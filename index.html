@@ -16,10 +16,13 @@
   <header class="app-header" role="banner">
     <div class="header-inner">
       <div class="brand-container">
-        <a href="#view-theory" class="brand-logo" aria-label="PhysicsNoza หน้าหลัก">
+        <a href="#view-landing" class="brand-logo" id="header-brand-logo" aria-label="PhysicsNoza หน้าแรก">
           <span>PHYSICSNOZA</span><span class="accent-dot">.</span>
         </a>
-        <div class="chapter-dropdown-wrapper" tabindex="0" role="region" aria-label="เลือกบทเรียน">
+        <button id="btn-back-to-chapters" class="btn-back-nav" style="display: none;" aria-label="กลับไปหน้าเลือกบทและสาขาวิชา">
+          ← เลือกบทเรียน
+        </button>
+        <div class="chapter-dropdown-wrapper" id="header-chapter-wrapper" tabindex="0" role="region" aria-label="เลือกบทเรียน">
           <button class="chapter-badge" style="cursor: pointer; background: var(--bg-alt); border: 1px solid var(--border-dark); display: inline-flex; align-items: center; gap: 0.35rem;" aria-haspopup="true" aria-expanded="false">
             <span>บทที่ 01 / 2D KINEMATICS & DYNAMICS</span> ▾
           </button>
@@ -30,19 +33,19 @@
             </a>
             <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
               <span><strong>บทที่ 02:</strong> การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง</span>
-              <span class="chapter-status-tag chapter-status-backlog">ยังไม่จัดทำ (Backlog)</span>
+              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
             </div>
             <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
               <span><strong>บทที่ 03:</strong> การแกว่งกวัดและฮาร์มอนิกอย่างง่าย</span>
-              <span class="chapter-status-tag chapter-status-backlog">ยังไม่จัดทำ (Backlog)</span>
+              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
             </div>
             <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
               <span><strong>บทที่ 04:</strong> คลื่นกลและเสียง</span>
-              <span class="chapter-status-tag chapter-status-backlog">ยังไม่จัดทำ (Backlog)</span>
+              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
             </div>
             <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
               <span><strong>บทที่ 05:</strong> อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส</span>
-              <span class="chapter-status-tag chapter-status-backlog">ยังไม่จัดทำ (Backlog)</span>
+              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
             </div>
           </div>
         </div>
@@ -52,8 +55,8 @@
       </div>
 
       <!-- 5 Interconnected Primary Views -->
-      <nav class="view-nav" role="tablist" aria-label="มุมมองเนื้อหาฟิสิกส์">
-        <button class="view-tab active" role="tab" id="tab-theory" aria-selected="true" aria-controls="view-theory" data-view="view-theory">
+      <nav class="view-nav" id="main-view-nav" role="tablist" aria-label="มุมมองเนื้อหาฟิสิกส์">
+        <button class="view-tab" role="tab" id="tab-theory" aria-selected="false" aria-controls="view-theory" data-view="view-theory">
           📖 1. ทฤษฎี (Theory)
         </button>
         <button class="view-tab" role="tab" id="tab-formulas" aria-selected="false" aria-controls="view-formulas" data-view="view-formulas">
@@ -69,11 +72,19 @@
           🏛️ 5. กลศาสตร์วิเคราะห์ (Analytical)
         </button>
       </nav>
+
+      <!-- Hamburger Menu Button -->
+      <div class="header-action-group">
+        <button id="btn-hamburger-menu" class="btn-hamburger" aria-label="เปิดเมนูสารบัญบทเรียนและทฤษฎี" aria-expanded="false" aria-controls="drawer-navigation-catalog" title="เปิดสารบัญบทเรียนและทฤษฎี (☰)">
+          <span class="hamburger-icon" aria-hidden="true">☰</span>
+          <span class="hamburger-label">สารบัญ</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <!-- Academic Tier Switcher Bar -->
-  <div class="tier-bar" role="region" aria-label="เลือกระดับความลึกทางวิชาการ">
+  <div class="tier-bar" id="app-tier-bar" role="region" aria-label="เลือกระดับความลึกทางวิชาการ" style="display: none;">
     <div class="tier-bar-inner">
       <span class="tier-label">ระดับความลึกทางวิชาการ (Academic Tier):</span>
       <div class="tier-buttons" role="group" aria-label="ตัวเลือกระดับวิชาการ">
@@ -90,11 +101,374 @@
     </div>
   </div>
 
+  <!-- Slide-Out Drawer Navigation & Theory Catalog -->
+  <div id="drawer-backdrop" class="drawer-backdrop" aria-hidden="true"></div>
+  <aside id="drawer-navigation-catalog" class="nav-drawer" role="dialog" aria-modal="true" aria-label="สารบัญบทเรียนและทฤษฎี" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <div class="drawer-main-title">📚 สารบัญบทเรียนและทฤษฎี</div>
+        <div class="drawer-sub-title">Navigation & Theory Catalog</div>
+      </div>
+      <button id="btn-close-drawer" class="btn-drawer-close" aria-label="ปิดหน้าต่างสารบัญ">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-catalog-target">
+      <!-- Dynamically rendered via app.js -->
+    </div>
+  </aside>
+
   <!-- Main Views Container -->
   <main class="main-content" id="main-content" role="main">
 
+    <!-- VIEW 0-A: LANDING PAGE -->
+    <section id="view-landing" class="view-panel active" role="region" aria-label="หน้าแรก">
+      <div class="landing-hero-container">
+        <div class="landing-badge">แพลตฟอร์มฟิสิกส์เชิงลึก & แบบจำลองเสมือนจริง 4 มิติ</div>
+        <h1 class="landing-hero-title">
+          PHYSICSNOZA<span class="accent-dot">.</span> 3.0
+        </h1>
+        <p class="landing-hero-subtitle">
+          การเคลื่อนที่สองมิติและโปรเจกไทล์พร้อมแรงต้านอากาศกำลังสอง บูรณาการทฤษฎีบท 4 ภาควิชา
+          สูตรและการอนุมานเต็มรูปแบบ แบบจำลอง RK4 เรียลไทม์ และปรากฏการณ์ธรรมชาติในชีวิตจริง
+        </p>
+
+        <div class="landing-cta-group">
+          <button id="btn-enter-website" class="btn-action-hero" aria-label="เข้าสู่เว็บไซต์">
+            🚀 เข้าสู่เว็บไซต์
+          </button>
+          <button id="btn-landing-quick-ch1" class="btn-action-hero-secondary" aria-label="เปิดบทที่ 1 ทันที">
+            📖 เปิดบทที่ 01: Kinematics
+          </button>
+        </div>
+
+        <div class="landing-features-grid">
+          <div class="landing-feature-card">
+            <div class="landing-feature-icon">📖</div>
+            <div class="landing-feature-title">1. ทฤษฎีลึกซึ้ง 6 ประเด็น</div>
+            <p class="landing-feature-desc">นิยาม หลักการ สมการ เงื่อนไขการใช้งาน ตัวอย่างคำนวณ และข้อควรระวังตามมาตรฐานตำราระดับโลก</p>
+          </div>
+          <div class="landing-feature-card">
+            <div class="landing-feature-icon">📐</div>
+            <div class="landing-feature-title">2. สูตร & การอนุมานรวดเดียว</div>
+            <p class="landing-feature-desc">ตารางตัวแปรและหน่วย SI สากล บัญชีสูตรกระชับ 4 ภาควิชา พร้อมขั้นตอนการอนุมานทีละบรรทัด</p>
+          </div>
+          <div class="landing-feature-card">
+            <div class="landing-feature-icon">🎯</div>
+            <div class="landing-feature-title">3. แบบจำลองเสมือนจริง 4 โหมด</div>
+            <p class="landing-feature-desc">เครื่องยนต์คำนวณ Runge-Kutta อันดับ 4 (RK4), สนามเวกเตอร์ลม, การชน-การดล และ 3D WebGL</p>
+          </div>
+          <div class="landing-feature-card">
+            <div class="landing-feature-icon">🌍</div>
+            <div class="landing-feature-title">4. ปรากฏการณ์จริง 16 รายการ</div>
+            <p class="landing-feature-desc">วิเคราะห์ลูกขนไก่, เข็มขัดนิรภัย, อุกกาบาต, รถแข่ง และกรณีศึกษาพร้อมการอ้างอิงเอกสารวิชาการเปิด</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 0-B: CHAPTER & SPECIALTY SELECTION PAGE -->
+    <section id="view-chapter-select" class="view-panel" role="region" aria-label="หน้าเลือกบทและสาขาวิชา">
+      <div class="selection-page-container">
+        <div class="selection-page-header">
+          <div class="selection-badge">หลักสูตรวิชาการและสาขาเฉพาะทาง</div>
+          <h2 class="selection-page-title">เลือกบทเรียน สาขาวิชาการ และหมวดข้อสอบ</h2>
+          <p class="selection-page-subtitle">
+            เลือกศึกษาตามบทเรียนฟิสิกส์พื้นฐาน สาขาวิศวกรรมเฉพาะทาง หรือทดสอบสมรรถนะตามหมวดข้อสอบมาตรฐาน
+          </p>
+        </div>
+
+        <!-- 1. Fundamental Physics Modules -->
+        <div class="selection-category-block">
+          <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">⚛️</span>
+              <h3 class="category-title">1. บทเรียนฟิสิกส์พื้นฐาน (Fundamental Physics Modules)</h3>
+            </div>
+            <span class="category-count">5 บทเรียน</span>
+          </div>
+
+          <div class="selection-cards-grid">
+            <!-- Active Chapter 1 -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 01</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              </div>
+              <h4 class="curriculum-title">การเคลื่อนที่สองมิติและโปรเจกไทล์ (2D Kinematics & Dynamics)</h4>
+              <p class="curriculum-desc">
+                ครอบคลุมการเคลื่อนที่แนวตรง เวกเตอร์ตำแหน่ง วิถีโปรเจกไทล์สุญญากาศ แรงต้านอากาศกำลังสอง ($F_d = -cv^2$) กฎการเคลื่อนที่ของนิวตัน งาน-พลังงาน การดล-โมเมนตัม และการคำนวณเชิงตัวเลข RK4
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 4 ภาควิชา</span> • <span>📐 15 ทฤษฎีหลัก</span> • <span>🎯 4 แบบจำลอง</span> • <span>🌍 16 ปรากฏการณ์</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch01" aria-label="เปิดบทที่ 1 การเคลื่อนที่สองมิติ">
+                  📖 เปิดบท
+                </button>
+              </div>
+            </div>
+
+            <!-- Backlog Chapter 2 -->
+            <div class="curriculum-card card-backlog">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 02</span>
+                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+              </div>
+              <h4 class="curriculum-title">การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง (Circular Motion & Centripetal Dynamics)</h4>
+              <p class="curriculum-desc">
+                ความเร่งสู่ศูนย์กลาง อัตราเร็วเชิงมุม การเคลื่อนที่บนทางโค้งยกมุมเอียง แรงดึงในสายดิ่ง และการเคลื่อนที่ของดาวเทียม
+              </p>
+              <div class="curriculum-meta">
+                <span>⏳ แผนพัฒนาถัดไป</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+              </div>
+            </div>
+
+            <!-- Backlog Chapter 3 -->
+            <div class="curriculum-card card-backlog">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 03</span>
+                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+              </div>
+              <h4 class="curriculum-title">การแกว่งกวัดและฮาร์มอนิกอย่างง่าย (Oscillations & Simple Harmonic Motion)</h4>
+              <p class="curriculum-desc">
+                ระบบมวลติดสปริง ลูกตุ้มนาฬิกาอย่างง่าย การแกว่งกวัดแบบมีความหนืด (Damped Oscillation) และการสั่นพ้อง (Resonance)
+              </p>
+              <div class="curriculum-meta">
+                <span>⏳ แผนพัฒนาถัดไป</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+              </div>
+            </div>
+
+            <!-- Backlog Chapter 4 -->
+            <div class="curriculum-card card-backlog">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 04</span>
+                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+              </div>
+              <h4 class="curriculum-title">คลื่นกลและเสียง (Mechanical Waves & Acoustics)</h4>
+              <p class="curriculum-desc">
+                สมการคลื่น การซ้อนทับ คลื่นนิ่งในเส้นเชือกและท่อลม ปรากฏการณ์ดอปเปลอร์ และคลื่นกระแทก
+              </p>
+              <div class="curriculum-meta">
+                <span>⏳ แผนพัฒนาถัดไป</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+              </div>
+            </div>
+
+            <!-- Backlog Chapter 5 -->
+            <div class="curriculum-card card-backlog">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 05</span>
+                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+              </div>
+              <h4 class="curriculum-title">อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส (Thermodynamics & Kinetic Theory)</h4>
+              <p class="curriculum-desc">
+                กฎข้อที่ 0, 1, 2 ของอุณหพลศาสตร์ กระบวนการไอโซเทอร์มัล แอเดียแบติก เครื่องจักรความร้อน และเอนโทรปี
+              </p>
+              <div class="curriculum-meta">
+                <span>⏳ แผนพัฒนาถัดไป</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Engineering Specialties -->
+        <div class="selection-category-block">
+          <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">🏗️</span>
+              <h3 class="category-title">2. สาขาวิศวกรรมเฉพาะทาง (Engineering Specialties)</h3>
+            </div>
+            <span class="category-count">3 สาขาวิชา</span>
+          </div>
+
+          <div class="selection-cards-grid">
+            <!-- Civil Engineering -->
+            <div class="curriculum-card card-planned">
+              <div class="card-top-row">
+                <span class="curriculum-code">โยธา</span>
+                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+              </div>
+              <h4 class="curriculum-title">วิศวกรรมโยธา (Civil Engineering)</h4>
+              <p class="curriculum-desc">
+                สถิตยศาสตร์โครงสร้าง โครงถักและคาน (Truss & Beam Statics) กลศาสตร์ของแข็ง ชลศาสตร์และการไหลในท่อ/ทางน้ำเปิด (Hydraulics) และปฐพีกลศาสตร์เบื้องต้น
+              </p>
+              <div class="curriculum-meta">
+                <span>📐 ผังทฤษฎี & แบบจำลองโครงสร้าง</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              </div>
+            </div>
+
+            <!-- Electrical Engineering -->
+            <div class="curriculum-card card-planned">
+              <div class="card-top-row">
+                <span class="curriculum-code">ไฟฟ้า</span>
+                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+              </div>
+              <h4 class="curriculum-title">วิศวกรรมไฟฟ้า (Electrical Engineering)</h4>
+              <p class="curriculum-desc">
+                ทฤษฎีแม่เหล็กไฟฟ้าและสมการแมกซ์เวลล์ (Maxwell's Equations) การวิเคราะห์วงจรพลศาสตร์ RLC สภาพแวดล้อมสนามคลื่น และระบบทรานเชียนต์
+              </p>
+              <div class="curriculum-meta">
+                <span>⚡ สนามคลื่น & พลศาสตร์วงจร</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              </div>
+            </div>
+
+            <!-- Mechanical Engineering -->
+            <div class="curriculum-card card-planned">
+              <div class="card-top-row">
+                <span class="curriculum-code">เครื่องกล</span>
+                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+              </div>
+              <h4 class="curriculum-title">วิศวกรรมเครื่องกล (Mechanical Engineering)</h4>
+              <p class="curriculum-desc">
+                จลนพลศาสตร์ของเครื่องจักรกล (Kinematics of Machinery) การสั่นสะเทือนเชิงกลขั้นสูง พลศาสตร์ของไหลประยุกต์ และวัฏจักรอุณหพลศาสตร์เครื่องยนต์
+              </p>
+              <div class="curriculum-meta">
+                <span>⚙️ กลไกเครื่องจักร & การสั่นสะเทือน</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Examination & Certification Tiers -->
+        <div class="selection-category-block">
+          <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">📝</span>
+              <h3 class="category-title">3. หมวดข้อสอบและการทดสอบสมรรถนะ (Examination & Certification Tiers)</h3>
+            </div>
+            <span class="category-count">4 ระดับการสอบ</span>
+          </div>
+
+          <div class="selection-cards-grid">
+            <!-- POSN -->
+            <div class="curriculum-card card-prep">
+              <div class="card-top-row">
+                <span class="curriculum-code">สอวน.</span>
+                <span class="status-badge status-prep">เตรียมข้อสอบ / Under Preparation</span>
+              </div>
+              <h4 class="curriculum-title">ระดับ สอวน. / โอลิมปิกวิชาการ (POSN / Physics Olympiad)</h4>
+              <p class="curriculum-desc">
+                คลังโจทย์และข้อสอบคัดเลือกค่าย 1 ค่าย 2 สอวน. ฟิสิกส์ และการสอบแข่งขันระดับชาติ เน้นการแก้ปัญหาเชิงวิเคราะห์ขั้นลึก
+              </p>
+              <div class="curriculum-meta">
+                <span>🏆 ข้อสอบโอลิมปิกวิชาการ</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>เตรียมข้อสอบ</button>
+              </div>
+            </div>
+
+            <!-- University Degree -->
+            <div class="curriculum-card card-prep">
+              <div class="card-top-row">
+                <span class="curriculum-code">ปริญญาตรี</span>
+                <span class="status-badge status-prep">เตรียมข้อสอบ / Under Preparation</span>
+              </div>
+              <h4 class="curriculum-title">ระดับ ปริญญาตรี (University Degree / General Physics)</h4>
+              <p class="curriculum-desc">
+                ข้อสอบมาตรฐานฟิสิกส์ทั่วไป 1 และ 2 สำหรับคณะวิศวกรรมศาสตร์และวิทยาศาสตร์ ครอบคลุมแคลคูลัสและการประยุกต์
+              </p>
+              <div class="curriculum-meta">
+                <span>🎓 ฟิสิกส์ระดับมหาวิทยาลัย</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>เตรียมข้อสอบ</button>
+              </div>
+            </div>
+
+            <!-- Associate Engineer -->
+            <div class="curriculum-card card-prep">
+              <div class="card-top-row">
+                <span class="curriculum-code">ก.ว. ภาคี</span>
+                <span class="status-badge status-prep">เตรียมข้อสอบ / Under Preparation</span>
+              </div>
+              <h4 class="curriculum-title">ระดับ ก.ว. ภาคีวิศวกร (Associate Engineer Certification)</h4>
+              <p class="curriculum-desc">
+                แบบทดสอบความรู้พื้นฐานทางวิศวกรรม (Fundamentals of Engineering) เพื่อขอรับใบอนุญาตประกอบวิชาชีพวิศวกรรมควบคุม
+              </p>
+              <div class="curriculum-meta">
+                <span>📜 สภาวิศวกร (ภาคี)</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>เตรียมข้อสอบ</button>
+              </div>
+            </div>
+
+            <!-- Professional Engineer -->
+            <div class="curriculum-card card-prep">
+              <div class="card-top-row">
+                <span class="curriculum-code">ก.ว. สามัญ</span>
+                <span class="status-badge status-prep">เตรียมข้อสอบ / Under Preparation</span>
+              </div>
+              <h4 class="curriculum-title">ระดับ ก.ว. สามัญวิศวกร (Professional Engineer Certification)</h4>
+              <p class="curriculum-desc">
+                การทดสอบและประเมินสมรรถนะการแก้ปัญหาทางวิศวกรรมระดับสูง ความปลอดภัย และมาตรฐานวิชาชีพ
+              </p>
+              <div class="curriculum-meta">
+                <span>🏅 สภาวิศวกร (สามัญ)</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-disabled" disabled>เตรียมข้อสอบ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Analytical Mechanics Gateway -->
+        <div class="selection-category-block">
+          <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">🏛️</span>
+              <h3 class="category-title">4. กลศาสตร์วิเคราะห์ขั้นสูง (Advanced Analytical Mechanics)</h3>
+            </div>
+            <span class="category-count">1 ส่วนหลัก</span>
+          </div>
+
+          <div class="selection-cards-grid">
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code">Analytical</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              </div>
+              <h4 class="curriculum-title">กระบวนทัศน์กลศาสตร์วิเคราะห์ (Action Principle, Lagrangian & Hamiltonian)</h4>
+              <p class="curriculum-desc">
+                หลักการกระทำน้อยที่สุด การแปลงเลอฌ็องดร์ สมการออยเลอร์-ลากรางจ์ วงเล็บปัวซง และระนาบเฟสสเปซเชิงพลศาสตร์
+              </p>
+              <div class="curriculum-meta">
+                <span>🌌 ทฤษฎีบทเนอเธอร์</span> • <span>📈 Phase Portrait Trace</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-primary btn-open-analytical" id="btn-open-analytical-from-select" aria-label="เปิดกลศาสตร์วิเคราะห์">
+                  🏛️ เปิดกลศาสตร์วิเคราะห์
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- VIEW 1: THEORY -->
-    <section id="view-theory" class="view-panel active" role="tabpanel" aria-labelledby="tab-theory">
+    <section id="view-theory" class="view-panel" role="tabpanel" aria-labelledby="tab-theory">
       <div id="theory-content-target">
         <!-- Dynamically rendered via app.js & projectile_content.js -->
       </div>
@@ -126,6 +500,11 @@
           </button>
         </div>
       </div>
+
+      <!-- Educational Context Frame (Formulas, Variables, Units & Boundary Conditions) -->
+      <aside id="sim-edu-context-frame" class="sim-edu-context-card" role="region" aria-label="กรอบข้อมูลการศึกษากำกับแบบจำลอง">
+        <!-- Dynamically rendered and updated by app.js based on active simulator mode -->
+      </aside>
 
       <!-- MODE 1: PROJECTILE BALLISTICS (RK4 ENGINE) -->
       <div id="sim-container-projectile" class="sim-mode-container active">
@@ -840,6 +1219,7 @@
 <script src="js/simulators/threejs_ballistics_simulator.js"></script>
 <script src="js/math_renderer.js"></script>
 <script src="js/data/projectile_content.js"></script>
+<script src="js/data/phenomena_content.js"></script>
 <script src="js/data/physics_theories_content.js"></script>
 <script src="js/data/analytical_formalisms_content.js"></script>
 <script src="js/app.js"></script>

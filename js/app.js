@@ -1,14 +1,14 @@
 /**
  * app.js - PhysicsNoza 3.0 Main Application Controller
  * Manages view routing, academic tier switching, KaTeX math rendering,
- * Division & Theory curriculum architecture, and simulator lifecycle.
+ * Division & Theory curriculum architecture, navigation drawer, and simulator lifecycle.
  */
 
 (function () {
   'use strict';
 
   // Global App State
-  let currentView = 'view-theory';
+  let currentView = 'view-landing';
   let currentTier = 'highSchool';
   let activeDivisionFilter = 'all';
   let activeFormulaDivisionFilter = 'all';
@@ -23,6 +23,9 @@
 
   function init() {
     setupViewNavigation();
+    setupDrawerNavigation();
+    renderDrawerCatalog();
+    setupActionButtons();
     setupTierSwitcher();
     renderTheoryContent();
     renderFormulasContent();
@@ -33,9 +36,16 @@
     initCollisionSimulator();
     initThreejsSimulator();
     setupSimulatorModeSwitcher();
+    renderSimulatorEduContext(activeSimMode);
     setupKeyboardShortcuts();
     setupMobileAccessModal();
     setupBackgroundExecution();
+
+    // Determine initial view based on URL hash or default to Landing Page
+    const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-analytical'];
+    const initialHash = window.location.hash.replace(/^#/, '');
+    const startView = validViews.includes(initialHash) ? initialHash : 'view-landing';
+    switchView(startView, true);
 
     // Render all initial math formulas
     if (window.MathRenderer) {
@@ -43,7 +53,7 @@
     }
   }
 
-  // View Navigation (Tab Switching)
+  // View Navigation (Tab & Page Switching)
   function setupViewNavigation() {
     const tabs = document.querySelectorAll('.view-tab');
     tabs.forEach(tab => {
@@ -54,8 +64,8 @@
     });
   }
 
-  function switchView(viewId) {
-    if (currentView === viewId) return;
+  function switchView(viewId, force = false) {
+    if (!force && currentView === viewId) return;
 
     // Lifecycle guard: pause all simulators only if background execution is NOT enabled
     const allowBackground = document.getElementById('sim-background-run')?.checked ?? true;
@@ -79,10 +89,26 @@
       panel.classList.toggle('active', isActive);
     });
 
+    // Control visibility of header elements & tier bar based on view
+    const backBtn = document.getElementById('btn-back-to-chapters');
+    const chapterWrapper = document.getElementById('header-chapter-wrapper');
+    const mainViewNav = document.getElementById('main-view-nav');
+    const tierBar = document.getElementById('app-tier-bar');
+
+    const isLanding = (viewId === 'view-landing');
+    const isChapterSelect = (viewId === 'view-chapter-select');
+    const isLesson = !isLanding && !isChapterSelect;
+
+    if (backBtn) backBtn.style.display = isLesson ? 'inline-flex' : 'none';
+    if (chapterWrapper) chapterWrapper.style.display = isLesson ? 'inline-flex' : 'none';
+    if (mainViewNav) mainViewNav.style.display = isLesson ? 'flex' : 'none';
+    if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator') ? 'block' : 'none';
+
     currentView = viewId;
 
     // If entering simulator, ensure active mode canvas is sized and rendered
     if (viewId === 'view-simulator') {
+      renderSimulatorEduContext(activeSimMode);
       if (activeSimMode === 'projectile' && simulatorInstance) {
         simulatorInstance._setupCanvasResolution();
         simulatorInstance.render();
@@ -101,7 +127,212 @@
     // Retypeset math if new content is visible
     if (window.MathRenderer) {
       const activePanel = document.getElementById(viewId);
-      window.MathRenderer.typeset(activePanel);
+      if (activePanel) window.MathRenderer.typeset(activePanel);
+    }
+  }
+
+  // Navigation Drawer Management
+  function setupDrawerNavigation() {
+    const btnHamburger = document.getElementById('btn-hamburger-menu');
+    const drawer = document.getElementById('drawer-navigation-catalog');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const btnClose = document.getElementById('btn-close-drawer');
+
+    if (!btnHamburger || !drawer || !backdrop) return;
+
+    function openDrawer() {
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      btnHamburger.setAttribute('aria-expanded', 'true');
+      backdrop.classList.add('active');
+      backdrop.setAttribute('aria-hidden', 'false');
+      if (btnClose) btnClose.focus();
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      btnHamburger.setAttribute('aria-expanded', 'false');
+      backdrop.classList.remove('active');
+      backdrop.setAttribute('aria-hidden', 'true');
+      btnHamburger.focus();
+    }
+
+    btnHamburger.addEventListener('click', () => {
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) closeDrawer();
+      else openDrawer();
+    });
+
+    if (btnClose) btnClose.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    // Keyboard accessibility: Escape key closes drawer
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+
+    window.PhysicsApp = window.PhysicsApp || {};
+    window.PhysicsApp.openDrawer = openDrawer;
+    window.PhysicsApp.closeDrawer = closeDrawer;
+    window.PhysicsApp.switchView = switchView;
+  }
+
+  // Render Theory Catalog & Chapter Switcher inside Drawer
+  function renderDrawerCatalog() {
+    const target = document.getElementById('drawer-catalog-target');
+    if (!target) return;
+
+    const data = window.PhysicsTheoriesContent;
+    if (!data || !data.theories) return;
+
+    let html = `
+      <!-- Active Chapter Indicator Card -->
+      <div class="drawer-current-chapter-card">
+        <div class="drawer-cur-chap-label">บทเรียนปัจจุบัน (Active Chapter)</div>
+        <div class="drawer-cur-chap-name">บทที่ 01: การเคลื่อนที่สองมิติและโปรเจกไทล์</div>
+      </div>
+
+      <!-- Quick Back to Chapter Select Button -->
+      <div style="margin-bottom: 1.25rem;">
+        <button class="btn-back-nav" style="width: 100%; justify-content: center;" onclick="window.PhysicsApp.switchView('view-chapter-select'); window.PhysicsApp.closeDrawer();">
+          ← กลับหน้าเลือกบทและสาขาวิชา
+        </button>
+      </div>
+
+      <!-- Section Label -->
+      <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.6rem;">
+        สารบัญ 4 ภาควิชา & 15 ทฤษฎีหลัก
+      </div>
+    `;
+
+    // Render 4 Divisions with collapsible accordion
+    data.divisions.forEach((div, idx) => {
+      const divTheories = data.theories.filter(t => t.divisionId === div.id);
+      const isFirst = (idx === 0);
+
+      html += `
+        <div class="drawer-division-group">
+          <button class="drawer-division-header" aria-expanded="${isFirst ? 'true' : 'false'}" data-division-target="drawer-div-${div.id}">
+            <span>${div.numeral}. ${div.titleTh}</span>
+            <span class="drawer-acc-indicator">${isFirst ? '▾' : '▸'}</span>
+          </button>
+          <div class="drawer-division-theories" id="drawer-div-${div.id}" style="display: ${isFirst ? 'flex' : 'none'};">
+            ${divTheories.map(t => `
+              <a href="#theory-${t.id}" class="drawer-theory-link" data-theory-id="${t.id}">
+                <span class="drawer-theory-num">${t.numberTh}</span>
+                <span class="drawer-theory-title">${t.titleTh}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <!-- Additional Gateway Links -->
+      <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+        <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">
+          สาขาวิชาการและหมวดอื่น ๆ
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <a href="#view-analytical" class="drawer-theory-link" onclick="window.PhysicsApp.switchView('view-analytical'); window.PhysicsApp.closeDrawer();">
+            🏛️ กลศาสตร์วิเคราะห์ (Analytical Mechanics)
+          </a>
+          <div style="font-size: 0.78rem; color: var(--text-muted); padding: 0.4rem 0.6rem;">
+            วิศวกรรมโยธา, ไฟฟ้า, เครื่องกล, ข้อสอบ สอวน., ก.ว. [ดูที่หน้าเลือกบท]
+          </div>
+        </div>
+      </div>
+    `;
+
+    target.innerHTML = html;
+
+    // Accordion Toggle Handlers
+    target.querySelectorAll('.drawer-division-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const divTargetId = header.dataset.divisionTarget;
+        const panel = document.getElementById(divTargetId);
+        const indicator = header.querySelector('.drawer-acc-indicator');
+        if (panel) {
+          const isExpanded = panel.style.display === 'flex';
+          panel.style.display = isExpanded ? 'none' : 'flex';
+          header.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+          if (indicator) indicator.textContent = isExpanded ? '▸' : '▾';
+        }
+      });
+    });
+
+    // Theory Link Click Handlers
+    target.querySelectorAll('.drawer-theory-link[data-theory-id]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tId = link.dataset.theoryId;
+        switchView('view-theory');
+        if (window.PhysicsApp.closeDrawer) window.PhysicsApp.closeDrawer();
+        setTimeout(() => {
+          const targetEl = document.getElementById('theory-' + tId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetEl.style.transition = 'box-shadow 0.5s ease';
+            targetEl.style.boxShadow = '0 0 0 3px #EA580C';
+            setTimeout(() => { targetEl.style.boxShadow = ''; }, 2200);
+          }
+        }, 120);
+      });
+    });
+  }
+
+  // Setup Global Action Buttons
+  function setupActionButtons() {
+    // 1. Enter Website from Hero
+    const btnEnter = document.getElementById('btn-enter-website');
+    if (btnEnter) {
+      btnEnter.addEventListener('click', () => {
+        switchView('view-chapter-select');
+      });
+    }
+
+    // 2. Quick Ch1 from Hero
+    const btnQuickCh1 = document.getElementById('btn-landing-quick-ch1');
+    if (btnQuickCh1) {
+      btnQuickCh1.addEventListener('click', () => {
+        switchView('view-theory');
+      });
+    }
+
+    // 3. Logo click -> Landing
+    const logo = document.getElementById('header-brand-logo');
+    if (logo) {
+      logo.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView('view-landing');
+      });
+    }
+
+    // 4. Open Chapter 1 from selection page
+    document.querySelectorAll('.btn-open-chapter[data-chapter="ch01"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView('view-theory');
+      });
+    });
+
+    // 5. Open Analytical Mechanics from selection page
+    const btnOpenAnalytical = document.getElementById('btn-open-analytical-from-select');
+    if (btnOpenAnalytical) {
+      btnOpenAnalytical.addEventListener('click', () => {
+        switchView('view-analytical');
+      });
+    }
+
+    // 6. Back to Chapter Select button in header
+    const btnBack = document.getElementById('btn-back-to-chapters');
+    if (btnBack) {
+      btnBack.addEventListener('click', () => {
+        switchView('view-chapter-select');
+      });
     }
   }
 
@@ -124,14 +355,8 @@
   }
 
   /**
-   * Render Master Curriculum: 4 Divisions & 10 Ordered Theories adhering to the
-   * 6-point pedagogical structure:
-   *  (1) นิยามและความหมาย
-   *  (2) หลักการและคำอธิบาย
-   *  (3) สูตร สัญลักษณ์ หน่วย และขั้นการอนุมาน
-   *  (4) การใช้งานและเงื่อนไข (รวมถึงเมื่อใดที่ใช้ไม่ได้)
-   *  (5) ตัวอย่างการคำนวณพร้อมภาพ/แบบจำลอง
-   *  (6) ข้อสังเกตและประเด็นที่มักเข้าใจผิดเฉพาะเรื่องที่เกี่ยวข้อง (ถ้ามี)
+   * Render Master Curriculum: 4 Divisions & 15 Theories
+   * Incorporates concise quick-jump bar and delegating full catalog to drawer
    */
   function renderTheoryContent() {
     const container = document.getElementById('theory-content-target');
@@ -151,44 +376,31 @@
         <p class="content-subtitle">โครงสร้างวิชาการมาตรฐาน: นิยาม, หลักการ, สูตรอนุมานตามระดับ, ขอบเขตการใช้งานจริง, ตัวอย่างคำนวณ และแบบจำลองเสมือนจริง</p>
       </div>
 
-      <!-- Table of Contents & Quick Jump -->
-      <div class="toc-container" role="region" aria-label="สารบัญและทางลัดทฤษฎี">
-        <div class="toc-header">
-          <div class="toc-title">
-            <span>📚 สารบัญทฤษฎีเรียงเลข (Theory Catalog)</span>
-          </div>
+      <!-- Streamlined Quick Jump & Division Filter Bar (Catalog moved to drawer per requirements) -->
+      <div class="lesson-quick-jump-bar" style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem 1.15rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <span style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">📚 เลือกแสดงภาควิชา:</span>
           <div class="division-filter-tabs" role="group" aria-label="กรองตามภาควิชา">
             <button class="division-filter-btn ${activeDivisionFilter === 'all' ? 'active' : ''}" data-division="all">
-              ทั้งหมด (${data.theories.length} ทฤษฎี)
+              ทั้งหมด (${data.theories.length})
             </button>
             <button class="division-filter-btn ${activeDivisionFilter === 'div-kinematics' ? 'active' : ''}" data-division="div-kinematics">
-              ภาคที่ 1: จลนศาสตร์ (${data.theories.filter(t => t.divisionId === 'div-kinematics').length})
+              ภาคที่ 1: จลนศาสตร์
             </button>
             <button class="division-filter-btn ${activeDivisionFilter === 'div-dynamics' ? 'active' : ''}" data-division="div-dynamics">
-              ภาคที่ 2: พลศาสตร์ (${data.theories.filter(t => t.divisionId === 'div-dynamics').length})
+              ภาคที่ 2: พลศาสตร์
             </button>
             <button class="division-filter-btn ${activeDivisionFilter === 'div-conservation' ? 'active' : ''}" data-division="div-conservation">
-              ภาคที่ 3: กฎการอนุรักษ์ (${data.theories.filter(t => t.divisionId === 'div-conservation').length})
+              ภาคที่ 3: กฎการอนุรักษ์
             </button>
             <button class="division-filter-btn ${activeDivisionFilter === 'div-computational' ? 'active' : ''}" data-division="div-computational">
-              ภาคที่ 4: เชื่อมโยง & คำนวณ (${data.theories.filter(t => t.divisionId === 'div-computational').length})
+              ภาคที่ 4: คำนวณ RK4
             </button>
           </div>
         </div>
-
-        <div class="toc-grid">
-          ${data.theories.map(t => {
-            const isVis = activeDivisionFilter === 'all' || activeDivisionFilter === t.divisionId;
-            return `
-            <a href="#theory-${t.id}" class="toc-item" data-division="${t.divisionId}" style="display: ${isVis ? 'flex' : 'none'};">
-              <div class="toc-item-top">
-                <span class="toc-item-number">${t.numberTh}</span>
-                <span class="toc-item-type">${t.type.split(' ')[0]}</span>
-              </div>
-              <div class="toc-item-title">${t.titleTh}</div>
-            </a>
-          `;}).join('')}
-        </div>
+        <button id="btn-open-drawer-catalog" class="btn-outline-catalog" title="เปิดสารบัญทฤษฎีเรียงเลข 15 ทฤษฎี">
+          ☰ สารบัญทฤษฎีเรียงเลข (15 ทฤษฎี)
+        </button>
       </div>
 
       <!-- Master Divisions & Theories Container -->
@@ -232,7 +444,6 @@
 
         filterBtns.forEach(b => b.classList.toggle('active', b.dataset.division === divId));
 
-        // 1. Filter division blocks
         const blocks = container.querySelectorAll('.division-block');
         blocks.forEach(block => {
           if (divId === 'all' || block.id === divId) {
@@ -241,16 +452,34 @@
             block.style.display = 'none';
           }
         });
+      });
+    });
 
-        // 2. Filter TOC items
-        const tocItems = container.querySelectorAll('.toc-item');
-        tocItems.forEach(item => {
-          if (divId === 'all' || item.dataset.division === divId) {
-            item.style.display = 'flex';
-          } else {
-            item.style.display = 'none';
+    // Attach Open Drawer Catalog button
+    const btnOpenDrawer = container.querySelector('#btn-open-drawer-catalog');
+    if (btnOpenDrawer) {
+      btnOpenDrawer.addEventListener('click', () => {
+        if (window.PhysicsApp && window.PhysicsApp.openDrawer) {
+          window.PhysicsApp.openDrawer();
+        }
+      });
+    }
+
+    // Attach Direct Jump to Formula buttons on Theory Cards
+    container.querySelectorAll('.btn-jump-to-formula').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tId = btn.dataset.theoryId;
+        switchView('view-formulas');
+        setTimeout(() => {
+          const el = document.getElementById('formula-summary-' + tId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.style.transition = 'box-shadow 0.5s ease';
+            el.style.boxShadow = '0 0 0 3px #EA580C';
+            setTimeout(() => { el.style.boxShadow = ''; }, 2000);
           }
-        });
+        }, 120);
       });
     });
 
@@ -328,11 +557,11 @@
             </div>
           </div>
 
-          <!-- (3) สูตร สัญลักษณ์ หน่วย และขั้นการอนุมาน (Formulas & Derivations) -->
+          <!-- (3) สูตร สัญลักษณ์ หน่วย และการอนุมาน (Formulas, Symbols & Derivations) -->
           <div class="theory-section section-formula">
             <div class="section-label">
               <span class="section-num">3</span>
-              <span>สูตร สัญลักษณ์ หน่วย และขั้นการอนุมานตามระดับ (Formulas, Symbols & Derivations)</span>
+              <span>สูตร สัญลักษณ์ หน่วย และการอนุมานตามระดับ (Formulas, Symbols & Derivations)</span>
             </div>
             
             ${t.formulas.map((f, fIdx) => `
@@ -364,19 +593,17 @@
                     </table>
                   </div>
                 ` : ''}
-
-                ${f.derivationSteps && f.derivationSteps.length > 0 ? `
-                  <div style="margin-top: 0.75rem;">
-                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--accent-orange-text); margin-bottom: 0.35rem;">
-                      ลำดับขั้นตอนการอนุมาน (Derivation Steps):
-                    </div>
-                    <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
-                      ${f.derivationSteps.map(step => `<p style="margin-bottom: 0.35rem;">${step}</p>`).join('')}
-                    </div>
-                  </div>
-                ` : ''}
               </div>
             `).join('')}
+
+            <div class="theory-formula-nav-row" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <span style="font-size: 0.85rem; color: var(--text-secondary);">
+                💡 ดูการพิสูจน์อนุมานทีละขั้นตอนอย่างละเอียดในแท็บสูตรและการอนุมาน
+              </span>
+              <button class="btn-action-primary btn-jump-to-formula" data-theory-id="${t.id}" aria-label="ดูสูตรและการอนุมานของทฤษฎีที่ ${t.id}">
+                📐 ดูสูตรและการอนุมาน
+              </button>
+            </div>
           </div>
 
           <!-- (4) การใช้งานและเงื่อนไข (Applications, Scope & Validity Boundaries) -->
@@ -680,9 +907,27 @@
                   <span class="formula-scope-tag">
                     <strong>ขอบเขต:</strong> ${t.application.validWhen}
                   </span>
-                  <button class="sim-deep-link-btn" data-theory-id="${t.id}" style="margin: 0; padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                    🎯 จำลองสูตรนี้ในแบบจำลอง &rarr;
-                  </button>
+                  ${(() => {
+                    const hasSim = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13].includes(t.id);
+                    if (hasSim) {
+                      return `
+                        <button class="btn-action-primary btn-jump-to-sim" data-theory-id="${t.id}" aria-label="ดูแบบจำลองที่เกี่ยวข้องกับทฤษฎีที่ ${t.id}">
+                          🎯 ดูแบบจำลองที่เกี่ยวข้อง
+                        </button>
+                      `;
+                    } else {
+                      let statusNote = '📐 แผนภาพเวกเตอร์ / ยังไม่มีแบบจำลองพลศาสตร์ตรงเรื่อง';
+                      if (t.id === 11) statusNote = '📐 กลศาสตร์การหมุน / ยังไม่มีแบบจำลองพลศาสตร์ตรงเรื่อง';
+                      if (t.id === 12) statusNote = '📐 แผนภาพเวกเตอร์ / อยู่ในแผนพัฒนาบทที่ 02';
+                      if (t.id === 14) statusNote = '📐 การวิเคราะห์สมการ / ยังไม่มีแบบจำลองพลศาสตร์ตรงเรื่อง';
+                      if (t.id === 15) statusNote = '📐 กลศาสตร์ของไหล / อยู่ในแผนพัฒนาวิศวกรรมเฉพาะทาง';
+                      return `
+                        <span class="sim-status-tag-truthful">
+                          ${statusNote}
+                        </span>
+                      `;
+                    }
+                  })()}
                 </div>
               </div>
             `).join('')}
@@ -834,7 +1079,7 @@
     });
 
     // Attach Simulator Preset deep link buttons
-    const simBtns = container.querySelectorAll('.sim-deep-link-btn');
+    const simBtns = container.querySelectorAll('.btn-jump-to-sim, .sim-deep-link-btn');
     simBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -848,38 +1093,318 @@
     }
   }
 
+  // ========================================================================
+  // VIEW 4: Real-World Engineering & Natural Phenomena Renderer
+  // ========================================================================
+  let activePhenomenaFilter = 'all';
+  let activePhenomenaSearch = '';
+
   function renderPhenomenaContent() {
     const container = document.getElementById('phenomena-content-target');
-    if (!container || !window.ProjectileContent) return;
+    if (!container) return;
 
-    const phenomena = window.ProjectileContent.phenomena;
+    const dataModule = window.PhenomenaData || (window.ProjectileContent && window.ProjectileContent.phenomena ? { phenomena: window.ProjectileContent.phenomena } : null);
+    if (!dataModule || !dataModule.phenomena) return;
+
+    const allPhenomena = dataModule.phenomena;
+    const meta = dataModule.meta || {
+      titleTh: "ปรากฏการณ์ในธรรมชาติและงานวิศวกรรมจริง",
+      titleEn: "Physical Phenomena & Real-World Engineering Applications",
+      descriptionTh: "การเชื่อมโยงทฤษฎีกลศาสตร์ สถิตยศาสตร์ พลศาสตร์ และกฎการอนุรักษ์ สู่สิ่งที่สังเกตได้ในโลกจริง (16 ปรากฏการณ์มาตรฐาน)"
+    };
 
     let html = `
       <div class="content-header">
-        <h2 class="content-title">ปรากฏการณ์ในธรรมชาติและงานวิศวกรรมจริง</h2>
-        <p class="content-subtitle">การเชื่อมโยงทฤษฎีแรงต้านอากาศสู่สิ่งที่พบเห็นในชีวิตประจำวันและเทคโนโลยีระดับสูง</p>
+        <h2 class="content-title">${meta.titleTh}</h2>
+        <p class="content-subtitle">${meta.titleEn} &mdash; ${meta.descriptionTh}</p>
       </div>
-      <div class="phenomena-list">
+
+      <!-- Phenomena Control Toolbar -->
+      <div class="phenomena-toolbar" role="region" aria-label="แถบควบคุมและค้นหาปรากฏการณ์">
+        <div class="phenomena-filter-group" role="group" aria-label="กรองตามภาควิชา">
+          <button class="phenomena-filter-btn ${activePhenomenaFilter === 'all' ? 'active' : ''}" data-filter="all">
+            ทั้งหมด (16 รายการ)
+          </button>
+          <button class="phenomena-filter-btn ${activePhenomenaFilter === 'div1' ? 'active' : ''}" data-filter="div1">
+            ภาคที่ 1: จลนศาสตร์
+          </button>
+          <button class="phenomena-filter-btn ${activePhenomenaFilter === 'div2' ? 'active' : ''}" data-filter="div2">
+            ภาคที่ 2: พลศาสตร์
+          </button>
+          <button class="phenomena-filter-btn ${activePhenomenaFilter === 'div3' ? 'active' : ''}" data-filter="div3">
+            ภาคที่ 3: กฎการอนุรักษ์
+          </button>
+          <button class="phenomena-filter-btn ${activePhenomenaFilter === 'div4' ? 'active' : ''}" data-filter="div4">
+            ภาคที่ 4: การหมุน & ของไหล
+          </button>
+        </div>
+
+        <div class="phenomena-search-box">
+          <span class="phenomena-search-icon">🔍</span>
+          <input type="text" id="phenomena-search-input" class="phenomena-search-input" placeholder="ค้นหาปรากฏการณ์, ทฤษฎี, คำสำคัญ..." value="${activePhenomenaSearch}">
+        </div>
+
+        <div id="phenomena-count-display" class="phenomena-count-badge">
+          แสดง 16 / 16 รายการ
+        </div>
+      </div>
+
+      <!-- Phenomena Cards Container -->
+      <div id="phenomena-cards-list" class="phenomena-list">
     `;
 
-    phenomena.forEach(p => {
+    allPhenomena.forEach((p) => {
+      // Determine all matching division keys for multi-division cards
+      const divisionKeys = [];
+      if (p.division) {
+        if (p.division.includes('1') || p.division.includes('จลนศาสตร์') || p.division.includes('Kinematics')) divisionKeys.push('div1');
+        if (p.division.includes('2') || p.division.includes('พลศาสตร์') || p.division.includes('Dynamics')) divisionKeys.push('div2');
+        if (p.division.includes('3') || p.division.includes('อนุรักษ์') || p.division.includes('Conservation')) divisionKeys.push('div3');
+        if (p.division.includes('4') || p.division.includes('ของไหล') || p.division.includes('หมุน') || p.division.includes('Rotation') || p.division.includes('Fluids')) divisionKeys.push('div4');
+      }
+      if (divisionKeys.length === 0) divisionKeys.push('div2');
+      const divAttr = divisionKeys.join(' ');
+
+      const simNameMap = {
+        projectile: 'โหมดที่ 1: โปรเจกไทล์ & แรงต้าน',
+        vehicle: 'โหมดที่ 2: รถแข่ง & เวกเตอร์ลม',
+        collision: 'โหมดที่ 3: การชน & การดล 1D',
+        threejs: 'โหมดที่ 4: วิถี 3 มิติ Three.js'
+      };
+      const simLabel = p.relatedSimulator ? simNameMap[p.relatedSimulator] || 'เปิดแบบจำลอง' : null;
+
       html += `
-        <div class="phenomena-card">
-          <div>
-            <span class="card-badge" style="margin-bottom: 0.5rem; display: inline-block;">${p.category}</span>
-            <h3 class="card-title" style="margin-bottom: 0.75rem;">${p.titleTh}</h3>
-            <p style="margin-bottom: 0.75rem; color: var(--text-primary); font-size: 0.95rem;"><strong>กลไกทางฟิสิกส์:</strong> ${p.mechanism}</p>
-            <p style="color: var(--text-secondary); font-size: 0.9rem;"><strong>การประยุกต์ใช้งาน:</strong> ${p.application}</p>
+        <article class="phenomena-card" id="${p.id}" data-id="${p.id}" data-division="${divisionKeys[0]}" data-divisions="${divAttr}" data-keywords="${(p.titleTh + ' ' + p.titleEn + ' ' + p.category + ' ' + p.id + ' ' + (p.observed || '')).toLowerCase()}">
+          <!-- Left Column: Academic Content & Formulas -->
+          <div class="phenomena-info-col">
+            <div class="phenomena-badge-row">
+              <span class="phenomena-id-chip">${p.id}</span>
+              <span class="phenomena-div-chip">${p.division}</span>
+              <span class="phenomena-cat-chip">${p.category}</span>
+            </div>
+
+            <h3 class="phenomena-card-title-th">${p.titleTh}</h3>
+            <div class="phenomena-card-title-en">${p.titleEn}</div>
+
+            <!-- 1. What is Observed -->
+            <div class="phenomena-section-item">
+              <span class="phenomena-section-label">👀 สิ่งที่สังเกตเห็นในโลกจริง (Observation)</span>
+              <div>${p.observed}</div>
+            </div>
+
+            <!-- 2. Physical Mechanism -->
+            <div class="phenomena-section-item">
+              <span class="phenomena-section-label">⚙️ กลไกทางฟิสิกส์เชิงลึก (Physical Mechanism)</span>
+              <div>${p.mechanism ? p.mechanism.replace(/\\n/g, '<br/><br/>') : ''}</div>
+            </div>
+
+            <!-- 3. Scope & Boundary Conditions -->
+            <div class="phenomena-section-item">
+              <span class="phenomena-section-label">📏 ขอบเขตและเงื่อนไขการบังคับใช้ (Boundary Conditions & Validity)</span>
+              <div style="color: #CBD5E1;">${p.scope || '-'}</div>
+            </div>
+
+            <!-- 4. Mathematical Formulas with KaTeX -->
+            <div class="phenomena-section-item">
+              <span class="phenomena-section-label">📐 สมการคณิตศาสตร์และกฎที่เกี่ยวข้อง (Governing Equations)</span>
+              ${(p.formulas || []).map(f => `
+                <div class="phenomena-formula-container">
+                  <div class="math-display">$$${f.latex}$$</div>
+                  <div class="phenomena-formula-desc">&bull; ${f.desc}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- 5. Variables & SI Units Table -->
+            ${p.variables && p.variables.length > 0 ? `
+              <div class="phenomena-section-item">
+                <span class="phenomena-section-label">📊 ตัวแปรและหน่วย SI สากล (Variables & Dimensions)</span>
+                <div class="phenomena-table-wrapper">
+                  <table class="phenomena-table">
+                    <thead>
+                      <tr>
+                        <th>สัญลักษณ์</th>
+                        <th>ความหมายทางกายภาพ</th>
+                        <th>หน่วย SI</th>
+                        <th>ค่าพิกัดมาตรฐาน / ค่าทั่วไป</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${p.variables.map(v => `
+                        <tr>
+                          <td class="phenomena-symbol">$${v.symbol}$</td>
+                          <td>${v.name}</td>
+                          <td class="phenomena-unit">${v.unit}</td>
+                          <td style="color: #94A3B8;">${v.typical || '-'}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 6. Academic Citations -->
+            <div class="phenomena-section-item">
+              <span class="phenomena-section-label">📚 แหล่งอ้างอิงวิชาการเปิดและหน้าตำรา (Academic Citations)</span>
+              <div class="phenomena-citations-list">
+                ${(p.citations || []).map(c => `
+                  <div class="phenomena-citation-card">
+                    <div class="phenomena-citation-title">📖 ${c.title} (${c.year})</div>
+                    <div class="phenomena-citation-meta">${c.authors} &mdash; <em>${c.source}</em></div>
+                    ${c.url ? `<div class="phenomena-citation-url" style="margin: 0.25rem 0;"><a href="${c.url}" target="_blank" rel="noopener noreferrer" style="color: #38BDF8; font-size: 0.8rem; text-decoration: underline; word-break: break-all;">🔗 ลิงก์เอกสารต้นฉบับ: ${c.url}</a></div>` : ''}
+                    ${c.verificationStatus === 'verified_direct_content' ? `
+                      <div style="margin-top: 0.35rem;">
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid #059669;">🟢 ตรวจเทียบเนื้อหาตรงต้นฉบับแล้ว (Direct Content Verified)</span>
+                        ${c.evidencePin ? `<div style="font-size: 0.78rem; color: #E2E8F0; margin-top: 0.25rem; line-height: 1.4;"><strong>หลักฐานอ้างอิง:</strong> ${c.evidencePin}</div>` : ''}
+                        ${c.pendingClaims ? `<div style="font-size: 0.75rem; color: #FBBF24; margin-top: 0.2rem; background: rgba(245, 158, 11, 0.1); padding: 3px 6px; border-radius: 3px; border-left: 2px solid #F59E0B;">⚠️ <em>ข้อสังเกต:</em> ${c.pendingClaims}</div>` : ''}
+                      </div>
+                    ` : c.verificationStatus === 'pending_content_verification' ? `
+                      <div style="margin-top: 0.35rem;">
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid #D97706;">🟡 รอดำเนินการเทียบหน้า/ตารางต้นฉบับ (Pending Content Inspection)</span>
+                        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.25rem; line-height: 1.4;"><strong>เหตุผล:</strong> ${c.pendingReason || 'ลิงก์รายการหนังสือทางวิชาการ — รอการตรวจเทียบเลขหน้าและตารางต้นฉบับทางกายภาพ'}</div>
+                      </div>
+                    ` : `
+                      <div class="phenomena-citation-note">${c.note ? `หมายเหตุ: ${c.note}` : ''}</div>
+                    `}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- 7. Engineering & Safety Note -->
+            ${p.engineeringNote ? `
+              <div class="phenomena-note-box">
+                <strong>💡 ข้อคิดและข้อควรระวังทางวิศวกรรม:</strong> ${p.engineeringNote}
+              </div>
+            ` : ''}
           </div>
-        </div>
+
+          <!-- Right Column: Visual SVG Diagram & Navigation Actions -->
+          <div class="phenomena-visual-column">
+            <div class="phenomena-diagram-frame">
+              ${p.svgDiagram}
+            </div>
+
+            <div class="phenomena-actions-group">
+              ${p.relatedTheoryId ? `
+                <button class="phenomena-action-btn phenomena-btn-theory btn-jump-theory" data-theory-id="${p.relatedTheoryId}" title="ไปยังเนื้อหา ${p.relatedTheoryTitle}">
+                  📖 อ่านทฤษฎี: ${(p.relatedTheoryTitle || '').split(':')[0]}
+                </button>
+              ` : ''}
+
+              ${p.relatedSimulator ? `
+                <button class="phenomena-action-btn phenomena-btn-sim btn-jump-sim" data-sim-mode="${p.relatedSimulator}" title="เปิดแบบจำลองเสมือนจริง ${simLabel}">
+                  🎯 เปิดแบบจำลอง: ${simLabel}
+                </button>
+              ` : `
+                <div style="text-align: center; font-size: 0.75rem; color: #64748B; padding: 0.4rem; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px dashed var(--border-dark);">
+                  📐 แผนภาพเวกเตอร์และการคำนวณสถิตยศาสตร์
+                </div>
+              `}
+            </div>
+          </div>
+        </article>
       `;
     });
 
-    html += `</div>`;
+    html += `
+        <div id="phenomena-no-results" class="phenomena-empty-state" style="display: none;">
+          <h3>ไม่พบปรากฏการณ์ที่ตรงกับคำค้นหา</h3>
+          <p>กรุณาลองเปลี่ยนคำค้นหา หรือคลิกเลือก "ทั้งหมด" เพื่อดูรายการปรากฏการณ์ทั้งหมด 16 รายการ</p>
+        </div>
+      </div>
+    `;
+
     container.innerHTML = html;
 
+    // Attach Event Listeners
+    setupPhenomenaInteractions();
+
+    // Initial Filter Apply
+    filterPhenomenaCards();
+
+    // KaTeX Typesetting
     if (window.MathRenderer) {
       window.MathRenderer.typeset(container);
+    }
+  }
+
+  function setupPhenomenaInteractions() {
+    const filterBtns = document.querySelectorAll('.phenomena-filter-btn');
+    const searchInput = document.getElementById('phenomena-search-input');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activePhenomenaFilter = btn.dataset.filter;
+        filterPhenomenaCards();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        activePhenomenaSearch = e.target.value.trim().toLowerCase();
+        filterPhenomenaCards();
+      });
+    }
+
+    // Theory jump buttons
+    document.querySelectorAll('.btn-jump-theory').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theoryId = btn.dataset.theoryId;
+        activeDivisionFilter = 'all';
+        renderTheoryContent();
+        switchView('view-theory');
+        setTimeout(() => {
+          const targetEl = document.getElementById(theoryId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetEl.style.transition = 'box-shadow 0.5s ease';
+            targetEl.style.boxShadow = '0 0 0 3px #38BDF8';
+            setTimeout(() => { targetEl.style.boxShadow = ''; }, 2000);
+          }
+        }, 120);
+      });
+    });
+
+    // Simulator jump buttons
+    document.querySelectorAll('.btn-jump-sim').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const simMode = btn.dataset.simMode;
+        switchView('view-simulator');
+        switchSimMode(simMode);
+      });
+    });
+  }
+
+  function filterPhenomenaCards() {
+    const cards = document.querySelectorAll('.phenomena-card');
+    const noResults = document.getElementById('phenomena-no-results');
+    const countDisplay = document.getElementById('phenomena-count-display');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const cardDivs = (card.dataset.divisions || card.dataset.division || '').split(/\s+/);
+      const divMatch = activePhenomenaFilter === 'all' || cardDivs.includes(activePhenomenaFilter);
+      const kw = card.dataset.keywords || '';
+      const searchMatch = !activePhenomenaSearch || kw.includes(activePhenomenaSearch);
+
+      if (divMatch && searchMatch) {
+        card.style.display = 'grid';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (noResults) {
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    if (countDisplay) {
+      countDisplay.textContent = `แสดง ${visibleCount} / ${cards.length} รายการ`;
     }
   }
 
@@ -1232,6 +1757,144 @@
     });
   }
 
+  // ======================================================================
+  // SIMULATOR EDUCATIONAL CONTEXT RENDERER (PHYSICS-NAVIGATION-001 REQ 2)
+  // ======================================================================
+
+  function renderSimulatorEduContext(mode) {
+    const frame = document.getElementById('sim-edu-context-frame');
+    if (!frame) return;
+
+    let title = '';
+    let badge = '';
+    let equationsLatex = [];
+    let varsRows = [];
+    let boundsText = '';
+    let controlMapText = '';
+
+    if (mode === 'projectile') {
+      title = 'โหมดที่ 1: วิถีโปรเจกไทล์ & แรงต้านอากาศกำลังสอง (4th-Order Runge-Kutta)';
+      badge = 'RK4 Numerical Engine';
+      equationsLatex = [
+        'm\\frac{d^2\\vec{r}}{dt^2} = m\\vec{g} - c|\\vec{v}|\\vec{v}',
+        '\\frac{dv_x}{dt} = -\\frac{c}{m}v\\cdot v_x,\\quad \\frac{dv_y}{dt} = -g -\\frac{c}{m}v\\cdot v_y'
+      ];
+      varsRows = [
+        { sym: 'v_0', name: 'ความเร็วต้น', unit: '\\text{m/s}' },
+        { sym: '\\theta', name: 'มุมยิงเทียบแนวระดับ', unit: '^\\circ\\text{ (deg)}' },
+        { sym: 'c', name: 'สัมประสิทธิ์แรงต้าน \\frac{1}{2}\\rho C_D A', unit: '\\text{kg/m}' },
+        { sym: 'm', name: 'มวลวัตถุ', unit: '\\text{kg}' },
+        { sym: 'g', name: 'ความเร่งโน้มถ่วง', unit: '\\text{m/s}^2' },
+        { sym: 'y_0', name: 'ความสูงฐานยิงเริ่มต้น', unit: '\\text{m}' }
+      ];
+      boundsText = 'จำลองอนุภาค 2 มิติในแนวดิ่ง-ราบภายใต้สนามโน้มถ่วงสม่ำเสมอ แรงต้านอากาศแปรผันตามอัตราเร็วกำลังสอง ($v^2$) ทิศทางต้านเวกเตอร์ความเร็วเสมอ สิ้นสุดการจำลองเมื่อวัตถุตกลงสู่ระดับพื้นดิน ($y \\le 0$)';
+      controlMapText = '• ลากปลายลูกศรเวกเตอร์บนกระดานเพื่อปรับมุม ($\\theta$) และความเร็ว ($v_0$) แบบเรียลไทม์<br>• ปรับสไลเดอร์ $c$ เพื่อดูผลกระทบของความหนืดอากาศต่อระยะตกเทียบกับวิถีสุญญากาศของกาลิเลโอ (เส้นประสีเทา)';
+    } else if (mode === 'vehicle') {
+      title = 'โหมดที่ 2: รถแข่ง จลนศาสตร์ 2 มิติ & สนามเวกเตอร์ลมพัดขวาง';
+      badge = 'Kinematics & Vector Field';
+      equationsLatex = [
+        '\\vec{v}_{\\text{eff}} = \\vec{v}_{\\text{car}} - \\vec{v}_{\\text{wind}}',
+        '\\vec{F}_{\\text{net}} = \\vec{F}_{\\text{engine}} - c_{\\text{aero}}|\\vec{v}_{\\text{eff}}|\\vec{v}_{\\text{eff}}'
+      ];
+      varsRows = [
+        { sym: 'v_{\\text{car}}', name: 'ความเร็วรถแข่ง', unit: '\\text{m/s หรือ km/h}' },
+        { sym: 'v_{\\text{wind}}', name: 'อัตราเร็วลม', unit: '\\text{m/s}' },
+        { sym: '\\phi_{\\text{wind}}', name: 'ทิศทางเวกเตอร์ลม', unit: '^\\circ\\text{ (deg)}' },
+        { sym: 'c_{\\text{aero}}', name: 'สัมประสิทธิ์ต้านแอโรไดนามิก', unit: '\\text{kg/m}' }
+      ];
+      boundsText = 'การเคลื่อนที่ 2 มิติบนระนาบราบ สมมติฐานพื้นผิวราบเรียบ สัมประสิทธิ์การยึดเกาะยางสม่ำเสมอ เวกเตอร์ความเร็วลมสม่ำเสมอทั่วบริเวณการแข่งขัน';
+      controlMapText = '• สไลเดอร์ความเร็วรถและทิศทางลมจะปรับเวกเตอร์ความเร็วประสาน (Resultant Velocity) ทันที<br>• สังเกตการเบี่ยงเบนของเวกเตอร์แรงต้านสัมพัทธ์ในกริดสนามเวกเตอร์';
+    } else if (mode === 'collision') {
+      title = 'โหมดที่ 3: การชน โมเมนตัม & การดล (Impulse & Momentum Conservation)';
+      badge = 'Impulse & Conservation';
+      equationsLatex = [
+        'm_1\\vec{u}_1 + m_2\\vec{u}_2 = m_1\\vec{v}_1 + m_2\\vec{v}_2',
+        'e = \\frac{v_2 - v_1}{u_1 - u_2},\\quad \\vec{J} = \\int \\vec{F}\\,dt = \\Delta\\vec{p}'
+      ];
+      varsRows = [
+        { sym: 'm_1, m_2', name: 'มวลของวัตถุที่ 1 และ 2', unit: '\\text{kg}' },
+        { sym: 'u_1, u_2', name: 'ความเร็วก่อนชน', unit: '\\text{m/s}' },
+        { sym: 'v_1, v_2', name: 'ความเร็วหลังชน', unit: '\\text{m/s}' },
+        { sym: 'e', name: 'สัมประสิทธิ์การคืนสภาพ (COR)', unit: '\\text{ไร้หน่วย } [0, 1]' }
+      ];
+      boundsText = 'ระบบโดดเดี่ยว (Isolated System) ปราศจากแรงลัพธ์ภายนอกในแนวราบ การชนเป็นเส้นตรง 1 มิติตามแนวเชื่อมศูนย์กลางมวล อนุรักษ์โมเมนตัมเสมอ พลังงานจลน์อนุรักษ์เฉพาะเมื่อ $e = 1$';
+      controlMapText = '• ปรับมวลและความเร็วเริ่มต้นของลูกทรงกลมทั้งสอง<br>• ปรับค่า $e$ จาก $1.0$ (ยืดหยุ่นสมบูรณ์) ไปยัง $0.0$ (ไม่ยืดหยุ่นสมบูรณ์ วัตถุติดกันไป) เพื่อตรวจสอบการสูญเสียพลังงานจลน์';
+    } else if (mode === 'threejs') {
+      title = 'โหมดที่ 4: วิถีโปรเจกไทล์ 3 มิติ & ลมพัดขวาง (WebGL 3D Engine)';
+      badge = '3D Spatial Ballistics';
+      equationsLatex = [
+        '\\ddot{x} = -\\frac{c}{m}v(v_x - w_x),\\quad \\ddot{y} = -g -\\frac{c}{m}v\\,v_y,\\quad \\ddot{z} = -\\frac{c}{m}v(v_z - w_z)'
+      ];
+      varsRows = [
+        { sym: 'v_0', name: 'ความเร็วต้นใน 3 มิติ', unit: '\\text{m/s}' },
+        { sym: '\\theta', name: 'มุมเงย (Elevation)', unit: '^\\circ\\text{ (deg)}' },
+        { sym: '\\psi', name: 'มุมกวาดราบ (Azimuth)', unit: '^\\circ\\text{ (deg)}' },
+        { sym: '\\vec{w}', name: 'เวกเตอร์ลมพัดขวาง $(w_x, w_z)$', unit: '\\text{m/s}' }
+      ];
+      boundsText = 'ปริภูมิยุคลิด 3 มิติ $(x, y, z)$ แรงต้านอากาศแปรผันตามกำลังสองของความเร็วสัมพัทธ์ 3 มิติ มีการเบี่ยงเบนแนวข้าง (Drift) จากลมพัดขวาง';
+      controlMapText = '• ใช้เมาส์/ทัชคลิกลากหมุนมุมมอง 3 มิติรอบวิถีการยิง<br>• ปรับมุมกวาดและแรงลมขวางเพื่อดูการเลี้ยวโค้งของวิถีในระนาบ 3 มิติ';
+    }
+
+    let html = `
+      <div class="sim-edu-header">
+        <div class="sim-edu-title">
+          <span>📚 ข้อมูลวิชาการกำกับแบบจำลอง: ${title}</span>
+        </div>
+        <span class="sim-edu-badge">${badge}</span>
+      </div>
+
+      <div class="sim-edu-grid">
+        <!-- Section 1: Governing Equations -->
+        <div class="sim-edu-section">
+          <div class="sim-edu-sec-title">📐 สมการเชิงอนุพันธ์กำกับแบบจำลอง (Governing Equations)</div>
+          <div class="sim-edu-equations">
+            ${equationsLatex.map(eq => `<div class="math-display">$$${eq}$$</div>`).join('')}
+          </div>
+        </div>
+
+        <!-- Section 2: Parameters & SI Units -->
+        <div class="sim-edu-section">
+          <div class="sim-edu-sec-title">📊 ตัวแปร พารามิเตอร์ และหน่วย SI สากล</div>
+          <table class="sim-edu-vars-table">
+            <thead>
+              <tr>
+                <th style="width: 25%;">ตัวแปร</th>
+                <th style="width: 50%;">ความหมายทางฟิสิกส์</th>
+                <th style="width: 25%;">หน่วย SI</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${varsRows.map(r => `
+                <tr>
+                  <td><strong>$${r.sym}$</strong></td>
+                  <td>${r.name}</td>
+                  <td>$${r.unit}$</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Section 3: Boundary Conditions & Controls -->
+        <div class="sim-edu-section">
+          <div class="sim-edu-sec-title">📏 เงื่อนไขขอบเขต & ความสัมพันธ์กับค่าควบคุม</div>
+          <p style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1.5;">
+            <strong>ขอบเขตการใช้งานจริง:</strong> ${boundsText}
+          </p>
+          <div class="sim-edu-control-map">
+            ${controlMapText}
+          </div>
+        </div>
+      </div>
+    `;
+
+    frame.innerHTML = html;
+
+    if (window.MathRenderer) {
+      window.MathRenderer.typeset(frame);
+    }
+  }
+
   // Simulator preset launcher
   function launchSimulatorPreset(theoryId) {
     switchView('view-simulator');
@@ -1275,6 +1938,15 @@
         simulatorInstance.render();
       }
     }
+
+    renderSimulatorEduContext(activeSimMode);
+
+    setTimeout(() => {
+      const activeContainer = document.querySelector('.sim-mode-container.active');
+      if (activeContainer) {
+        activeContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
   }
 
   // ======================================================================
@@ -1323,6 +1995,7 @@
     });
 
     activeSimMode = mode;
+    renderSimulatorEduContext(mode);
 
     // Trigger canvas resize and initial render
     if (mode === 'projectile' && simulatorInstance) {
