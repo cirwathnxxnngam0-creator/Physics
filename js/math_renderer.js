@@ -158,26 +158,194 @@
     return fallbackRenderLatex(latex);
   }
 
+  const LATEX_COMMANDS = [
+    'frac', 'sqrt', 'mathbf', 'mathrm', 'text', 'vec', 'hat', 'dot', 'ddot',
+    'sum', 'int', 'oint', 'prod', 'lim',
+    'varepsilon', 'mathcal', 'partial', 'times', 'cdot', 'approx', 'pm', 'mp',
+    'leq', 'geq', 'neq', 'implies', 'to', 'in', 'alpha', 'beta', 'gamma', 'Delta',
+    'delta', 'epsilon', 'zeta', 'eta', 'theta', 'Theta', 'iota', 'kappa', 'lambda',
+    'Lambda', 'mu', 'nu', 'xi', 'Xi', 'pi', 'rho', 'sigma', 'Sigma', 'tau',
+    'upsilon', 'phi', 'Phi', 'chi', 'psi', 'Psi', 'omega', 'Omega', 'nabla', 'hbar',
+    'left', 'right', 'langle', 'rangle', 'exp', 'sin', 'cos', 'tan', 'ln', 'log', 'quad', 'qquad'
+  ];
+
+  /**
+   * Automatically detects and wraps unbracketed LaTeX expressions with $...$
+   */
+  function autoDetectAndWrapLatex(text) {
+    if (!text || typeof text !== 'string') return text;
+    
+    let hasCmd = false;
+    for (let c = 0; c < LATEX_COMMANDS.length; c++) {
+      if (text.indexOf('\\' + LATEX_COMMANDS[c]) !== -1) {
+        hasCmd = true;
+        break;
+      }
+    }
+    if (!hasCmd) return text;
+
+    const tokens = text.split(/(\$\$[\s\S]+?\$\$|\$[^\$\n]+?\$)/);
+    const katexInst = getKaTeX();
+
+    for (let t = 0; t < tokens.length; t++) {
+      if (tokens[t].startsWith('$')) continue;
+      let s = tokens[t];
+      let i = 0;
+      while (i < s.length) {
+        if (s[i] === '\\') {
+          const rest = s.substring(i + 1);
+          const matchCmd = rest.match(/^[a-zA-Z]+/);
+          if (matchCmd && LATEX_COMMANDS.indexOf(matchCmd[0]) !== -1) {
+            let startPos = i;
+            while (startPos > 0) {
+              const prevChar = s[startPos - 1];
+              if (/[\u0E00-\u0E7F\n$]/.test(prevChar)) break;
+              if ((prevChar === ':' || prevChar === ';') && startPos > 1 && /[\u0E00-\u0E7F\s]/.test(s[startPos - 2])) break;
+              if (prevChar === '•') break;
+              startPos--;
+            }
+            while (startPos < i && /\s/.test(s[startPos])) startPos++;
+
+            let endPos = i + 1 + matchCmd[0].length;
+            while (endPos < s.length) {
+              const ch = s[endPos];
+              if (/[\u0E00-\u0E7F\n$]/.test(ch)) break;
+              if (ch === '{') {
+                const closeIdx = findMatchingBrace(s, endPos);
+                if (closeIdx !== -1) {
+                  endPos = closeIdx + 1;
+                  continue;
+                }
+              }
+              endPos++;
+            }
+
+            let candidate = s.substring(startPos, endPos).trim();
+
+            while (candidate.length > 0 && /[.,;:!]$/.test(candidate)) {
+              candidate = candidate.slice(0, -1).trim();
+              endPos--;
+            }
+
+            // Ensure balanced braces { }
+            let openB = (candidate.match(/{/g) || []).length;
+            let closeB = (candidate.match(/}/g) || []).length;
+            while (closeB < openB && endPos < s.length && !/[\u0E00-\u0E7F\n$]/.test(s[endPos])) {
+              candidate += s[endPos];
+              if (s[endPos] === '}') closeB++;
+              endPos++;
+            }
+
+            // Ensure balanced parentheses ( )
+            let openP = (candidate.match(/\(/g) || []).length;
+            let closeP = (candidate.match(/\)/g) || []).length;
+            while (closeP < openP && endPos < s.length && !/[\u0E00-\u0E7F\n$]/.test(s[endPos])) {
+              candidate += s[endPos];
+              if (s[endPos] === ')') closeP++;
+              endPos++;
+            }
+
+            if (/\\right\s*$/.test(candidate) && endPos < s.length && /[)\]}|.]/.test(s[endPos])) {
+              candidate += s[endPos];
+              endPos++;
+            }
+
+            candidate = candidate.trim();
+
+            if (candidate.length > 0) {
+              let canParse = true;
+              if (katexInst) {
+                try {
+                  katexInst.renderToString(candidate, { throwOnError: true });
+                } catch (e) {
+                  canParse = false;
+                }
+              }
+
+              if (canParse) {
+                const before = s.substring(0, startPos);
+                const after = s.substring(endPos);
+                s = before + '$' + candidate + '$' + after;
+                i = startPos + candidate.length + 2;
+                continue;
+              }
+            }
+          }
+        }
+        i++;
+      }
+      tokens[t] = s;
+    }
+    return tokens.join('');
+  }
+
+  /**
+   * Helper to format a string containing math (with auto-wrap + KaTeX rendering)
+   */
+  function renderMathText(text) {
+    if (!text) return '';
+    let prepared = autoDetectAndWrapLatex(text);
+    
+    // Display math
+    prepared = prepared.replace(/\$\$([\s\S]+?)\$\$/g, function (_, math) {
+      return '<div class="math-container display-math">' + renderLatex(math, true) + '</div>';
+    });
+    prepared = prepared.replace(/\\\[([\s\S]+?)\\\]/g, function (_, math) {
+      return '<div class="math-container display-math">' + renderLatex(math, true) + '</div>';
+    });
+
+    // Inline math
+    prepared = prepared.replace(/\$([^\$\n]+?)\$/g, function (_, math) {
+      return '<span class="inline-math">' + renderLatex(math, false) + '</span>';
+    });
+    prepared = prepared.replace(/\\\(([\s\S]+?)\\\)/g, function (_, math) {
+      return '<span class="inline-math">' + renderLatex(math, false) + '</span>';
+    });
+
+    return prepared;
+  }
+
   /**
    * Typesets all inline and display math elements in a given DOM container
    */
   function typeset(element) {
     if (!element) return;
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    const walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function(node) {
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.closest('.katex, .katex-html, .katex-mathml, script, style, textarea, code, .math-rendered-block')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          const val = node.nodeValue;
+          if (!val) return NodeFilter.FILTER_REJECT;
+          const hasMathDelim = val.includes('$') || val.includes('\\[') || val.includes('\\(');
+          if (hasMathDelim) return NodeFilter.FILTER_ACCEPT;
+          if (val.includes('\\')) {
+            for (let c = 0; c < LATEX_COMMANDS.length; c++) {
+              if (val.indexOf('\\' + LATEX_COMMANDS[c]) !== -1) {
+                return NodeFilter.FILTER_ACCEPT;
+              }
+            }
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+      },
+      false
+    );
+
     const textNodes = [];
     let node;
     while ((node = walker.nextNode())) {
-      if (node.nodeValue && (node.nodeValue.includes('$') || node.nodeValue.includes('\\[') || node.nodeValue.includes('\\('))) {
-        const parentName = node.parentNode ? node.parentNode.nodeName.toLowerCase() : '';
-        if (parentName !== 'script' && parentName !== 'style' && parentName !== 'textarea' && parentName !== 'code') {
-          textNodes.push(node);
-        }
-      }
+      textNodes.push(node);
     }
 
     textNodes.forEach(tNode => {
       const text = tNode.nodeValue;
-      let replaced = text;
+      let replaced = autoDetectAndWrapLatex(text);
 
       // Display math $$...$$ or \[...\]
       replaced = replaced.replace(/\$\$([\s\S]+?)\$\$/g, function (_, math) {
@@ -197,6 +365,7 @@
 
       if (replaced !== text) {
         const span = document.createElement('span');
+        span.className = 'math-rendered-block';
         span.innerHTML = replaced;
         if (tNode.parentNode) {
           tNode.parentNode.replaceChild(span, tNode);
@@ -207,6 +376,8 @@
 
   return {
     renderLatex,
-    typeset
+    typeset,
+    autoDetectAndWrapLatex,
+    renderMathText
   };
 }));

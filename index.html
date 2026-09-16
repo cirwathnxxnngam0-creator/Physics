@@ -23,30 +23,38 @@
           ← เลือกบทเรียน
         </button>
         <div class="chapter-dropdown-wrapper" id="header-chapter-wrapper" tabindex="0" role="region" aria-label="เลือกบทเรียน">
-          <button class="chapter-badge" style="cursor: pointer; background: var(--bg-alt); border: 1px solid var(--border-dark); display: inline-flex; align-items: center; gap: 0.35rem;" aria-haspopup="true" aria-expanded="false">
+          <button class="chapter-badge header-chapter-badge" style="cursor: pointer; background: var(--bg-alt); border: 1px solid var(--border-dark); display: inline-flex; align-items: center; gap: 0.35rem;" aria-haspopup="true" aria-expanded="false">
             <span>บทที่ 01 / 2D KINEMATICS & DYNAMICS</span> ▾
           </button>
           <div class="chapter-dropdown-menu" role="menu" aria-label="รายการบทเรียนทั้งหมดในคลัง">
-            <a href="#view-theory" class="chapter-item active" role="menuitem">
+            <a href="#view-theory" class="chapter-item active" data-chapter="ch01" role="menuitem">
               <span><strong>บทที่ 01:</strong> การเคลื่อนที่สองมิติและโปรเจกไทล์</span>
               <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
-            <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
+            <a href="#view-theory" class="chapter-item" data-chapter="ch02" role="menuitem">
               <span><strong>บทที่ 02:</strong> การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง</span>
-              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
-            </div>
-            <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
+            <a href="#view-theory" class="chapter-item" data-chapter="ch03" role="menuitem">
               <span><strong>บทที่ 03:</strong> การแกว่งกวัดและฮาร์มอนิกอย่างง่าย</span>
-              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
-            </div>
-            <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
+            <a href="#view-theory" class="chapter-item" data-chapter="ch04" role="menuitem">
               <span><strong>บทที่ 04:</strong> คลื่นกลและเสียง</span>
-              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
-            </div>
-            <div class="chapter-item backlog" role="menuitem" aria-disabled="true">
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
+            <a href="#view-theory" class="chapter-item" data-chapter="ch05" role="menuitem">
               <span><strong>บทที่ 05:</strong> อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส</span>
-              <span class="chapter-status-tag chapter-status-backlog">กำลังพัฒนา (In Development)</span>
-            </div>
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
+            <a href="#view-theory" class="chapter-item" data-chapter="ch06" role="menuitem">
+              <span><strong>บทที่ 06:</strong> ไฟฟ้าและแม่เหล็ก</span>
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
+            <a href="#view-theory" class="chapter-item" data-chapter="ch07" role="menuitem">
+              <span><strong>บทที่ 07:</strong> ฟิสิกส์นิวเคลียร์และอนุภาค</span>
+              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
+            </a>
           </div>
         </div>
         <button id="btn-mobile-access" class="mobile-access-trigger-btn" aria-label="เชื่อมต่อผ่านโทรศัพท์มือถือ (Mobile Access)" title="เปิดใช้งานบนโทรศัพท์หรือแท็บเล็ตผ่าน Wi-Fi">
@@ -71,6 +79,9 @@
         <button class="view-tab" role="tab" id="tab-analytical" aria-selected="false" aria-controls="view-analytical" data-view="view-analytical">
           🏛️ 5. กลศาสตร์วิเคราะห์ (Analytical)
         </button>
+        <button class="view-tab" role="tab" id="tab-practice" aria-selected="false" aria-controls="view-practice" data-view="view-practice">
+          📝 6. คลังโจทย์ (Practice)
+        </button>
       </nav>
 
       <!-- Hamburger Menu Button -->
@@ -82,24 +93,6 @@
       </div>
     </div>
   </header>
-
-  <!-- Academic Tier Switcher Bar -->
-  <div class="tier-bar" id="app-tier-bar" role="region" aria-label="เลือกระดับความลึกทางวิชาการ" style="display: none;">
-    <div class="tier-bar-inner">
-      <span class="tier-label">ระดับความลึกทางวิชาการ (Academic Tier):</span>
-      <div class="tier-buttons" role="group" aria-label="ตัวเลือกระดับวิชาการ">
-        <button class="tier-btn active" data-tier="highSchool" aria-label="ระดับมัธยมศึกษา">
-          มัธยมศึกษา (High School)
-        </button>
-        <button class="tier-btn" data-tier="basicUniversity" aria-label="ระดับมหาวิทยาลัยพื้นฐาน">
-          มหาวิทยาลัยพื้นฐาน (General Physics)
-        </button>
-        <button class="tier-btn" data-tier="advancedUniversity" aria-label="ระดับมหาวิทยาลัยขั้นสูงและวิศวกรรม">
-          ขั้นสูง & วิศวกรรม (Engineering / COE)
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- Slide-Out Drawer Navigation & Theory Catalog -->
   <div id="drawer-backdrop" class="drawer-backdrop" aria-hidden="true"></div>
@@ -122,44 +115,89 @@
     <!-- VIEW 0-A: LANDING PAGE -->
     <section id="view-landing" class="view-panel active" role="region" aria-label="หน้าแรก">
       <div class="landing-hero-container">
-        <div class="landing-badge">แพลตฟอร์มฟิสิกส์เชิงลึก & แบบจำลองเสมือนจริง 4 มิติ</div>
+        <div class="landing-badge">แพลตฟอร์มฟิสิกส์เชิงลึก & วิศวกรรมศาสตร์ประยุกต์</div>
         <h1 class="landing-hero-title">
           PHYSICSNOZA<span class="accent-dot">.</span> 3.0
         </h1>
         <p class="landing-hero-subtitle">
-          การเคลื่อนที่สองมิติและโปรเจกไทล์พร้อมแรงต้านอากาศกำลังสอง บูรณาการทฤษฎีบท 4 ภาควิชา
-          สูตรและการอนุมานเต็มรูปแบบ แบบจำลอง RK4 เรียลไทม์ และปรากฏการณ์ธรรมชาติในชีวิตจริง
+          ศูนย์รวมการเรียนรู้ฟิสิกส์เชิงลึก 4 มิติ และวิศวกรรมศาสตร์เชิงคำนวณ ครอบคลุมตั้งแต่ระดับมัธยมศึกษา มหาวิทยาลัยพื้นฐาน สอวน./โอลิมปิกวิชาการ จนถึงวิศวกรรมเฉพาะทาง พร้อมแบบจำลองเสมือนจริงและระบบทำโจทย์
         </p>
 
         <div class="landing-cta-group">
           <button id="btn-enter-website" class="btn-action-hero" aria-label="เข้าสู่เว็บไซต์">
-            🚀 เข้าสู่เว็บไซต์
-          </button>
-          <button id="btn-landing-quick-ch1" class="btn-action-hero-secondary" aria-label="เปิดบทที่ 1 ทันที">
-            📖 เปิดบทที่ 01: Kinematics
+            🚀 เข้าสู่แพลตฟอร์มเต็มรูปแบบ (All Chapters)
           </button>
         </div>
 
-        <div class="landing-features-grid">
-          <div class="landing-feature-card">
-            <div class="landing-feature-icon">📖</div>
-            <div class="landing-feature-title">1. ทฤษฎีลึกซึ้ง 6 ประเด็น</div>
-            <p class="landing-feature-desc">นิยาม หลักการ สมการ เงื่อนไขการใช้งาน ตัวอย่างคำนวณ และข้อควรระวังตามมาตรฐานตำราระดับโลก</p>
+        <!-- 3-Track Curriculum & Practice Portal -->
+        <div class="landing-tracks-portal">
+          <!-- Track 1: Fundamental Physics -->
+          <div class="portal-track-card portal-track-fund">
+            <div class="portal-track-header">
+              <span class="portal-track-badge">มัธยมศึกษา & มหาวิทยาลัยปี 1</span>
+              <div class="portal-track-icon">⚛️</div>
+            </div>
+            <h3 class="portal-track-title">1. ฟิสิกส์พื้นฐาน (Fundamental Physics)</h3>
+            <p class="portal-track-desc">
+              ครอบคลุม 7 บทเรียนหลัก: กลศาสตร์สองมิติ การเคลื่อนที่แบบวงกลม การแกว่งกวัด คลื่นกลและเสียง อุณหพลศาสตร์ ไฟฟ้าและแม่เหล็ก และฟิสิกส์นิวเคลียร์
+            </p>
+            <div class="portal-track-actions">
+              <button class="btn-track-action btn-track-theory" id="btn-portal-fund-theory" aria-label="ดูเนื้อหาฟิสิกส์พื้นฐาน">
+                📖 ดูทฤษฎี
+              </button>
+              <button class="btn-track-action btn-track-sim" id="btn-portal-fund-sim" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: 1px solid #3b82f6; color: #ffffff;" aria-label="แบบจำลองฟิสิกส์พื้นฐาน">
+                🧪 แบบจำลอง
+              </button>
+              <button class="btn-track-action btn-track-practice" id="btn-portal-fund-practice" style="background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;" aria-label="ทำโจทย์ฟิสิกส์พื้นฐาน">
+                📝 โจทย์คำนวณ
+              </button>
+            </div>
           </div>
-          <div class="landing-feature-card">
-            <div class="landing-feature-icon">📐</div>
-            <div class="landing-feature-title">2. สูตร & การอนุมานรวดเดียว</div>
-            <p class="landing-feature-desc">ตารางตัวแปรและหน่วย SI สากล บัญชีสูตรกระชับ 4 ภาควิชา พร้อมขั้นตอนการอนุมานทีละบรรทัด</p>
+
+          <!-- Track 2: Advanced Physics & Olympiad -->
+          <div class="portal-track-card portal-track-adv">
+            <div class="portal-track-header">
+              <span class="portal-track-badge">สอวน. / โอลิมปิก & ปริญญาตรี</span>
+              <div class="portal-track-icon">🌌</div>
+            </div>
+            <h3 class="portal-track-title">2. ฟิสิกส์ขั้นสูง & สอวน. (Advanced / Olympiad)</h3>
+            <p class="portal-track-desc">
+              กระบวนทัศน์กลศาสตร์วิเคราะห์ หลักการกระทำน้อยที่สุด ลากรานเจียน (Lagrangian), แฮมิลโทเนียน (Hamiltonian), พิกัดนัยทั่วไป และโจทย์คัดเลือกผู้แทนโอลิมปิกวิชาการ
+            </p>
+            <div class="portal-track-actions">
+              <button class="btn-track-action btn-track-theory" id="btn-portal-adv-theory" aria-label="ดูกลศาสตร์วิเคราะห์">
+                🏛️ ทฤษฎีวิเคราะห์
+              </button>
+              <button class="btn-track-action btn-track-sim" id="btn-portal-adv-sim" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 1px solid #8b5cf6; color: #ffffff;" aria-label="แบบจำลองกลศาสตร์ขั้นสูง">
+                🧪 แบบจำลอง
+              </button>
+              <button class="btn-track-action btn-track-practice" id="btn-portal-adv-practice" style="background: linear-gradient(135deg, #4f46e5, #4338ca); border: 1px solid #6366f1; color: #ffffff;" aria-label="ทำโจทย์โอลิมปิก">
+                🏆 โจทย์โอลิมปิก
+              </button>
+            </div>
           </div>
-          <div class="landing-feature-card">
-            <div class="landing-feature-icon">🎯</div>
-            <div class="landing-feature-title">3. แบบจำลองเสมือนจริง 4 โหมด</div>
-            <p class="landing-feature-desc">เครื่องยนต์คำนวณ Runge-Kutta อันดับ 4 (RK4), สนามเวกเตอร์ลม, การชน-การดล และ 3D WebGL</p>
-          </div>
-          <div class="landing-feature-card">
-            <div class="landing-feature-icon">🌍</div>
-            <div class="landing-feature-title">4. ปรากฏการณ์จริง 16 รายการ</div>
-            <p class="landing-feature-desc">วิเคราะห์ลูกขนไก่, เข็มขัดนิรภัย, อุกกาบาต, รถแข่ง และกรณีศึกษาพร้อมการอ้างอิงเอกสารวิชาการเปิด</p>
+
+          <!-- Track 3: Civil Engineering Specialties -->
+          <div class="portal-track-card portal-track-civ">
+            <div class="portal-track-header">
+              <span class="portal-track-badge">วิศวกรรมศาสตร์ประยุกต์ & ก.ว.</span>
+              <div class="portal-track-icon">🏗️</div>
+            </div>
+            <h3 class="portal-track-title">3. สาขาวิศวกรรมศาสตร์: โยธา (Civil Engineering)</h3>
+            <p class="portal-track-desc">
+              สถิตยศาสตร์วิศวกรรม สมดุลวัตถุเกร็ง โครงถักสะพาน แผนภาพแรงเฉือนและโมเมนต์ดัดในคาน (SFD & BMD) ความเค้น-ความเครียด และวงกลมของมอร์
+            </p>
+            <div class="portal-track-actions">
+              <button class="btn-track-action btn-track-theory" id="btn-portal-civ-theory" aria-label="ดูเนื้อหาวิศวกรรมโยธา">
+                🏗️ ทฤษฎีโยธา
+              </button>
+              <button class="btn-track-action btn-track-sim" id="btn-portal-civ-sim" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;" aria-label="แบบจำลองคานและวงกลมมอร์">
+                🧪 แบบจำลอง
+              </button>
+              <button class="btn-track-action btn-track-practice" id="btn-portal-civ-practice" style="background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;" aria-label="ทำโจทย์วิศวกรรม">
+                📐 โจทย์คำนวณ
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -183,7 +221,7 @@
               <span class="category-icon">⚛️</span>
               <h3 class="category-title">1. บทเรียนฟิสิกส์พื้นฐาน (Fundamental Physics Modules)</h3>
             </div>
-            <span class="category-count">5 บทเรียน</span>
+            <span class="category-count">7 บทเรียน</span>
           </div>
 
           <div class="selection-cards-grid">
@@ -207,75 +245,123 @@
               </div>
             </div>
 
-            <!-- Backlog Chapter 2 -->
-            <div class="curriculum-card card-backlog">
+            <!-- Active Chapter 2 -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
                 <span class="curriculum-code">บทที่ 02</span>
-                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
               <h4 class="curriculum-title">การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง (Circular Motion & Centripetal Dynamics)</h4>
               <p class="curriculum-desc">
-                ความเร่งสู่ศูนย์กลาง อัตราเร็วเชิงมุม การเคลื่อนที่บนทางโค้งยกมุมเอียง แรงดึงในสายดิ่ง และการเคลื่อนที่ของดาวเทียม
+                พิกัดเชิงขั้ว อัตราเร็วเชิงมุม ความเร่งสู่ศูนย์กลางและความเร่งแนวสัมผัส พลศาสตร์ของแรงลัพธ์แนวรัศมี ทางโค้งราบและทางโค้งยกมุมเอียง วงกลมแนวดิ่ง ลูปคลอธอยด์ และวงโคจรดาวเทียม
               </p>
               <div class="curriculum-meta">
-                <span>⏳ แผนพัฒนาถัดไป</span>
+                <span>📚 2 ภาควิชา</span> • <span>📐 5 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองพลศาสตร์วงกลม</span> • <span>🌍 4 ปรากฏการณ์</span>
               </div>
               <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch02" aria-label="เปิดบทที่ 2 การเคลื่อนที่แบบวงกลม">
+                  📖 เปิดบท
+                </button>
               </div>
             </div>
 
-            <!-- Backlog Chapter 3 -->
-            <div class="curriculum-card card-backlog">
+            <!-- Active Chapter 3 -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
                 <span class="curriculum-code">บทที่ 03</span>
-                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
-              <h4 class="curriculum-title">การแกว่งกวัดและฮาร์มอนิกอย่างง่าย (Oscillations & Simple Harmonic Motion)</h4>
+              <h4 class="curriculum-title">การแกว่งกวัดและฮาร์มอนิกอย่างง่าย (Oscillations, SHM & Resonance)</h4>
               <p class="curriculum-desc">
-                ระบบมวลติดสปริง ลูกตุ้มนาฬิกาอย่างง่าย การแกว่งกวัดแบบมีความหนืด (Damped Oscillation) และการสั่นพ้อง (Resonance)
+                สมการอนุพันธ์อันดับสอง กฎของฮุก มวลติดสปริง ลูกตุ้มนาฬิกาอย่างง่าย การอนุรักษ์พลังงานกล การสั่นหน่วงทั้ง 3 สภาวะ (Underdamped, Critical, Overdamped) การสั่นพ้อง และค่าประกอบคุณภาพ Q
               </p>
               <div class="curriculum-meta">
-                <span>⏳ แผนพัฒนาถัดไป</span>
+                <span>📚 2 ภาควิชา</span> • <span>📐 5 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองการแกว่งกวัด & สั่นพ้อง</span> • <span>🌍 4 ปรากฏการณ์</span>
               </div>
               <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch03" aria-label="เปิดบทที่ 3 การแกว่งกวัดและฮาร์มอนิกอย่างง่าย">
+                  📖 เปิดบท
+                </button>
               </div>
             </div>
 
-            <!-- Backlog Chapter 4 -->
-            <div class="curriculum-card card-backlog">
+            <!-- Active Chapter 4 -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
                 <span class="curriculum-code">บทที่ 04</span>
-                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
               <h4 class="curriculum-title">คลื่นกลและเสียง (Mechanical Waves & Acoustics)</h4>
               <p class="curriculum-desc">
-                สมการคลื่น การซ้อนทับ คลื่นนิ่งในเส้นเชือกและท่อลม ปรากฏการณ์ดอปเปลอร์ และคลื่นกระแทก
+                สมการคลื่น 1 มิติ อัตราเร็วคลื่น กำลังงานส่งผ่าน การสะท้อนที่รอยต่อ คลื่นนิ่งในเส้นเชือกและท่อลม บีตส์ สเกลความเข้มเสียงเดซิเบล ดอปเปลอร์ และคลื่นกระแทกโซนิกบูม
               </p>
               <div class="curriculum-meta">
-                <span>⏳ แผนพัฒนาถัดไป</span>
+                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองคลื่นกล คลื่นนิ่ง & บีตส์</span> • <span>🌍 4 ปรากฏการณ์</span>
               </div>
               <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch04" aria-label="เปิดบทที่ 4 คลื่นกลและเสียง">
+                  📖 เปิดบท
+                </button>
               </div>
             </div>
 
-            <!-- Backlog Chapter 5 -->
-            <div class="curriculum-card card-backlog">
+            <!-- Active Chapter 5 -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
                 <span class="curriculum-code">บทที่ 05</span>
-                <span class="status-badge status-backlog">กำลังพัฒนา / In Development</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
               <h4 class="curriculum-title">อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส (Thermodynamics & Kinetic Theory)</h4>
               <p class="curriculum-desc">
-                กฎข้อที่ 0, 1, 2 ของอุณหพลศาสตร์ กระบวนการไอโซเทอร์มัล แอเดียแบติก เครื่องจักรความร้อน และเอนโทรปี
+                กฎข้อศูนย์ กฎแก๊สอุดมคติ ทฤษฎีจลน์ระดับโมเลกุลและการแจกแจงแมกซ์เวลล์-โบลต์ซมันน์ กฎข้อที่หนึ่ง สี่กระบวนการหลัก เครื่องยนต์ความร้อน วัฏจักรคาร์โนต์ และเอนโทรปี
               </p>
               <div class="curriculum-meta">
-                <span>⏳ แผนพัฒนาถัดไป</span>
+                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลอง P-V Engine & แก๊สจลน์</span> • <span>🌍 4 ปรากฏการณ์</span>
               </div>
               <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>อยู่ระหว่างพัฒนา</button>
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch05" aria-label="เปิดบทที่ 5 อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส">
+                  📖 เปิดบท
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Chapter 6 -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 06</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              </div>
+              <h4 class="curriculum-title">ไฟฟ้าและแม่เหล็ก (Electromagnetism & Circuits)</h4>
+              <p class="curriculum-desc">
+                ประจุไฟฟ้า กฎคูลอมบ์ สนามไฟฟ้า กฎเกาส์ ศักย์ไฟฟ้า ตัวเก็บประจุ วงจรไฟฟ้ากระแสตรง กฎเคอร์ชอฟฟ์ วงจรทรานเชียนต์ RC สนามแม่เหล็ก แรงลอเรนซ์ และการเหนี่ยวนำแม่เหล็กไฟฟ้า
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 2 ภาควิชา</span> • <span>📐 7 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองสนามไฟฟ้า แรงลอเรนซ์ & วงจร RC</span> • <span>🌍 4 ปรากฏการณ์</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch06" aria-label="เปิดบทที่ 6 ไฟฟ้าและแม่เหล็ก">
+                  📖 เปิดบท
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Chapter 7 -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code">บทที่ 07</span>
+                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              </div>
+              <h4 class="curriculum-title">ฟิสิกส์นิวเคลียร์และอนุภาค (Nuclear & Particle Physics)</h4>
+              <p class="curriculum-desc">
+                โครงสร้างนิวเคลียส พลังงานยึดเหนี่ยว มวลพร่อง การสลายกัมมันตรังสี ครึ่งชีวิต ปฏิกิริยานิวเคลียร์ ฟิชชัน ฟิวชัน และการตรวจวัดรังสี
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองเส้นโค้งพลังงานยึดเหนี่ยว & การสลายกัมมันตรังสี</span> • <span>🌍 4 ปรากฏการณ์</span>
+              </div>
+              <div class="curriculum-action-row">
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch07" aria-label="เปิดบทที่ 7 ฟิสิกส์นิวเคลียร์และอนุภาค">
+                  📖 เปิดบท
+                </button>
               </div>
             </div>
           </div>
@@ -293,20 +379,22 @@
 
           <div class="selection-cards-grid">
             <!-- Civil Engineering -->
-            <div class="curriculum-card card-planned">
+            <div class="curriculum-card card-active card-civil-portal" data-chapter="civil_eng" style="cursor: pointer;">
               <div class="card-top-row">
-                <span class="curriculum-code">โยธา</span>
-                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+                <span class="curriculum-code" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">โยธา</span>
+                <span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">สถานะเปิดใช้งาน / Active</span>
               </div>
-              <h4 class="curriculum-title">วิศวกรรมโยธา (Civil Engineering)</h4>
+              <h4 class="curriculum-title">วิศวกรรมโยธา (Civil Engineering: Statics & Mechanics)</h4>
               <p class="curriculum-desc">
-                สถิตยศาสตร์โครงสร้าง โครงถักและคาน (Truss & Beam Statics) กลศาสตร์ของแข็ง ชลศาสตร์และการไหลในท่อ/ทางน้ำเปิด (Hydraulics) และปฐพีกลศาสตร์เบื้องต้น
+                สถิตยศาสตร์โครงสร้าง สมดุลวัตถุเกร็ง โครงถัก แผนภาพแรงเฉือนและโมเมนต์ดัดในคาน (SFD & BMD) การโก่งตัวของคาน และวงกลมของมอร์
               </p>
               <div class="curriculum-meta">
-                <span>📐 ผังทฤษฎี & แบบจำลองโครงสร้าง</span>
+                <span>📐 ผังทฤษฎี & แบบจำลองคาน/วงกลมมอร์</span>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;">📐 โจทย์คำนวณ</button>
               </div>
             </div>
 
@@ -486,17 +574,116 @@
       <!-- Simulator Mode Switcher Bar -->
       <div class="sim-mode-switcher-container">
         <div class="sim-mode-nav" role="tablist" aria-label="เลือกโหมดแบบจำลองพลศาสตร์">
-          <button class="sim-mode-btn active" data-sim-mode="projectile" id="mode-btn-projectile" role="tab" aria-selected="true">
+          <!-- Chapter 1 (4 Simulators) -->
+          <button class="sim-mode-btn active" data-chapter="ch01" data-sim-mode="projectile" id="mode-btn-projectile" role="tab" aria-selected="true">
             🎯 1. วิถีโปรเจกไทล์ & แรงต้านอากาศ (RK4)
           </button>
-          <button class="sim-mode-btn" data-sim-mode="vehicle" id="mode-btn-vehicle" role="tab" aria-selected="false">
+          <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="vehicle" id="mode-btn-vehicle" role="tab" aria-selected="false">
             🏎️ 2. รถแข่ง จลนศาสตร์ & สนามเวกเตอร์ลม
           </button>
-          <button class="sim-mode-btn" data-sim-mode="collision" id="mode-btn-collision" role="tab" aria-selected="false">
+          <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="collision" id="mode-btn-collision" role="tab" aria-selected="false">
             💥 3. การชน โมเมนตัม & การดล (Impulse)
           </button>
-          <button class="sim-mode-btn" data-sim-mode="threejs" id="mode-btn-threejs" role="tab" aria-selected="false">
+          <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="threejs" id="mode-btn-threejs" role="tab" aria-selected="false">
             🌐 4. วิถี 3 มิติ & ลมพัดขวาง (Three.js WebGL)
+          </button>
+
+          <!-- Chapter 2 (3 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch02" data-sim-mode="circular" data-submode="banked" id="mode-btn-ch02-banked" role="tab" aria-selected="false" style="display: none;">
+            🔄 1. ทางโค้งยกมุมเอียง (Banked Road)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch02" data-sim-mode="circular" data-submode="vertical" id="mode-btn-ch02-vertical" role="tab" aria-selected="false" style="display: none;">
+            🎡 2. วงกลมในระนาบดิ่ง (Vertical Circle)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch02" data-sim-mode="circular" data-submode="orbit" id="mode-btn-ch02-orbit" role="tab" aria-selected="false" style="display: none;">
+            🛰️ 3. วงโคจรแรงโน้มถ่วง (Orbital Mechanics)
+          </button>
+
+          <!-- Chapter 3 (4 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="spring" id="mode-btn-ch03-spring" role="tab" aria-selected="false" style="display: none;">
+            🌀 1. มวลติดสปริงฮาร์มอนิก (Spring SHM)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="pendulum" id="mode-btn-ch03-pendulum" role="tab" aria-selected="false" style="display: none;">
+            ⏱️ 2. ลูกตุ้มนาฬิกาเชิงเดี่ยว (Simple Pendulum)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="damping_resonance" id="mode-btn-ch03-damping" role="tab" aria-selected="false" style="display: none;">
+            📈 3. การสั่นหน่วง & สั่นพ้อง (Damped Driven Resonance)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="double_pendulum" id="mode-btn-ch03-double" role="tab" aria-selected="false" style="display: none;">
+            🔀 4. ลูกตุ้มคู่โกลาหล (Double Pendulum Chaos)
+          </button>
+
+          <!-- Chapter 4 (6 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="traveling" id="mode-btn-ch04-traveling" role="tab" aria-selected="false" style="display: none;">
+            🌊 1. คลื่นต่อเนื่องตามขวาง (Traveling Wave)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="standing" id="mode-btn-ch04-standing" role="tab" aria-selected="false" style="display: none;">
+            🎸 2. คลื่นนิ่ง & ฮาร์มอนิก (Standing Waves)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="interference_beats" id="mode-btn-ch04-beats" role="tab" aria-selected="false" style="display: none;">
+            🔊 3. การแทรกสอด & บีตส์ (Beats & Interference)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="water_waves" id="mode-btn-ch04-water" role="tab" aria-selected="false" style="display: none;">
+            🌊 4. คลื่นน้ำ & คลื่นทะเล (Water & Ocean Waves)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="light_waves" id="mode-btn-ch04-light" role="tab" aria-selected="false" style="display: none;">
+            🌈 5. คลื่นแสง & สเปกตรัม (Light Waves & Spectrum)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch04" data-sim-mode="wave" data-submode="polarization" id="mode-btn-ch04-polarization" role="tab" aria-selected="false" style="display: none;">
+            👓 6. โพลาไรเซชัน & กฎของมาลุส (Polarization & Malus)
+          </button>
+
+          <!-- Chapter 5 (3 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch05" data-sim-mode="thermo" data-submode="pv_engine" id="mode-btn-ch05-pv" role="tab" aria-selected="false" style="display: none;">
+            ⚙️ 1. วัฏจักร P-V & เครื่องยนต์ความร้อน (P-V Carnot Engine)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch05" data-sim-mode="thermo" data-submode="kinetic_gas" id="mode-btn-ch05-gas" role="tab" aria-selected="false" style="display: none;">
+            ⚛️ 2. ทฤษฎีจลน์โมเลกุลแก๊ส (Kinetic Gas RK4)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch05" data-sim-mode="thermo" data-submode="heat_conduction" id="mode-btn-ch05-heat" role="tab" aria-selected="false" style="display: none;">
+            🔥 3. การนำความร้อน 1D (Heat Conduction)
+          </button>
+
+          <!-- Chapter 6 (6 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="field_charges" id="mode-btn-ch06-charges" role="tab" aria-selected="false" style="display: none;">
+            ⚡ 1. สนามไฟฟ้าและประจุคูลอมบ์ (Electric Fields & Charges)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="lorentz_cyclotron" id="mode-btn-ch06-lorentz" role="tab" aria-selected="false" style="display: none;">
+            🧲 2. แรงลอเรนซ์และไซโคลตรอน (Lorentz Cyclotron)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="rc_circuit" id="mode-btn-ch06-rc" role="tab" aria-selected="false" style="display: none;">
+            🔋 3. วงจรทรานเชียนต์ RC (RC Transient Circuit)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="faraday_induction" id="mode-btn-ch06-faraday" role="tab" aria-selected="false" style="display: none;">
+            🌀 4. การเหนี่ยวนำฟาราเดย์และเลนซ์ (Faraday & Lenz Induction)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="biot_savart" id="mode-btn-ch06-biot" role="tab" aria-selected="false" style="display: none;">
+            🧲 5. กฎบีโอต์-ซาวารต์และสนามแม่เหล็ก (Biot-Savart Law)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="ac_rlc_resonance" id="mode-btn-ch06-ac-rlc" role="tab" aria-selected="false" style="display: none;">
+            〰️ 6. ไฟฟ้ากระแสสลับ RLC เรโซแนนซ์ (AC RLC & Phasor)
+          </button>
+
+          <!-- Chapter 7 (3 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="binding_energy" id="mode-btn-ch07-binding" role="tab" aria-selected="false" style="display: none;">
+            ⚛️ 1. พลังงานยึดเหนี่ยวนิวเคลียส (Binding Energy)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="decay_stochastic" id="mode-btn-ch07-decay" role="tab" aria-selected="false" style="display: none;">
+            🎲 2. การสลายตัวมอนเตคาร์โล (Stochastic Decay)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="shielding_dosimetry" id="mode-btn-ch07-shielding" role="tab" aria-selected="false" style="display: none;">
+            🛡️ 3. การกำบังรังสีและโดสิเมทรี (Radiation Shielding)
+          </button>
+
+          <!-- Chapter Civil Engineering (3 Simulators) -->
+          <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="simply_supported" id="mode-btn-civ-simply" role="tab" aria-selected="false" style="display: none;">
+            🏗️ 1. คานช่วงเดี่ยว & แรงแผ่ (Simply Supported SFD/BMD)
+          </button>
+          <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="cantilever" id="mode-btn-civ-cantilever" role="tab" aria-selected="false" style="display: none;">
+            🏢 2. คานยื่นฝังผนังแน่น (Cantilever Beam)
+          </button>
+          <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="mohr_circle" id="mode-btn-civ-mohr" role="tab" aria-selected="false" style="display: none;">
+            🔄 3. วงกลมของมอร์ & การแปลงความเค้น (Mohr's Stress Circle)
           </button>
         </div>
       </div>
@@ -518,8 +705,8 @@
           <div class="sim-stage-container">
             <div class="canvas-wrapper">
               <canvas id="simulator-canvas" class="canvas-drag-surface" aria-label="กระดานจำลองวิถีการยิงโปรเจกไทล์ ลากที่ปลายเวกเตอร์เพื่อปรับมุมและความเร็ว"></canvas>
-
-            <div class="canvas-legend" aria-hidden="true">
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
               <div class="legend-item">
                 <span class="legend-color" style="background-color: #EA580C;"></span>
                 <span>วิถีจริง (มีแรงต้าน $F_d = -cv^2$)</span>
@@ -530,8 +717,8 @@
               </div>
               <div class="legend-item" style="margin-top: 2px; color: #475569; font-size: 0.75rem;">
                 💡 แตะ/ลากที่หัวลูกศรบนกระดานเพื่อปรับมุมและความเร็วได้โดยตรง
-              </div>
-            </div>
+              
+          </div>
           </div>
 
           <!-- Playback Action Buttons -->
@@ -695,7 +882,8 @@
         <div class="sim-stage-container">
           <div class="canvas-wrapper">
             <canvas id="vehicle-canvas" class="canvas-drag-surface" aria-label="สนามจำลองรถแข่งและเวกเตอร์ลม คลิกบนสนามเพื่อวางจุดหมายเส้นทางใหม่ หรือลากรถแข่งโดยตรง"></canvas>
-            <div class="canvas-legend" aria-hidden="true">
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
               <div class="legend-item">
                 <span class="legend-color" style="background-color: #10B981;"></span>
                 <span>ความเร็วรถ $\vec{v}_{\text{car}}$ (Ground Velocity)</span>
@@ -714,8 +902,8 @@
               </div>
               <div class="legend-item" style="margin-top: 2px; color: #475569; font-size: 0.75rem;">
                 💡 คลิกบนสนามเพื่อปักหมุดนำร่อง (Waypoints) รถจะเลี้ยวอัตโนมัติสู้แรงลม
-              </div>
-            </div>
+              
+          </div>
           </div>
 
           <!-- Vehicle Playback Controls Bar -->
@@ -843,7 +1031,8 @@
         <div class="sim-stage-container">
           <div class="canvas-wrapper">
             <canvas id="collision-canvas" class="canvas-drag-surface" aria-label="รางจำลองการเคลื่อนที่เข้าชนและการดล ลากวัตถุเพื่อตั้งตำแหน่งเริ่มต้น"></canvas>
-            <div class="canvas-legend" aria-hidden="true">
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
               <div class="legend-item">
                 <span class="legend-color" style="background-color: #2563EB;"></span>
                 <span>รถคันที่ 1 ($m_1, \vec{v}_1$) โมเมนตัม $\vec{p}_1$</span>
@@ -858,8 +1047,8 @@
               </div>
               <div class="legend-item" style="margin-top: 2px; color: #475569; font-size: 0.75rem;">
                 💡 แตะ/ลากที่ตัวรถเพื่อเลื่อนตำแหน่งตั้งต้นได้ตามต้องการ
-              </div>
-            </div>
+              
+          </div>
           </div>
 
           <!-- Collision Playback Controls Bar -->
@@ -996,8 +1185,8 @@
         <div class="sim-stage-container">
           <div class="canvas-wrapper" style="position: relative; background: #0A0F1D; min-height: 480px;">
             <canvas id="threejs-canvas" style="width: 100%; height: 480px; display: block; cursor: grab; border-radius: 8px;" aria-label="กระดานจำลองวิถี 3 มิติ ลากเมาส์เพื่อหมุนมุมมอง เลื่อนลูกกลิ้งเพื่อซูม"></canvas>
-
-            <div class="canvas-legend" aria-hidden="true" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); border: 1px solid #334155;">
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
               <div class="legend-item">
                 <span class="legend-color" style="background-color: #38BDF8;"></span>
                 <span style="color: #F8FAFC;">วิถีการบิน 3 มิติจริง (มีลมขวาง & แรงต้าน $F_d = -c\|\vec{v}_{\text{rel}}\|\vec{v}_{\text{rel}}$)</span>
@@ -1008,8 +1197,8 @@
               </div>
               <div class="legend-item" style="margin-top: 2px; color: #94A3B8; font-size: 0.75rem;">
                 💡 <strong>ควบคุมกล้อง 3D:</strong> คลิกเมาส์ซ้ายค้างแล้วลากเพื่อหมุนมุมมอง (Orbit) | เลื่อนลูกกลิ้งเมาส์เพื่อซูมเข้า-ออก (Zoom)
-              </div>
-            </div>
+              
+          </div>
           </div>
 
           <!-- Playback Action Buttons -->
@@ -1133,6 +1322,1744 @@
         </aside>
       </div>
     </div><!-- End sim-container-threejs -->
+
+<div id="sim-container-circular" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองพลศาสตร์การเคลื่อนที่แบบวงกลม ทางโค้งเอียง และลูปแนวดิ่ง</h2>
+        <p class="content-subtitle">Interactive Centripetal Dynamics: วิเคราะห์แรงลัพธ์แนวรัศมี ทางโค้งยกมุมเอียงตามเกณฑ์ AASHTO, ลูปคลอธอยด์ลดแรง G และวงโคจรดาวเทียม</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 2 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="banked" id="btn-submode-banked">
+              🛣️ ทางโค้งราบ & ทางโค้งยกมุมเอียง (Banked Turn)
+            </button>
+            <button class="submode-btn" data-submode="vertical" id="btn-submode-vertical">
+              🎢 วงกลมแนวดิ่ง & ลูปคลอธอยด์ (Vertical Loop)
+            </button>
+            <button class="submode-btn" data-submode="orbit" id="btn-submode-orbit">
+              🛰️ วงโคจรดาวเทียม & แรงโน้มถ่วง (Keplerian Orbit)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="circular-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองการเคลื่อนที่แบบวงกลมและทางโค้งเอียง"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EA580C;"></span>
+                <span>เวกเตอร์ความเร็วแนวสัมผัส $\vec{v}$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #38BDF8;"></span>
+                <span>เวกเตอร์ความเร่งสู่ศูนย์กลาง $\vec{a}_c = \frac{v^2}{r}$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #10B981;"></span>
+                <span>แรงปฏิกิริยาตั้งฉาก $\vec{N}$ / แรงโน้มถ่วง $\vec{F}_g$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EF4444;"></span>
+                <span>น้ำหนัก $m\vec{g}$ / แรงเสียดทาน $\vec{f}_s$</span>
+              
+          </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-circ-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-circ-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-circ-step" class="btn btn-secondary" aria-label="ก้าวทีละเฟรม">
+                ⏭ ก้าว (Step 0.05s)
+              </button>
+              <button id="btn-circ-reset" class="btn btn-secondary" aria-label="รีเซ็ต">
+                ↺ รีเซ็ต (Reset)
+              </button>
+            </div>
+
+            <!-- Vector Overlays Toggles -->
+            <div class="vector-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-circ-vel" checked>
+                <span>ความเร็ว $\vec{v}$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-circ-acc" checked>
+                <span>ความเร่ง $\vec{a}_c$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-circ-forces" checked>
+                <span>แรงกระทำ $\vec{F}$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-circ-trail" checked>
+                <span>เส้นวิถี (Trail)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameters Sidebar & Live Telemetry -->
+        <aside class="sim-sidebar" aria-label="แผงปรับแต่งพารามิเตอร์การเคลื่อนที่แบบวงกลม">
+          <div class="sim-panel">
+            <h3 class="panel-heading">พารามิเตอร์การเคลื่อนที่ (Parameters)</h3>
+
+            <!-- Radius slider -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="circ-slider-radius">รัศมีความโค้ง $r$ (Radius):</label>
+                <span id="circ-val-radius" class="control-val-display">40.0 m</span>
+              </div>
+              <input type="range" id="circ-slider-radius" min="10" max="150" step="1" value="40">
+            </div>
+
+            <!-- Speed slider -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="circ-slider-speed">อัตราเร็ว $v$ (Speed):</label>
+                <span id="circ-val-speed" class="control-val-display">18.0 m/s (64.8 km/h)</span>
+              </div>
+              <input type="range" id="circ-slider-speed" min="2" max="45" step="0.5" value="18">
+            </div>
+
+            <!-- Bank angle slider -->
+            <div class="control-group" id="circ-group-bank">
+              <div class="control-label-row">
+                <label for="circ-slider-bank">มุมยกทางโค้ง $\theta_{\text{bank}}$:</label>
+                <span id="circ-val-bank" class="control-val-display">12.0°</span>
+              </div>
+              <input type="range" id="circ-slider-bank" min="0" max="35" step="0.5" value="12">
+            </div>
+
+            <!-- Friction slider -->
+            <div class="control-group" id="circ-group-friction">
+              <div class="control-label-row">
+                <label for="circ-slider-friction">สัมประสิทธิ์แรงเสียดทานสถิต $\mu_s$:</label>
+                <span id="circ-val-friction" class="control-val-display">0.35</span>
+              </div>
+              <input type="range" id="circ-slider-friction" min="0.00" max="0.90" step="0.05" value="0.35">
+            </div>
+
+            <!-- Loop type select for vertical mode -->
+            <div class="control-group" id="circ-group-looptype" style="display: none;">
+              <div class="control-label-row">
+                <label for="circ-select-looptype">ชนิดรูปทรงห่วง (Loop Geometry):</label>
+              </div>
+              <select id="circ-select-looptype" class="control-select-input" style="width: 100%; background: #1E293B; color: #F8FAFC; border: 1px solid #475569; padding: 0.4rem; border-radius: 6px;">
+                <option value="clothoid">ห่วงคลอธอยด์รูปหยดน้ำ (Clothoid - ปลอดภัย 3G)</option>
+                <option value="circle">วงกลมแท้สมบูรณ์ (True Circle - แรงกระแทก 6G)</option>
+              </select>
+            </div>
+
+            <!-- Orbit altitude & presets for Keplerian Orbit mode -->
+            <div class="control-group" id="circ-group-orbit" style="display: none;">
+              <div class="control-label-row">
+                <label for="circ-slider-orbit-alt">ระดับความสูงวงโคจร $h$ (Altitude):</label>
+                <span id="circ-val-orbit-alt" class="control-val-display">35,786 km</span>
+              </div>
+              <input type="range" id="circ-slider-orbit-alt" min="300" max="40000" step="100" value="35786">
+
+              <!-- Presets -->
+              <div class="orbit-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip" data-alt="400" title="Low Earth Orbit (ISS)">🛰️ LEO (400 km)</button>
+                <button type="button" class="btn-preset-chip" data-alt="20200" title="Medium Earth Orbit (GPS constellation)">📡 GPS (20,200 km)</button>
+                <button type="button" class="btn-preset-chip active" data-alt="35786" title="Geostationary Orbit (24h period)">🌍 GEO (35,786 km)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Telemetry Readout -->
+          <div class="sim-panel telemetry-panel">
+            <h3 class="panel-heading">มาตรวัดพลศาสตร์วงกลม (Live Telemetry)</h3>
+            <div class="telemetry-grid">
+              <div class="telem-box">
+                <div class="telem-label">อัตราเร็วเชิงมุม $\omega$</div>
+                <div id="circ-telem-omega" class="telem-val">0.45 rad/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเร่งสู่ศูนย์กลาง $a_c$</div>
+                <div id="circ-telem-ac" class="telem-val" style="color: #38BDF8;">8.10 m/s²</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงสู่ศูนย์กลาง $\Sigma F_r$</div>
+                <div id="circ-telem-fc" class="telem-val" style="color: #10B981;">8,100 N</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">สัมผัสแรง G-force</div>
+                <div id="circ-telem-gforce" class="telem-val" style="color: #F59E0B;">0.83 G</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">คาบเวลา $T$ (ต่อ 1 รอบ)</div>
+                <div id="circ-telem-period" class="telem-val">13.96 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่ $f$</div>
+                <div id="circ-telem-freq" class="telem-val">0.072 Hz</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-circular -->
+
+<div id="sim-container-oscillation" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองการแกว่งกวัด ฮาร์มอนิกอย่างง่าย ลูกตุ้ม และการสั่นพ้อง</h2>
+        <p class="content-subtitle">Interactive Oscillatory Dynamics: จำลองมวลติดสปริง, ลูกตุ้มเปรียบเทียบเชิงเส้นกับไม่เป็นเชิงเส้น, ความหน่วง 3 สภาวะ และเส้นโค้งเรโซแนนซ์</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 3 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="spring" id="btn-submode-spring">
+              🌀 1. มวลติดสปริง (Mass-Spring SHM)
+            </button>
+            <button class="submode-btn" data-submode="pendulum" id="btn-submode-pendulum">
+              🕰️ 2. ลูกตุ้มนาฬิกาอย่างง่าย (Simple Pendulum)
+            </button>
+            <button class="submode-btn" data-submode="damping_resonance" id="btn-submode-damping-res">
+              🌊 3. การสั่นหน่วง & เรโซแนนซ์ (Damping & Resonance)
+            </button>
+            <button class="submode-btn" data-submode="double_pendulum" id="btn-submode-double-pendulum">
+              🔀 4. ลูกตุ้มคู่โกลาหล (Double Pendulum Chaos)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="oscillation-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองการแกว่งกวัดและฮาร์มอนิกอย่างง่าย"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #10B981;"></span>
+                <span>เวกเตอร์ความเร็ว $\vec{v}$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EC4899;"></span>
+                <span>เวกเตอร์ความเร่ง $\vec{a} = -\omega_0^2 \vec{x}$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EF4444;"></span>
+                <span>แรงดึงกลับ $\vec{F}_s = -k\vec{x}$ / น้ำหนัก $m\vec{g}$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #38BDF8;"></span>
+                <span>พลังงานกลรวม $E$ / แรงตึงเชือก $\vec{T}$</span>
+              
+          </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-osc-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-osc-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-osc-step" class="btn btn-secondary" aria-label="ก้าวไปข้างหน้าทีละ 0.02 วินาที">
+                ⏭ ก้าว (Step 0.02s)
+              </button>
+              <button id="btn-osc-reset" class="btn btn-secondary" aria-label="รีเซ็ตตำแหน่งเริ่มต้น">
+                🔄 เริ่มใหม่ (Reset)
+              </button>
+            </div>
+
+            <!-- Vector & Visual Toggles -->
+            <div class="vector-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-vel" checked>
+                <span>ความเร็ว $\vec{v}$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-acc" checked>
+                <span>ความเร่ง $\vec{a}$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-forces" checked>
+                <span>แรงคืนตัว $\vec{F}$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-energy" checked>
+                <span>แถบพลังงาน $K, U, E$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-phase" checked>
+                <span>เฟสสเปซ / เรโซแนนซ์</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-osc-ghost" checked>
+                <span>เปรียบเทียบเงาเชิงเส้น</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameters Sidebar & Telemetry Readouts -->
+        <aside class="sim-sidebar" aria-label="แผงปรับแต่งพารามิเตอร์การแกว่งกวัด">
+          <div class="sidebar-section-title">พารามิเตอร์ระบบการแกว่งกวัด (Oscillation Parameters)</div>
+
+          <div class="sim-panel">
+            <!-- Spring / System Mass m -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="osc-slider-mass">มวลของวัตถุ $m$ (Mass):</label>
+                <span id="osc-val-mass" class="control-val-display">2.0 kg</span>
+              </div>
+              <input type="range" id="osc-slider-mass" min="0.5" max="10.0" step="0.5" value="2.0" aria-label="มวลของวัตถุ">
+            </div>
+
+            <!-- Spring Constant k -->
+            <div class="control-group" id="group-osc-k">
+              <div class="control-label-row">
+                <label for="osc-slider-k">ค่านิจสปริง $k$ (Spring Stiffness):</label>
+                <span id="osc-val-k" class="control-val-display">50 N/m</span>
+              </div>
+              <input type="range" id="osc-slider-k" min="10" max="200" step="5" value="50" aria-label="ค่านิจสปริง">
+            </div>
+
+            <!-- Amplitude A -->
+            <div class="control-group" id="group-osc-amp">
+              <div class="control-label-row">
+                <label for="osc-slider-amp">แอมพลิจูดเริ่มต้น $A$ (Amplitude):</label>
+                <span id="osc-val-amp" class="control-val-display">1.20 m</span>
+              </div>
+              <input type="range" id="osc-slider-amp" min="0.2" max="2.0" step="0.05" value="1.2" aria-label="แอมพลิจูดเริ่มต้น">
+            </div>
+
+            <!-- Pendulum Length L -->
+            <div class="control-group" id="group-osc-length" style="display: none;">
+              <div class="control-label-row">
+                <label for="osc-slider-length">ความยาวเชือกลูกตุ้ม $L$ (Length):</label>
+                <span id="osc-val-length" class="control-val-display">1.50 m</span>
+              </div>
+              <input type="range" id="osc-slider-length" min="0.4" max="3.0" step="0.1" value="1.5" aria-label="ความยาวเชือกลูกตุ้ม">
+            </div>
+
+            <!-- Pendulum Initial Angle theta0 -->
+            <div class="control-group" id="group-osc-angle" style="display: none;">
+              <div class="control-label-row">
+                <label for="osc-slider-angle">มุมปล่อยเริ่มต้น $\theta_0$ (Angle):</label>
+                <span id="osc-val-angle" class="control-val-display">25.0°</span>
+              </div>
+              <input type="range" id="osc-slider-angle" min="5" max="85" step="1" value="25" aria-label="มุมปล่อยเริ่มต้น">
+            </div>
+
+            <!-- Damping Coefficient b -->
+            <div class="control-group" id="group-osc-damping" style="display: none;">
+              <div class="control-label-row">
+                <label for="osc-slider-damping">สัมประสิทธิ์ความหน่วง $b$ (Damping):</label>
+                <span id="osc-val-damping" class="control-val-display">0.80 N·s/m</span>
+              </div>
+              <input type="range" id="osc-slider-damping" min="0.0" max="6.0" step="0.1" value="0.8" aria-label="สัมประสิทธิ์ความหน่วง">
+            </div>
+
+            <!-- Driving Frequency omega -->
+            <div class="control-group" id="group-osc-omega" style="display: none;">
+              <div class="control-label-row">
+                <label for="osc-slider-omega">ความถี่แรงเร้าภายนอก $\omega$ (Drive Freq):</label>
+                <span id="osc-val-omega" class="control-val-display">5.00 rad/s</span>
+              </div>
+              <input type="range" id="osc-slider-omega" min="0.5" max="15.0" step="0.2" value="5.0" aria-label="ความถี่แรงเร้าภายนอก">
+            </div>
+
+            <!-- Driving Force Amplitude F0 -->
+            <div class="control-group" id="group-osc-f0" style="display: none;">
+              <div class="control-label-row">
+                <label for="osc-slider-f0">ขนาดแรงเร้าภายนอก $F_0$ (Force Amp):</label>
+                <span id="osc-val-f0" class="control-val-display">10.0 N</span>
+              </div>
+              <input type="range" id="osc-slider-f0" min="0" max="30" step="1" value="10" aria-label="ขนาดแรงเร้าภายนอก">
+            </div>
+
+            <!-- Double Pendulum Controls Group -->
+            <div id="group-osc-double-pendulum" class="submode-controls-group" style="display: none;">
+              <!-- Angle 1 theta1 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-th1">มุมปล่อยลูกตุ้ม 1 $\theta_1$:</label>
+                  <span id="osc-val-dp-th1" class="control-val-display">90.0°</span>
+                </div>
+                <input type="range" id="osc-slider-dp-th1" min="-180" max="180" step="1" value="90">
+              </div>
+
+              <!-- Angle 2 theta2 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-th2">มุมปล่อยลูกตุ้ม 2 $\theta_2$:</label>
+                  <span id="osc-val-dp-th2" class="control-val-display">90.0°</span>
+                </div>
+                <input type="range" id="osc-slider-dp-th2" min="-180" max="180" step="1" value="90">
+              </div>
+
+              <!-- Rod 1 Length L1 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-l1">ความยาวก้าน 1 $L_1$:</label>
+                  <span id="osc-val-dp-l1" class="control-val-display">1.00 m</span>
+                </div>
+                <input type="range" id="osc-slider-dp-l1" min="0.4" max="2.0" step="0.1" value="1.0">
+              </div>
+
+              <!-- Rod 2 Length L2 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-l2">ความยาวก้าน 2 $L_2$:</label>
+                  <span id="osc-val-dp-l2" class="control-val-display">1.00 m</span>
+                </div>
+                <input type="range" id="osc-slider-dp-l2" min="0.4" max="2.0" step="0.1" value="1.0">
+              </div>
+
+              <!-- Mass 1 m1 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-m1">มวลลูกตุ้ม 1 $m_1$:</label>
+                  <span id="osc-val-dp-m1" class="control-val-display">1.00 kg</span>
+                </div>
+                <input type="range" id="osc-slider-dp-m1" min="0.2" max="5.0" step="0.1" value="1.0">
+              </div>
+
+              <!-- Mass 2 m2 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-dp-m2">มวลลูกตุ้ม 2 $m_2$:</label>
+                  <span id="osc-val-dp-m2" class="control-val-display">1.00 kg</span>
+                </div>
+                <input type="range" id="osc-slider-dp-m2" min="0.2" max="5.0" step="0.1" value="1.0">
+              </div>
+
+              <!-- Double Pendulum Presets -->
+              <div class="dp-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip active" data-dp-th1="90" data-dp-th2="90" title="มุมฉาก 90° ปรากฏการณ์โกลาหลมาตรฐาน">🔀 โกลาหล (90°/90°)</button>
+                <button type="button" class="btn-preset-chip" data-dp-th1="175" data-dp-th2="175" title="ปล่อยเกือบจุดสูงสุด เกิดการตีลังกา">⚡ พลังงานสูง (175°/175°)</button>
+                <button type="button" class="btn-preset-chip" data-dp-th1="30" data-dp-th2="30" title="มุมเล็กคล้ายการแกว่งกวัดกึ่งเชิงเส้น">⚖️ แกว่งปกติ (30°/30°)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Oscillation Telemetry HUD -->
+          <div class="sim-panel telemetry-panel">
+            <h3 class="panel-heading">มาตรวัดจลนพลศาสตร์การแกว่งกวัด (Live Oscillation Telemetry)</h3>
+            <div class="telemetry-grid">
+              <div class="telem-box">
+                <div class="telem-label">การกระจัด $x$ หรือมุม $\theta$</div>
+                <div id="osc-telem-pos" class="telem-val">+1.20 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเร็ว $v$ หรืออัตราเร็วเชิงมุม</div>
+                <div id="osc-telem-vel" class="telem-val" style="color: #10B981;">0.00 m/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเร่ง $a$</div>
+                <div id="osc-telem-acc" class="telem-val" style="color: #EC4899;">-30.00 m/s²</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่เชิงมุมธรรมชาติ $\omega_0$</div>
+                <div id="osc-telem-omega0" class="telem-val" style="color: #38BDF8;">5.00 rad/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">คาบการสั่น $T$</div>
+                <div id="osc-telem-period" class="telem-val">1.26 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่การสั่น $f$</div>
+                <div id="osc-telem-freq" class="telem-val">0.796 Hz</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">พลังงานกลรวม $E$</div>
+                <div id="osc-telem-energy" class="telem-val" style="color: #F59E0B;">36.00 J</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ค่าประกอบคุณภาพ $Q$ / $\zeta$</div>
+                <div id="osc-telem-q" class="telem-val">Q = ∞</div>
+              </div>
+              <div class="telem-box" style="grid-column: span 2;">
+                <div class="telem-label">สภาวะการเคลื่อนที่ (Regime Status)</div>
+                <div id="osc-telem-regime" class="telem-val" style="font-size: 0.85rem; color: #10B981;">SHM ฮาร์มอนิกอย่างง่าย</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-oscillation -->
+
+<div id="sim-container-wave" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองคลื่นกล คลื่นนิ่งในเส้นเชือก และการเกิดบีตส์</h2>
+        <p class="content-subtitle">Interactive Wave Dynamics: จำลองการแผ่คลื่นตามขวาง การสั่นของอนุภาคตัวกลาง ฮาร์มอนิกคลื่นนิ่ง และการซ้อนทับเกิดบีตส์พร้อมสังเคราะห์เสียงจริง</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 4 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="traveling" id="btn-submode-traveling">
+              🌊 1. คลื่นเคลื่อนที่ตามขวาง (Traveling Wave)
+            </button>
+            <button class="submode-btn" data-submode="standing" id="btn-submode-standing">
+              🎸 2. คลื่นนิ่ง & ฮาร์มอนิก (Standing Waves)
+            </button>
+            <button class="submode-btn" data-submode="interference_beats" id="btn-submode-beats">
+              🎵 3. การซ้อนทับ & บีตส์ (Beats & Interference)
+            </button>
+            <button class="submode-btn" data-submode="water_waves" id="btn-submode-water">
+              🌊 4. คลื่นน้ำ & ทะเล (Water Waves)
+            </button>
+            <button class="submode-btn" data-submode="light_waves" id="btn-submode-light">
+              🌈 5. คลื่นแสง & สเปกตรัม (Light Waves)
+            </button>
+            <button class="submode-btn" data-submode="polarization" id="btn-submode-polarization">
+              👓 6. โพลาไรเซชัน & มาลุส (Polarization)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="wave-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองคลื่นกลและคลื่นนิ่ง"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #38BDF8;"></span>
+                <span>รูปร่างคลื่น $y(x,t)$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #FDE047;"></span>
+                <span>อนุภาคตัวกลางสั่น SHM แนวดิ่ง</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EF4444;"></span>
+                <span>ตำแหน่งบัพ (Nodes: $N$)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #10B981;"></span>
+                <span>ตำแหน่งปฏิบัพ (Antinodes: $A$)</span>
+              
+          </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-wave-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-wave-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-wave-step" class="btn btn-secondary" aria-label="ก้าวไปข้างหน้าทีละ 0.03 วินาที">
+                ⏭ ก้าว (Step 0.03s)
+              </button>
+              <button id="btn-wave-reset" class="btn btn-secondary" aria-label="รีเซ็ตตำแหน่งเริ่มต้น">
+                🔄 เริ่มใหม่ (Reset)
+              </button>
+            </div>
+
+            <!-- Vector & Visual Toggles -->
+            <div class="vector-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-particles" checked>
+                <span>เม็ดอนุภาค SHM</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-vel" checked>
+                <span>ความเร็วอนุภาค $v_y$</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-decomp" checked>
+                <span>แยกคลื่นตกกระทบ/สะท้อน</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-env" checked>
+                <span>เส้นซองแอมพลิจูด</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-nodes" checked>
+                <span>จุดบัพ/ปฏิบัพ (Nodes)</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-wave-calipers" checked>
+                <span>ไม้บรรทัดวัด $\lambda$</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameters Sidebar & Telemetry Readouts -->
+        <aside class="sim-sidebar" aria-label="แผงปรับแต่งพารามิเตอร์คลื่นกล">
+          <div class="sidebar-section-title">พารามิเตอร์คลื่นกล (Wave Parameters)</div>
+
+          <div class="sim-panel">
+            <!-- Wave Amplitude A -->
+            <div class="control-group" id="group-wave-amp">
+              <div class="control-label-row">
+                <label for="wave-slider-amp">แอมพลิจูด $A$ (Amplitude):</label>
+                <span id="wave-val-amp" class="control-val-display">0.80 m</span>
+              </div>
+              <input type="range" id="wave-slider-amp" min="0.1" max="1.5" step="0.05" value="0.8" aria-label="แอมพลิจูดคลื่น">
+            </div>
+
+            <!-- Wave Frequency f -->
+            <div class="control-group" id="group-wave-freq">
+              <div class="control-label-row">
+                <label for="wave-slider-freq">ความถี่คลื่น $f$ (Frequency):</label>
+                <span id="wave-val-freq" class="control-val-display">1.20 Hz</span>
+              </div>
+              <input type="range" id="wave-slider-freq" min="0.2" max="4.0" step="0.1" value="1.2" aria-label="ความถี่คลื่น">
+            </div>
+
+            <!-- String Tension Ts -->
+            <div class="control-group" id="group-wave-tension">
+              <div class="control-label-row">
+                <label for="wave-slider-tension">แรงตึงเชือก $T_s$ (Tension):</label>
+                <span id="wave-val-tension" class="control-val-display">80 N</span>
+              </div>
+              <input type="range" id="wave-slider-tension" min="10" max="250" step="5" value="80" aria-label="แรงตึงเชือก">
+            </div>
+
+            <!-- Linear Mass Density mu -->
+            <div class="control-group" id="group-wave-density">
+              <div class="control-label-row">
+                <label for="wave-slider-density">ความหนาแน่นเชิงเส้น $\mu$ (Density):</label>
+                <span id="wave-val-density" class="control-val-display">0.05 kg/m</span>
+              </div>
+              <input type="range" id="wave-slider-density" min="0.01" max="0.25" step="0.01" value="0.05" aria-label="ความหนาแน่นมวลเชิงเส้น">
+            </div>
+
+            <!-- Harmonic Number n (for Standing wave) -->
+            <div class="control-group" id="group-wave-n" style="display: none;">
+              <div class="control-label-row">
+                <label for="wave-slider-n">ลำดับฮาร์มอนิก $n$ (Harmonic Mode):</label>
+                <span id="wave-val-n" class="control-val-display">n = 2</span>
+              </div>
+              <input type="range" id="wave-slider-n" min="1" max="6" step="1" value="2" aria-label="ลำดับฮาร์มอนิก">
+            </div>
+
+            <!-- Frequency 1 (for Beats) -->
+            <div class="control-group" id="group-wave-f1" style="display: none;">
+              <div class="control-label-row">
+                <label for="wave-slider-f1">ความถี่คลื่น 1 $f_1$:</label>
+                <span id="wave-val-f1" class="control-val-display">2.00 Hz</span>
+              </div>
+              <input type="range" id="wave-slider-f1" min="0.5" max="5.0" step="0.1" value="2.0" aria-label="ความถี่คลื่นที่ 1">
+            </div>
+
+            <!-- Frequency 2 (for Beats) -->
+            <div class="control-group" id="group-wave-f2" style="display: none;">
+              <div class="control-label-row">
+                <label for="wave-slider-f2">ความถี่คลื่น 2 $f_2$:</label>
+                <span id="wave-val-f2" class="control-val-display">2.40 Hz</span>
+              </div>
+              <input type="range" id="wave-slider-f2" min="0.5" max="5.0" step="0.1" value="2.4" aria-label="ความถี่คลื่นที่ 2">
+            </div>
+
+            <!-- 4. Water Waves Controls Group -->
+            <div id="group-wave-water" class="submode-controls-group" style="display: none;">
+              <!-- Water Depth d -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-water-depth">ความลึกของน้ำ $d$ (Water Depth):</label>
+                  <span id="wave-val-water-depth" class="control-val-display">20.0 m</span>
+                </div>
+                <input type="range" id="wave-slider-water-depth" min="1.0" max="60.0" step="1.0" value="20.0">
+              </div>
+
+              <!-- Wave Height H -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-water-height">ความสูงคลื่น $H = 2A$ (Wave Height):</label>
+                  <span id="wave-val-water-height" class="control-val-display">1.20 m</span>
+                </div>
+                <input type="range" id="wave-slider-water-height" min="0.2" max="3.0" step="0.1" value="1.2">
+              </div>
+
+              <!-- Water Wavelength lambda -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-water-wl">ความยาวคลื่นน้ำ $\lambda$ (Wavelength):</label>
+                  <span id="wave-val-water-wl" class="control-val-display">20.0 m</span>
+                </div>
+                <input type="range" id="wave-slider-water-wl" min="5.0" max="60.0" step="1.0" value="20.0">
+              </div>
+
+              <!-- Water Presets -->
+              <div class="water-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip active" data-depth="30" data-wl="15" data-h="1.5" title="คลื่นน้ำลึก อนุภาควงกลมสมบูรณ์">🌊 คลื่นน้ำลึก (d/λ ≥ 0.5)</button>
+                <button type="button" class="btn-preset-chip" data-depth="2" data-wl="30" data-h="1.0" title="คลื่นน้ำตื้นเข้าฝั่ง อนุภาควงรีแบน">🏖️ คลื่นน้ำตื้น (d/λ ≤ 0.05)</button>
+              </div>
+            </div>
+
+            <!-- 5. Light Waves & Spectrum Controls Group -->
+            <div id="group-wave-light" class="submode-controls-group" style="display: none;">
+              <!-- Wavelength Slider (380 - 750 nm) -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-light-wl">ความยาวคลื่นแสง $\lambda$ (Wavelength):</label>
+                  <span id="wave-val-light-wl" class="control-val-display">400 nm (ม่วง/Violet)</span>
+                </div>
+                <input type="range" id="wave-slider-light-wl" min="380" max="750" step="1" value="400">
+              </div>
+
+              <!-- Real-time Spectral Badge Readout -->
+              <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 0.6rem; margin-top: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                  <span id="light-color-swatch" style="display: inline-block; width: 22px; height: 22px; border-radius: 4px; background: #7800F0; border: 1px solid #FFFFFF;"></span>
+                  <strong id="light-color-name" style="color: #E2E8F0; font-size: 0.9rem;">สีม่วง (Violet, 400 nm)</strong>
+                </div>
+                <div style="font-size: 0.8rem; color: #94A3B8; line-height: 1.4;">
+                  <div>ความถี่ $f$: <span id="light-readout-freq" style="color: #38BDF8; font-weight: bold;">750.0 THz</span></div>
+                  <div>พลังงานโฟตอน $E$: <span id="light-readout-energy" style="color: #F59E0B; font-weight: bold;">3.10 eV (4.97×10⁻¹⁹ J)</span></div>
+                  <div>อัตราเร็วในสุญญากาศ: <span style="color: #10B981; font-weight: bold;">c = 3.00 × 10⁸ m/s</span></div>
+                </div>
+              </div>
+
+              <!-- Spectrum Presets Chips -->
+              <div class="light-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.6rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip active" data-wl="400" title="สีม่วง 400 nm">🟣 400 nm (ม่วง)</button>
+                <button type="button" class="btn-preset-chip" data-wl="460" title="สีน้ำเงิน 460 nm">🔵 460 nm (น้ำเงิน)</button>
+                <button type="button" class="btn-preset-chip" data-wl="530" title="สีเขียว 530 nm">🟢 530 nm (เขียว)</button>
+                <button type="button" class="btn-preset-chip" data-wl="580" title="สีเหลือง 580 nm">🟡 580 nm (เหลือง)</button>
+                <button type="button" class="btn-preset-chip" data-wl="600" title="สีส้ม 600 nm">🟠 600 nm (ส้ม)</button>
+                <button type="button" class="btn-preset-chip" data-wl="680" title="สีแดง 680 nm">🔴 680 nm (แดง)</button>
+              </div>
+
+              <!-- Cross-link button to Chapter 06 -->
+              <button type="button" id="btn-crosslink-em" class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem; font-size: 0.82rem; border-color: #38BDF8; color: #38BDF8; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                🔗 เชื่อมต่อไปยังบทที่ 06: คลื่นแม่เหล็กไฟฟ้า (Electromagnetism)
+              </button>
+            </div>
+
+            <!-- 6. Wave Polarization Controls Group -->
+            <div id="group-wave-polarization" class="submode-controls-group" style="display: none;">
+              <!-- Polarizer 1 Angle -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-pol-th1">มุมแผ่นโพลาไรเซอร์ 1 $\theta_1$:</label>
+                  <span id="wave-val-pol-th1" class="control-val-display">0.0°</span>
+                </div>
+                <input type="range" id="wave-slider-pol-th1" min="0" max="180" step="5" value="0">
+              </div>
+
+              <!-- Analyzer 2 Angle -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="wave-slider-pol-th2">มุมแผ่นวิเคราะห์ 2 $\theta_2$:</label>
+                  <span id="wave-val-pol-th2" class="control-val-display">45.0°</span>
+                </div>
+                <input type="range" id="wave-slider-pol-th2" min="0" max="180" step="5" value="45">
+              </div>
+
+              <!-- Polarization Presets -->
+              <div class="pol-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip" data-th1="0" data-th2="0" title="ขนานกัน แสงผ่านได้ 100%">🟢 ขนาน (Δθ = 0°, 100%)</button>
+                <button type="button" class="btn-preset-chip active" data-th1="0" data-th2="45" title="ทำมุม 45 องศา แสงผ่านได้ 50%">🟡 ทำมุม (Δθ = 45°, 50%)</button>
+                <button type="button" class="btn-preset-chip" data-th1="0" data-th2="90" title="ตั้งฉากกัน แสงมืดสนิท 0%">🔴 ตั้งฉากมืด (Δθ = 90°, 0%)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wave Telemetry HUD -->
+          <div class="sim-panel telemetry-panel">
+            <h3 class="panel-heading">มาตรวัดจลนพลศาสตร์คลื่น (Live Wave Telemetry)</h3>
+            <div class="telemetry-grid">
+              <div class="telem-box">
+                <div class="telem-label">อัตราเร็วคลื่น $v$</div>
+                <div id="wave-telem-speed" class="telem-val" style="color: #38BDF8;">40.00 m/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความยาวคลื่น $\lambda$</div>
+                <div id="wave-telem-lambda" class="telem-val" style="color: #A855F7;">33.33 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่ $f$</div>
+                <div id="wave-telem-freq" class="telem-val" style="color: #10B981;">1.20 Hz</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">คาบคลื่น $T$</div>
+                <div id="wave-telem-period" class="telem-val">0.83 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">เลขคลื่น $k$</div>
+                <div id="wave-telem-k" class="telem-val">0.19 rad/m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่เชิงมุม $\omega$</div>
+                <div id="wave-telem-omega" class="telem-val">7.54 rad/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">กำลังงานส่งผ่าน $P_{\text{avg}}$</div>
+                <div id="wave-telem-power" class="telem-val" style="color: #F59E0B;">36.41 W</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความถี่บีตส์ $f_{\text{beat}}$</div>
+                <div id="wave-telem-beat" class="telem-val" style="color: #EF4444;">0.40 Hz</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-wave -->
+
+<div id="sim-container-thermo" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองอุณหพลศาสตร์ วัฏจักรความร้อน และทฤษฎีจลน์ของแก๊ส</h2>
+        <p class="content-subtitle">Interactive Thermodynamics & Kinetic Theory: จำลองกระบอกสูบและแผนภาพ P-V วัฏจักรคาร์โนต์ กล่องอนุภาคแก๊สจลน์ และการนำความร้อน 1 มิติ</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 5 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="pv_engine" id="btn-submode-pv-engine">
+              ⚙️ 1. วัฏจักรเครื่องยนต์ความร้อน & กราฟ P-V
+            </button>
+            <button class="submode-btn" data-submode="kinetic_gas" id="btn-submode-kinetic-gas">
+              ⚛️ 2. กล่องแก๊สจลน์ & สถิติแมกซ์เวลล์-โบลต์ซมันน์
+            </button>
+            <button class="submode-btn" data-submode="heat_conduction" id="btn-submode-heat-conduction">
+              🔥 3. การนำความร้อนแบบทรานเชียนต์ 1 มิติ
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="thermo-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองอุณหพลศาสตร์และทฤษฎีจลน์"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EF4444;"></span>
+                <span>อุณหภูมิสูง $T_H$ / ความร้อนเข้า $Q_H$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #38BDF8;"></span>
+                <span>อุณหภูมิต่ำ $T_C$ / ความร้อนออก $Q_C$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #F59E0B;"></span>
+                <span>งานกลสุทธิ $W_{\text{net}} = \oint P dV$</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #10B981;"></span>
+                <span>อัตราเร็วรากกำลังสองเฉลี่ย $v_{\text{rms}}$</span>
+              
+          </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-thermo-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-thermo-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-thermo-step" class="btn btn-secondary" aria-label="ก้าวไปข้างหน้าทีละเฟรม">
+                ⏭ ก้าว (Step)
+              </button>
+              <button id="btn-thermo-reset" class="btn btn-secondary" aria-label="รีเซ็ตสถานะกลับสู่จุดเริ่มต้น">
+                🔄 รีเซ็ต (Reset)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameter Control Panel & Real-Time Telemetry -->
+        <aside class="sim-controls-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="control-card">
+            <h3 class="card-title">🎛️ แผงควบคุมพารามิเตอร์ (Thermodynamic Controls)</h3>
+
+            <!-- PV Engine Specific Controls -->
+            <div id="controls-pv-engine" class="submode-controls-group">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="thermo-engine-type" class="control-label">ประเภทวัฏจักร (Cycle Type):</label>
+                <select id="thermo-engine-type" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="carnot">วัฏจักรคาร์โนต์ผันกลับได้ (Carnot Cycle)</option>
+                  <option value="otto">วัฏจักรออตโต เครื่องยนต์เบนซิน 4 จังหวะ (Otto Cycle)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>อุณหภูมิแหล่งร้อน $T_H$</span>
+                  <span id="label-thermo-th" style="color: #EF4444; font-weight: bold;">600 K</span>
+                </div>
+                <input type="range" id="slider-thermo-th" min="400" max="900" step="20" value="600" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>อุณหภูมิแหล่งเย็น $T_C$</span>
+                  <span id="label-thermo-tc" style="color: #38BDF8; font-weight: bold;">300 K</span>
+                </div>
+                <input type="range" id="slider-thermo-tc" min="200" max="400" step="10" value="300" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Kinetic Gas Specific Controls -->
+            <div id="controls-kinetic-gas" class="submode-controls-group" style="display: none;">
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>อุณหภูมิแก๊ส $T$</span>
+                  <span id="label-kinetic-temp" style="color: #F59E0B; font-weight: bold;">300 K</span>
+                </div>
+                <input type="range" id="slider-kinetic-temp" min="100" max="800" step="20" value="300" style="width: 100%;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-gas-molar-mass" class="control-label">ชนิดโมเลกุลแก๊ส:</label>
+                <select id="select-gas-molar-mass" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="0.028">ไนโตรเจน N₂ (28 g/mol)</option>
+                  <option value="0.004">ฮีเลียม He (4 g/mol)</option>
+                  <option value="0.044">คาร์บอนไดออกไซด์ CO₂ (44 g/mol)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Heat Conduction Specific Controls -->
+            <div id="controls-heat-conduction" class="submode-controls-group" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-bar-material" class="control-label">ชนิดวัสดุแท่งนำความร้อน:</label>
+                <select id="select-bar-material" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="copper">ทองแดง Copper (k = 390 W/m·K)</option>
+                  <option value="aluminum">อะลูมิเนียม Aluminum (k = 205 W/m·K)</option>
+                  <option value="steel">เหล็กกล้า Steel (k = 50 W/m·K)</option>
+                  <option value="glass">แก้วฉนวน Glass (k = 0.8 W/m·K)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Physical Telemetry Card -->
+          <div class="control-card">
+            <h3 class="card-title">📊 ข้อมูลโทรมาตรกายภาพ (Physical Telemetry)</h3>
+            <div class="telem-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div class="telem-box">
+                <div class="telem-label">ประสิทธิภาพคาร์โนต์ $\eta_{\text{Carnot}}$</div>
+                <div id="thermo-telem-eta" class="telem-val" style="color: #4ADE80;">50.0%</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แหล่งร้อน $T_H$</div>
+                <div id="thermo-telem-th" class="telem-val" style="color: #EF4444;">600 K</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แหล่งเย็น $T_C$</div>
+                <div id="thermo-telem-tc" class="telem-val" style="color: #38BDF8;">300 K</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเร็วรากเฉลี่ย $v_{\text{rms}}$</div>
+                <div id="thermo-telem-vrms" class="telem-val" style="color: #F59E0B;">517.0 m/s</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-thermo -->
+
+    <!-- MODE 9 (CHAPTER 6): ELECTROMAGNETISM & CIRCUITS SIMULATOR -->
+    <div id="sim-container-em" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองแม่เหล็กไฟฟ้า วงจรไฟฟ้า และการเหนี่ยวนำแม่เหล็กไฟฟ้า</h2>
+        <p class="content-subtitle">Interactive Electromagnetism Engine: วิเคราะห์สนามไฟฟ้าและศักย์สมศักย์, การเคลื่อนที่ของประจุในสนามแม่เหล็ก (ไซโคลตรอน), วงจรทรานเชียนต์ RC, กฎการเหนี่ยวนำฟาราเดย์และเลนซ์, กฎบีโอต์-ซาวารต์ และวงจรเรโซแนนซ์ไฟฟ้ากระแสสลับ RLC</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 6 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="field_charges" id="btn-submode-field-charges">
+              ⚡ 1. สนามไฟฟ้าและเส้นสมศักย์ (Field & Potentials)
+            </button>
+            <button class="submode-btn" data-submode="lorentz_cyclotron" id="btn-submode-lorentz">
+              🧲 2. แรงลอเรนซ์และไซโคลตรอน (Lorentz & Cyclotron)
+            </button>
+            <button class="submode-btn" data-submode="rc_circuit" id="btn-submode-rc-circuit">
+              🔌 3. วงจรไฟฟ้า RC ทรานเชียนต์ (RC Circuit Transient)
+            </button>
+            <button class="submode-btn" data-submode="faraday_induction" id="btn-submode-faraday">
+              🌀 4. กฎการเหนี่ยวนำฟาราเดย์และเลนซ์ (Faraday & Lenz)
+            </button>
+            <button class="submode-btn" data-submode="biot_savart" id="btn-submode-biot-savart">
+              🧲 5. กฎบีโอต์-ซาวารต์และสนามแม่เหล็ก (Biot-Savart & Solenoid)
+            </button>
+            <button class="submode-btn" data-submode="ac_rlc_resonance" id="btn-submode-ac-rlc">
+              〰️ 6. ไฟฟ้ากระแสสลับ RLC เรโซแนนซ์และเฟสเซอร์ (AC RLC & Phasor)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="em-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองแม่เหล็กไฟฟ้า วงจรไฟฟ้า และฟาราเดย์"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #EF4444;"></span>
+              <span>ประจุบวก $+q$ / ขั้ว N / แหล่งจ่าย $v(t)$</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #38BDF8;"></span>
+              <span>ประจุลบ $-q$ / ขั้ว S / ฟลักซ์ $\Phi_B$ / กระแส $i(t)$</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #10B981;"></span>
+              <span>แรงเคลื่อนไฟฟ้า $\mathcal{E}$ / สนาม $B$ / ความถี่เรโซแนนซ์</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: #F59E0B;"></span>
+              <span>ขดลวดตัวนำ / กระแส $I$ / เข็มกัลวาโนมิเตอร์</span>
+            </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-em-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-em-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-em-step" class="btn btn-secondary" aria-label="ก้าวทีละเฟรม">
+                ⏭ ก้าว (Step 0.03s)
+              </button>
+              <button id="btn-em-reset" class="btn btn-secondary" aria-label="รีเซ็ต">
+                🔄 เริ่มใหม่ (Reset)
+              </button>
+            </div>
+
+            <!-- Vector & Visual Toggles -->
+            <div class="vector-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-em-vectors" checked>
+                <span>เวกเตอร์สนาม/แรง</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-em-equipotential" checked>
+                <span>เส้นสมศักย์ (Equipotential)</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-em-trails" checked>
+                <span>รอยวิถีอนุภาค (Trails)</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="chk-em-grid" checked>
+                <span>กริดพิกัด (Grid)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameters Sidebar & Telemetry Readouts -->
+        <aside class="sim-sidebar" aria-label="แผงปรับแต่งพารามิเตอร์แม่เหล็กไฟฟ้า">
+          <div class="sidebar-section-title">พารามิเตอร์แม่เหล็กไฟฟ้า (EM Parameters)</div>
+
+          <div class="sim-panel">
+            <!-- Field & Charges Specific Controls -->
+            <div id="controls-field-charges" class="submode-controls-group">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-charge-config" class="control-label">โครงแบบระบบประจุ (Configuration):</label>
+                <select id="select-charge-config" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="dipole">ไดโพลไฟฟ้า (+q, -q คู่ตรงข้าม)</option>
+                  <option value="two_pos">ประจุบวกสองตัว (+q, +q ผลักกัน)</option>
+                  <option value="single_pos">ประจุเดี่ยวบวก (+q)</option>
+                  <option value="quadrupole">ควอดรูโพลไฟฟ้า (4 ขั้วสลับเครื่องหมาย)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ขนาดประจุ $q_1$</span>
+                  <span id="label-charge-q1" style="color: #EF4444; font-weight: bold;">+5.0 μC</span>
+                </div>
+                <input type="range" id="slider-charge-q1" min="-10" max="10" step="1" value="5" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ขนาดประจุ $q_2$</span>
+                  <span id="label-charge-q2" style="color: #38BDF8; font-weight: bold;">-5.0 μC</span>
+                </div>
+                <input type="range" id="slider-charge-q2" min="-10" max="10" step="1" value="-5" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Lorentz & Cyclotron Specific Controls -->
+            <div id="controls-lorentz" class="submode-controls-group" style="display: none;">
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>สนามแม่เหล็ก $B_z$ (Magnetic Field)</span>
+                  <span id="label-lorentz-b" style="color: #10B981; font-weight: bold;">1.50 T</span>
+                </div>
+                <input type="range" id="slider-lorentz-b" min="-3.0" max="3.0" step="0.2" value="1.5" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเร็วเริ่มต้น $v_0$</span>
+                  <span id="label-lorentz-v" style="color: #F59E0B; font-weight: bold;">45.0 m/s</span>
+                </div>
+                <input type="range" id="slider-lorentz-v" min="10" max="100" step="5" value="45" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>สนามไฟฟ้า $E_y$ (Velocity Selector)</span>
+                  <span id="label-lorentz-e" style="color: #38BDF8; font-weight: bold;">0.0 N/C</span>
+                </div>
+                <input type="range" id="slider-lorentz-e" min="-100" max="100" step="10" value="0" style="width: 100%;">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-particle-type" class="control-label">ชนิดอนุภาคประจุ:</label>
+                <select id="select-particle-type" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="proton">โปรตอน (Proton: q = +1e, m = 1u)</option>
+                  <option value="electron">อิเล็กตรอน (Electron: q = -1e, เบามาก)</option>
+                  <option value="alpha">แอลฟา (Alpha Particle: q = +2e, m = 4u)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- RC Circuit Specific Controls -->
+            <div id="controls-rc-circuit" class="submode-controls-group" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-rc-switch" class="control-label">สถานะสวิตช์วงจร (Circuit Switch):</label>
+                <select id="select-rc-switch" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="charge">🔋 ชาร์จประจุ (Charge: ต่อเข้าแบตเตอรี่ 12V)</option>
+                  <option value="discharge">⚡ คายประจุ (Discharge: ลัดผ่านตัวต้านทาน)</option>
+                  <option value="open">⏹ เปิดวงจร (Open: ตัดการเชื่อมต่อ)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความต้านทาน $R$</span>
+                  <span id="label-rc-r" style="color: #F59E0B; font-weight: bold;">100 kΩ</span>
+                </div>
+                <input type="range" id="slider-rc-r" min="20" max="250" step="10" value="100" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความจุไฟฟ้า $C$</span>
+                  <span id="label-rc-c" style="color: #38BDF8; font-weight: bold;">20 μF</span>
+                </div>
+                <input type="range" id="slider-rc-c" min="5" max="80" step="5" value="20" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Faraday & Lenz Induction Controls -->
+            <div id="controls-faraday" class="submode-controls-group" style="display: none;">
+              <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem;">
+                💡 <em>ลากแท่งแม่เหล็กด้วยเมาส์เข้า-ออกขดลวด หรือเปิดการแกว่งสั่นอัตโนมัติ</em>
+              </p>
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>จำนวนรอบขดลวด $N$</span>
+                  <span id="label-faraday-turns" style="color: #F59E0B; font-weight: bold;">200 รอบ</span>
+                </div>
+                <input type="range" id="slider-faraday-turns" min="50" max="500" step="25" value="200" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเร็วในการแกว่ง $v$</span>
+                  <span id="label-faraday-speed" style="color: #38BDF8; font-weight: bold;">2.5x</span>
+                </div>
+                <input type="range" id="slider-faraday-speed" min="0.5" max="5.0" step="0.5" value="2.5" style="width: 100%;">
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเข้มสนามแม่เหล็ก $B_0$</span>
+                  <span id="label-faraday-strength" style="color: #10B981; font-weight: bold;">1.20 T</span>
+                </div>
+                <input type="range" id="slider-faraday-strength" min="0.2" max="2.5" step="0.1" value="1.2" style="width: 100%;">
+              </div>
+
+              <button id="btn-toggle-faraday-osc" class="btn btn-secondary" style="width: 100%; padding: 0.45rem; font-size: 0.85rem; margin-top: 0.25rem;">
+                ⏯️ สลับโหมดแกว่งแม่เหล็กอัตโนมัติ
+              </button>
+            </div>
+
+            <!-- Biot-Savart & Field Sources Controls -->
+            <div id="controls-biot-savart" class="submode-controls-group" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-biot-type" class="control-label">รูปแบบแหล่งกำเนิดสนามแม่เหล็ก:</label>
+                <select id="select-biot-type" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="straight">ลวดตัวนำตรงเดี่ยว (B = μ₀I/2πr)</option>
+                  <option value="parallel">ลวดขนานสองเส้น (แรงดูด/ผลัก F/L)</option>
+                  <option value="loop">ห่วงลวดวงกลมระนาบ (B_center = μ₀I/2R)</option>
+                  <option value="solenoid">ขดลวดโซเลนอยด์ (B = μ₀nI)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>กระแสไฟฟ้าเส้นที่ 1 ($I_1$)</span>
+                  <span id="label-biot-i1" style="color: #38BDF8; font-weight: bold;">15.0 A</span>
+                </div>
+                <input type="range" id="slider-biot-i1" min="1.0" max="40.0" step="1.0" value="15.0" style="width: 100%;">
+              </div>
+
+              <div id="biot-parallel-extras">
+                <div class="slider-control" style="margin-bottom: 0.75rem;">
+                  <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span>กระแสไฟฟ้าเส้นที่ 2 ($I_2$)</span>
+                    <span id="label-biot-i2" style="color: #F59E0B; font-weight: bold;">15.0 A</span>
+                  </div>
+                  <input type="range" id="slider-biot-i2" min="1.0" max="40.0" step="1.0" value="15.0" style="width: 100%;">
+                </div>
+
+                <div class="slider-control" style="margin-bottom: 0.75rem;">
+                  <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span>ระยะห่างระหว่างลวด ($d$)</span>
+                    <span id="label-biot-dist" style="color: #10B981; font-weight: bold;">0.25 m</span>
+                  </div>
+                  <input type="range" id="slider-biot-dist" min="0.05" max="0.50" step="0.05" value="0.25" style="width: 100%;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label for="select-biot-dir" class="control-label">ทิศทางกระแสเปรียบเทียบ:</label>
+                  <select id="select-biot-dir" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                    <option value="1">กระแสทิศเดียวกัน (แรงดึงดูดเข้าหากัน)</option>
+                    <option value="-1">กระแสสวนทางกัน (แรงผลักออกจากกัน)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- AC Series RLC Resonance Controls -->
+            <div id="controls-ac-rlc" class="submode-controls-group" style="display: none;">
+              <!-- Quick Observation Preset Chips -->
+              <div style="margin-bottom: 0.85rem;">
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.35rem;">⚡ พรีเซ็ตสังเกตสภาวะวงจร (Quick Observation):</div>
+                <div class="ac-presets" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                  <button type="button" class="preset-chip" id="btn-ac-preset-res" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #10B981; background: rgba(16,185,129,0.15); color: #6EE7B7; cursor: pointer;">
+                    🎯 เรโซแนนซ์ (f = f₀)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-ac-preset-cap" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #A855F7; background: rgba(168,85,247,0.15); color: #D8B4FE; cursor: pointer;">
+                    ⚡ คาปาซิทีฟ (f &lt; f₀)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-ac-preset-ind" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #EF4444; background: rgba(239,68,68,0.15); color: #FCA5A5; cursor: pointer;">
+                    🧲 อินดักทีฟ (f &gt; f₀)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-ac-preset-hiq" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #38BDF8; background: rgba(56,189,248,0.15); color: #7DD3FC; cursor: pointer;">
+                    📻 วิทยุ Q สูง
+                  </button>
+                </div>
+              </div>
+
+              <!-- Animation Speed Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเร็วแอนิเมชัน (Animation Speed)</span>
+                  <span id="label-ac-speed" style="color: #10B981; font-weight: bold;">0.15x</span>
+                </div>
+                <input type="range" id="slider-ac-speed" min="0.02" max="0.50" step="0.01" value="0.15" style="width: 100%;">
+              </div>
+
+              <!-- Source Voltage Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>แรงดันประสิทธิผล ($V_{\text{rms}}$)</span>
+                  <span id="label-ac-volt" style="color: #F59E0B; font-weight: bold;">120 V</span>
+                </div>
+                <input type="range" id="slider-ac-volt" min="10" max="240" step="5" value="120" style="width: 100%;">
+              </div>
+
+              <!-- Frequency Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความถี่แหล่งจ่าย ($f$)</span>
+                  <span id="label-ac-freq" style="color: #F59E0B; font-weight: bold;">60.0 Hz</span>
+                </div>
+                <input type="range" id="slider-ac-freq" min="10" max="300" step="1" value="60" style="width: 100%;">
+              </div>
+
+              <!-- Resistance Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความต้านทาน ($R$)</span>
+                  <span id="label-ac-r" style="color: #38BDF8; font-weight: bold;">40 Ω</span>
+                </div>
+                <input type="range" id="slider-ac-r" min="5" max="200" step="5" value="40" style="width: 100%;">
+              </div>
+
+              <!-- Inductance Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเหนี่ยวนำ ($L$)</span>
+                  <span id="label-ac-l" style="color: #EF4444; font-weight: bold;">0.20 H</span>
+                </div>
+                <input type="range" id="slider-ac-l" min="0.05" max="0.80" step="0.05" value="0.20" style="width: 100%;">
+              </div>
+
+              <!-- Capacitance Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความจุไฟฟ้า ($C$)</span>
+                  <span id="label-ac-c" style="color: #A855F7; font-weight: bold;">10 μF</span>
+                </div>
+                <input type="range" id="slider-ac-c" min="1" max="50" step="1" value="10" style="width: 100%;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Physical Telemetry Card -->
+          <div class="telemetry-card" style="margin-top: 1rem;">
+            <div class="telemetry-header">
+              <span class="telemetry-title">ผลการคำนวณทางกายภาพสด (Live Physical Telemetry)</span>
+              <span class="badge badge-pulse">EM Engine</span>
+            </div>
+            <div class="telemetry-grid">
+              <div class="telemetry-item">
+                <span class="telemetry-label" id="label-em-tele-1">พารามิเตอร์ 1</span>
+                <span class="telemetry-value" id="val-em-tele-1">0.00</span>
+              </div>
+              <div class="telemetry-item">
+                <span class="telemetry-label" id="label-em-tele-2">พารามิเตอร์ 2</span>
+                <span class="telemetry-value" id="val-em-tele-2">0.00</span>
+              </div>
+              <div class="telemetry-item">
+                <span class="telemetry-label" id="label-em-tele-3">พารามิเตอร์ 3</span>
+                <span class="telemetry-value" id="val-em-tele-3">0.00</span>
+              </div>
+              <div class="telemetry-item">
+                <span class="telemetry-label" id="label-em-tele-4">พารามิเตอร์ 4</span>
+                <span class="telemetry-value" id="val-em-tele-4">0.00</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-em -->
+
+    <!-- MODE 10 (CHAPTER 7): NUCLEAR & MODERN PHYSICS SIMULATOR -->
+    <div id="sim-container-nuclear" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองฟิสิกส์นิวเคลียร์ พลังงานยึดเหนี่ยว และการสลายกัมมันตรังสี</h2>
+        <p class="content-subtitle">Interactive Nuclear Physics: สำรวจเส้นโค้งพลังงานยึดเหนี่ยวต่อนิวคลีออน (E_b/A), การสลายตัวเชิงสถิติของนิวเคลียสอะตอมแบบมอนเตคาร์โล, และการทดลองกำบังรังสี (แอลฟา บีตา แกมมา) พร้อมมาตรวิทยาโดสิมิเตอร์</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Chapter 7 -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="binding_energy" id="btn-submode-binding-energy">
+              ⚛️ 1. เส้นโค้งพลังงานยึดเหนี่ยว (Eb/A Curve)
+            </button>
+            <button class="submode-btn" data-submode="decay_stochastic" id="btn-submode-decay-stochastic">
+              🎲 2. กฎการสลายเชิงสถิติ (Stochastic Decay)
+            </button>
+            <button class="submode-btn" data-submode="shielding_dosimetry" id="btn-submode-shielding">
+              🛡️ 3. การกำบังรังสี & โดสิมิเตอร์ (Shielding & Dose)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
+            <canvas id="nuclear-canvas" class="canvas-drag-surface" style="width: 100%; height: 480px; display: block; border-radius: 8px;" aria-label="กระดานจำลองฟิสิกส์นิวเคลียร์และการสลายตัว"></canvas>
+          </div>
+          <div class="canvas-legend" aria-hidden="true">
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #EF4444;"></span>
+                <span>พีคเสถียรภาพ ⁵⁶Fe / รังสีแอลฟา (α)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #10B981;"></span>
+                <span>เขตนิวเคลียร์ฟิวชัน (Fusion)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #F59E0B;"></span>
+                <span>นิวเคลียสแม่ N(t) / รังสีบีตา (β)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color" style="background-color: #A855F7;"></span>
+                <span>รังสีแกมมา (γ โฟตอน)</span>
+              </div>
+          </div>
+
+          <!-- Playback Action Buttons -->
+          <div class="sim-controls-bar">
+            <div class="sim-btn-group">
+              <button id="btn-nuclear-play" class="btn btn-primary" aria-label="เริ่มการจำลอง">
+                ▶ เล่น (Play)
+              </button>
+              <button id="btn-nuclear-pause" class="btn btn-secondary" disabled aria-label="หยุดชั่วคราว">
+                ⏸ หยุด (Pause)
+              </button>
+              <button id="btn-nuclear-step" class="btn btn-secondary" aria-label="ก้าวไปข้างหน้าทีละเฟรม">
+                ⏭ ก้าว (Step)
+              </button>
+              <button id="btn-nuclear-reset" class="btn btn-secondary" aria-label="รีเซ็ตสถานะกลับสู่จุดเริ่มต้น">
+                🔄 รีเซ็ต (Reset)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameter Control Panel & Real-Time Telemetry -->
+        <aside class="sim-controls-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="control-card">
+            <h3 class="card-title">🎛️ แผงควบคุมพารามิเตอร์ (Nuclear Controls)</h3>
+
+            <!-- Binding Energy Specific Controls -->
+            <div id="controls-binding-energy" class="submode-controls-group">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-nuclide" class="control-label">เลือกนิวไคลด์มาตรฐานเพื่อวิเคราะห์:</label>
+                <select id="select-nuclide" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="0">ไฮโดรเจนหนัก ²H (Deuterium)</option>
+                  <option value="1">ฮีเลียม ⁴He (Alpha Particle)</option>
+                  <option value="2">ลิเทียม ⁶Li</option>
+                  <option value="3">คาร์บอน ¹²C</option>
+                  <option value="4">ออกซิเจน ¹⁶O</option>
+                  <option value="5" selected>เหล็ก ⁵⁶Fe (จุดเสถียรสูงสุด)</option>
+                  <option value="6">นิกเกิล ⁶²Ni</option>
+                  <option value="7">ดีบุก ¹²⁰Sn</option>
+                  <option value="8">ตะกั่ว ²⁰⁸Pb</option>
+                  <option value="9">ยูเรเนียม ²³⁵U (เชื้อเพลิงฟิชชัน)</option>
+                  <option value="10">ยูเรเนียม ²³⁸U</option>
+                </select>
+              </div>
+              <p style="font-size: 0.85rem; color: #94a3b8;">
+                💡 <em>คลิกที่จุดนิวไคลด์ใดๆ บนกราฟเพื่อแสดงข้อมูลมวลพร่องและพลังงานยึดเหนี่ยว</em>
+              </p>
+            </div>
+
+            <!-- Stochastic Decay Specific Controls -->
+            <div id="controls-decay-stochastic" class="submode-controls-group" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-decay-isotope" class="control-label">ชนิดไอโซโทปกัมมันตรังสี:</label>
+                <select id="select-decay-isotope" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="C14">คาร์บอน ¹⁴C (T_1/2 = 5,730 ปี)</option>
+                  <option value="I131">ไอโอดีน ¹³¹I (T_1/2 = 8.02 วัน)</option>
+                  <option value="Rn222">เรดอน ²²²Rn (T_1/2 = 3.82 วัน)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ครึ่งชีวิตในการจำลอง T_1/2</span>
+                  <span id="label-nuclear-halflife" style="color: #F59E0B; font-weight: bold;">5.0 s</span>
+                </div>
+                <input type="range" id="slider-nuclear-halflife" min="2.0" max="15.0" step="0.5" value="5.0" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Shielding & Dosimetry Specific Controls -->
+            <div id="controls-shielding" class="submode-controls-group" style="display: none;">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-radiation-type" class="control-label">ชนิดรังสี (Radiation Type):</label>
+                <select id="select-radiation-type" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="alpha">แอลฟา α (²⁴He, w_R = 20)</option>
+                  <option value="beta">บีตา β⁻ (อิเล็กตรอน, w_R = 1)</option>
+                  <option value="gamma" selected>แกมมา γ (โฟตอนพลังงานสูง, w_R = 1)</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label for="select-shield-material" class="control-label">วัสดุกำบังรังสี (Shield Material):</label>
+                <select id="select-shield-material" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
+                  <option value="paper">กระดาษ/ผิวหนัง Paper (0.1 mm)</option>
+                  <option value="aluminum">อะลูมิเนียม Aluminum (5 mm)</option>
+                  <option value="lead" selected>ตะกั่ว Lead (μ = 0.77 cm⁻¹)</option>
+                  <option value="concrete">คอนกรีต Concrete (μ = 0.14 cm⁻¹)</option>
+                </select>
+              </div>
+
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความหนาของแผ่นกำบัง (Thickness)</span>
+                  <span id="label-shield-thickness" style="color: #38BDF8; font-weight: bold;">20 mm</span>
+                </div>
+                <input type="range" id="slider-shield-thickness" min="2" max="60" step="2" value="20" style="width: 100%;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Physical Telemetry Card -->
+          <div class="control-card">
+            <h3 class="card-title">📊 ข้อมูลโทรมาตรกายภาพ (Physical Telemetry)</h3>
+            <div class="telem-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div class="telem-box">
+                <div class="telem-label">พลังงานยึดเหนี่ยว $E_b/A$</div>
+                <div id="nuclear-telem-eb" class="telem-val" style="color: #4ADE80;">8.79 MeV</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">กัมมันตภาพจำลอง $A$</div>
+                <div id="nuclear-telem-activity" class="telem-val" style="color: #F59E0B;">24.9 Bq</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ครึ่งชีวิต $T_{1/2}$</div>
+                <div id="nuclear-telem-halflife" class="telem-val" style="color: #38BDF8;">5.0 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ชนิดรังสีที่วิเคราะห์</div>
+                <div id="nuclear-telem-radiation" class="telem-val" style="color: #A855F7;">GAMMA</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-nuclear -->
+
+    <!-- MODE 11: CIVIL ENGINEERING STATICS & MECHANICS OF MATERIALS -->
+    <div id="sim-container-civil" class="sim-mode-container" style="display: none;">
+      <div class="content-header">
+        <h2 class="content-title">แบบจำลองวิศวกรรมโยธา: แผนภาพแรงเฉือน โมเมนต์ดัด การโก่งตัวของคาน และวงกลมของมอร์</h2>
+        <p class="content-subtitle">Interactive Structural Mechanics: คำนวณแรงปฏิกิริยาจุดรองรับ แผนภาพแรงเฉือน (SFD), แผนภาพโมเมนต์ดัด (BMD), เส้นโค้งการโก่งตัวเชิงยืดหยุ่นของออยเลอร์-แบร์นูลลี, และการแปลงสถานะความเค้นระนาบด้วยวงกลมของมอร์ (Mohr's Stress Circle)</p>
+      </div>
+
+      <div class="sim-layout">
+        <!-- Left: Stage Canvas & Interactive Controls -->
+        <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Civil Engineering -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="simply_supported" id="btn-submode-civ-simply">
+              🏗️ 1. คานช่วงเดี่ยวรับแรงจุด & แรงแผ่ (Simply Supported Beam)
+            </button>
+            <button class="submode-btn" data-submode="cantilever" id="btn-submode-civ-cantilever">
+              🏢 2. คานยื่นฝังผนังแน่น (Cantilever Beam)
+            </button>
+            <button class="submode-btn" data-submode="mohr_circle" id="btn-submode-civ-mohr">
+              🔄 3. วงกลมของมอร์ & การแปลงความเค้น (Mohr's Stress Circle)
+            </button>
+          </div>
+
+          <div class="canvas-wrapper" style="position: relative; min-height: 520px;">
+            <canvas id="civil-canvas" class="canvas-drag-surface" style="width: 100%; height: 520px; display: block; border-radius: 8px;" aria-label="กระดานจำลองสถิตยศาสตร์คานและวงกลมของมอร์"></canvas>
+          </div>
+          <div class="civil-diagram-legend" aria-hidden="true">
+            <div class="civil-legend-item">
+              <span class="civil-legend-dot" style="background-color: #38BDF8;"></span>
+              <span>แรงเฉือน SFD V(x) [kN]</span>
+            </div>
+            <div class="civil-legend-item">
+              <span class="civil-legend-dot" style="background-color: #F59E0B;"></span>
+              <span>โมเมนต์ดัด BMD M(x) [kN·m]</span>
+            </div>
+            <div class="civil-legend-item">
+              <span class="civil-legend-dot" style="background-color: #A855F7;"></span>
+              <span>การโก่งตัวเชิงยืดหยุ่น ν(x) [mm]</span>
+            </div>
+            <div class="civil-legend-item">
+              <span class="civil-legend-dot" style="background-color: #10B981;"></span>
+              <span>ความเค้นหลัก / หมุนระนาบ θ</span>
+            </div>
+          </div>
+
+          <!-- Presets Action Buttons -->
+          <div class="sim-controls-bar" style="margin-top: 0.75rem;">
+            <div class="sim-btn-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="btn-civ-preset-center" class="btn btn-secondary" style="font-size: 0.82rem;">
+                🎯 แรงจุดกึ่งกลาง (Center P)
+              </button>
+              <button id="btn-civ-preset-udl" class="btn btn-secondary" style="font-size: 0.82rem;">
+                📐 แรงแผ่กระจายล้วน (Pure UDL)
+              </button>
+              <button id="btn-civ-preset-combined" class="btn btn-secondary" style="font-size: 0.82rem;">
+                ⚖️ โหลดผสม (P + UDL)
+              </button>
+              <button id="btn-civ-preset-cantilever-tip" class="btn btn-secondary" style="font-size: 0.82rem;">
+                🏢 คานยื่นรับแรงปลาย (Tip Load)
+              </button>
+              <button id="btn-civ-preset-pure-shear" class="btn btn-secondary" style="font-size: 0.82rem;">
+                ✂️ แรงเฉือนบริสุทธิ์ (Pure Shear)
+              </button>
+              <button id="btn-civ-reset" class="btn btn-secondary" style="font-size: 0.82rem;" aria-label="รีเซ็ตค่ามาตรฐาน">
+                🔄 รีเซ็ต (Reset)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Parameter Control Panel & Real-Time Telemetry -->
+        <aside class="sim-controls-panel" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="control-card">
+            <h3 class="card-title">🎛️ แผงควบคุมพารามิเตอร์ (Civil Controls)</h3>
+
+            <!-- Beam Specific Controls -->
+            <div id="controls-civil-beam" class="submode-controls-group">
+              <!-- Beam Length -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความยาวช่วงคาน (Span L)</span>
+                  <span id="label-civ-len" style="color: #38BDF8; font-weight: bold;">6.0 m</span>
+                </div>
+                <input type="range" id="slider-civ-len" min="2.0" max="12.0" step="0.5" value="6.0" style="width: 100%;">
+              </div>
+
+              <!-- Point Load P -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>แรงจุดกระทำ (Point Load P)</span>
+                  <span id="label-civ-p" style="color: #EF4444; font-weight: bold;">30.0 kN</span>
+                </div>
+                <input type="range" id="slider-civ-p" min="0" max="100" step="5" value="30" style="width: 100%;">
+              </div>
+
+              <!-- Load Position a -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ตำแหน่งแรงจุด (Position a)</span>
+                  <span id="label-civ-a" style="color: #F87171; font-weight: bold;">2.0 m</span>
+                </div>
+                <input type="range" id="slider-civ-a" min="0" max="12.0" step="0.5" value="2.0" style="width: 100%;">
+              </div>
+
+              <!-- Distributed Load w -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>แรงแผ่สม่ำเสมอ (UDL w)</span>
+                  <span id="label-civ-w" style="color: #F59E0B; font-weight: bold;">10.0 kN/m</span>
+                </div>
+                <input type="range" id="slider-civ-w" min="0" max="50" step="2" value="10" style="width: 100%;">
+              </div>
+
+              <!-- Flexural Rigidity EI -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>สภาพต้านทานดัด (EI)</span>
+                  <span id="label-civ-ei" style="color: #C084FC; font-weight: bold;">20,000 kN·m²</span>
+                </div>
+                <input type="range" id="slider-civ-ei" min="5000" max="80000" step="2500" value="20000" style="width: 100%;">
+              </div>
+            </div>
+
+            <!-- Mohr Circle Specific Controls -->
+            <div id="controls-civil-mohr" class="submode-controls-group" style="display: none;">
+              <!-- Sigma X -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเค้นฉาก σ_x</span>
+                  <span id="label-civ-sx" style="color: #EF4444; font-weight: bold;">80.0 MPa</span>
+                </div>
+                <input type="range" id="slider-civ-sx" min="-150" max="150" step="5" value="80" style="width: 100%;">
+              </div>
+
+              <!-- Sigma Y -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเค้นฉาก σ_y</span>
+                  <span id="label-civ-sy" style="color: #3B82F6; font-weight: bold;">20.0 MPa</span>
+                </div>
+                <input type="range" id="slider-civ-sy" min="-150" max="150" step="5" value="20" style="width: 100%;">
+              </div>
+
+              <!-- Tau XY -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความเค้นเฉือน τ_xy</span>
+                  <span id="label-civ-txy" style="color: #F59E0B; font-weight: bold;">40.0 MPa</span>
+                </div>
+                <input type="range" id="slider-civ-txy" min="-100" max="100" step="5" value="40" style="width: 100%;">
+              </div>
+
+              <!-- Rotation Theta -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>มุมหมุนระนาบ (Angle θ)</span>
+                  <span id="label-civ-theta" style="color: #10B981; font-weight: bold;">25.0°</span>
+                </div>
+                <input type="range" id="slider-civ-theta" min="-90" max="90" step="1" value="25" style="width: 100%;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Physical Telemetry Card -->
+          <div class="control-card">
+            <h3 class="card-title">📊 ข้อมูลโทรมาตรโครงสร้าง (Structural Telemetry)</h3>
+            <div id="telem-civil-beam" class="telem-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div class="telem-box">
+                <div class="telem-label">แรงปฏิกิริยา R_A</div>
+                <div id="civ-telem-ra" class="telem-val" style="color: #34D399;">40.00 kN</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label" id="civ-telem-rb-label">แรงปฏิกิริยา R_B</div>
+                <div id="civ-telem-rb" class="telem-val" style="color: #34D399;">50.00 kN</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงเฉือนสูงสุด |V_max|</div>
+                <div id="civ-telem-maxv" class="telem-val" style="color: #38BDF8;">50.00 kN</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">โมเมนต์ดัดสูงสุด |M_max|</div>
+                <div id="civ-telem-maxm" class="telem-val" style="color: #F59E0B;">70.00 kN·m</div>
+              </div>
+              <div class="telem-box" style="grid-column: span 2;">
+                <div class="telem-label">การโก่งตัวสูงสุด |ν_max| (Euler-Bernoulli)</div>
+                <div id="civ-telem-maxdef" class="telem-val" style="color: #C084FC;">4.85 mm</div>
+              </div>
+            </div>
+
+            <div id="telem-civil-mohr" class="telem-grid" style="display: none; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div class="telem-box">
+                <div class="telem-label">ความเค้นหลัก σ₁</div>
+                <div id="civ-telem-s1" class="telem-val" style="color: #A855F7;">100.0 MPa</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเค้นหลัก σ₂</div>
+                <div id="civ-telem-s2" class="telem-val" style="color: #A855F7;">0.0 MPa</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเค้นเฉือนสูงสุด τ_max</div>
+                <div id="civ-telem-taumax" class="telem-val" style="color: #F59E0B;">50.0 MPa</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">มุมระนาบหลัก θ_p</div>
+                <div id="civ-telem-thetap" class="telem-val" style="color: #38BDF8;">26.6°</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเค้นฉากระนาบหมุน σ_x'</div>
+                <div id="civ-telem-sxprime" class="telem-val" style="color: #10B981;">98.2 MPa</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเค้นเฉือนระนาบหมุน τ_x'y'</div>
+                <div id="civ-telem-txyprime" class="telem-val" style="color: #F59E0B;">-8.5 MPa</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div><!-- End sim-container-civil -->
+  </section>
+
+  <!-- VIEW 6: PRACTICE PROBLEM ENGINE -->
+  <section id="view-practice" class="view-panel" role="tabpanel" aria-labelledby="tab-practice">
+    <div class="practice-container">
+      <div class="content-header">
+        <div class="practice-badge">คลังข้อสอบและแบบฝึกหัดคำนวณเชิงโต้ตอบ</div>
+        <h2 class="content-title">คลังโจทย์ฟิสิกส์และวิศวกรรมศาสตร์ (Interactive Question Bank)</h2>
+        <p class="content-subtitle">ฝึกทำโจทย์พร้อมระบบตรวจคำตอบทันที แสดงวิธีคิดและสูตรอนุมานแบบละเอียดด้วย KaTeX เชื่อมโยงตรงสู่แบบจำลองเสมือนจริง</p>
+      </div>
+
+      <!-- Track Filter Bar -->
+      <div class="practice-filter-bar">
+        <div class="practice-track-tabs" role="tablist">
+          <button class="practice-tab-btn active" data-track="all">🌐 ทั้งหมด (All)</button>
+          <button class="practice-tab-btn" data-track="fundamental">⚛️ ฟิสิกส์พื้นฐาน (Fundamental)</button>
+          <button class="practice-tab-btn" data-track="advanced">🌌 ฟิสิกส์ขั้นสูง & สอวน. (Olympiad)</button>
+          <button class="practice-tab-btn" data-track="civil">🏗️ วิศวกรรมโยธา (Civil Eng)</button>
+        </div>
+        <div class="practice-stats-pill">
+          <span>คะแนนสะสม: <strong id="practice-score-display">0</strong> / <span id="practice-total-display">0</span> ข้อ</span>
+        </div>
+      </div>
+
+      <!-- Problems Target Container -->
+      <div id="practice-problems-target" class="practice-cards-grid">
+        <!-- Dynamically populated via app.js -->
+      </div>
+    </div>
   </section>
 
   <!-- VIEW 4: PHENOMENA & APPLICATIONS -->
@@ -1217,11 +3144,26 @@
 <script src="js/simulators/vehicle_vector_field_simulator.js"></script>
 <script src="js/simulators/collision_impulse_simulator.js"></script>
 <script src="js/simulators/threejs_ballistics_simulator.js"></script>
+<script src="js/simulators/circular_motion_simulator.js"></script>
 <script src="js/math_renderer.js"></script>
 <script src="js/data/projectile_content.js"></script>
 <script src="js/data/phenomena_content.js"></script>
 <script src="js/data/physics_theories_content.js"></script>
+<script src="js/data/chapter02_circular_content.js"></script>
+<script src="js/simulators/oscillation_simulator.js"></script>
+<script src="js/data/chapter03_oscillations_content.js"></script>
+<script src="js/simulators/wave_simulator.js"></script>
+<script src="js/data/chapter04_waves_content.js"></script>
+<script src="js/simulators/thermo_simulator.js"></script>
+<script src="js/data/chapter05_thermo_content.js"></script>
+<script src="js/simulators/em_simulator.js"></script>
+<script src="js/data/chapter06_em_content.js"></script>
+<script src="js/simulators/nuclear_simulator.js"></script>
+<script src="js/data/chapter07_nuclear_content.js"></script>
 <script src="js/data/analytical_formalisms_content.js"></script>
+<script src="js/simulators/civil_beam_simulator.js"></script>
+<script src="js/data/civil_engineering_content.js"></script>
+<script src="js/data/practice_problems_content.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

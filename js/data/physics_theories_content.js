@@ -1594,7 +1594,7 @@
     "sym": "\\mu_s, \\mu_k",
     "nameTh": "สัมประสิทธิ์แรงเสียดทาน",
     "nameEn": "Friction coefficients",
-    "unit": "\\text{ไร้หน่วย}",
+    "unit": "—",
     "domain": "dynamics",
     "domainTh": "พลศาสตร์",
     "note": "อัตราส่วนแรงเสียดทานต่อแรงตั้งฉากขึ้นกับคู่ผิวสัมผัส"
@@ -1603,7 +1603,7 @@
     "sym": "C_d",
     "nameTh": "สัมประสิทธิ์แรงต้านรูปทรง",
     "nameEn": "Drag coefficient",
-    "unit": "\\text{ไร้หน่วย}",
+    "unit": "—",
     "domain": "dynamics",
     "domainTh": "พลศาสตร์",
     "note": "ค่าคงที่ตามลักษณะรูปทรงเรขาคณิตและความราบเรียบของพื้นผิว"
@@ -1684,7 +1684,7 @@
     "sym": "e",
     "nameTh": "สัมประสิทธิ์การคืนตัว",
     "nameEn": "Coefficient of restitution",
-    "unit": "\\text{ไร้หน่วย}",
+    "unit": "—",
     "domain": "conservation",
     "domainTh": "กฎการอนุรักษ์",
     "note": "อัตราส่วนความเร็วสัมพัทธ์หลังชนต่อก่อนชน $e = -\\frac{v_{2f}-v_{1f}}{u_{2i}-u_{1i}}$"
