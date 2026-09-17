@@ -65,12 +65,14 @@
         { name: 'Iron-56', sym: '⁵⁶Fe', a: 56, z: 26, ebPerA: 8.79, color: '#ef4444' }, // Peak
         { name: 'Nickel-62', sym: '⁶²Ni', a: 62, z: 28, ebPerA: 8.79, color: '#f59e0b' },
         { name: 'Tin-120', sym: '¹²⁰Sn', a: 120, z: 50, ebPerA: 8.50, color: '#38bdf8' },
-        { name: 'Lead-208', sym: '²⁰⁸Pb', a: 208, z: 82, ebPerA: 7.87, color: '#94a3b8' },
+        { name: 'Lead-208', sym: '²⁰⁸Pb', a: 208, z: 82, ebPerA: 7.87, color: '#94a3b8' }, // Heaviest truly stable
+        { name: 'Bismuth-209', sym: '²⁰⁹Bi', a: 209, z: 83, ebPerA: 7.84, color: '#ec4899', isRadioactiveStart: true }, // Heaviest primordial alpha-decay
+        { name: 'Polonium-210', sym: '²¹⁰Po', a: 210, z: 84, ebPerA: 7.83, color: '#d946ef' },
         { name: 'Uranium-235', sym: '²³⁵U', a: 235, z: 92, ebPerA: 7.59, color: '#f43f5e' },
         { name: 'Uranium-238', sym: '²³⁸U', a: 238, z: 92, ebPerA: 7.57, color: '#fb923c' }
       ];
 
-      // Submode 2: Stochastic Atoms (200 atoms)
+      // Submode 2: Stochastic Atoms (180 atoms)
       this.totalAtoms = 180;
       this.atoms = [];
       this.decayHistory = [];
@@ -79,6 +81,7 @@
 
       // Submode 3: Radiation particles
       this.radiationParticles = [];
+      this.absorptionSparks = [];
       this.sourceEmissionTimer = 0;
 
       // Resolution and interaction
@@ -117,6 +120,16 @@
       this.render();
     }
 
+    // Shared geometry for shielding barrier
+    getShieldBounds() {
+      const w = this.width || 800;
+      const srcX = 25;
+      const detX = w - 70;
+      const shieldW = Math.max(16, Math.min(75, this.params.shieldThickness * 2.0));
+      const shieldX = Math.round(srcX + 75 + (detX - srcX - 75 - shieldW) * 0.45);
+      return { srcX, detX, shieldX, shieldW };
+    }
+
     // ==========================================
     // INITIALIZATION HELPERS
     // ==========================================
@@ -127,17 +140,15 @@
       this.simTime = 0;
       const cols = 18;
       const rows = 10;
-      const startX = 60;
-      const startY = 110;
-      const spacingX = 22;
-      const spacingY = 22;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           this.atoms.push({
             id: r * cols + c,
-            x: startX + c * spacingX + (Math.random() - 0.5) * 4,
-            y: startY + r * spacingY + (Math.random() - 0.5) * 4,
+            col: c,
+            row: r,
+            jitterX: (Math.random() - 0.5) * 0.35,
+            jitterY: (Math.random() - 0.5) * 0.35,
             decayed: false,
             decayTime: 0,
             flashTimer: 0
@@ -145,6 +156,62 @@
         }
       }
       this.decayHistory.push({ t: 0, count: this.atoms.length });
+    }
+
+    initRadiationStream() {
+      this.radiationParticles = [];
+      this.absorptionSparks = [];
+      const { srcX, detX, shieldX, shieldW } = this.getShieldBounds();
+      const isMobile = (this.width || 800) < 600;
+      const srcY = isMobile ? 180 : 210;
+
+      let color = '#38bdf8';
+      let r = 4;
+      let speed = 320;
+      if (this.params.radiationType === 'alpha') {
+        color = '#ef4444';
+        r = 5.5;
+        speed = 220;
+      } else if (this.params.radiationType === 'beta') {
+        color = '#f59e0b';
+        r = 3;
+        speed = 390;
+      } else if (this.params.radiationType === 'gamma') {
+        color = '#a855f7';
+        r = 2.5;
+        speed = 480;
+      }
+
+      // Pre-populate particles along beam so there is never a blank gap or interruption
+      const count = 36;
+      for (let i = 0; i < count; i++) {
+        const xPos = srcX + 48 + (i / count) * (detX - srcX - 48);
+        if (xPos > shieldX) {
+          let transProb = 1.0;
+          if (this.params.radiationType === 'alpha') transProb = 0.0;
+          else if (this.params.radiationType === 'beta') {
+            if (this.params.shieldMaterial === 'paper') transProb = 0.90;
+            else if (this.params.shieldMaterial === 'aluminum') transProb = 0.25;
+            else transProb = 0.03;
+          } else if (this.params.radiationType === 'gamma') {
+            if (this.params.shieldMaterial === 'paper') transProb = 0.98;
+            else if (this.params.shieldMaterial === 'aluminum') transProb = 0.70;
+            else if (this.params.shieldMaterial === 'concrete') transProb = 0.50;
+            else if (this.params.shieldMaterial === 'lead') transProb = 0.20;
+          }
+          if (Math.random() > transProb) continue;
+        }
+
+        this.radiationParticles.push({
+          x: xPos,
+          y: srcY + (Math.random() - 0.5) * 36,
+          vx: speed,
+          vy: (Math.random() - 0.5) * 16,
+          type: this.params.radiationType,
+          color: color,
+          r: r
+        });
+      }
     }
 
     setupInteraction() {
@@ -175,6 +242,8 @@
             const py = originY - (n.ebPerA / 10) * plotH;
             if (Math.hypot(pos.x - px, pos.y - py) < 14) {
               this.params.selectedNuclideIndex = i;
+              const selElem = document.getElementById('select-nuclide');
+              if (selElem) selElem.value = i;
               this.render();
               this.emitTelemetry();
               break;
@@ -194,7 +263,7 @@
         if (subMode === 'decay_stochastic') {
           this.initAtoms();
         } else if (subMode === 'shielding_dosimetry') {
-          this.radiationParticles = [];
+          this.initRadiationStream();
         }
         this.render();
         this.emitTelemetry();
@@ -206,6 +275,10 @@
         this.params[key] = value;
         if (key === 'halfLife') {
           this.params.decayConstant = Math.LN2 / Math.max(0.5, value);
+        } else if (key === 'radiationType' || key === 'shieldMaterial' || key === 'shieldThickness') {
+          if (this.subMode === 'shielding_dosimetry') {
+            this.initRadiationStream();
+          }
         }
         this.render();
         this.emitTelemetry();
@@ -303,14 +376,13 @@
         }
       } else if (this.subMode === 'shielding_dosimetry') {
         this.sourceEmissionTimer += dt;
-        if (this.sourceEmissionTimer > 0.06) {
+        if (this.sourceEmissionTimer > 0.055) {
           this.sourceEmissionTimer = 0;
           this.emitRadiationParticle();
         }
 
-        // Update active radiation particles
-        const shieldX = 280;
-        const shieldW = Math.max(10, this.params.shieldThickness * 2.2);
+        // Shared geometry ensures 100% collision alignment with visual barrier
+        const { shieldX, shieldW, detX } = this.getShieldBounds();
 
         for (let i = this.radiationParticles.length - 1; i >= 0; i--) {
           const p = this.radiationParticles[i];
@@ -321,60 +393,78 @@
           if (p.x >= shieldX && p.x <= shieldX + shieldW) {
             let absorbProb = 0;
             if (this.params.radiationType === 'alpha') {
-              absorbProb = 0.95; // Alpha stopped by paper or almost any barrier
+              // Alpha particles have high stopping power (dE/dx); stopped on front surface of paper or any barrier
+              absorbProb = 0.96;
             } else if (this.params.radiationType === 'beta') {
               if (this.params.shieldMaterial === 'paper') absorbProb = 0.08;
               else if (this.params.shieldMaterial === 'aluminum') absorbProb = 0.65;
-              else absorbProb = 0.92;
+              else absorbProb = 0.95;
             } else if (this.params.radiationType === 'gamma') {
-              // Exponential attenuation I = I0 * exp(-mu * x)
+              // Attenuation by photoelectric, Compton, pair production
               if (this.params.shieldMaterial === 'paper') absorbProb = 0.005;
               else if (this.params.shieldMaterial === 'aluminum') absorbProb = 0.04;
-              else if (this.params.shieldMaterial === 'lead') absorbProb = 0.40;
-              else if (this.params.shieldMaterial === 'concrete') absorbProb = 0.15;
+              else if (this.params.shieldMaterial === 'concrete') absorbProb = 0.16;
+              else if (this.params.shieldMaterial === 'lead') absorbProb = 0.42;
             }
 
             if (Math.random() < absorbProb) {
-              p.absorbed = true;
+              // Particle absorbed by shield! Stop particle and trigger visible flash on shield
+              this.absorptionSparks = this.absorptionSparks || [];
+              this.absorptionSparks.push({ x: p.x, y: p.y, timer: 0.35, color: p.color });
               this.radiationParticles.splice(i, 1);
               continue;
             }
           }
 
-          // Offscreen removal
+          // Absorbed by detector or offscreen removal
+          if (p.x >= detX) {
+            this.radiationParticles.splice(i, 1);
+            continue;
+          }
           if (p.x > (this.width || 800) || p.y < 0 || p.y > (this.height || 480)) {
             this.radiationParticles.splice(i, 1);
+          }
+        }
+
+        // Update absorption sparks
+        if (this.absorptionSparks && this.absorptionSparks.length > 0) {
+          for (let s = this.absorptionSparks.length - 1; s >= 0; s--) {
+            this.absorptionSparks[s].timer -= dt;
+            if (this.absorptionSparks[s].timer <= 0) {
+              this.absorptionSparks.splice(s, 1);
+            }
           }
         }
       }
     }
 
     emitRadiationParticle() {
-      const srcX = 60;
-      const srcY = 220;
+      const { srcX } = this.getShieldBounds();
+      const isMobile = (this.width || 800) < 600;
+      const srcY = isMobile ? 180 : 210;
       let color = '#38bdf8';
       let r = 4;
       let speed = 320;
 
       if (this.params.radiationType === 'alpha') {
-        color = '#ef4444'; // Heavy He-4
-        r = 6;
+        color = '#ef4444'; // Heavy He-4 (Alpha)
+        r = 5.5;
         speed = 220;
       } else if (this.params.radiationType === 'beta') {
-        color = '#f59e0b'; // Light electron
+        color = '#f59e0b'; // Light electron (Beta)
         r = 3;
-        speed = 400;
+        speed = 390;
       } else if (this.params.radiationType === 'gamma') {
-        color = '#a855f7'; // High freq photon
+        color = '#a855f7'; // High freq photon (Gamma)
         r = 2.5;
         speed = 480;
       }
 
       this.radiationParticles.push({
-        x: srcX,
-        y: srcY + (Math.random() - 0.5) * 40,
+        x: srcX + 48,
+        y: srcY + (Math.random() - 0.5) * 36,
         vx: speed,
-        vy: (Math.random() - 0.5) * 25,
+        vy: (Math.random() - 0.5) * 18,
         type: this.params.radiationType,
         color: color,
         r: r
@@ -601,6 +691,26 @@
           labelX = px - 12;
           labelY = py - 13;
           ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else if (n.sym === '²⁰⁸Pb') {
+          labelX = px - 16;
+          labelY = py - 14;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#94a3b8';
+        } else if (n.sym === '²⁰⁹Bi') {
+          labelX = px;
+          labelY = py + 16; // Placed below point to avoid colliding with Pb-208 and Po-210
+          ctx.fillStyle = isSel ? '#fbbf24' : '#ec4899';
+        } else if (n.sym === '²¹⁰Po') {
+          labelX = px + 16;
+          labelY = py - 14;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#d946ef';
+        } else if (n.sym === '²³⁵U') {
+          labelX = px - 14;
+          labelY = py - 14;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#f43f5e';
+        } else if (n.sym === '²³⁸U') {
+          labelX = px + 12;
+          labelY = py + 14;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#fb923c';
         } else {
           ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
         }
@@ -638,7 +748,13 @@
 
       if (isMobile) {
         ctx.font = 'bold 11px sans-serif';
-        ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | A = ${sel.a}, Z = ${sel.z}, N = ${sel.a - sel.z}`, originX + 10, cardY + 8);
+        if (sel.sym === '²⁰⁹Bi') {
+          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | ธาตุกัมมันตรังสีปฐมภูมิหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+        } else if (sel.sym === '²⁰⁸Pb') {
+          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | ธาตุเสถียรตัวสุดท้ายที่หนักที่สุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+        } else {
+          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | A = ${sel.a}, Z = ${sel.z}, N = ${sel.a - sel.z}`, originX + 10, cardY + 8);
+        }
 
         ctx.fillStyle = '#38bdf8';
         ctx.font = '10px monospace';
@@ -646,7 +762,13 @@
         ctx.fillText(`มวลพร่อง Δm = ${deltaM} u`, originX + 10, cardY + 54);
       } else {
         ctx.font = 'bold 12.5px sans-serif';
-        ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | เลขมวล A = ${sel.a}, เลขอะตอม Z = ${sel.z}, นิวตรอน N = ${sel.a - sel.z}`, originX + 15, cardY + 12);
+        if (sel.sym === '²⁰⁹Bi') {
+          ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | ธาตุกัมมันตรังสีปฐมภูมิที่หนักที่สุด (Heaviest Primordial Nuclide, T_1/2 = 2.01×10¹⁹ ปี, สลายแอลฟา α)`, originX + 15, cardY + 12);
+        } else if (sel.sym === '²⁰⁸Pb') {
+          ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | ธาตุเสถียรตัวสุดท้ายที่หนักที่สุดในเอกภพ (Heaviest Stable Nuclide, Z=82, N=126)`, originX + 15, cardY + 12);
+        } else {
+          ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | เลขมวล A = ${sel.a}, เลขอะตอม Z = ${sel.z}, นิวตรอน N = ${sel.a - sel.z}`, originX + 15, cardY + 12);
+        }
 
         ctx.fillStyle = '#38bdf8';
         ctx.font = '11.5px monospace';
@@ -790,71 +912,119 @@
       const h = this.height || 480;
       const isMobile = w < 600;
 
-      // Header
+      // Shared geometry from getShieldBounds for 100% collision-visual consistency
+      const { srcX, detX, shieldX, shieldW } = this.getShieldBounds();
+      const srcY = isMobile ? 180 : 210;
+
+      // Header Banner
       ctx.fillStyle = '#f8fafc';
       ctx.font = isMobile ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
-      ctx.fillText('🛡️ การกำบังรังสีและมาตรวิทยารังสีวิทยา (Radiation Shielding & Dosimetry)', 20, 25);
+      ctx.fillText('🛡️ การลดทอนรังสีและโดสิเมทรีรังสีวิทยา (Radiation Attenuation & Medical Dosimetry)', 20, 25);
       ctx.fillStyle = '#94a3b8';
       ctx.font = isMobile ? '10px sans-serif' : '12px sans-serif';
-      ctx.fillText('จำลองอำนาจทะลุทะลวงของรังสี แอลฟา/บีตา/แกมมา ตามกฎ I = I_0 e^(-μx)', 20, 44);
+      ctx.fillText('กฎการลดทอนเบียร์-แลมเบิร์ต I(x) = I₀ e^(-μx) | ชั้นความหนาครึ่งค่า HVL = ln(2)/μ', 20, 44);
 
-      // Radiation Source Emitter
-      const srcX = 20;
-      const srcY = isMobile ? 180 : 210;
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(srcX, srcY - 40, 50, 80);
+      // Collimated Source Emitter Box
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(srcX, srcY - 42, 52, 84);
       ctx.strokeStyle = '#ef4444';
       ctx.lineWidth = 2;
-      ctx.strokeRect(srcX, srcY - 40, 50, 80);
+      ctx.strokeRect(srcX, srcY - 42, 52, 84);
 
       // Trefoil radiation symbol
       ctx.fillStyle = '#fbbf24';
       ctx.beginPath();
-      ctx.arc(srcX + 25, srcY, 12, 0, Math.PI * 2);
+      ctx.arc(srcX + 26, srcY - 4, 13, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#0f172a';
-      ctx.beginPath(); ctx.arc(srcX + 25, srcY, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath();
+      ctx.arc(srcX + 26, srcY - 4, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Collimator aperture slot
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(srcX + 48, srcY - 14, 4, 20);
 
       ctx.fillStyle = '#f8fafc';
       ctx.font = 'bold 10px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('ต้นกำเนิด', srcX + 25, srcY + 30);
+      ctx.fillText('คอลลิเมเตอร์', srcX + 26, srcY + 24);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px monospace';
+      ctx.fillText('ไอโซโทป', srcX + 26, srcY + 36);
 
-      // Detector Target
-      const detX = w - 65;
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(detX, srcY - 50, 45, 120);
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(detX, srcY - 50, 45, 120);
-      ctx.fillStyle = '#10b981';
-      ctx.font = 'bold 10px sans-serif';
-      ctx.fillText('Geiger', detX + 22, srcY);
+      // Shielding Barrier Material Styling
+      let shieldColor = '#475569';
+      let matName = '';
+      let hvlText = '';
+      let muVal = 0.77;
+      let wR = 1;
 
-      // Shielding Barrier dynamically centered between emitter and detector
-      const shieldW = Math.max(12, Math.min(60, this.params.shieldThickness * 1.8));
-      const shieldX = Math.round(srcX + 65 + (detX - srcX - 65 - shieldW) * 0.45);
-      let shieldColor = '#94a3b8'; // default
-      if (this.params.shieldMaterial === 'paper') shieldColor = '#f8fafc';
-      else if (this.params.shieldMaterial === 'aluminum') shieldColor = '#38bdf8';
-      else if (this.params.shieldMaterial === 'lead') shieldColor = '#475569';
-      else if (this.params.shieldMaterial === 'concrete') shieldColor = '#78716c';
+      if (this.params.radiationType === 'alpha') {
+        wR = 20;
+        muVal = 999;
+      } else if (this.params.radiationType === 'beta') {
+        wR = 1;
+        muVal = 2.5;
+      } else if (this.params.radiationType === 'gamma') {
+        wR = 1;
+        if (this.params.shieldMaterial === 'paper') muVal = 0.01;
+        else if (this.params.shieldMaterial === 'aluminum') muVal = 0.20;
+        else if (this.params.shieldMaterial === 'concrete') muVal = 0.14;
+        else if (this.params.shieldMaterial === 'lead') muVal = 0.77;
+      }
+
+      if (this.params.shieldMaterial === 'paper') {
+        shieldColor = '#f1f5f9';
+        matName = 'กระดาษ / ผิวหนังชั้นนอก (Epidermis, ~0.1 mm)';
+        hvlText = '0.05 mm';
+      } else if (this.params.shieldMaterial === 'aluminum') {
+        shieldColor = '#38bdf8';
+        matName = 'แผ่นอะลูมิเนียมเกรดวิศวกรรม (Al-6061)';
+        hvlText = '3.5 cm (γ)';
+      } else if (this.params.shieldMaterial === 'lead') {
+        shieldColor = '#64748b';
+        matName = 'แผ่นตะกั่วบริสุทธิ์ชีลด์รังสี (Pb-208)';
+        hvlText = '9.0 mm (γ)';
+      } else if (this.params.shieldMaterial === 'concrete') {
+        shieldColor = '#78716c';
+        matName = 'คอนกรีตมวลหนักสำหรับเตาปฏิกรณ์ (Heavy Concrete)';
+        hvlText = '5.0 cm (γ)';
+      }
 
       const shieldH = isMobile ? 170 : 220;
       const shieldY = srcY - Math.round(shieldH * 0.5);
       ctx.fillStyle = shieldColor;
       ctx.fillRect(shieldX, shieldY, shieldW, shieldH);
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = '#f8fafc';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(shieldX, shieldY, shieldW, shieldH);
 
-      // Shield Label
+      // Shield Top Label & Bottom Specs
       ctx.fillStyle = '#f8fafc';
       ctx.font = 'bold 11px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`กำบัง: ${this.params.shieldMaterial.toUpperCase()} (${this.params.shieldThickness} mm)`, shieldX + shieldW / 2, shieldY - 10);
+      ctx.fillText(`${matName} (${this.params.shieldThickness} mm)`, shieldX + shieldW / 2, shieldY - 12);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '10px monospace';
+      ctx.fillText(`HVL ≈ ${hvlText} | μ ≈ ${muVal.toFixed(2)} cm⁻¹`, shieldX + shieldW / 2, shieldY + shieldH + 16);
 
-      // Render Particles
+      // Geiger-Müller Detector Target
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(detX, srcY - 50, 48, 120);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(detX, srcY - 50, 48, 120);
+
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 10.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('GM Tube', detX + 24, srcY - 6);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = '9px monospace';
+      ctx.fillText('หัววัดไกเกอร์', detX + 24, srcY + 12);
+
+      // Render Radiation Particles
       this.radiationParticles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -862,50 +1032,64 @@
         ctx.fill();
       });
 
-      // Attenuation calculation
-      let mu = 0.05; // cm^-1
-      let wR = 1;
-      if (this.params.radiationType === 'alpha') {
-        wR = 20; // High biological harm
-        mu = 999;
-      } else if (this.params.radiationType === 'beta') {
-        wR = 1;
-        mu = 2.5;
-      } else if (this.params.radiationType === 'gamma') {
-        wR = 1;
-        if (this.params.shieldMaterial === 'lead') mu = 0.77;
-        else if (this.params.shieldMaterial === 'concrete') mu = 0.14;
-        else if (this.params.shieldMaterial === 'aluminum') mu = 0.20;
-        else mu = 0.01;
+      // Render Dynamic Absorption Sparks on Shield Face
+      if (this.absorptionSparks && this.absorptionSparks.length > 0) {
+        this.absorptionSparks.forEach(s => {
+          const progress = Math.max(0, s.timer / 0.35);
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, (1 - progress) * 14 + 3, 0, Math.PI * 2);
+          ctx.strokeStyle = s.color || '#fbbf24';
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = progress;
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.restore();
+        });
       }
 
+      // Attenuation calculation
       const xCm = this.params.shieldThickness / 10;
-      const transFrac = (this.params.radiationType === 'alpha') ? 0 : Math.exp(-mu * xCm);
+      const transFrac = (this.params.radiationType === 'alpha') ? 0 : Math.exp(-muVal * xCm);
       const doseRateGy = (transFrac * 10).toFixed(2);
       const doseRateSv = (transFrac * 10 * wR).toFixed(2);
 
       // Bottom Telemetry card
       const telemY = isMobile ? 320 : 360;
-      const telemH = isMobile ? 75 : 85;
+      const telemH = isMobile ? 78 : 88;
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(20, telemY, w - 40, telemH);
       ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
       ctx.strokeRect(20, telemY, w - 40, telemH);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = isMobile ? 'bold 11px sans-serif' : 'bold 13px sans-serif';
+      ctx.font = isMobile ? 'bold 11px sans-serif' : 'bold 12.5px sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
+
+      let radName = '';
+      if (this.params.radiationType === 'alpha') radName = 'แอลฟา α (ฮีเลียม ⁴He²⁺)';
+      else if (this.params.radiationType === 'beta') radName = 'บีตาลบ β⁻ (อิเล็กตรอนความเร็วสูง e⁻)';
+      else radName = 'แกมมา γ (โฟตอนความถี่สูง hν)';
+
       if (isMobile) {
-        ctx.fillText(`☢️ รังสี: ${this.params.radiationType.toUpperCase()} (w_R = ${wR}) | ทะลุผ่าน: ${(transFrac * 100).toFixed(1)}%`, 30, telemY + 10);
+        ctx.fillText(`☢️ รังสี: ${radName} | w_R = ${wR}`, 28, telemY + 8);
         ctx.fillStyle = '#38bdf8';
         ctx.font = '10px monospace';
-        ctx.fillText(`D = ${doseRateGy} mGy/h | H = ${doseRateSv} mSv/h`, 30, telemY + 36);
+        ctx.fillText(`ชีลด์ x = ${this.params.shieldThickness} mm | ทะลุผ่าน I/I₀ = ${(transFrac * 100).toFixed(1)}%`, 28, telemY + 28);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText(`D = ${doseRateGy} mGy/h | H = ${doseRateSv} mSv/h`, 28, telemY + 48);
       } else {
-        ctx.fillText(`☢️ ชนิดรังสี: ${this.params.radiationType.toUpperCase()} (ค่าน้ำหนักรังสี w_R = ${wR}) | ความเข้มทะลุผ่าน I/I_0 = ${(transFrac * 100).toFixed(1)}%`, 35, telemY + 16);
+        ctx.fillText(`☢️ ชนิดรังสี: ${radName} | ค่าน้ำหนักรังสีทางชีววิทยา w_R = ${wR}`, 32, telemY + 12);
         ctx.fillStyle = '#38bdf8';
-        ctx.font = '12px monospace';
-        ctx.fillText(`ปริมาณรังสีดูดกลืน D = ${doseRateGy} mGy/h | ปริมาณรังสีสมมูลต่อเนื้อเยื่อ H = D·w_R = ${doseRateSv} mSv/h`, 35, telemY + 46);
+        ctx.font = '11.5px monospace';
+        ctx.fillText(`ความหนาชีลด์ x = ${this.params.shieldThickness} mm | สัมประสิทธิ์ μ = ${muVal.toFixed(2)} cm⁻¹ | สัดส่วนความเข้มทะลุผ่าน I/I₀ = ${(transFrac * 100).toFixed(1)}%`, 32, telemY + 36);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText(`อัตราปริมาณรังสีดูดกลืน D = ${doseRateGy} mGy/h | อัตราปริมาณรังสีสมมูลต่อเนื้อเยื่อ H = D·w_R = ${doseRateSv} mSv/h (ICRP-103)`, 32, telemY + 60);
       }
     }
 

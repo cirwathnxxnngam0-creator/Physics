@@ -22,14 +22,22 @@
       "name": "Phenomena Library Expansion",
       "status": "VERIFIED",
       "details": "Chapter 06 expanded to 20 phenomena, Ch01 has 30 phenomena, mismatched images cleaned"
+    },
+    {
+      "name": "Comprehensive 8 Defect Resolution & Multi-Sim Physics Polish",
+      "status": "VERIFIED",
+      "details": "Fixed thermo kinetic gas wall bounds & label collisions; enabled submode switching re-render; added AC RLC power factor (PF) & power breakdown; added Bi-209 radioactive element & fixed nuclide overlapping; fixed nuclear lattice decay bounds; eliminated shielding gap & non-repetitive labels; fixed typography line-break; synchronized chapter theory view"
     }
   ],
   "verificationMetrics": {
     "ch01PhenomenaCount": 30,
     "ch06PhenomenaCount": 20,
-    "lightboxModalActive": true,
+    "thermoGasOverflow": 0,
+    "nuclearLatticeOverflow": 0,
+    "bi209Included": true,
+    "acRlcPowerFactorTelemetry": true,
     "triPillarTestStatus": "PASSED (0 console errors)",
-    "mobileViewportValidated": "360x780",
+    "mobileViewportValidated": "360x780 and 390x844",
     "desktopViewportValidated": "1440x900"
   }
 }

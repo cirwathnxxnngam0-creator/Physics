@@ -1866,57 +1866,76 @@
         ctx.fillText(`φ=${phiDeg.toFixed(1)}°`, arcTextX - 12, arcTextY);
       }
 
-      // Bottom Card in Phasor Box: Circuit Numbers & Live Values
-      const cardY = pBoxY + 258;
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-      ctx.fillRect(pBoxX + 8, cardY, pBoxW - 16, 96);
+      // Bottom Card in Phasor Box: Circuit Numbers & Live Values (Enhanced Readability & PF)
+      const cardY = pBoxY + 242;
+      const cardH = 120;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+      ctx.fillRect(pBoxX + 6, cardY, pBoxW - 12, cardH);
       ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(pBoxX + 8, cardY, pBoxW - 16, 96);
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(pBoxX + 6, cardY, pBoxW - 12, cardH);
 
-      ctx.font = '10px monospace';
       ctx.textAlign = 'left';
 
       // Row 1: Reactances
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText('ค่ารีแอกแทนซ์:', pBoxX + 14, cardY + 18);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('รีแอกแทนซ์:', pBoxX + 12, cardY + 18);
+      ctx.font = 'bold 11.5px monospace';
       ctx.fillStyle = '#38bdf8';
-      ctx.fillText(`R=${R.toFixed(0)}Ω`, pBoxX + 90, cardY + 18);
+      ctx.fillText(`R=${R.toFixed(0)}Ω`, pBoxX + 80, cardY + 18);
       ctx.fillStyle = '#ef4444';
-      ctx.fillText(`XL=${XL.toFixed(1)}Ω`, pBoxX + 155, cardY + 18);
+      ctx.fillText(`XL=${XL.toFixed(1)}Ω`, pBoxX + 145, cardY + 18);
       ctx.fillStyle = '#a855f7';
-      ctx.fillText(`XC=${XC.toFixed(1)}Ω`, pBoxX + 230, cardY + 18);
+      ctx.fillText(`XC=${XC.toFixed(1)}Ω`, pBoxX + 225, cardY + 18);
 
-      // Row 2: Total Impedance & Nature
+      // Row 2: Total Impedance & Nature Badge
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText('อิมพีแดนซ์:', pBoxX + 14, cardY + 38);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('อิมพีแดนซ์:', pBoxX + 12, cardY + 40);
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 10.5px monospace';
-      ctx.fillText(`Z = ${this.acZ.toFixed(1)} Ω`, pBoxX + 78, cardY + 38);
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(`Z = ${this.acZ.toFixed(1)} Ω`, pBoxX + 80, cardY + 40);
 
-      const stateBadge = Math.abs(XL - XC) < 1.0 ? '🎯 เรโซแนนซ์ (XL ≈ XC)' : (XL > XC ? '🧲 อินดักทีฟ (V นำ I)' : '⚡ คาปาซิทีฟ (I นำ V)');
+      const stateBadge = Math.abs(XL - XC) < 1.0 ? '🎯 เรโซแนนซ์ (XL ≈ XC)' : (XL > XC ? '🧲 V นำ I (Lagging)' : '⚡ I นำ V (Leading)');
       const badgeColor = Math.abs(XL - XC) < 1.0 ? '#10b981' : (XL > XC ? '#ef4444' : '#a855f7');
-      ctx.font = '9.5px sans-serif';
+      ctx.font = 'bold 10.5px sans-serif';
       ctx.fillStyle = badgeColor;
-      ctx.fillText(stateBadge, pBoxX + 160, cardY + 38);
+      ctx.fillText(stateBadge, pBoxX + 172, cardY + 40);
 
       // Row 3: Instantaneous live v(t) and i(t)
-      ctx.font = '10px monospace';
+      ctx.font = 'bold 11px sans-serif';
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText('ค่าขณะใดขณะหนึ่ง:', pBoxX + 14, cardY + 58);
+      ctx.fillText('ขณะใดขณะหนึ่ง:', pBoxX + 12, cardY + 63);
       const v_inst = V0 * Math.cos(angle);
       const i_inst = I0 * Math.cos(angle - phi);
+      ctx.font = 'bold 11.5px monospace';
       ctx.fillStyle = '#f59e0b';
-      ctx.fillText(`v(t)=${(v_inst >= 0 ? '+' : '') + v_inst.toFixed(1)}V`, pBoxX + 115, cardY + 58);
+      ctx.fillText(`v(t)=${(v_inst >= 0 ? '+' : '') + v_inst.toFixed(1)}V`, pBoxX + 100, cardY + 63);
       ctx.fillStyle = '#38bdf8';
-      ctx.fillText(`i(t)=${(i_inst >= 0 ? '+' : '') + i_inst.toFixed(2)}A`, pBoxX + 215, cardY + 58);
+      ctx.fillText(`i(t)=${(i_inst >= 0 ? '+' : '') + i_inst.toFixed(2)}A`, pBoxX + 205, cardY + 63);
 
-      // Row 4: Power Factor
+      // Row 4: Power Factor (PF) & Power Components (Requested by User)
       const pf = Math.cos(phi);
+      const realP = Vrms * Irms * pf;
+      const apparentS = Vrms * Irms;
+      const reactiveQ = Vrms * Irms * Math.sin(phi);
+
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText('เพาเวอร์แฟกเตอร์:', pBoxX + 14, cardY + 78);
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('เพาเวอร์แฟกเตอร์:', pBoxX + 12, cardY + 86);
       ctx.fillStyle = '#34d399';
-      ctx.fillText(`cos(φ)=${pf.toFixed(3)} | P=${(Vrms * Irms * pf).toFixed(1)}W`, pBoxX + 110, cardY + 78);
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(`PF = ${Math.abs(pf).toFixed(3)} (cos φ)`, pBoxX + 115, cardY + 86);
+
+      // Row 5: Power Breakdown (P, S, Q)
+      ctx.font = 'bold 10.5px monospace';
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(`P=${realP.toFixed(1)}W`, pBoxX + 12, cardY + 107);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`| S=${apparentS.toFixed(1)}VA`, pBoxX + 85, cardY + 107);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText(`| Q=${Math.abs(reactiveQ).toFixed(1)}VAR`, pBoxX + 165, cardY + 107);
 
       // ----------------------------------------------------
       // Right Top: Dual-Trace Oscilloscope (2 Full Cycles)

@@ -147,7 +147,7 @@
       const vScale = (v_rms / 500) * 120; // visual pixel velocity
 
       const boxW = 340;
-      const boxH = 340;
+      const boxH = 320;
       const boxX = 30;
       const boxY = 60;
 
@@ -185,6 +185,8 @@
         this.subMode = subMode;
         if (subMode === 'kinetic_gas') this.initKineticGas();
         if (subMode === 'heat_conduction') this.initHeatConduction();
+        this.render();
+        this.emitTelemetry();
       }
     }
 
@@ -198,6 +200,8 @@
           this.barT[0] = this.params.barTempHot;
           this.barT[this.barNodes - 1] = this.params.barTempCold;
         }
+        this.render();
+        this.emitTelemetry();
       }
     }
 
@@ -291,7 +295,7 @@
 
     updateKineticGas(dt) {
       const boxW = 340;
-      const boxH = 340;
+      const boxH = 320;
       const boxX = 30;
       const boxY = 60;
       let totalImpulse = 0;
@@ -689,9 +693,9 @@
     // ----------------------------------------------------
     renderKineticGas(ctx, w, h) {
       const boxX = 30;
-      const boxY = 50;
+      const boxY = 60;
       const boxW = 340;
-      const boxH = 340;
+      const boxH = 320;
 
       // 2D Rigid Gas Enclosure
       ctx.fillStyle = '#020617';
@@ -723,19 +727,22 @@
         ctx.stroke();
       }
 
-      // Title & Pressure meter over box
+      // Title & Pressure meter over box (separated to prevent any collision)
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(`กล่องกักแก๊สจำลอง 2D (N = ${this.gasParticles.length} อนุภาค)`, boxX, boxY - 12);
+      ctx.font = 'bold 12.5px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(`กล่องกักแก๊ส 2D (N = ${this.gasParticles.length} อนุภาค)`, boxX, boxY - 12);
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '12px monospace';
-      ctx.fillText(`ความดันที่ผนัง P_wall ≈ ${this.measuredPressure} kPa`, boxX + 150, boxY - 12);
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`ความดัน P_wall ≈ ${this.measuredPressure} kPa`, boxX + boxW, boxY - 12);
 
       // ------------------------------------
       // RIGHT HALF: MAXWELL-BOLTZMANN HISTOGRAM
       // ------------------------------------
       const histX = 410;
-      const histY = 70;
+      const histY = 60;
       const histW = 350;
       const histH = 260;
 
@@ -744,6 +751,12 @@
       ctx.strokeStyle = '#334155';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(histX, histY, histW, histH);
+
+      // Graph Title
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('สถิติการแจกแจงอัตราเร็ว Maxwell-Boltzmann', histX, histY - 12);
 
       // Build speed histogram
       const numBins = 14;
@@ -762,20 +775,28 @@
       const barW = histW / numBins;
       for (let b = 0; b < numBins; b++) {
         const barH = (counts[b] / Math.max(1, this.gasParticles.length)) * histH * 3.5;
+        const clampedH = Math.min(histH - 4, barH);
         ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
-        ctx.fillRect(histX + b * barW + 2, histY + histH - barH, barW - 4, barH);
+        ctx.fillRect(histX + b * barW + 2, histY + histH - clampedH, barW - 4, clampedH);
       }
 
-      // Theoretical Maxwell-Boltzmann Continuous Curve Overlay
+      // Theoretical Maxwell-Boltzmann Continuous Curve Overlay (Clipped to prevent bleeding)
+      ctx.save();
       ctx.beginPath();
-      for (let px = 0; px <= histW; px += 4) {
+      ctx.rect(histX, histY, histW, histH);
+      ctx.clip();
+
+      const m = this.params.gasMolarMass / 6.022e23;
+      const k = 1.3806e-23;
+      const fMax = (4 / (Math.sqrt(Math.PI) * Math.E * vp)); // Analytical peak of MB distribution
+      const curveScale = (histH * 0.78) / Math.max(1e-12, fMax);
+
+      ctx.beginPath();
+      for (let px = 0; px <= histW; px += 3) {
         const v = (px / histW) * maxSpeedPlot;
-        // f(v) = 4*pi*(m/(2pi*k*T))^(3/2) * v^2 * exp(-m*v^2/(2*k*T))
-        const m = this.params.gasMolarMass / 6.022e23;
-        const k = 1.3806e-23;
         const coef = 4 * Math.PI * Math.pow(m / (2 * Math.PI * k * T), 1.5);
         const fv = coef * v * v * Math.exp((-m * v * v) / (2 * k * T));
-        const py = histY + histH - fv * 300000;
+        const py = histY + histH - fv * curveScale;
         if (px === 0) ctx.moveTo(histX + px, py);
         else ctx.lineTo(histX + px, py);
       }
@@ -798,24 +819,37 @@
       ctx.strokeStyle = '#22c55e';
       ctx.beginPath(); ctx.moveTo(xVrms, histY); ctx.lineTo(xVrms, histY + histH); ctx.stroke();
       ctx.setLineDash([]);
+      ctx.restore();
 
-      // Marker labels
-      ctx.fillStyle = '#ef4444'; ctx.font = '10px sans-serif'; ctx.fillText(`v_p = ${vp.toFixed(0)}`, xVp - 15, histY - 6);
-      ctx.fillStyle = '#f59e0b'; ctx.fillText(`v_avg = ${vAvg.toFixed(0)}`, xVavg - 15, histY - 18);
-      ctx.fillStyle = '#22c55e'; ctx.fillText(`v_rms = ${vRms.toFixed(0)}`, xVrms - 15, histY - 30);
+      // Marker labels inside graph box
+      ctx.font = 'bold 9.5px monospace';
+      ctx.textAlign = 'center';
+      if (xVp >= histX && xVp <= histX + histW) {
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText(`v_p=${vp.toFixed(0)}`, xVp, histY + 14);
+      }
+      if (xVavg >= histX && xVavg <= histX + histW) {
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText(`v_avg=${vAvg.toFixed(0)}`, xVavg, histY + 27);
+      }
+      if (xVrms >= histX && xVrms <= histX + histW) {
+        ctx.fillStyle = '#22c55e';
+        ctx.fillText(`v_rms=${vRms.toFixed(0)}`, xVrms, histY + 40);
+      }
 
       // Telemetry card below
       ctx.fillStyle = '#1e293b';
-      ctx.fillRect(boxX, 405, w - 60, 60);
+      ctx.fillRect(boxX, 400, w - 60, 65);
       ctx.strokeStyle = '#475569';
-      ctx.strokeRect(boxX, 405, w - 60, 60);
+      ctx.strokeRect(boxX, 400, w - 60, 65);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText(`📊 สถิติอัตราเร็วโมเลกุลแมกซ์เวลล์-โบลต์ซมันน์ (T = ${T} K, แก๊ส N₂ มวล 28 g/mol)`, boxX + 15, 424);
+      ctx.font = 'bold 12.5px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`📊 สถิติอัตราเร็วโมเลกุลแมกซ์เวลล์-โบลต์ซมันน์ (T = ${T} K, มวลโมลาร์ M = ${(this.params.gasMolarMass * 1000).toFixed(0)} g/mol)`, boxX + 15, 422);
       ctx.fillStyle = '#38bdf8';
       ctx.font = '11px monospace';
-      ctx.fillText(`v_p: ${vp.toFixed(1)} m/s (ยอดสูงสุด) < v_avg: ${vAvg.toFixed(1)} m/s < v_rms: ${vRms.toFixed(1)} m/s | <K_trans> = (3/2)k_B T = ${((1.5 * 1.38e-23 * T) * 1e21).toFixed(2)} × 10⁻²¹ J`, boxX + 15, 445);
+      ctx.fillText(`v_p: ${vp.toFixed(1)} m/s (ยอดสูงสุด) < v_avg: ${vAvg.toFixed(1)} m/s < v_rms: ${vRms.toFixed(1)} m/s | <K_trans> = (3/2)k_B T = ${((1.5 * 1.38e-23 * T) * 1e21).toFixed(2)} × 10⁻²¹ J`, boxX + 15, 444);
     }
 
     // ----------------------------------------------------

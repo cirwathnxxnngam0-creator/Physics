@@ -288,15 +288,15 @@
                 <span class="curriculum-code">บทที่ 04</span>
                 <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
-              <h4 class="curriculum-title">คลื่นกลและเสียง (Mechanical Waves & Acoustics)</h4>
+              <h4 class="curriculum-title">คลื่นกล เสียง และทัศนศาสตร์เชิงเรขาคณิต (Waves, Acoustics & Optics)</h4>
               <p class="curriculum-desc">
-                สมการคลื่น 1 มิติ อัตราเร็วคลื่น กำลังงานส่งผ่าน การสะท้อนที่รอยต่อ คลื่นนิ่งในเส้นเชือกและท่อลม บีตส์ สเกลความเข้มเสียงเดซิเบล ดอปเปลอร์ และคลื่นกระแทกโซนิกบูม
+                สมการคลื่น 1 มิติ อัตราเร็วคลื่น กำลังงานส่งผ่าน การสะท้อนและหักเห คลื่นนิ่ง บีตส์ ดอปเปลอร์ คลื่นกระแทกโซนิกบูม กระจกเว้า-นูน เลนส์นูน-เว้า สูตรช่างทำเลนส์ และทัศนูปกรณ์
               </p>
               <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองคลื่นกล คลื่นนิ่ง & บีตส์</span> • <span>🌍 4 ปรากฏการณ์</span>
+                <span>📚 3 ภาควิชา</span> • <span>📐 9 ทฤษฎีหลัก</span> • <span>🎯 6 แบบจำลองคลื่น แสง & โพลาไรเซชัน</span> • <span>🌍 6 ปรากฏการณ์</span>
               </div>
               <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch04" aria-label="เปิดบทที่ 4 คลื่นกลและเสียง">
+                <button class="btn-action-primary btn-open-chapter" data-chapter="ch04" aria-label="เปิดบทที่ 4 คลื่นกล เสียง และทัศนศาสตร์">
                   📖 เปิดบท
                 </button>
               </div>
@@ -2777,17 +2777,19 @@
               <div class="form-group" style="margin-bottom: 0.75rem;">
                 <label for="select-nuclide" class="control-label">เลือกนิวไคลด์มาตรฐานเพื่อวิเคราะห์:</label>
                 <select id="select-nuclide" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
-                  <option value="0">ไฮโดรเจนหนัก ²H (Deuterium)</option>
-                  <option value="1">ฮีเลียม ⁴He (Alpha Particle)</option>
-                  <option value="2">ลิเทียม ⁶Li</option>
-                  <option value="3">คาร์บอน ¹²C</option>
-                  <option value="4">ออกซิเจน ¹⁶O</option>
-                  <option value="5" selected>เหล็ก ⁵⁶Fe (จุดเสถียรสูงสุด)</option>
-                  <option value="6">นิกเกิล ⁶²Ni</option>
-                  <option value="7">ดีบุก ¹²⁰Sn</option>
-                  <option value="8">ตะกั่ว ²⁰⁸Pb</option>
-                  <option value="9">ยูเรเนียม ²³⁵U (เชื้อเพลิงฟิชชัน)</option>
-                  <option value="10">ยูเรเนียม ²³⁸U</option>
+                  <option value="0">ไฮโดรเจนหนัก ²H (Deuterium, A=2)</option>
+                  <option value="1">ฮีเลียม ⁴He (Alpha Particle, A=4)</option>
+                  <option value="2">ลิเทียม ⁶Li (A=6)</option>
+                  <option value="3">คาร์บอน ¹²C (A=12)</option>
+                  <option value="4">ออกซิเจน ¹⁶O (A=16)</option>
+                  <option value="5" selected>เหล็ก ⁵⁶Fe (จุดเสถียรภาพสูงสุดในเอกภพ, A=56)</option>
+                  <option value="6">นิกเกิล ⁶²Ni (Eb/A สูงสุด 8.794 MeV, A=62)</option>
+                  <option value="7">ดีบุก ¹²⁰Sn (A=120)</option>
+                  <option value="8">ตะกั่ว ²⁰⁸Pb (ธาตุเสถียรตัวสุดท้ายที่หนักที่สุด, A=208)</option>
+                  <option value="9">บิสมัท ²⁰⁹Bi (ธาตุกัมมันตรังสีปฐมภูมิตัวแรก/หนักสุด, A=209)</option>
+                  <option value="10">โพโลเนียม ²¹⁰Po (A=210)</option>
+                  <option value="11">ยูเรเนียม ²³⁵U (เชื้อเพลิงนิวเคลียร์ฟิชชัน, A=235)</option>
+                  <option value="12">ยูเรเนียม ²³⁸U (ไอโซโทปยูเรเนียมธรรมชาติหลัก, A=238)</option>
                 </select>
               </div>
               <p style="font-size: 0.85rem; color: #94a3b8;">
@@ -2820,19 +2822,19 @@
               <div class="form-group" style="margin-bottom: 0.75rem;">
                 <label for="select-radiation-type" class="control-label">ชนิดรังสี (Radiation Type):</label>
                 <select id="select-radiation-type" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
-                  <option value="alpha">แอลฟา α (²⁴He, w_R = 20)</option>
-                  <option value="beta">บีตา β⁻ (อิเล็กตรอน, w_R = 1)</option>
-                  <option value="gamma" selected>แกมมา γ (โฟตอนพลังงานสูง, w_R = 1)</option>
+                  <option value="alpha">แอลฟา α (นิวเคลียส ⁴He²⁺, ประจุ +2e, w_R = 20)</option>
+                  <option value="beta">บีตา β⁻ (อิเล็กตรอนความเร็วสูง e⁻, ประจุ -1e, w_R = 1)</option>
+                  <option value="gamma" selected>แกมมา γ (โฟตอนพลังงานสูงคลื่นแม่เหล็กไฟฟ้า, w_R = 1)</option>
                 </select>
               </div>
 
               <div class="form-group" style="margin-bottom: 0.75rem;">
                 <label for="select-shield-material" class="control-label">วัสดุกำบังรังสี (Shield Material):</label>
                 <select id="select-shield-material" class="form-select" style="width: 100%; padding: 0.4rem; border-radius: 4px; background: #1e293b; color: #f8fafc; border: 1px solid #475569;">
-                  <option value="paper">กระดาษ/ผิวหนัง Paper (0.1 mm)</option>
-                  <option value="aluminum">อะลูมิเนียม Aluminum (5 mm)</option>
-                  <option value="lead" selected>ตะกั่ว Lead (μ = 0.77 cm⁻¹)</option>
-                  <option value="concrete">คอนกรีต Concrete (μ = 0.14 cm⁻¹)</option>
+                  <option value="paper">กระดาษ / ผิวหนังกำพร้า (0.1 mm, หยุดแอลฟา 100%)</option>
+                  <option value="aluminum">อะลูมิเนียม Al-6061 (HVL ≈ 3.5 cm | μ = 0.20 cm⁻¹)</option>
+                  <option value="lead" selected>ตะกั่วชีลด์รังสี Pb (HVL = 9.0 mm | μ = 0.77 cm⁻¹)</option>
+                  <option value="concrete">คอนกรีตมวลหนักเตาปฏิกรณ์ (HVL = 5.0 cm | μ = 0.14 cm⁻¹)</option>
                 </select>
               </div>
 

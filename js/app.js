@@ -435,6 +435,14 @@
 
     currentView = viewId;
 
+    if (viewId === 'view-theory') {
+      renderTheoryContent(currentChapter);
+    } else if (viewId === 'view-formulas') {
+      renderFormulasContent(currentChapter);
+    } else if (viewId === 'view-phenomena') {
+      renderPhenomenaContent(currentChapter);
+    }
+
     // If entering simulator, ensure active mode canvas is sized and rendered
     if (viewId === 'view-simulator') {
       renderSimulatorEduContext(activeSimMode);
@@ -2916,11 +2924,12 @@
       boundsText = 'จำลอง 3 ระบบหลัก: (1) มวลติดสปริงในแนวราบ/ดิ่ง พร้อมการอนุรักษ์พลังงานกล E = K + U และวงโคจรพรีคอนดิชันใน Phase Space (2) ลูกตุ้มนาฬิกาอย่างง่าย เปรียบเทียบมุมเล็กเชิงเส้นกับผลเฉลยจริงเชิงตัวเลข RK4 (3) การสั่นหน่วง 3 สภาวะ (Underdamped, Critical, Overdamped) และการสั่นพ้องเรโซแนนซ์';
       controlMapText = '• สลับ 3 โหมดย่อย (มวลติดสปริง / ลูกตุ้มอย่างง่าย / การสั่นหน่วงและเรโซแนนซ์)<br>• ปรับค่ามวล m, สปริง k, ความยาวลูกตุ้ม L, ความหน่วง b และความถี่เร้า ω เพื่อสังเกตจุดยอดเรโซแนนซ์บนเส้นโค้ง A(ω) และแผนภาพเฟสสเปซ';
     } else if (mode === 'wave') {
-      title = 'โหมดที่ 6 (บทที่ 4): คลื่นกล คลื่นนิ่งในเส้นเชือก และการเกิดบีตส์';
-      badge = 'Mechanical Waves & Acoustics';
+      title = 'โหมดที่ 6 (บทที่ 4): คลื่นกล เสียง และทัศนศาสตร์เชิงเรขาคณิต';
+      badge = 'Waves, Acoustics & Optics Engine';
       equationsLatex = [
-        '\\frac{\\partial^2 y}{\\partial x^2} = \\frac{1}{v^2}\\frac{\\partial^2 y}{\\partial t^2},\\quad v = \\sqrt{\\frac{T_s}{\\mu}}',
-        'y(x,t) = 2A\\sin(kx)\\cos(\\omega t),\\quad f_n = n\\frac{v}{2L},\\quad f_{\\text{beat}} = |f_1 - f_2|'
+        '\\frac{\\partial^2 y}{\\partial x^2} = \\frac{1}{v^2}\\frac{\\partial^2 y}{\\partial t^2},\\quad v = \\sqrt{\\frac{T_s}{\\mu}} = f\\lambda,\\quad y(x,t) = 2A\\sin(kx)\\cos(\\omega t)',
+        'n_1\\sin\\theta_1 = n_2\\sin\\theta_2,\\quad \\frac{1}{f} = \\frac{1}{s} + \\frac{1}{s\'},\\quad \\frac{1}{f} = (n-1)\\left(\\frac{1}{R_1} - \\frac{1}{R_2}\\right)',
+        'I = I_0\\cos^2\\theta,\\quad f_{\\text{beat}} = |f_1 - f_2|,\\quad f\' = f\\left(\\frac{v \\pm v_O}{v \\mp v_S}\\right)'
       ];
       varsRows = [
         { sym: 'y(x,t)', name: 'การกระจัดของอนุภาคตัวกลาง', unit: '\\text{m}' },
@@ -2930,10 +2939,13 @@
         { sym: 'T_s', name: 'แรงตึงในเส้นเชือก', unit: '\\text{N}' },
         { sym: '\\mu', name: 'ความหนาแน่นมวลเชิงเส้น', unit: '\\text{kg/m}' },
         { sym: 'f', name: 'ความถี่คลื่น', unit: '\\text{Hz}' },
-        { sym: 'P_{\\text{avg}}', name: 'กำลังงานเฉลี่ยที่ส่งผ่าน', unit: '\\text{W}' }
+        { sym: 'n', name: 'ดัชนีหักเหของตัวกลางโปร่งใส', unit: '—' },
+        { sym: 's, s\'', name: 'ระยะวัตถุ และระยะภาพ', unit: '\\text{cm}' },
+        { sym: 'f_{\\text{lens}}', name: 'ความยาวโฟกัสของเลนส์หรือกระจกเงา', unit: '\\text{cm}' },
+        { sym: 'I(\\theta)', name: 'ความเข้มแสงหลังผ่านแผ่นโพลาไรเซอร์ (กฎมาลุส)', unit: '\\text{W/m}^2' }
       ];
-      boundsText = 'ครอบคลุม 3 รูปแบบการแผ่: (1) คลื่นเคลื่อนที่ตามขวางบนเส้นเชือกอุดมคติ อนุภาคสั่นฮาร์มอนิกแนวดิ่งไม่มีการไหลของมวล (2) คลื่นนิ่งและฮาร์มอนิก n=1..6 ในเส้นเชือกปลายตรึงสองข้าง พร้อมการระบุจุดบัพและปฏิบัพ (3) การแทรกสอดทางเวลาเกิดบีตส์ พร้อมระบบสังเคราะห์เสียงจริงผ่าน Web Audio API';
-      controlMapText = '• สลับ 3 โหมดย่อย (คลื่นเคลื่อนที่ตามขวาง / คลื่นนิ่ง & ฮาร์มอนิก / การซ้อนทับ & บีตส์)<br>• ปรับค่าความตึง Ts, มวลต่อความยาว mu, ความถี่ f และแอมพลิจูด เพื่อสังเกตการเปลี่ยนแปลงความเร็วคลื่นและกำลังงาน P_avg';
+      boundsText = 'ครอบคลุม 6 ระบบหลักของคลื่นและทัศนศาสตร์: (1) คลื่นเคลื่อนที่ตามขวางบนเส้นเชือก (2) คลื่นนิ่งและฮาร์มอนิก n=1..6 ในเส้นเชือกปลายตรึง (3) การแทรกสอดเกิดบีตส์พร้อมเสียง Web Audio (4) คลื่นผิวน้ำและการเคลื่อนที่แบบวงรี (5) คลื่นแสง สเปกตรัม การสะท้อน-หักเห และการรวมภาพของเลนส์บาง/กระจกโค้ง (6) โพลาไรเซชันของคลื่นแสงตามกฎของมาลุส I = I0 cos²(θ)';
+      controlMapText = '• สลับ 6 โหมดย่อย (คลื่นเคลื่อนที่ / คลื่นนิ่ง / บีตส์ / คลื่นผิวน้ำ / คลื่นแสง & สเปกตรัม / โพลาไรเซชัน)<br>• ปรับค่าความตึง Ts, ความถี่ f, ดัชนีหักเห n, มุมโพลาไรเซอร์ θ และความยาวโฟกัส เพื่อสังเกตการหักเห การแทรกสอด และความเข้มแสง';
     } else if (mode === 'thermo') {
       title = 'โหมดที่ 7 (บทที่ 5): อุณหพลศาสตร์ วัฏจักรความร้อน และทฤษฎีจลน์ของแก๊ส';
       badge = 'Thermodynamics & Kinetic Theory';
@@ -3267,6 +3279,28 @@
     else if (mode === 'em') targetChapter = 'ch06';
     else if (mode === 'nuclear') targetChapter = 'ch07';
     else if (mode === 'civil') targetChapter = 'civil_eng';
+
+    // Synchronize currentChapter with simulator mode's chapter
+    if (currentChapter !== targetChapter) {
+      currentChapter = targetChapter;
+      const badge = document.querySelector('.header-chapter-badge');
+      if (badge) {
+        if (currentChapter === 'ch01') badge.innerHTML = '<span>บทที่ 01 / 2D KINEMATICS & DYNAMICS</span> ▾';
+        else if (currentChapter === 'ch02') badge.innerHTML = '<span>บทที่ 02 / CIRCULAR MOTION & GRAVITATION</span> ▾';
+        else if (currentChapter === 'ch03') badge.innerHTML = '<span>บทที่ 03 / OSCILLATIONS & SIMPLE HARMONIC MOTION</span> ▾';
+        else if (currentChapter === 'ch04') badge.innerHTML = '<span>บทที่ 04 / WAVES, ACOUSTICS & OPTICS</span> ▾';
+        else if (currentChapter === 'ch05') badge.innerHTML = '<span>บทที่ 05 / THERMODYNAMICS & KINETIC THEORY</span> ▾';
+        else if (currentChapter === 'ch06') badge.innerHTML = '<span>บทที่ 06 / ELECTROMAGNETISM & CIRCUITS</span> ▾';
+        else if (currentChapter === 'ch07') badge.innerHTML = '<span>บทที่ 07 / NUCLEAR & MODERN PHYSICS</span> ▾';
+        else if (currentChapter === 'civil_eng') badge.innerHTML = '<span>สาขาวิศวกรรมโยธา / CIVIL ENGINEERING</span> ▾';
+      }
+      activeDivisionFilter = 'all';
+      activeFormulaDivisionFilter = 'all';
+      renderDrawerCatalog(currentChapter);
+      renderTheoryContent(currentChapter);
+      renderFormulasContent(currentChapter);
+      renderPhenomenaContent(currentChapter);
+    }
 
     const allChaps = ['ch01', 'ch02', 'ch03', 'ch04', 'ch05', 'ch06', 'ch07', 'civil_eng'];
     allChaps.forEach(ch => {
@@ -6379,6 +6413,7 @@
   window.getEMSimulator = () => emSimulatorInstance;
   window.switchSimMode = switchSimMode;
   window.switchView = switchView;
+  window.App = window.PhysicsApp;
 
   document.addEventListener('DOMContentLoaded', init);
 })();
