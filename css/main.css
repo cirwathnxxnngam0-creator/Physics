@@ -3399,46 +3399,78 @@ canvas {
   border: 1px solid var(--border-light);
   border-left: 4px solid #EA580C;
   border-radius: 8px;
-  margin: 1rem 0 1.25rem 0;
-  padding: 1.25rem;
+  margin: 0.75rem 0 1rem 0;
+  padding: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
 }
 
-.sim-edu-header {
+.sim-edu-collapsible {
+  width: 100%;
+}
+
+.sim-edu-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-light);
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+  list-style: none;
+}
+
+.sim-edu-summary:hover {
+  background: var(--bg-main);
+}
+
+.sim-edu-summary::-webkit-details-marker {
+  display: none;
 }
 
 .sim-edu-title {
-  font-size: 1.05rem;
-  font-weight: 800;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.sim-edu-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .sim-edu-badge {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  background: #FFF7ED;
-  border: 1px solid #FDBA74;
-  color: #C2410C;
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.35);
+  color: #EA580C;
   padding: 0.15rem 0.55rem;
   border-radius: 4px;
 }
 
+.sim-edu-toggle-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.sim-edu-body {
+  padding: 0.75rem 1rem 1rem 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
 .sim-edu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
-  margin-top: 0.75rem;
 }
 
 .sim-edu-section {
@@ -3446,6 +3478,7 @@ canvas {
   border: 1px solid var(--border-light);
   border-radius: 6px;
   padding: 0.85rem;
+  overflow: hidden;
 }
 
 .sim-edu-sec-title {
@@ -3464,6 +3497,9 @@ canvas {
   font-size: 0.95rem;
   margin: 0.35rem 0;
   line-height: 1.4;
+  overflow-x: auto;
+  max-width: 100%;
+  padding-bottom: 4px;
 }
 
 .sim-edu-vars-table {
@@ -3471,6 +3507,8 @@ canvas {
   font-size: 0.82rem;
   border-collapse: collapse;
   margin-top: 0.35rem;
+  overflow-x: auto;
+  display: block;
 }
 
 .sim-edu-vars-table th {

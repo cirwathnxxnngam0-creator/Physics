@@ -113,9 +113,9 @@
       const getCanvasCoords = (e) => {
         const rect = this.canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const scaleX = this.canvas.width / (rect.width * (window.devicePixelRatio || 1));
+        const w = this.width || rect.width || 400;
+        const scaleX = w / rect.width;
         const px = (clientX - rect.left) * scaleX;
-        const w = this.canvas.width / (window.devicePixelRatio || 1);
         return (px / w) * 100.0; // World x (0..100)
       };
 
@@ -168,6 +168,9 @@
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.ctx.imageSmoothingEnabled = true;
       this.ctx.imageSmoothingQuality = 'high';
+      this.width = width;
+      this.height = height;
+      this.dpr = dpr;
       this.render();
     }
 
@@ -337,8 +340,8 @@
 
     render() {
       const ctx = this.ctx;
-      const w = this.canvas.width / (window.devicePixelRatio || 1);
-      const h = this.canvas.height / (window.devicePixelRatio || 1);
+      const w = this.width || 400;
+      const h = this.height || 280;
 
       ctx.clearRect(0, 0, w, h);
 

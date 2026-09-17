@@ -479,6 +479,8 @@
       const height = this.displayHeight;
 
       ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
 
       this._drawBackgroundGrid(ctx, width, height);
       this._drawGroundAndPlatforms(ctx);
@@ -747,14 +749,19 @@
       if (label) {
         ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         const metrics = ctx.measureText(label);
-        const lx = toX + 6 * Math.cos(angle);
-        const ly = toY + 6 * Math.sin(angle);
+        let lx = options.labelX !== undefined ? options.labelX : toX + 6 * Math.cos(angle);
+        let ly = options.labelY !== undefined ? options.labelY : toY + 6 * Math.sin(angle);
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.fillRect(lx - 2, ly - 10, metrics.width + 4, 13);
-        ctx.strokeStyle = 'rgba(203, 213, 225, 0.8)';
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(lx - 2, ly - 10, metrics.width + 4, 13);
+        // Prevent label clipping below canvas bottom and collision with scaling legend
+        if (ly > this.displayHeight - 26) {
+          ly = this.displayHeight - 26;
+        }
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        ctx.fillRect(lx - 2, ly - 10, metrics.width + 5, 14);
+        ctx.strokeStyle = 'rgba(203, 213, 225, 0.9)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(lx - 2, ly - 10, metrics.width + 5, 14);
 
         ctx.fillStyle = color;
         ctx.fillText(label, lx, ly);
@@ -785,12 +792,16 @@
           this._drawArrow(ctx, pos.sx, pos.sy, endVx, pos.sy, '#475569', `vx=${state.vx.toFixed(1)}`, {
             dash: [3, 3],
             lineWidth: 1.5,
-            headStyle: 'open'
+            headStyle: 'open',
+            labelX: (pos.sx + endVx) / 2 - 14,
+            labelY: pos.sy - 8
           });
           this._drawArrow(ctx, endVx, pos.sy, endVx, endVy, '#475569', `vy=${state.vy.toFixed(1)}`, {
             dash: [3, 3],
             lineWidth: 1.5,
-            headStyle: 'open'
+            headStyle: 'open',
+            labelX: endVx + (state.vy >= 0 ? 8 : -50),
+            labelY: (pos.sy + endVy) / 2
           });
         }
       }
@@ -813,10 +824,12 @@
       if (this.vectors.showGravity) {
         const fgMag = this.params.m * this.params.g;
         const cappedLen = Math.min(60, fgMag * fScale);
-        const endGy = pos.sy + cappedLen;
+        const endGy = Math.min(this.displayHeight - 28, pos.sy + cappedLen);
         this._drawArrow(ctx, pos.sx, pos.sy, pos.sx, endGy, '#334155', `mg=${fgMag.toFixed(1)}N`, {
           lineWidth: 2,
-          headStyle: 'filled'
+          headStyle: 'filled',
+          labelX: pos.sx + 8,
+          labelY: (pos.sy + endGy) / 2 + 4
         });
       }
 

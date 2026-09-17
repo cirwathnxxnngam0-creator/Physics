@@ -2946,7 +2946,7 @@
         { sym: 'V', name: 'ปริมาตรของกระบอกสูบ', unit: '\\text{L}' },
         { sym: 'T_H', name: 'อุณหภูมิแหล่งความร้อนสูง', unit: '\\text{K}' },
         { sym: 'T_C', name: 'อุณหภูมิแหล่งความร้อนต่ำ', unit: '\\text{K}' },
-        { sym: '\\eta', name: 'ประสิทธิภาพเชิงความร้อน', unit: '\\text{%}' },
+        { sym: '\\eta', name: 'ประสิทธิภาพเชิงความร้อน', unit: '\\text{\\%}' },
         { sym: 'W_{\\text{net}}', name: 'งานกลสุทธิต่อรอบวัฏจักร', unit: '\\text{J}' },
         { sym: 'v_{\\text{rms}}', name: 'อัตราเร็วรากกำลังสองเฉลี่ย', unit: '\\text{m/s}' },
         { sym: 'k', name: 'สภาพนำความร้อนของวัสดุ', unit: '\\text{W/(m}\\cdot\\text{K)}' }
@@ -3017,61 +3017,69 @@
       controlMapText = '• ลากเมาส์บนกระดานคานเพื่อตรวจสอบค่า $x$, $V(x)$, $M(x)$ และ $\\nu(x)$ แบบเรียลไทม์<br>• พิมพ์ตัวเลขโดยตรงในกล่องข้อความเพื่อจำลองคานช่วงเดี่ยว คานยื่น หรือวงกลมของมอร์ได้ทันที';
     }
     let html = `
-      <div class="sim-edu-header">
-        <div class="sim-edu-title">
-          <span>📚 ข้อมูลวิชาการกำกับแบบจำลอง: ${title}</span>
-        </div>
-        <span class="sim-edu-badge">${badge}</span>
-      </div>
+      <details class="sim-edu-collapsible">
+        <summary class="sim-edu-summary">
+          <div class="sim-edu-title">
+            <span class="sim-edu-icon">📖</span>
+            <span>ข้อมูลวิชาการและสมการกำกับแบบจำลอง: ${title}</span>
+          </div>
+          <div class="sim-edu-badge-group">
+            <span class="sim-edu-badge">${badge}</span>
+            <span class="sim-edu-toggle-hint">คลิกเพื่อดูสมการและพารามิเตอร์ ▾</span>
+          </div>
+        </summary>
 
-      <div class="sim-edu-grid">
-        <!-- Section 1: Governing Equations -->
-        <div class="sim-edu-section">
-          <div class="sim-edu-sec-title">📐 สมการเชิงอนุพันธ์กำกับแบบจำลอง (Governing Equations)</div>
-          <div class="sim-edu-equations">
-            ${equationsLatex.map(eq => `<div class="math-display">$$${eq}$$</div>`).join('')}
+        <div class="sim-edu-body">
+          <div class="sim-edu-grid">
+            <!-- Section 1: Governing Equations -->
+            <div class="sim-edu-section">
+              <div class="sim-edu-sec-title">📐 สมการเชิงอนุพันธ์กำกับแบบจำลอง (Governing Equations)</div>
+              <div class="sim-edu-equations">
+                ${equationsLatex.map(eq => `<div class="math-display">$$${eq}$$</div>`).join('')}
+              </div>
+            </div>
+
+            <!-- Section 2: Parameters & SI Units -->
+            <div class="sim-edu-section">
+              <div class="sim-edu-sec-title">📊 ตัวแปร พารามิเตอร์ และหน่วย SI สากล</div>
+              <table class="sim-edu-vars-table">
+                <thead>
+                  <tr>
+                    <th style="width: 25%;">ตัวแปร</th>
+                    <th style="width: 50%;">ความหมายทางฟิสิกส์</th>
+                    <th style="width: 25%;">หน่วย SI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${varsRows.map(r => {
+                    const uStr = (r.unit || '').trim();
+                    const isUnitless = !uStr || uStr.includes('ไร้หน่วย') || uStr.toLowerCase().includes('dimensionless') || uStr === '—' || uStr === '-' || uStr === '\\text{—}';
+                    const formattedUnit = isUnitless ? '—' : `$${uStr}$`;
+                    return `
+                    <tr>
+                      <td><strong>$${r.sym}$</strong></td>
+                      <td>${r.name}</td>
+                      <td>${formattedUnit}</td>
+                    </tr>
+                  `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Section 3: Boundary Conditions & Controls -->
+            <div class="sim-edu-section">
+              <div class="sim-edu-sec-title">📏 เงื่อนไขขอบเขต & ความสัมพันธ์กับค่าควบคุม</div>
+              <p style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1.5;">
+                <strong>ขอบเขตการใช้งานจริง:</strong> ${boundsText}
+              </p>
+              <div class="sim-edu-control-map">
+                ${controlMapText}
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- Section 2: Parameters & SI Units -->
-        <div class="sim-edu-section">
-          <div class="sim-edu-sec-title">📊 ตัวแปร พารามิเตอร์ และหน่วย SI สากล</div>
-          <table class="sim-edu-vars-table">
-            <thead>
-              <tr>
-                <th style="width: 25%;">ตัวแปร</th>
-                <th style="width: 50%;">ความหมายทางฟิสิกส์</th>
-                <th style="width: 25%;">หน่วย SI</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${varsRows.map(r => {
-                const uStr = (r.unit || '').trim();
-                const isUnitless = !uStr || uStr.includes('ไร้หน่วย') || uStr.toLowerCase().includes('dimensionless') || uStr === '—' || uStr === '-' || uStr === '\\text{—}';
-                const formattedUnit = isUnitless ? '—' : `$${uStr}$`;
-                return `
-                <tr>
-                  <td><strong>$${r.sym}$</strong></td>
-                  <td>${r.name}</td>
-                  <td>${formattedUnit}</td>
-                </tr>
-              `;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Section 3: Boundary Conditions & Controls -->
-        <div class="sim-edu-section">
-          <div class="sim-edu-sec-title">📏 เงื่อนไขขอบเขต & ความสัมพันธ์กับค่าควบคุม</div>
-          <p style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.5rem; line-height: 1.5;">
-            <strong>ขอบเขตการใช้งานจริง:</strong> ${boundsText}
-          </p>
-          <div class="sim-edu-control-map">
-            ${controlMapText}
-          </div>
-        </div>
-      </div>
+      </details>
     `;
 
     frame.innerHTML = html;
@@ -3249,6 +3257,23 @@
       else if (mode === 'nuclear') submode = 'binding_energy';
       else if (mode === 'civil') submode = 'simply_supported';
     }
+
+    // Map simulator mode to chapter and show corresponding pills
+    let targetChapter = 'ch01';
+    if (mode === 'circular') targetChapter = 'ch02';
+    else if (mode === 'oscillation') targetChapter = 'ch03';
+    else if (mode === 'wave') targetChapter = 'ch04';
+    else if (mode === 'thermo') targetChapter = 'ch05';
+    else if (mode === 'em') targetChapter = 'ch06';
+    else if (mode === 'nuclear') targetChapter = 'ch07';
+    else if (mode === 'civil') targetChapter = 'civil_eng';
+
+    const allChaps = ['ch01', 'ch02', 'ch03', 'ch04', 'ch05', 'ch06', 'ch07', 'civil_eng'];
+    allChaps.forEach(ch => {
+      document.querySelectorAll(`.sim-mode-btn[data-chapter="${ch}"]`).forEach(b => {
+        b.style.display = (ch === targetChapter) ? 'inline-flex' : 'none';
+      });
+    });
 
     // Update buttons in navbar
     document.querySelectorAll('.sim-mode-btn').forEach(btn => {

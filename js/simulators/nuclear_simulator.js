@@ -161,11 +161,13 @@
       this.canvas.addEventListener('click', (e) => {
         if (this.subMode === 'binding_energy') {
           const pos = getPos(e);
-          // Check click on any nuclide point
-          const originX = 70;
-          const originY = 380;
-          const plotW = this.canvas.width - 120;
-          const plotH = 280;
+          const w = this.width || 800;
+          const h = this.height || 480;
+          const isSmallScreen = w < 600;
+          const originX = w < 500 ? 45 : 70;
+          const originY = Math.min(370, h - (isSmallScreen ? 110 : 85));
+          const plotW = Math.max(220, w - originX - (w < 500 ? 20 : 50));
+          const plotH = Math.min(270, originY - 75);
 
           for (let i = 0; i < this.nuclides.length; i++) {
             const n = this.nuclides[i];
@@ -340,7 +342,7 @@
           }
 
           // Offscreen removal
-          if (p.x > this.canvas.width || p.y < 0 || p.y > this.canvas.height) {
+          if (p.x > (this.width || 800) || p.y < 0 || p.y > (this.height || 480)) {
             this.radiationParticles.splice(i, 1);
           }
         }
@@ -384,12 +386,12 @@
     // ==========================================
 
     render() {
-      if (this.canvas.width <= 300) {
+      if (!this.width || this.width <= 300) {
         this._setupCanvasResolution();
       }
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 800;
+      const h = this.height || 480;
 
       // Dark background
       ctx.fillStyle = '#090d16';
@@ -407,8 +409,8 @@
     // --- Submode 1: Binding Energy per Nucleon ---
     renderBindingEnergyCurve() {
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 800;
+      const h = this.height || 480;
 
       const isSmallScreen = w < 600;
       const originX = w < 500 ? 45 : 70;
@@ -655,8 +657,8 @@
     // --- Submode 2: Stochastic Radioactive Decay ---
     renderDecayStochastic() {
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 800;
+      const h = this.height || 480;
       const isMobile = w < 760;
 
       // Header
@@ -784,8 +786,8 @@
     // --- Submode 3: Radiation Shielding & Dosimetry ---
     renderShieldingDosimetry() {
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 800;
+      const h = this.height || 480;
       const isMobile = w < 600;
 
       // Header

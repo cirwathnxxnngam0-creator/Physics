@@ -146,8 +146,10 @@
         const rect = this.canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const scaleX = this.canvas.width / (rect.width * (window.devicePixelRatio || 1));
-        const scaleY = this.canvas.height / (rect.height * (window.devicePixelRatio || 1));
+        const w = this.width || rect.width || 400;
+        const h = this.height || rect.height || 300;
+        const scaleX = w / rect.width;
+        const scaleY = h / rect.height;
         const px = (clientX - rect.left) * scaleX;
         const py = (clientY - rect.top) * scaleY;
         return this.canvasToWorld(px, py);
@@ -188,8 +190,8 @@
     }
 
     worldToCanvas(wx, wy) {
-      const w = this.canvas.width / (window.devicePixelRatio || 1);
-      const h = this.canvas.height / (window.devicePixelRatio || 1);
+      const w = this.width || 400;
+      const h = this.height || 300;
       const scale = Math.min(w / 400, h / 300);
       const ox = (w - 400 * scale) / 2;
       const oy = (h - 300 * scale) / 2;
@@ -201,8 +203,8 @@
     }
 
     canvasToWorld(cx, cy) {
-      const w = this.canvas.width / (window.devicePixelRatio || 1);
-      const h = this.canvas.height / (window.devicePixelRatio || 1);
+      const w = this.width || 400;
+      const h = this.height || 300;
       const scale = Math.min(w / 400, h / 300);
       const ox = (w - 400 * scale) / 2;
       const oy = (h - 300 * scale) / 2;
@@ -241,6 +243,9 @@
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       this.ctx.imageSmoothingEnabled = true;
       this.ctx.imageSmoothingQuality = 'high';
+      this.width = width;
+      this.height = height;
+      this.dpr = dpr;
       this.render();
     }
 
@@ -380,8 +385,8 @@
 
     render() {
       const ctx = this.ctx;
-      const w = this.canvas.width / (window.devicePixelRatio || 1);
-      const h = this.canvas.height / (window.devicePixelRatio || 1);
+      const w = this.width || 400;
+      const h = this.height || 300;
 
       ctx.clearRect(0, 0, w, h);
 

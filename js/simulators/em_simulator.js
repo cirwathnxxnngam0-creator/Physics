@@ -182,14 +182,15 @@
       this.ctx.imageSmoothingQuality = 'high';
       this.width = w;
       this.height = h;
+      this.dpr = dpr;
     }
 
     resize() {
-      const oldW = this.canvas.width;
-      const oldH = this.canvas.height;
+      const oldW = this.width || 850;
+      const oldH = this.height || 480;
       this._setupCanvasResolution();
-      const newW = this.canvas.width;
-      const newH = this.canvas.height;
+      const newW = this.width;
+      const newH = this.height;
 
       if (this.charges && this.charges.length > 0) {
         if (this.charges[0] && (this.charges[0].x < 70 || this.charges[0].x > newW - 70)) {
@@ -211,8 +212,8 @@
     // ==========================================
 
     initCharges(resetPositions = true) {
-      const w = this.canvas && this.canvas.width > 0 ? this.canvas.width : 800;
-      const h = this.canvas && this.canvas.height > 0 ? this.canvas.height : 480;
+      const w = this.width || 850;
+      const h = this.height || 480;
       const cx = w / 2;
       const cy = h / 2;
 
@@ -313,8 +314,8 @@
     setupInteraction() {
       const getPos = (e) => {
         const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+        const scaleX = (this.width || 850) / rect.width;
+        const scaleY = (this.height || 480) / rect.height;
         return {
           x: (e.clientX - rect.left) * scaleX,
           y: (e.clientY - rect.top) * scaleY
@@ -344,16 +345,18 @@
 
       window.addEventListener('mousemove', (e) => {
         const pos = getPos(e);
+        const w = this.width || 850;
+        const h = this.height || 480;
         if (this.draggedCharge && this.subMode === 'field_charges') {
-          this.draggedCharge.x = Math.max(65, Math.min(this.canvas.width - 65, pos.x));
-          this.draggedCharge.y = Math.max(50, Math.min(this.canvas.height - 55, pos.y));
+          this.draggedCharge.x = Math.max(65, Math.min(w - 65, pos.x));
+          this.draggedCharge.y = Math.max(50, Math.min(h - 55, pos.y));
         } else if (this.isDraggingMagnet && this.subMode === 'faraday_induction') {
-          const newX = Math.max(80, Math.min(this.canvas.width - 120, pos.x));
+          const newX = Math.max(80, Math.min(w - 120, pos.x));
           this.magnetVx = (newX - this.magnetX) / 0.016;
           this.magnetX = newX;
         } else if (this.subMode === 'biot_savart') {
-          this.compassX = Math.max(30, Math.min(this.canvas.width - 30, pos.x));
-          this.compassY = Math.max(30, Math.min(this.canvas.height - 30, pos.y));
+          this.compassX = Math.max(30, Math.min(w - 30, pos.x));
+          this.compassY = Math.max(30, Math.min(h - 30, pos.y));
         }
       });
 
@@ -542,8 +545,8 @@
     }
 
     updateFieldCharges(dt) {
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 850;
+      const h = this.height || 480;
 
       for (let i = this.testParticles.length - 1; i >= 0; i--) {
         const p = this.testParticles[i];
@@ -583,6 +586,16 @@
     }
 
     updateLorentz(dt) {
+      const w = this.width || 850;
+      const h = this.height || 480;
+      const isMobile = w < 600;
+      const magX = Math.round(Math.max(75, w * 0.14));
+      const magY = isMobile ? 45 : 55;
+      const magH = Math.round(Math.min(360, h - (isMobile ? 60 : 75)));
+      const gunW = Math.max(55, magX - 15);
+      const gunMuzzleX = 10 + gunW;
+      const gunCenterY = Math.round(magY + magH * 0.5);
+
       this.gunTimer = (this.gunTimer || 0) + dt;
       if (this.gunTimer > 0.4) {
         this.gunTimer = 0;
@@ -590,8 +603,8 @@
         this.lorentzParticles.push({
           x_m: 0,
           y_m: 0,
-          x: 40,
-          y: 240,
+          x: gunMuzzleX,
+          y: gunCenterY,
           vx: this.params.particleVelocity,
           vy: 0,
           q: this.params.particleCharge,
@@ -606,7 +619,7 @@
 
       // Energy-conserving Boris pusher with 4 sub-steps per frame for precision and work=0 in pure B-field
       const subSteps = 4;
-      const h = dt / subSteps;
+      const hStep = dt / subSteps;
 
       for (let i = this.lorentzParticles.length - 1; i >= 0; i--) {
         const p = this.lorentzParticles[i];
@@ -617,11 +630,11 @@
         for (let step = 0; step < subSteps; step++) {
           // 1. Half electric acceleration (E is along y downward):
           const v_minus_x = p.vx;
-          const v_minus_y = p.vy + 0.5 * q_over_m * E * h;
+          const v_minus_y = p.vy + 0.5 * q_over_m * E * hStep;
 
           // 2. Boris magnetic rotation (B is into screen +z):
           // In 2D: (v x B)_x = v_y * B, (v x B)_y = -v_x * B
-          const t_z = 0.5 * q_over_m * B * h;
+          const t_z = 0.5 * q_over_m * B * hStep;
           const s_z = (2 * t_z) / (1 + t_z * t_z);
 
           const v_prime_x = v_minus_x + v_minus_y * t_z;
@@ -632,21 +645,21 @@
 
           // 3. Second half electric acceleration:
           p.vx = v_plus_x;
-          p.vy = v_plus_y + 0.5 * q_over_m * E * h;
+          p.vy = v_plus_y + 0.5 * q_over_m * E * hStep;
 
           // 4. Update SI position in meters:
-          p.x_m += p.vx * h;
-          p.y_m += p.vy * h;
+          p.x_m += p.vx * hStep;
+          p.y_m += p.vy * hStep;
 
           // 5. Update canvas pixel coordinates via explicit graphic scale (Rule #4):
-          p.x = 40 + p.x_m * this.LORENTZ_PX_PER_METER;
-          p.y = 240 + p.y_m * this.LORENTZ_PX_PER_METER;
+          p.x = gunMuzzleX + p.x_m * this.LORENTZ_PX_PER_METER;
+          p.y = gunCenterY + p.y_m * this.LORENTZ_PX_PER_METER;
         }
 
         p.trail.push({ x: p.x, y: p.y });
         if (p.trail.length > 100) p.trail.shift();
 
-        if (this.canvas && (p.x < 0 || p.x > this.canvas.width || p.y < 0 || p.y > this.canvas.height)) {
+        if (p.x < 0 || p.x > w || p.y < 0 || p.y > h) {
           this.lorentzParticles.splice(i, 1);
         }
       }
@@ -862,12 +875,12 @@
     // ==========================================
 
     render() {
-      if (this.canvas.width <= 300) {
+      if (!this.width || this.width <= 300) {
         this._setupCanvasResolution();
       }
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const w = this.width || 850;
+      const h = this.height || 480;
 
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, w, h);
