@@ -1,0 +1,35 @@
+{
+  "project": "PhysicsNoza 3.0",
+  "lastUpdated": "2026-09-17T15:05:00+07:00",
+  "status": "active",
+  "completedMilestones": [
+    {
+      "name": "Analytical Mechanics Navigation Refactoring",
+      "status": "VERIFIED",
+      "details": "Relocated into Chapter 01 Analytical Mechanics view"
+    },
+    {
+      "name": "Phenomena Visuals & Full Lightbox Modal",
+      "status": "VERIFIED",
+      "details": "Uncropped layout, [ดูภาพเต็ม] button, high-res Lightbox modal with physical forces breakdown"
+    },
+    {
+      "name": "Lightning & Atmospheric Electrical Discharges Coverage",
+      "status": "VERIFIED",
+      "details": "7 in-depth lightning phenomena added in Chapter 06"
+    },
+    {
+      "name": "Phenomena Library Expansion",
+      "status": "VERIFIED",
+      "details": "Chapter 06 expanded to 20 phenomena, Ch01 has 30 phenomena, mismatched images cleaned"
+    }
+  ],
+  "verificationMetrics": {
+    "ch01PhenomenaCount": 30,
+    "ch06PhenomenaCount": 20,
+    "lightboxModalActive": true,
+    "triPillarTestStatus": "PASSED (0 console errors)",
+    "mobileViewportValidated": "360x780",
+    "desktopViewportValidated": "1440x900"
+  }
+}

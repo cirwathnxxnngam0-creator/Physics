@@ -82,16 +82,25 @@
     }
 
     _setupCanvasResolution() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const rect = this.canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const width = rect.width || 800;
-      const height = rect.height || 480;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
 
-      this.canvas.width = Math.round(width * dpr);
-      this.canvas.height = Math.round(height * dpr);
+      let w = parentW > 0 ? parentW : (rect.width > 0 ? rect.width : Math.min(window.innerWidth - 32, 800));
+      w = Math.max(w, 280);
+      const aspect = 480 / 800;
+      const h = Math.round(w * aspect);
+
+      this.canvas.width = Math.round(w * dpr);
+      this.canvas.height = Math.round(h * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.width = width;
-      this.height = height;
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
+      this.width = w;
+      this.height = h;
     }
 
     resize() {

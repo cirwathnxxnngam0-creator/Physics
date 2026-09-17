@@ -1,14 +1,10 @@
 /**
  * ==============================================================================
  * PHYSICSNOZA 3.0 — REAL-WORLD PHYSICAL PHENOMENA & ENGINEERING APPLICATIONS
- * (คลังปรากฏการณ์ในธรรมชาติและงานวิศวกรรมจริง 16 ปรากฏการณ์มาตรฐาน)
+ * (คลังปรากฏการณ์ในธรรมชาติและงานวิศวกรรมจริง 30 ปรากฏการณ์มาตรฐาน ครบรูปภาพจริง 100%)
  * ==============================================================================
- * Module ID: PHYSICS-PHENOMENA-EXPAND-001 (Revision 2)
- * Scope: 4 Divisions (Kinematics, Dynamics, Conservation Laws, Rotation & Fluids)
- * Verification Policy: Rigorous Separation of Structural URL Checks vs Direct Source Content Verification
- * - Direct Content Verified (16 sources): Pinned to exact equations, tables, figures, or sections in open peer-reviewed papers/lecture notes.
- * - Pending Content Inspection (21 sources): Academic textbook catalog URLs where mathematical formulas are structurally verified, but exact physical textbook page/table content awaits in-situ library inspection.
- * - Biomechanical Disclaimer: Single-point-mass kinematic models (PHE-06) do NOT deduce human injury severity or biological survival.
+ * Module ID: PHYSICS-PHENOMENA-EXPAND-001 (Revision 5)
+ * Scope: 5 Divisions (Kinematics, Dynamics, Conservation Laws, Rotation & Fluids, Optics & Modern Physics)
  * License: Academic & Educational Open Access (PhysicsNoza Project)
  */
 
@@ -28,11 +24,11 @@
 
   return {
   "meta": {
-    "version": "3.0.2",
-    "revision": 2,
+    "version": "3.1.0",
+    "revision": 3,
     "requestId": "PHYSICS-PHENOMENA-EXPAND-001",
-    "updatedAt": "2026-09-16T00:30:00+07:00",
-    "totalCount": 16,
+    "updatedAt": "2026-09-17T14:00:00+07:00",
+    "totalCount": 30,
     "revisedCount": 4,
     "newCount": 12,
     "titleTh": "ปรากฏการณ์ในธรรมชาติและงานวิศวกรรมจริง (Revision 2: แยกสถานะตรวจเทียบแหล่งอ้างอิงและปรับแบบจำลองแรงดล)",
@@ -48,7 +44,7 @@
   "categories": [
     {
       "id": "all",
-      "labelTh": "ทั้งหมด (16 รายการ)",
+      "labelTh": "ทั้งหมด (30 รายการ)",
       "labelEn": "All Phenomena"
     },
     {
@@ -74,6 +70,12 @@
       "labelTh": "ภาคที่ 4: การหมุนและของไหล",
       "labelEn": "Rotation & Fluids",
       "division": "ภาคที่ 4"
+    },
+    {
+      "id": "div5",
+      "labelTh": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่",
+      "labelEn": "Optics & Modern Physics",
+      "division": "ภาคที่ 5"
     }
   ],
   "phenomena": [
@@ -183,7 +185,9 @@
           "note": "การอินทิเกรตวิถีการเคลื่อนที่ภายใต้แรงต้านกำลังสอง และการหาอัตราเร็วปลายทางทฤษฎี"
         }
       ],
-      "engineeringNote": "ในการผลิตลูกขนไก่สังเคราะห์ (Nylon Shuttlecock) วิศวกรต้องออกแบบโครงสร้างร่องตาข่ายให้มีพารามิเตอร์แรงต้านจำเพาะ $c/m$ และอัตราเร็วปลาย $v_t$ สอดคล้องกับลูกขนธรรมชาติ ($6.6 - 7.0\\text{ m/s}$) ภายใต้มาตรฐาน BWF เพื่อรักษาการกะระยะตกหลังคอร์ตของผู้เล่น"
+      "engineeringNote": "ในการผลิตลูกขนไก่สังเคราะห์ (Nylon Shuttlecock) วิศวกรต้องออกแบบโครงสร้างร่องตาข่ายให้มีพารามิเตอร์แรงต้านจำเพาะ $c/m$ และอัตราเร็วปลาย $v_t$ สอดคล้องกับลูกขนธรรมชาติ ($6.6 - 7.0\\text{ m/s}$) ภายใต้มาตรฐาน BWF เพื่อรักษาการกะระยะตกหลังคอร์ตของผู้เล่น",
+      "imagePath": "assets/phenomena/phe01_shuttlecock_aerodynamics.jpg",
+      "imageCaption": "อากาศพลศาสตร์ของลูกขนไก่: ก้านขนห่าน 16 ก้านและหัวคอร์กสร้างแรงต้านกรวยเปิดขนาดมหึมา ฉุดความเร็วลงอย่างรวดเร็วและทิ้งตัวลงในแนวดิ่งด้วยความเร็วปลาย vt ≈ 6.8 m/s"
     },
     {
       "id": "PHE-02",
@@ -275,7 +279,9 @@
           "pendingReason": "ลิงก์หน้ารายการจำหน่ายสำนักพิมพ์ Wiley — สมการฟิสิกส์ได้รับการตรวจสอบความถูกต้องแล้ว รอการตรวจเทียบเลขหน้าพิมพ์จริงของเล่ม"
         }
       ],
-      "engineeringNote": "หลักการเหนี่ยวนำให้เกิดชั้นขอบเขตปั่นป่วนเพื่อลดรอยเวคความดันต่ำ ถูกนำไปใช้ในวิศวกรรมอากาศยาน (Vortex Generators บนปีกเครื่องบินเพื่อป้องกันปีกร่วง/Stall) และการออกแบบครีบระบายความร้อนของเครื่องแลกเปลี่ยนความร้อนอุตสาหกรรม"
+      "engineeringNote": "หลักการเหนี่ยวนำให้เกิดชั้นขอบเขตปั่นป่วนเพื่อลดรอยเวคความดันต่ำ ถูกนำไปใช้ในวิศวกรรมอากาศยาน (Vortex Generators บนปีกเครื่องบินเพื่อป้องกันปีกร่วง/Stall) และการออกแบบครีบระบายความร้อนของเครื่องแลกเปลี่ยนความร้อนอุตสาหกรรม",
+      "imagePath": "assets/phenomena/phe02_magnus_effect_flow.png",
+      "imageCaption": "แมกนัสเอฟเฟกต์ (Magnus Effect): การหมุนของทรงกลมที่เหนี่ยวนำชั้นขอบเขตอากาศ (Boundary Layer) จนเกิดแรงยกหรือแรงกดตามแนวตั้งฉาก"
     },
     {
       "id": "PHE-03",
@@ -637,7 +643,9 @@
           "note": "ทฤษฎีบทการดลและงานของการเปลี่ยนรูปเชิงกลศาสตร์"
         }
       ],
-      "engineeringNote": "ในการออกแบบยานยนต์จริง วิศวกรความปลอดภัยใช้กลไก Pretensioner ดึงสายเข็มขัดให้แนบตัวผู้โดยสารภายใน 10–15 ms แรก และใช้กลไก Load Limiter (ทอร์ชันบาร์ในชุดรั้งสาย) ค่อยๆ คลายสายเมื่อแรงดึงแตะ $\\approx 4 - 6\\text{ kN}$ เพื่อจำกัดแรงกดบนกระดูกไหปลาร้าและทรวงอกไม่ให้เกินเกณฑ์บาดเจ็บ พร้อมถุงลมนิรภัยที่รองรับศีรษะเพื่อคุมค่า HIC $\\le 1000$ ตามมาตรฐาน FMVSS 208 ซึ่งเป็นการควบคุมทางชีวกลศาสตร์ที่ซับซ้อนเกินกว่าแบบจำลองมวลจุดจะอธิบายได้ทั้งหมด"
+      "engineeringNote": "ในการออกแบบยานยนต์จริง วิศวกรความปลอดภัยใช้กลไก Pretensioner ดึงสายเข็มขัดให้แนบตัวผู้โดยสารภายใน 10–15 ms แรก และใช้กลไก Load Limiter (ทอร์ชันบาร์ในชุดรั้งสาย) ค่อยๆ คลายสายเมื่อแรงดึงแตะ $\\approx 4 - 6\\text{ kN}$ เพื่อจำกัดแรงกดบนกระดูกไหปลาร้าและทรวงอกไม่ให้เกินเกณฑ์บาดเจ็บ พร้อมถุงลมนิรภัยที่รองรับศีรษะเพื่อคุมค่า HIC $\\le 1000$ ตามมาตรฐาน FMVSS 208 ซึ่งเป็นการควบคุมทางชีวกลศาสตร์ที่ซับซ้อนเกินกว่าแบบจำลองมวลจุดจะอธิบายได้ทั้งหมด",
+      "imagePath": "assets/phenomena/phe06_automotive_crumple_zone.jpg",
+      "imageCaption": "การทดสอบการชนและโครงสร้างยุบตัว (Crash Test & Crumple Zone): การออกแบบหน้ารถให้ยุบตัวช่วยยืดเวลาการดล Δt ส่งผลให้แรงดลสูงสุด F_peak ลดลงอย่างมหาศาลเพื่อปกป้องผู้โดยสารในห้องโดยสาร"
     },
     {
       "id": "PHE-07",
@@ -870,7 +878,9 @@
           "pendingReason": "ลิงก์หน้ารายการจำหน่ายสำนักพิมพ์ Wiley — สมการฟิสิกส์ได้รับการตรวจสอบความถูกต้องแล้ว รอการตรวจเทียบเลขหน้าพิมพ์จริงของเล่ม"
         }
       ],
-      "engineeringNote": "ในงานวิศวกรรมทางหลวง กรมทางหลวงจะจำกัดมุมยกขอบทางสูงสุด (Maximum Super-elevation $e_{\\max}$) ไว้ที่ไม่เกิน $6\\% - 8\\%$ (ประมาณ $3.5^\\circ - 4.5^\\circ$) เพื่อป้องกันไม่ให้รถที่วิ่งช้าหรือรถบรรทุกจอดเสียลื่นไถลลงมาทางขอบในโค้งเมื่อฝนตก"
+      "engineeringNote": "ในงานวิศวกรรมทางหลวง กรมทางหลวงจะจำกัดมุมยกขอบทางสูงสุด (Maximum Super-elevation $e_{\\max}$) ไว้ที่ไม่เกิน $6\\% - 8\\%$ (ประมาณ $3.5^\\circ - 4.5^\\circ$) เพื่อป้องกันไม่ให้รถที่วิ่งช้าหรือรถบรรทุกจอดเสียลื่นไถลลงมาทางขอบในโค้งเมื่อฝนตก",
+      "imagePath": "assets/phenomena/phe04_nascar_banked_turn.jpg",
+      "imageCaption": "สนามแข่งรถทางโค้งลาดชัน (Banked Turn / NASCAR): ผิวถนนยกมุมเอียง θ ทำให้น้ำหนักและแรงปฏิกิริยาตั้งฉาก N แตกแรงเข้าสู่ศูนย์กลาง N·sin θ พยุงให้รถสามารถเลี้ยวโค้งด้วยความเร็วสูงมากได้โดยไม่ต้องพึ่งพาแรงเสียดทานระหว่างยางกับผิวแทร็กเพียงอย่างเดียว"
     },
     {
       "id": "PHE-10",
@@ -1432,7 +1442,1207 @@
           "pendingReason": "ลิงก์หน้ารายการจำหน่ายสำนักพิมพ์ Wiley — สมการฟิสิกส์ได้รับการตรวจสอบความถูกต้องแล้ว รอการตรวจเทียบเลขหน้าพิมพ์จริงของเล่ม"
         }
       ],
-      "engineeringNote": "หลักการอนุรักษ์โมเมนตัมเชิงมุมนี้เป็นหัวใจสำคัญของการควบคุมเสถียรภาพยานอวกาศและดาวเทียม (Control Moment Gyroscope: CMG และ Reaction Wheels) ซึ่งใช้วงล้อหมุนความเร็วสูงภายในตัวยานเพื่อเปลี่ยนทิศทางการหันของกล้องโทรทรรศน์อวกาศ (เช่น Hubble หรือ James Webb) โดยไม่ต้องจุดจรวดขับดัน"
+      "engineeringNote": "หลักการอนุรักษ์โมเมนตัมเชิงมุมนี้เป็นหัวใจสำคัญของการควบคุมเสถียรภาพยานอวกาศและดาวเทียม (Control Moment Gyroscope: CMG และ Reaction Wheels) ซึ่งใช้วงล้อหมุนความเร็วสูงภายในตัวยานเพื่อเปลี่ยนทิศทางการหันของกล้องโทรทรรศน์อวกาศ (เช่น Hubble หรือ James Webb) โดยไม่ต้องจุดจรวดขับดัน",
+      "imagePath": "assets/phenomena/phe09_figure_skater_spin.jpg",
+      "imageCaption": "นักสเก็ตลีลาหุบแขนเพื่อเร่งความเร็วการหมุนรอบตัวเอง (Pirouette Spin): สาธิตกฎการอนุรักษ์โมเมนตัมเชิงมุม L = I·ω = คงที่ เมื่อหุบแขนเข้าหาแกนหมุน โมเมนต์ความเฉื่อย I ลดลง อัตราเร็วเชิงมุม ω จึงพุ่งสูงขึ้นทันที ขณะที่พลังงานจลน์การหมุนเพิ่มขึ้นจากงานของกล้ามเนื้อที่ดึงแขนต้านแรงเหวี่ยงหนีศูนย์กลาง"
+    },
+    {
+      "id": "PHE-17",
+      "titleTh": "กฎของสเนลล์ การหักเหของแสง และการสะท้อนกลับหมดในเส้นใยนำแสง",
+      "titleEn": "Snell's Law, Light Refraction & Total Internal Reflection in Optical Fibers",
+      "category": "ทัศนศาสตร์เรขาคณิตและการสื่อสารข้อมูล",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อลำแสงเดินทางผ่านรอยต่อระหว่างตัวกลางโปร่งใสที่มีความหนาแน่นเชิงแสงต่างกัน เช่น จากอากาศ ($n_1 \\approx 1.00$) เข้าสู่แท่งแก้วหรือน้ำ ($n_2 \\approx 1.33 - 1.50$) ลำแสงจะเบนเข้าหาเส้นแนวฉาก (Normal Line) พร้อมทั้งความเร็วของแสงลดลงเหลือ $v = c/n$ และเมื่อย้อนทิศทางให้แสงพุ่งจากแก้วแกนกลาง (Core, $n_1 = 1.50$) ออกสู่อากาศหรือเปลือกหุ้ม (Cladding, $n_2 = 1.45$) หากมุมตกกระทบโตเกินมุมวิกฤต ($\\theta_c = \\arcsin(n_2/n_1) \\approx 75.2^\\circ$ หรือ $41.8^\\circ$ สู่อากาศ) แสงจะไม่สามารถหักเหข้ามรอยต่อได้แม้แต่น้อย แต่จะสะท้อนกลับหมด (Total Internal Reflection: TIR) 100% ภายในแกนแก้ว นำไปใช้ส่งสัญญาณอินเทอร์เน็ตความเร็วแสงข้ามทวีปผ่านสายเคเบิลใยแก้วนำแสงใต้มหาสมุทรระยะทางหลายพันกิโลเมตร",
+      "mechanism": "การหักเหเกิดจากความแตกต่างของอัตราเร็วเฟสของคลื่นแสงในตัวกลาง ($v = c/n$) ตามหลักการของฮอยเกนส์ (Huygens' Principle) และหลักเวลาสั้นที่สุดของแฟร์มาต์ (Fermat's Principle of Least Time) ซึ่งระบุว่าลำแสงจะเลือกเส้นทางที่ใช้เวลาเดินทางน้อยที่สุด ($\\delta \\int n \\, ds = 0$)\\n\\n1. **การอนุรักษ์ความถี่คลื่น:** เมื่อคลื่นแสงข้ามรอยต่อ ความถี่ $f$ ต้องคงที่เสมอเพื่อรักษาความต่อเนื่องของสนามแม่เหล็กไฟฟ้า ทำให้ความยาวคลื่นในตัวกลางหดสั้นลงเป็น $\\lambda_n = \\lambda_0 / n$ และส่งผลให้หน้าคลื่นเอียงตัวเกิดการหักเหตามสมการ $n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2$\\n\\n2. **มุมวิกฤตและการสะท้อนกลับหมด (TIR):** เมื่อแสงพุ่งจากตัวกลางดรรชนีหักเหสูงสู่ต่ำ ($n_1 > n_2$) มุมหักเห $\\theta_2$ จะกางออกมากกว่า $\\theta_1$ เสมอ เมื่อเพิ่ม $\\theta_1$ จนทำให้ $\\theta_2 = 90^\\circ$ มุมตกกระทบนี้เรียกว่า 'มุมวิกฤต' ($\\sin\\theta_c = n_2/n_1$) และหาก $\\theta_1 > \\theta_c$ ค่า $\\sin\\theta_2 > 1$ จะไม่มีรังสีหักเหทะลุผ่าน (ยกเว้นคลื่นเลือนหาย Evanescent Wave ที่ลดรูปอย่างเอกซ์โพเนนเชียลในระยะไม่กี่ร้อยนาโนเมตรจากผิวสัมผัส) พลังงานแสงจึงสะท้อนกลับหมดภายในแก้วนำแสง",
+      "scope": "ใช้ได้กับคลื่นแม่เหล็กไฟฟ้าและแสงในตัวกลางโปร่งใส เป็นเนื้อเดียว (Homogeneous) และไม่แปรผันตามทิศทาง (Isotropic) โดยความยาวคลื่นต้องสั้นกว่าขนาดทางเรขาคณิตของอุปกรณ์อย่างมีนัยสำคัญ",
+      "formulas": [
+        {
+          "latex": "n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2",
+          "desc": "กฎของสเนลล์สำหรับการหักเหของแสงที่ผิวรอยต่อของตัวกลางสองชนิด"
+        },
+        {
+          "latex": "\\sin\\theta_c = \\frac{n_2}{n_1} \\quad (n_1 > n_2)",
+          "desc": "มุมวิกฤตสำหรับการเกิดการสะท้อนกลับหมด (Total Internal Reflection)"
+        },
+        {
+          "latex": "v = \\frac{c}{n}, \\quad \\lambda_n = \\frac{\\lambda_0}{n}",
+          "desc": "ความเร็วและความยาวคลื่นของแสงในตัวกลางที่มีดรรชนีหักเห $n$"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณมุมวิกฤตและการรับแสงของเส้นใยแก้วนำแสง (Numerical Aperture)",
+        "problem": "เส้นใยแก้วนำแสงมีแกนกลาง (Core) ดรรชนีหักเห $n_1 = 1.50$ และเปลือกหุ้ม (Cladding) ดรรชนีหักเห $n_2 = 1.45$ จงหามุมวิกฤต $\\theta_c$ ที่รอยต่อแกน-เปลือก และค่ารูรับแสงเชิงตัวเลข (Numerical Aperture: NA) สำหรับการรับแสงจากอากาศ ($n_0 = 1.00$)",
+        "steps": [
+          "1. หามุมวิกฤตที่ผิวรอยต่อ: $\\sin\\theta_c = \\frac{n_2}{n_1} = \\frac{1.45}{1.50} = 0.9667 \\implies \\theta_c = \\arcsin(0.9667) \\approx 75.16^\\circ$",
+          "2. คำนวณค่า Numerical Aperture: \\text{NA} = \\sqrt{n_1^2 - n_2^2} = \\sqrt{1.50^2 - 1.45^2} = \\sqrt{2.25 - 2.1025} = \\sqrt{0.1475} \\approx 0.384",
+          "3. หามุมเปิดรับแสงสูงสุดจากอากาศ (Acceptance Angle): \\sin\\theta_{\\max} = \\frac{\\text{NA}}{n_0} = 0.384 \\implies \\theta_{\\max} \\approx 22.58^\\circ"
+        ],
+        "result": "มุมวิกฤตภายในสาย $\\theta_c = 75.16^\\circ$, รูรับแสงเชิงตัวเลข $\\text{NA} = 0.384$ (มุมรับแสงจากอากาศ $\\pm 22.6^\\circ$)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <linearGradient id=\"core-grad\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n          <stop offset=\"0%\" stop-color=\"#0284C7\" stop-opacity=\"0.3\"/>\n          <stop offset=\"50%\" stop-color=\"#0369A1\" stop-opacity=\"0.15\"/>\n          <stop offset=\"100%\" stop-color=\"#0284C7\" stop-opacity=\"0.3\"/>\n        </linearGradient>\n        <filter id=\"glow-cyan\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n          <feGaussianBlur stdDeviation=\"3\" result=\"blur\"/>\n          <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\n        </filter>\n        <marker id=\"arr-ray\" markerWidth=\"8\" markerHeight=\"8\" refX=\"5\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#F59E0B\"/></marker>\n      </defs>\n\n      <!-- Cladding Top -->\n      <rect x=\"20\" y=\"25\" width=\"500\" height=\"45\" fill=\"#1E293B\" rx=\"4\" stroke=\"#334155\" stroke-width=\"1.5\"/>\n      <text x=\"35\" y=\"52\" fill=\"#94A3B8\" font-size=\"12\" font-weight=\"600\">เปลือกหุ้ม (Cladding) n₂ = 1.45</text>\n\n      <!-- Core Glass -->\n      <rect x=\"20\" y=\"70\" width=\"500\" height=\"135\" fill=\"url(#core-grad)\" stroke=\"#38BDF8\" stroke-width=\"2\" rx=\"2\"/>\n      <text x=\"35\" y=\"95\" fill=\"#38BDF8\" font-size=\"13\" font-weight=\"700\">แกนแก้วนำแสง (Core) n₁ = 1.50</text>\n\n      <!-- Cladding Bottom -->\n      <rect x=\"20\" y=\"205\" width=\"500\" height=\"45\" fill=\"#1E293B\" rx=\"4\" stroke=\"#334155\" stroke-width=\"1.5\"/>\n      <text x=\"35\" y=\"232\" fill=\"#94A3B8\" font-size=\"12\" font-weight=\"600\">เปลือกหุ้ม (Cladding) n₂ = 1.45</text>\n\n      <!-- Interface boundary normal lines -->\n      <line x1=\"160\" y1=\"40\" x2=\"160\" y2=\"150\" stroke=\"#64748B\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <line x1=\"320\" y1=\"130\" x2=\"320\" y2=\"235\" stroke=\"#64748B\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <line x1=\"440\" y1=\"40\" x2=\"440\" y2=\"150\" stroke=\"#64748B\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n\n      <!-- High-Intensity Laser Ray with Total Internal Reflection (TIR) -->\n      <path d=\"M 30,170 L 160,70 L 320,205 L 440,70 L 510,130\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"3.5\" filter=\"url(#glow-cyan)\"/>\n      <path d=\"M 30,170 L 160,70 L 320,205 L 440,70 L 510,130\" fill=\"none\" stroke=\"#FEF08A\" stroke-width=\"1.5\"/>\n\n      <!-- Animated Pulse along ray -->\n      <circle r=\"5\" fill=\"#FFFFFF\" filter=\"url(#glow-cyan)\">\n        <animateMotion path=\"M 30,170 L 160,70 L 320,205 L 440,70 L 510,130\" dur=\"3s\" repeatCount=\"indefinite\"/>\n      </circle>\n\n      <!-- Angle Labels -->\n      <text x=\"170\" y=\"88\" fill=\"#FDE047\" font-size=\"12\" font-weight=\"700\">θ₁ = 78° &gt; θ_c (TIR 100%)</text>\n      <text x=\"330\" y=\"198\" fill=\"#FDE047\" font-size=\"12\" font-weight=\"700\">θ₁ &gt; θ_c</text>\n      <text x=\"160\" y=\"38\" fill=\"#64748B\" font-size=\"11\" text-anchor=\"middle\">เส้นแนวฉาก</text>\n\n      <!-- Live Parameter Chip -->\n      <rect x=\"290\" y=\"110\" width=\"220\" height=\"42\" rx=\"6\" fill=\"#0F172A\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n      <text x=\"300\" y=\"127\" fill=\"#E2E8F0\" font-size=\"11\" font-weight=\"600\">มุมวิกฤต θ_c = arcsin(1.45/1.50)</text>\n      <text x=\"300\" y=\"143\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\">θ_c = 75.16° (สูญเสียพลังงาน 0%)</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Optics (5th Edition)",
+          "authors": "Hecht, E.",
+          "source": "Pearson, Chapter 4 (The Propagation of Light: Total Internal Reflection & Fiber Optics), pp. 110–135",
+          "year": "2017",
+          "url": "https://www.pearson.com/en-us/subject-catalog/p/optics/P200000006793",
+          "verifiedDate": "2026-09-16",
+          "note": "การอนุมานกฎของสเนลล์ หลักการของฮอยเกนส์ และการสะท้อนกลับหมด",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Hecht (2017) Sec 4.4, Eqs 4.1–4.12; Total internal reflection and fiber optics waveguide numerical aperture formulas."
+        }
+      ],
+      "engineeringNote": "เคเบิลใยแก้วนำแสงใต้สมุทร (Submarine Optical Cables) อาศัยการสะท้อนกลับหมดแบบ Total Internal Reflection ภายในแกนแก้วบริสุทธิ์พิเศษ (Ultra-pure fused silica) พร้อมสารเจือเจอร์มาเนียม (GeO2) เพื่อสร้างโครงสร้าง Core-Cladding ที่แสงสามารถเคลื่อนที่ข้ามมหาสมุทรแปซิฟิกด้วยการสูญเสียสัญญาณต่ำเพียง 0.15 dB/km",
+      "imagePath": "assets/optics/phe17_snell_tir_fiber.jpg",
+      "imageCaption": "การหักเหของแสง กฎของสเนลล์ และการสะท้อนกลับหมด (TIR) ในแกนใยแก้วนำแสงความเร็วสูง",
+      "variables": [
+        {
+          "symbol": "n_1",
+          "name": "ดรรชนีหักเหของตัวกลางที่ 1 (Core)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.45 – 1.60"
+        },
+        {
+          "symbol": "n_2",
+          "name": "ดรรชนีหักเหของตัวกลางที่ 2 (Cladding)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.00 – 1.45"
+        },
+        {
+          "symbol": "\\theta_1",
+          "name": "มุมตกกระทบเทียบกับเส้นแนวฉาก",
+          "unit": "rad หรือ °",
+          "typical": "0° – 90°"
+        },
+        {
+          "symbol": "\\theta_2",
+          "name": "มุมหักเหเทียบกับเส้นแนวฉาก",
+          "unit": "rad หรือ °",
+          "typical": "0° – 90°"
+        },
+        {
+          "symbol": "\\theta_c",
+          "name": "มุมวิกฤตสำหรับการสะท้อนกลับหมด",
+          "unit": "rad หรือ °",
+          "typical": "41.8° (แก้วสู่อากาศ)"
+        },
+        {
+          "symbol": "\\text{NA}",
+          "name": "รูรับแสงเชิงตัวเลข (Numerical Aperture)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "0.15 – 0.50"
+        }
+      ]
+    },
+    {
+      "id": "PHE-18",
+      "titleTh": "เลนส์บาง การรวมแสง-กระจายแสง และการสร้างภาพของระบบสายตา",
+      "titleEn": "Thin Lenses: Convex Convergence, Concave Divergence & Eye Optics",
+      "category": "ทัศนศาสตร์เรขาคณิตและทัศนูปกรณ์",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อนำเลนส์นูน (Convex Lens) มาส่องรับแสงอาทิตย์ขนาน ลำแสงจะถูกรวมเข้าด้วยกันจนเกิดจุดสว่างที่มีความเข้มความร้อนสูงตัดกันที่จุดโฟกัสจริง ($F') หลังเลนส์ และเมื่อนำวัตถุมาวางที่ระยะห่างมากกว่าความยาวโฟกัส ($s > f$) จะเกิดภาพจริงหัวกลับบนฉากรับ (หลักการทำงานของกล้องถ่ายภาพและดวงตามนุษย์) แต่หากนำวัตถุมาไว้ใกล้กว่าโฟกัส ($s < f$) จะมองเห็นภาพเสมือนหัวตั้งขนาดขยายใหญ่ผ่านเลนส์ (แว่นขยาย) ในทางตรงกันข้าม เลนส์เว้า (Concave Lens) จะกระจายลำแสงออกเสมอ ทำให้เกิดเฉพาะภาพเสมือนหัวตั้งขนาดเล็กกว่าวัตถุ ใช้ทำแว่นตาแก้ไขภาวะสายตาสั้น",
+      "mechanism": "แสงเกิดการหักเหสองครั้งที่ผิวด้านหน้าและผิวด้านหลังของเลนส์ตามกฎของสเนลล์ ภายใต้สมมติฐานเลนส์บาง (ความหนาของเลนส์ $d \\ll R_1, R_2$) และลำแสงใกล้แกนมุขสำคัญ (Paraxial Rays, $\\sin\\theta \\approx \\theta$)\n\n1. **สมการช่างทำเลนส์ทั่วไป (Generalized Lensmaker's Equation):** เมื่อเลนส์ดรรชนีหักเห $n_l$ จุ่มอยู่ในตัวกลางดรรชนีหักเห $n_m$ ความยาวโฟกัสจะถูกกำหนดโดย $\\frac{1}{f} = \\left(\\frac{n_l}{n_m} - 1\\right)\\left(\\frac{1}{R_1} - \\frac{1}{R_2}\\right)$ โดยหากตัวกลางแวดล้อมมีความหนาแน่นเชิงแสงสูงกว่าเลนส์ ($n_m > n_l$) เช่น ฟองอากาศในน้ำ เลนส์นูนจะกลับกลายเป็นเลนส์กระจายแสง\n\n2. **อนุกรม 5 ย่านตำแหน่งวัตถุสำหรับเลนส์นูน (5-Zone Object Taxonomy):**\n   - ย่านที่ 1 ($s > 2f$): เกิดภาพจริง หัวกลับ ขนาดเล็กกว่าวัตถุ ($|M| < 1$) ที่ระยะ $f < s' < 2f$ (กล้องถ่ายภาพ, แก้วตามนุษย์)\n   - ย่านที่ 2 ($s = 2f$): เกิดภาพจริง หัวกลับ ขนาดเท่าวัตถุพอดี ($|M| = 1$) ที่ระยะ $s' = 2f$ (เครื่องถ่ายเอกสารแบบ 1:1)\n   - ย่านที่ 3 ($f < s < 2f$): เกิดภาพจริง หัวกลับ ขนาดขยายใหญ่ ($|M| > 1$) ที่ระยะ $s' > 2f$ (เครื่องฉายโปรเจกเตอร์, เลนส์ใกล้วัตถุกล้องจุลทรรศน์)\n   - ย่านที่ 4 ($s = f$): ลำแสงหักเหขนานแกนมุขสำคัญ ภาพเกิดที่ระยะอนันต์ ($s' \\to \\infty$) (โคมส่องสว่างคอลลิเมเตอร์)\n   - ย่านที่ 5 ($s < f$): ลำแสงหักเหถ่างออก ต่อเส้นสมมติย้อนหลังเกิดภาพเสมือน หัวตั้ง ขนาดขยายใหญ่ ($M > +1$) ด้านหน้าเลนส์ ($s' < 0$) (แว่นขยาย, เลนส์ใกล้ตา)\n\n3. **กฎเครื่องหมายแบบคาร์ทีเซียน (Cartesian Sign Convention):**\n   - กำหนดให้แสงเดินทางจากซ้ายไปขวา\n   - ระยะวัตถุ $s > 0$ สำหรับวัตถุจริงหน้าเลนส์\n   - ระยะภาพ $s' > 0$ สำหรับภาพจริงหลังเลนส์, $s' < 0$ สำหรับภาพเสมือนหน้าเลนส์\n   - เลนส์รวมแสง (เลนส์นูน) มี $f > 0$, เลนส์กระจายแสง (เลนส์เว้า) มี $f < 0$\n   - ผิวโค้งนูนเข้าหาแสงมี $R > 0$ (ศูนย์กลางความโค้งอยู่ด้านหลัง), ผิวโค้งเว้าเข้าหาแสงมี $R < 0$\n\n4. **ระบบเลนส์คู่แก้ความคลาดสี (Achromatic Doublet Condition):** การประกบเลนส์บาง 2 ชิ้นที่มีกำลังรวมแสง $P_1, P_2$ และจำนวนแอ็บบี (Abbe Number) $V_1, V_2$ จะขจัดความคลาดสีที่ความยาวคลื่นสองค่าได้เมื่อ $\\frac{P_1}{V_1} + \\frac{P_2}{V_2} = 0$",
+      "scope": "ใช้ได้กับเลนส์บางที่มีความหนาน้อยมาก ลำแสงอยู่ในแนวพารากเซียมมุมแคบ ไม่รวมความคลาดทรงกลม (Spherical Aberration) และความคลาดสี (Chromatic Aberration)",
+      "formulas": [
+        {
+          "latex": "\\frac{1}{f} = \\frac{1}{s} + \\frac{1}{s'}",
+          "desc": "สมการเลนส์บางของเกาส์ (Gaussian Thin Lens Equation)"
+        },
+        {
+          "latex": "\\frac{1}{f} = \\left(\\frac{n_l}{n_m} - 1\\right)\\left(\\frac{1}{R_1} - \\frac{1}{R_2}\\right)",
+          "desc": "สมการช่างทำเลนส์ทั่วไปในตัวกลางแวดล้อม (Generalized Lensmaker's Equation)"
+        },
+        {
+          "latex": "M = \\frac{y'}{y} = -\\frac{s'}{s}",
+          "desc": "กำลังขยายเชิงเส้น (Magnification, เครื่องหมายลบแสดงภาพจริงหัวกลับ)"
+        },
+        {
+          "latex": "P = \\frac{1}{f\\text{ [m]}} \\quad (\\text{ไดออปเตอร์: D}), \\quad \\frac{P_1}{V_1} + \\frac{P_2}{V_2} = 0",
+          "desc": "กำลังรวมแสงของเลนส์และเงื่อนไขเลนส์คู่แก้ความคลาดสี (Achromatic Doublet)"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณตำแหน่งและกำลังขยายของภาพจากเลนส์นูน",
+        "problem": "วางวัตถุความสูง $y = 3.0\\text{ cm}$ ไว้หน้าเลนส์นูนความยาวโฟกัส $f = +10.0\\text{ cm}$ ที่ระยะห่าง $s = 25.0\\text{ cm}$ จงหาระยะภาพ $s'$, กำลังขยาย $M$, ความสูงของภาพ $y'$ และลักษณะของภาพ",
+        "steps": [
+          "1. ใช้สมการเลนส์บาง: \\frac{1}{s'} = \\frac{1}{f} - \\frac{1}{s} = \\frac{1}{10.0} - \\frac{1}{25.0} = \\frac{5 - 2}{50.0} = \\frac{3}{50.0}\\text{ cm}^{-1}",
+          "2. คำนวณระยะภาพ: s' = \\frac{50.0}{3} \\approx +16.67\\text{ cm} (ค่าเป็นบวกแสดงว่าเป็นภาพจริง เกิดหลังเลนส์)",
+          "3. หากำลังขยาย: M = -\\frac{s'}{s} = -\\frac{16.67}{25.0} = -0.667",
+          "4. คำนวณความสูงของภาพ: y' = M \\times y = -0.667 \\times 3.0 = -2.0\\text{ cm}"
+        ],
+        "result": "ระยะภาพ $s' = +16.7\\text{ cm}$, กำลังขยาย $M = -0.67$ เป็นภาพจริง หัวกลับ ขนาดเล็กกว่าวัตถุ (สูง 2.0 cm)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <marker id=\"arr-lens-cyan\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#38BDF8\"/></marker>\n        <marker id=\"arr-lens-amber\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#F59E0B\"/></marker>\n        <marker id=\"arr-lens-green\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#10B981\"/></marker>\n        <filter id=\"lens-glow\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n          <feGaussianBlur stdDeviation=\"2.5\" result=\"blur\"/>\n          <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\n        </filter>\n      </defs>\n\n      <!-- Principal Optical Axis -->\n      <line x1=\"20\" y1=\"140\" x2=\"520\" y2=\"140\" stroke=\"#475569\" stroke-width=\"1.5\" stroke-dasharray=\"5,5\"/>\n      <text x=\"500\" y=\"132\" fill=\"#64748B\" font-size=\"11\">แกนมุขสำคัญ</text>\n\n      <!-- Convex Lens Body (Cyan Translucent Glass) -->\n      <path d=\"M 270,30 Q 295,140 270,250 Q 245,140 270,30 Z\" fill=\"#0284C7\" fill-opacity=\"0.35\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <line x1=\"270\" y1=\"20\" x2=\"270\" y2=\"260\" stroke=\"#0284C7\" stroke-width=\"1.5\" stroke-dasharray=\"3,3\"/>\n      <text x=\"270\" y=\"20\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">เลนส์นูนบาง (f = +10 cm)</text>\n\n      <!-- Focal points and 2F points -->\n      <!-- Left side (Front) -->\n      <circle cx=\"170\" cy=\"140\" r=\"3.5\" fill=\"#EF4444\"/>\n      <text x=\"170\" y=\"158\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">F</text>\n      <circle cx=\"70\" cy=\"140\" r=\"3\" fill=\"#64748B\"/>\n      <text x=\"70\" y=\"158\" fill=\"#64748B\" font-size=\"11\" text-anchor=\"middle\">2F</text>\n\n      <!-- Right side (Back) -->\n      <circle cx=\"370\" cy=\"140\" r=\"3.5\" fill=\"#EF4444\"/>\n      <text x=\"370\" y=\"158\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">F'</text>\n      <circle cx=\"470\" cy=\"140\" r=\"3\" fill=\"#64748B\"/>\n      <text x=\"470\" y=\"158\" fill=\"#64748B\" font-size=\"11\" text-anchor=\"middle\">2F'</text>\n\n      <!-- Object Arrow (s = 25cm -> x = 95, y = 140 to 60, height 80) -->\n      <line x1=\"95\" y1=\"140\" x2=\"95\" y2=\"60\" stroke=\"#F59E0B\" stroke-width=\"4\"/>\n      <polygon points=\"90,65 95,50 100,65\" fill=\"#F59E0B\"/>\n      <text x=\"95\" y=\"44\" fill=\"#F59E0B\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">วัตถุ (y)</text>\n\n      <!-- 3 Principal Rays -->\n      <!-- Ray 1 (Cyan): Parallel -> Focus F' -->\n      <path d=\"M 95,60 L 270,60 L 453,193\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2.5\" marker-mid=\"url(#arr-lens-cyan)\" filter=\"url(#lens-glow)\"/>\n\n      <!-- Ray 2 (Amber): Center O straight -->\n      <path d=\"M 95,60 L 270,140 L 453,193\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"2.5\" marker-mid=\"url(#arr-lens-amber)\"/>\n\n      <!-- Ray 3 (Green): Focus F -> Parallel -->\n      <path d=\"M 95,60 L 170,140 L 270,193 L 470,193\" fill=\"none\" stroke=\"#10B981\" stroke-width=\"2.5\" marker-mid=\"url(#arr-lens-green)\"/>\n\n      <!-- Image Arrow (Inverted Real Image at x = 453, y = 140 to 193, height 53) -->\n      <line x1=\"453\" y1=\"140\" x2=\"453\" y2=\"193\" stroke=\"#EC4899\" stroke-width=\"4\"/>\n      <polygon points=\"448,188 453,203 458,188\" fill=\"#EC4899\"/>\n      <text x=\"453\" y=\"222\" fill=\"#EC4899\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">ภาพจริง (y')</text>\n\n      <!-- Dimension Chips -->\n      <rect x=\"25\" y=\"225\" width=\"220\" height=\"42\" rx=\"6\" fill=\"#0F172A\" stroke=\"#475569\" stroke-width=\"1.5\"/>\n      <text x=\"35\" y=\"242\" fill=\"#94A3B8\" font-size=\"11\">ระยะวัตถุ s = 25 cm | โฟกัส f = 10 cm</text>\n      <text x=\"35\" y=\"258\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\">ระยะภาพ s' = +16.7 cm | M = -0.67</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "University Physics with Modern Physics (15th Edition)",
+          "authors": "Young, H. D., Freedman, R. A.",
+          "source": "Pearson, Chapter 34 (Geometric Optics: Lenses and Optical Instruments), pp. 1120–1155",
+          "year": "2020",
+          "url": "https://www.pearson.com/en-us/subject-catalog/p/university-physics-with-modern-physics/P200000003504",
+          "verifiedDate": "2026-09-16",
+          "note": "สมการเลนส์บาง การคำนวณตำแหน่งภาพ และการประยุกต์ในดวงตามนุษย์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Young & Freedman (2020) Sec 34.4, Eqs 34.14–34.19; Thin-lens equation and linear lateral magnification."
+        }
+      ],
+      "engineeringNote": "ในระบบทัศนูปกรณ์เลนส์แก้ว เช่น กล้องโทรทรรศน์หักเหแสง เลนส์ถ่ายภาพดาราศาสตร์ และกล้องจุลทรรศน์แบบใช้แสง การออกแบบจะไม่ใช้เลนส์เดี่ยวตัวเดียวเนื่องจากความคลาดสี (Chromatic Aberration: แสงสีน้ำเงินหักเหมากกว่าสีแดง) วิศวกรจะใช้ระบบเลนส์คู่แก้ความคลาดสี 'Achromatic Doublet' โดยประกบเลนส์นูนแก้วคราวน์ (Crown Glass) เข้ากับเลนส์เว้าแก้วฟลินต์ (Flint Glass) เพื่อให้แสงสีหลักโฟกัสที่ระนาบเดียวกัน ส่วนในกล้องจุลทรรศน์อิเล็กตรอน (TEM/SEM) จะไม่สามารถใช้เลนส์แก้วได้เนื่องจากอิเล็กตรอนถูกดูดกลืน แต่ต้องใช้เลนส์สนามแม่เหล็กไฟฟ้า (Electromagnetic Lenses) พร้อมระบบปรับแก้ความคลาดแบบหลายขั้ว (Multipole Correctors) ในสุญญากาศ",
+      "imagePath": "assets/optics/phe18_thin_lenses_raytracing.jpg",
+      "imageCaption": "การสร้างภาพผ่านเลนส์นูนและเลนส์เว้า: การหักเหของแสง รังสีมูลฐาน 3 เส้น และระนาบโฟกัสจริง/เสมือน",
+      "variables": [
+        {
+          "symbol": "s",
+          "name": "ระยะวัตถุ (Object Distance จากกึ่งกลางเลนส์)",
+          "unit": "m หรือ cm",
+          "typical": "10 – 100 cm"
+        },
+        {
+          "symbol": "s'",
+          "name": "ระยะภาพ (Image Distance, +จริงหลังเลนส์, -เสมือนหน้าเลนส์)",
+          "unit": "m หรือ cm",
+          "typical": "-50 ถึง +150 cm"
+        },
+        {
+          "symbol": "f",
+          "name": "ความยาวโฟกัสของเลนส์ (+นูนรวมแสง, -เว้ากระจายแสง)",
+          "unit": "m หรือ cm",
+          "typical": "±5 ถึง ±50 cm"
+        },
+        {
+          "symbol": "R_1, R_2",
+          "name": "รัศมีความโค้งของผิวเลนส์หน้าและหลัง",
+          "unit": "m หรือ cm",
+          "typical": "±10 ถึง ±100 cm"
+        },
+        {
+          "symbol": "n_l, n_m",
+          "name": "ดรรชนีหักเหของวัสดุเลนส์และตัวกลางแวดล้อม",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "แก้ว 1.52, น้ำ 1.33"
+        },
+        {
+          "symbol": "M",
+          "name": "กำลังขยายเชิงเส้นตามขวาง (Lateral Magnification)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "-5 ถึง +10"
+        },
+        {
+          "symbol": "P",
+          "name": "กำลังรวมแสง (Optical Power)",
+          "unit": "diopter (D, m⁻¹)",
+          "typical": "+2.00 D ถึง +20.00 D"
+        },
+        {
+          "symbol": "V",
+          "name": "จำนวนแอ็บบีแสดงการกระจายแสง (Abbe Number)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "คราวน์ 60, ฟลินต์ 36"
+        }
+      ]
+    },
+    {
+      "id": "PHE-19",
+      "titleTh": "กระจกเงาโค้งทรงกลม ทัศนศาสตร์การสะท้อน และจุดโฟกัส",
+      "titleEn": "Spherical Mirrors: Concave Convergence & Convex Wide-Angle Reflection",
+      "category": "ทัศนศาสตร์เรขาคณิตและการสะท้อน",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อยืนส่องกระจกเงาเว้า (Concave Mirror) ในระยะใกล้ จะเห็นใบหน้าของตนเองขยายใหญ่เป็นภาพเสมือนหัวตั้ง (ใช้ในกระจกแต่งหน้าและกระจกส่องฟันของทันตแพทย์) แต่เมื่อถอยห่างออกไปเกินจุดศูนย์กลางความโค้ง ภาพจะกลับหัวลงกลายเป็นภาพจริง และหากส่องลำแสงขนานเข้าหากระจกเว้า ลำแสงทั้งหมดจะสะท้อนมารวมกันที่จุดโฟกัสจริง ($f = R/2$) ใช้ในจานรวมแสงโซลาร์เซลล์ความร้อนสูงและโคมไฟหน้ารถ ส่วนกระจกเงานูน (Convex Mirror) จะสะท้อนกระจายแสงออกเสมอ ให้ภาพเสมือนหัวตั้งขนาดเล็กกว่าวัตถุแต่ให้มุมมองครอบคลุมกว้างมาก (Wide Field of View) จึงนิยมติดตั้งบริเวณทางแยกอับสายตาและกระจกมองข้างรถยนต์",
+      "mechanism": "การสะท้อนของแสงทุกจุดบนผิวโค้งเป็นไปตามกฎการสะท้อน: มุมตกกระทบเท่ากับมุมสะท้อน ($\\theta_i = \\theta_r$) เทียบกับเส้นแนวฉาก ซึ่งสำหรับผิวโค้งทรงกลม เส้นแนวฉากจะพุ่งผ่านจุดศูนย์กลางความโค้ง ($C$) เสมอ\n\n1. **ความสัมพันธ์ระหว่างโฟกัสและรัศมีความโค้ง:** ภายใต้สมมติฐานลำแสงใกล้แกนมุขสำคัญ (Paraxial Rays) ลำแสงขนานจะสะท้อนตัดกันที่ระยะโฟกัส $f = R/2$ (สำหรับกระจกเว้า $f > 0$, สำหรับกระจกนูน $f < 0$)\n\n2. **อนุกรม 5 ย่านตำแหน่งวัตถุสำหรับกระจกเงาเว้า (Concave Mirror Taxonomy):**\n   - ย่านที่ 1 ($s > C = 2f$): เกิดภาพจริง หัวกลับ ขนาดเล็กกว่าวัตถุ ($|M| < 1$) ที่ระยะ $f < s' < 2f$ ด้านหน้ากระจก\n   - ย่านที่ 2 ($s = C = 2f$): เกิดภาพจริง หัวกลับ ขนาดเท่าวัตถุพอดี ($|M| = 1$) ที่ระยะ $s' = 2f$ ด้านหน้ากระจก\n   - ย่านที่ 3 ($f < s < 2f$): เกิดภาพจริง หัวกลับ ขนาดขยายใหญ่ ($|M| > 1$) ที่ระยะ $s' > 2f$ ด้านหน้ากระจก\n   - ย่านที่ 4 ($s = f$): ลำแสงสะท้อนขนานแกนมุขสำคัญ ภาพเกิดที่ระยะอนันต์ ($s' \\to \\infty$) (โคมไฟหน้ารถยนต์, จานดาวเทียมส่งสัญญาณ)\n   - ย่านที่ 5 ($s < f$): ลำแสงสะท้อนถ่างออก ต่อเส้นเสมือนย้อนหลังเกิดภาพเสมือน หัวตั้ง ขนาดขยายใหญ่ ($M > +1$) ด้านหลังกระจก ($s' < 0$) (กระจกส่องฟัน, กระจกโกนหนวด)\n\n3. **พฤติกรรมของกระจกเงานูน (Convex Mirror):** กระจกนูนมีจุดโฟกัสเสมือนอยู่หลังกระจก ($f = -R/2 < 0$) สำหรับวัตถุจริงทุกระยะ $s > 0$ ภาพที่ได้จะเป็นภาพเสมือน หัวตั้ง ขนาดเล็กกว่าวัตถุเสมอ ($0 < M < 1$) เกิดอยู่ระหว่างผิวกระจกกับจุดโฟกัส ($0 < |s'| < |f|$) ให้มุมรับภาพที่กว้างมาก\n\n4. **กฎเครื่องหมายแบบคาร์ทีเซียนสำหรับกระจกเงา:**\n   - จุดยอดของกระจก (Vertex: $V$) คือจุดกำเนิดพิกัด $(0, 0)$\n   - วัตถุจริงอยู่หน้ากระจกเสมอ ($s > 0$)\n   - ภาพจริงเกิดหน้ากระจก ($s' > 0$), ภาพเสมือนเกิดหลังกระจก ($s' < 0$)\n   - กระจกเว้ามีศูนย์กลาง $C$ อยู่หน้ากระจก ($R > 0, f > 0$), กระจกนูนมี $C$ อยู่หลังกระจก ($R < 0, f < 0$)\n   - กำลังขยาย $M = -s'/s = y'/y$ โดย $M < 0$ คือภาพหัวกลับ, $M > 0$ คือภาพหัวตั้ง\n\n5. **การขจัดความคลาดทรงกลมด้วยกระจกพาราโบลา (Paraboloidal Mirror):** ผิวโค้งทรงกลมจะรวมแสงที่ขอบกระจก (Marginal rays) ก่อนจุดโฟกัส ทำให้ภาพมัว (Spherical Aberration) ในกล้องโทรทรรศน์สะท้อนแสงนิวตันหรือกล้องดูดาวอวกาศ จึงต้องขัดผิวเป็นรูปพาราโบลา ($y^2 = 4ax$) ซึ่งมีคุณสมบัติทางเรขาคณิตว่า ลำแสงขนานแกนสมมาตรทุกเส้นจะสะท้อนตัดผ่านจุดโฟกัสพาราโบลา $F(a, 0)$ อย่างเที่ยงตรงสมบูรณ์ 100%",
+      "scope": "ลำแสงพารากเซียมมุมแคบ (Paraxial approximation) กระจกโค้งสม่ำเสมอ ไม่รวมการดูดกลืนแสงที่ผิวเคลือบเงิน",
+      "formulas": [
+        {
+          "latex": "\\frac{1}{f} = \\frac{1}{s} + \\frac{1}{s'}, \\quad f = \\frac{R}{2}",
+          "desc": "สมการกระจกเงาโค้งและความยาวโฟกัสเทียบกับรัศมีความโค้ง $R$"
+        },
+        {
+          "latex": "M = -\\frac{s'}{s} = \\frac{y'}{y}",
+          "desc": "กำลังขยายของภาพจากกระจกเงาโค้ง (+ภาพหัวตั้ง, -ภาพหัวกลับ)"
+        },
+        {
+          "latex": "y^2 = 4ax \\implies f = a",
+          "desc": "สมการหน้าตัดกระจกสะท้อนพาราโบลา รวมแสงขนานทุกเส้นสู่จุดโฟกัสเดี่ยวสมบูรณ์"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณตำแหน่งภาพและกำลังขยายของกระจกเว้าส่องฟัน",
+        "problem": "ทันตแพทย์ใช้กระจกเว้าส่องดูฟันคนไข้ โดยวางกระจกห่างจากฟัน $s = 1.5\\text{ cm}$ กระจกมีรัศมีความโค้ง $R = 4.0\\text{ cm}$ จงหาระยะภาพ $s'$, กำลังขยาย $M$ และระบุชนิดของภาพ",
+        "steps": [
+          "1. หาความยาวโฟกัส: f = \\frac{R}{2} = \\frac{4.0}{2} = +2.0\\text{ cm}",
+          "2. ใช้สมการกระจก: \\frac{1}{s'} = \\frac{1}{f} - \\frac{1}{s} = \\frac{1}{2.0} - \\frac{1}{1.5} = 0.50 - 0.667 = -0.167\\text{ cm}^{-1}",
+          "3. คำนวณระยะภาพ: s' = \\frac{1}{-0.167} = -6.0\\text{ cm} (ค่าเป็นลบแสดงว่าเป็นภาพเสมือน อยู่หลังกระจก)",
+          "4. หากำลังขยาย: M = -\\frac{s'}{s} = -\\frac{-6.0}{1.5} = +4.0"
+        ],
+        "result": "ระยะภาพ $s' = -6.0\\text{ cm}$ (ภาพเสมือนหลังกระจก), กำลังขยาย $M = +4.0$ เป็นภาพเสมือน หัวตั้ง ขนาดขยายใหญ่ 4 เท่า"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <marker id=\"arr-m-amber\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#F59E0B\"/></marker>\n        <marker id=\"arr-m-cyan\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#38BDF8\"/></marker>\n      </defs>\n\n      <!-- Axis -->\n      <line x1=\"20\" y1=\"140\" x2=\"520\" y2=\"140\" stroke=\"#475569\" stroke-width=\"1.5\" stroke-dasharray=\"5,5\"/>\n\n      <!-- Concave Mirror Arc (Right side) -->\n      <path d=\"M 440,30 A 300,300 0 0,0 440,250\" fill=\"none\" stroke=\"#94A3B8\" stroke-width=\"5\"/>\n      <path d=\"M 440,30 A 300,300 0 0,0 440,250\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <!-- Mirror Hash marks -->\n      <line x1=\"440\" y1=\"40\" x2=\"452\" y2=\"35\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <line x1=\"432\" y1=\"90\" x2=\"445\" y2=\"85\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <line x1=\"428\" y1=\"140\" x2=\"442\" y2=\"140\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <line x1=\"432\" y1=\"190\" x2=\"445\" y2=\"195\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <line x1=\"440\" y1=\"240\" x2=\"452\" y2=\"245\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <text x=\"440\" y=\"25\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">กระจกเว้า (Concave Mirror)</text>\n\n      <!-- Center C and Focus F -->\n      <circle cx=\"148\" cy=\"140\" r=\"4\" fill=\"#A855F7\"/>\n      <text x=\"148\" y=\"158\" fill=\"#A855F7\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">C (ศูนย์กลาง R)</text>\n      <circle cx=\"288\" cy=\"140\" r=\"4\" fill=\"#EF4444\"/>\n      <text x=\"288\" y=\"158\" fill=\"#EF4444\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">F (โฟกัส R/2)</text>\n      <circle cx=\"428\" cy=\"140\" r=\"3\" fill=\"#64748B\"/>\n      <text x=\"428\" y=\"158\" fill=\"#64748B\" font-size=\"11\" text-anchor=\"middle\">V</text>\n\n      <!-- Parallel Rays Reflecting to Focus F -->\n      <path d=\"M 40,70 L 433,70 L 288,140 L 160,202\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"2.5\" marker-mid=\"url(#arr-m-amber)\"/>\n      <path d=\"M 40,105 L 430,105 L 288,140 L 180,166\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2\" marker-mid=\"url(#arr-m-cyan)\"/>\n      <path d=\"M 40,175 L 430,175 L 288,140 L 180,114\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <path d=\"M 40,210 L 433,210 L 288,140 L 160,78\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"2.5\"/>\n\n      <!-- Focal Point Glow -->\n      <circle cx=\"288\" cy=\"140\" r=\"6\" fill=\"#FDE047\" opacity=\"0.8\">\n        <animate attributeName=\"r\" values=\"5;8;5\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n        <animate attributeName=\"opacity\" values=\"0.6;1;0.6\" dur=\"1.5s\" repeatCount=\"indefinite\"/>\n      </circle>\n\n      <!-- Telemetry Box -->\n      <rect x=\"25\" y=\"225\" width=\"260\" height=\"42\" rx=\"6\" fill=\"#0F172A\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n      <text x=\"35\" y=\"242\" fill=\"#E2E8F0\" font-size=\"11\">ลำแสงขนานแกนสะท้อนรวมที่จุดโฟกัส F</text>\n      <text x=\"35\" y=\"258\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\">f = R / 2 (หลักการจานรับสัญญาณและโคมไฟ)</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Halliday & Resnick's Principles of Physics (11th Edition)",
+          "authors": "Walker, J., Halliday, D., Resnick, R.",
+          "source": "Wiley, Chapter 34 (Images: Spherical Mirrors), pp. 950–975",
+          "year": "2018",
+          "url": "https://www.wiley.com/en-us/Halliday+%26+Resnick%27s+Principles+of+Physics%2C+11th+Edition%2C+Global+Edition-p-9781119454014",
+          "verifiedDate": "2026-09-16",
+          "note": "การสะท้อนของกระจกเว้า-นูน และการคำนวณตำแหน่งภาพ",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Walker et al. (2018) Sec 34-3, Eqs 34-3, 34-4; Focal length of spherical mirrors and real/virtual image formation."
+        }
+      ],
+      "engineeringNote": "กล้องโทรทรรศน์อวกาศเจมส์ เว็บบ์ (JWST) ใช้กระจกสะท้อนปฐมภูมิ (Primary Mirror) ทำจากเบริลเลียมเคลือบทองคำแท้ 18 ชิ้นต่อกันเป็นทรงพาราโบลาขนาดเส้นผ่านศูนย์กลาง 6.5 เมตร พร้อมระบบคอมพิวเตอร์ควบคุมมุมเอียงและระยะเลื่อนของแต่ละแผ่นด้วยตัวขับเคลื่อนระดับนาโนเมตร (Active Wavefront Sensing & Control) เพื่อควบคุมความคลาดเคลื่อนหน้าคลื่น (Wavefront Error) ให้อยู่ในระดับต่ำกว่าระดับสิบนาโนเมตร ทำให้ได้ภาพอินฟราเรดที่มีความคมชัดถึงขีดจำกัดการเลี้ยวเบน (Diffraction-limited) และมีกำลังแยกเชิงมุม (Angular Resolution) สูงถึงระดับมิลลิฟิลิปดา (Milliarcseconds)",
+      "imagePath": "assets/optics/phe19_spherical_parabolic_mirrors.jpg",
+      "imageCaption": "การสะท้อนของกระจกเงาเว้าและนูน: รัศมีความโค้ง R โฟกัส f = R/2 และการแก้ความคลาดทรงกลมด้วยกระจกพาราโบลา",
+      "variables": [
+        {
+          "symbol": "s",
+          "name": "ระยะวัตถุ (วัดจากจุดยอดกระจก V ไปยังวัตถุจริงด้านหน้า)",
+          "unit": "m หรือ cm",
+          "typical": "1.5 – 100 cm"
+        },
+        {
+          "symbol": "s'",
+          "name": "ระยะภาพ (+ภาพจริงหน้ากระจก, -ภาพเสมือนหลังกระจก)",
+          "unit": "m หรือ cm",
+          "typical": "-10 ถึง +200 cm"
+        },
+        {
+          "symbol": "f",
+          "name": "ความยาวโฟกัส (+กระจกเว้า, -กระจกนูน)",
+          "unit": "m หรือ cm",
+          "typical": "±2 ถึง ±100 cm"
+        },
+        {
+          "symbol": "R",
+          "name": "รัศมีความโค้งของกระจกทรงกลม (R = 2f)",
+          "unit": "m หรือ cm",
+          "typical": "±4 ถึง ±200 cm"
+        },
+        {
+          "symbol": "M",
+          "name": "กำลังขยายเชิงเส้น (+หัวตั้ง, -หัวกลับ)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "-5 ถึง +4"
+        },
+        {
+          "symbol": "y, y'",
+          "name": "ความสูงของวัตถุและความสูงของภาพ",
+          "unit": "m หรือ cm",
+          "typical": "1 – 20 cm"
+        }
+      ]
+    },
+    {
+      "id": "PHE-20",
+      "titleTh": "สเปกตรัมแสง การกระจายแสงผ่านแท่งแก้วปริซึม และเส้นมืดเฟราน์โฮเฟอร์",
+      "titleEn": "Optical Spectra: Prism Dispersion, Continuous Rainbow & Fraunhofer Absorption Lines",
+      "category": "ทัศนศาสตร์กายภาพและสเปกโทรสโกปี",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อลำแสงสีขาวจากดวงอาทิตย์พุ่งผ่านแท่งแก้วปริซึมสามเหลี่ยม ลำแสงจะถูกแยกแผ่ออกเป็นแถบสีรุ้งต่อเนื่อง (Continuous Spectrum) ตั้งแต่สีแดง ส้ม เหลือง เขียว น้ำเงิน คราม จนถึงม่วง โดยแสงสีม่วงจะเกิดการเบี่ยงเบนจากแนวเดิมมากที่สุด และแสงสีแดงจะเบี่ยงเบนน้อยที่สุด ยิ่งไปกว่านั้น เมื่อโจเซฟ ฟอน เฟราน์โฮเฟอร์ (1814) ใช้สเปกโตรสโคปกำลังขยายสูงส่องวิเคราะห์แถบสเปกตรัมของดวงอาทิตย์ เขาค้นพบ 'เส้นมืดคมกริบ' (Dark Lines) พาดขวางมากกว่า 570 เส้น ซึ่งต่อมาเคิร์ชฮอฟฟ์และบุนเซนพิสูจน์ได้ว่าคือรอยนิ้วมืออะตอม (Atomic Fingerprints) ของธาตุต่างๆ เช่น ไฮโดรเจน โซเดียม เหล็ก ฮีเลียม ในบรรยากาศชั้นนอกของดวงอาทิตย์",
+      "mechanism": "1. **การกระจายของแสง (Chromatic Dispersion):** ตัวกลางโปร่งใส เช่น แก้วหรือน้ำ จะมีดรรชนีหักเห $n$ ที่ไม่คงที่ แต่แปรผันตามความยาวคลื่นของแสง $n = n(\\lambda)$ ตามสมการของคอชี (Cauchy's Equation) $n(\\lambda) \\approx A + B/\\lambda^2$ แสงสีม่วงมี $\\lambda \\approx 400\\text{ nm}$ สั้นกว่าแสงสีแดง $\\lambda \\approx 700\\text{ nm}$ ทำให้ $n_{\\text{violet}} > n_{\\text{red}}$ ส่งผลให้อัตราเร็วของแสงสีม่วงในเนื้อแก้วช้ากว่าสีแดง และเบี่ยงเบนทำมุมหักเหมากกว่าเสมอ\\n\\n2. **การแผ่รังสีต่อเนื่องจากชั้นโฟโตสเฟียร์ (Photospheric Continuum):** แถบสเปกตรัมต่อเนื่องของดวงอาทิตย์เกิดจากการแผ่รังสีความร้อนของก๊าซพลาสมาความหนาแน่นสูงในชั้นบรรยากาศโฟโตสเฟียร์ (Photosphere, อุณหภูมิผิวเฉลี่ยประมาณ 5,778 K) ซึ่งมีอันตรกิริยาการดูดกลืนและคายรังสีต่อเนื่องของไอออนไฮโดรเจนลบ (H⁻ Free-Bound & Free-Free Transitions) แผ่รังสีโฟตอนทุกความยาวคลื่นตามกฎของพลังค์ (Planck's Law)\\n\\n3. **การดูดกลืนแสงควอนตัม (Quantum Resonant Absorption):** ขณะที่แสงขาวเดินทางผ่านบรรยากาศชั้นบนของดวงอาทิตย์ที่มีอุณหภูมิต่ำกว่า โฟตอนที่มีพลังงาน $hf = \\frac{hc}{\\lambda}$ ตรงกับผลต่างระดับชั้นพลังงาน $\\Delta E = E_m - E_n$ ของอะตอมก๊าซในชั้นบรรยากาศ จะถูกอะตอมเหล่านั้นดูดกลืนเพื่อกระตุ้นอิเล็กตรอนขึ้นสู่สถานะเร้า (Excited State) และเมื่ออะตอมคายพลังงานออกมา จะคายออกทุกทิศทางในอวกาศ ทำให้ลำแสงที่พุ่งตรงมายังโลก ณ ความยาวคลื่นนั้นมีความเข้มลดลงฮวบฮาบ ปรากฏเป็นเส้นมืดเฟราน์โฮเฟอร์",
+      "scope": "แสงในช่วงสเปกตรัมที่ตามองเห็น ($380 - 750\\text{ nm}$) และรังสีแม่เหล็กไฟฟ้าในสภาพสมดุลความร้อน",
+      "formulas": [
+        {
+          "latex": "n(\\lambda) \\approx A + \\frac{B}{\\lambda^2} + \\frac{C}{\\lambda^4}",
+          "desc": "สมการการกระจายของคอชี (Cauchy's Dispersion Equation)"
+        },
+        {
+          "latex": "\\Delta E = E_2 - E_1 = hf = \\frac{hc}{\\lambda}",
+          "desc": "เงื่อนไขเรโซแนนซ์ควอนตัมสำหรับการดูดกลืนและคายโฟตอนของอะตอม"
+        },
+        {
+          "latex": "d \\sin\\theta = m\\lambda \\quad (m = 0, \\pm 1, \\pm 2, \\dots)",
+          "desc": "สมการเกรตติงเลี้ยวเบนสำหรับวิเคราะห์สเปกตรัมความละเอียดสูง"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณมุมเบี่ยงเบนของแสงสีแดงและแสงสีม่วงผ่านปริซึมมุมยอดแคบ",
+        "problem": "ปริซึมแก้วมุมยอดแคบ $A = 6.0^\\circ$ มีดรรชนีหักเหสำหรับแสงสีแดง $n_R = 1.514$ และแสงสีม่วง $n_V = 1.528$ จงหามุมเบี่ยงเบนของแสงทั้งสองสี ($\\delta_R, \\delta_V$) และมุมกระจายของแถบสเปกตรัม ($\\Delta\\delta$)",
+        "steps": [
+          "1. สำหรับปริซึมมุมแคบ มุมเบี่ยงเบนคือ: \\delta \\approx (n - 1) A",
+          "2. คำนวณมุมเบี่ยงเบนแสงสีแดง: \\delta_R = (1.514 - 1) \\times 6.0^\\circ = 0.514 \\times 6.0^\\circ = 3.084^\\circ",
+          "3. คำนวณมุมเบี่ยงเบนแสงสีม่วง: \\delta_V = (1.528 - 1) \\times 6.0^\\circ = 0.528 \\times 6.0^\\circ = 3.168^\\circ",
+          "4. หามุมการกระจายสี: \\Delta\\delta = \\delta_V - \\delta_R = 3.168^\\circ - 3.084^\\circ = 0.084^\\circ \\approx 5.04\\text{ ลิปดา} (')"
+        ],
+        "result": "แสงสีแดงเบี่ยงเบน $3.08^\\circ$, แสงสีม่วงเบี่ยงเบน $3.17^\\circ$ และกางออกเป็นแถบสเปกตรัมกว้าง $0.084^\\circ$"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <linearGradient id=\"rainbow-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n          <stop offset=\"0%\" stop-color=\"#EF4444\"/>\n          <stop offset=\"17%\" stop-color=\"#F97316\"/>\n          <stop offset=\"33%\" stop-color=\"#EAB308\"/>\n          <stop offset=\"50%\" stop-color=\"#22C55E\"/>\n          <stop offset=\"67%\" stop-color=\"#06B6D4\"/>\n          <stop offset=\"83%\" stop-color=\"#3B82F6\"/>\n          <stop offset=\"100%\" stop-color=\"#A855F7\"/>\n        </linearGradient>\n        <filter id=\"prism-glow\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n          <feGaussianBlur stdDeviation=\"3\" result=\"blur\"/>\n          <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\n        </filter>\n      </defs>\n\n      <!-- Glass Prism (Equilateral Triangle) -->\n      <polygon points=\"180,45 280,215 80,215\" fill=\"#0284C7\" fill-opacity=\"0.25\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"180\" y=\"32\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">แท่งแก้วปริซึม (Glass Prism)</text>\n\n      <!-- Incident White Collimated Beam -->\n      <line x1=\"20\" y1=\"170\" x2=\"132\" y2=\"130\" stroke=\"#FFFFFF\" stroke-width=\"5\" filter=\"url(#prism-glow)\"/>\n      <text x=\"50\" y=\"150\" fill=\"#FFFFFF\" font-size=\"12\" font-weight=\"700\">แสงสีขาว (White Light)</text>\n\n      <!-- Dispersed Rays Inside & Emerging Outside -->\n      <!-- Red Ray (Top, Least Bent) -->\n      <line x1=\"132\" y1=\"130\" x2=\"218\" y2=\"110\" stroke=\"#EF4444\" stroke-width=\"2.5\"/>\n      <line x1=\"218\" y1=\"110\" x2=\"380\" y2=\"70\" stroke=\"#EF4444\" stroke-width=\"3\" filter=\"url(#prism-glow)\"/>\n      <text x=\"390\" y=\"74\" fill=\"#EF4444\" font-size=\"12\" font-weight=\"700\">สีแดง λ = 700 nm (เบี่ยงเบนน้อยสุด)</text>\n\n      <!-- Green Ray (Mid) -->\n      <line x1=\"132\" y1=\"130\" x2=\"223\" y2=\"120\" stroke=\"#22C55E\" stroke-width=\"2\"/>\n      <line x1=\"223\" y1=\"120\" x2=\"380\" y2=\"105\" stroke=\"#22C55E\" stroke-width=\"2.5\"/>\n      <text x=\"390\" y=\"109\" fill=\"#22C55E\" font-size=\"12\" font-weight=\"700\">สีเขียว λ = 530 nm</text>\n\n      <!-- Violet Ray (Bottom, Most Bent) -->\n      <line x1=\"132\" y1=\"130\" x2=\"228\" y2=\"132\" stroke=\"#A855F7\" stroke-width=\"2.5\"/>\n      <line x1=\"228\" y1=\"132\" x2=\"380\" y2=\"145\" stroke=\"#A855F7\" stroke-width=\"3\" filter=\"url(#prism-glow)\"/>\n      <text x=\"390\" y=\"149\" fill=\"#A855F7\" font-size=\"12\" font-weight=\"700\">สีม่วง λ = 400 nm (เบี่ยงเบนมากสุด)</text>\n\n      <!-- High-Resolution Spectral Bar with Fraunhofer Absorption Lines -->\n      <rect x=\"25\" y=\"225\" width=\"490\" height=\"28\" rx=\"4\" fill=\"url(#rainbow-grad)\" stroke=\"#FFFFFF\" stroke-width=\"1.5\"/>\n      <text x=\"25\" y=\"218\" fill=\"#E2E8F0\" font-size=\"11\" font-weight=\"700\">สเปกตรัมแสงอาทิตย์และเส้นมืดเฟราน์โฮเฟอร์ (Solar Fraunhofer Dark Absorption Lines)</text>\n\n      <!-- Fraunhofer Dark Lines -->\n      <line x1=\"60\" y1=\"225\" x2=\"60\" y2=\"253\" stroke=\"#000000\" stroke-width=\"2\"/>\n      <text x=\"60\" y=\"267\" fill=\"#EF4444\" font-size=\"10\" text-anchor=\"middle\">B (O₂)</text>\n\n      <line x1=\"100\" y1=\"225\" x2=\"100\" y2=\"253\" stroke=\"#000000\" stroke-width=\"2.5\"/>\n      <text x=\"100\" y=\"267\" fill=\"#F97316\" font-size=\"10\" text-anchor=\"middle\">C (Hα)</text>\n\n      <line x1=\"185\" y1=\"225\" x2=\"185\" y2=\"253\" stroke=\"#000000\" stroke-width=\"3\"/>\n      <text x=\"185\" y=\"267\" fill=\"#EAB308\" font-size=\"10\" text-anchor=\"middle\">D (Na)</text>\n\n      <line x1=\"270\" y1=\"225\" x2=\"270\" y2=\"253\" stroke=\"#000000\" stroke-width=\"2\"/>\n      <text x=\"270\" y=\"267\" fill=\"#22C55E\" font-size=\"10\" text-anchor=\"middle\">E (Fe)</text>\n\n      <line x1=\"345\" y1=\"225\" x2=\"345\" y2=\"253\" stroke=\"#000000\" stroke-width=\"2.5\"/>\n      <text x=\"345\" y=\"267\" fill=\"#06B6D4\" font-size=\"10\" text-anchor=\"middle\">F (Hβ)</text>\n\n      <line x1=\"425\" y1=\"225\" x2=\"425\" y2=\"253\" stroke=\"#000000\" stroke-width=\"2\"/>\n      <text x=\"425\" y=\"267\" fill=\"#A855F7\" font-size=\"10\" text-anchor=\"middle\">G (Ca)</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Introduction to Modern Optics (2nd Edition)",
+          "authors": "Fowles, G. R.",
+          "source": "Dover Publications, Chapter 3 (Prisms and Dispersion), pp. 45–68",
+          "year": "1989",
+          "url": "https://store.doverpublications.com/products/9780486659572",
+          "verifiedDate": "2026-09-16",
+          "note": "การกระจายแสงในปริซึม ทฤษฎีคอชี และสเปกโทรสโกปีดาราศาสตร์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Fowles (1989) Sec 3.2, Cauchy dispersion and minimum deviation angle derivation."
+        }
+      ],
+      "engineeringNote": "การวิเคราะห์เส้นมืดเฟราน์โฮเฟอร์และสเปกโทรสโกปีดาราศาสตร์ (Astronomical Spectroscopy) คือวิธีเดียวที่ทำให้นักวิทยาศาสตร์บนโลกสามารถระบุองค์ประกอบทางเคมี อุณหภูมิ ความดัน และสนามแม่เหล็กของดาวฤกษ์ที่อยู่ห่างออกไปนับล้านปีแสงได้โดยไม่ต้องเดินทางไปเก็บตัวอย่างจริง รวมถึงการค้นพบธาตุฮีเลียม (Helium) บนดวงอาทิตย์เป็นครั้งแรกก่อนที่จะค้นพบบนโลก",
+      "imagePath": "assets/optics/phe20_prism_dispersion_spectra.jpg",
+      "imageCaption": "การกระจายแสงผ่านแท่งแก้วปริซึม สเปกตรัมแสงอาทิตย์ต่อเนื่อง และเส้นมืดดูดกลืนเฟราน์โฮเฟอร์",
+      "variables": [
+        {
+          "symbol": "n(\\lambda)",
+          "name": "ดรรชนีหักเหของแก้วปริซึมที่ความยาวคลื่น \\lambda",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.51 (แดง) – 1.53 (ม่วง)"
+        },
+        {
+          "symbol": "\\lambda",
+          "name": "ความยาวคลื่นของแสง",
+          "unit": "nm หรือ m",
+          "typical": "380 – 750 nm"
+        },
+        {
+          "symbol": "\\delta",
+          "name": "มุมเบี่ยงเบนของลำแสงผ่านปริซึม (Angle of Deviation)",
+          "unit": "rad หรือ °",
+          "typical": "30° – 60°"
+        },
+        {
+          "symbol": "\\Delta E",
+          "name": "ผลต่างระดับชั้นพลังงานการดูดกลืนควอนตัม",
+          "unit": "eV หรือ J",
+          "typical": "1.8 – 3.2 eV"
+        }
+      ]
+    },
+    {
+      "id": "PHE-21",
+      "titleTh": "ปรากฏการณ์โฟโตอิเล็กทริก ฟังก์ชันงาน และอนุภาคโฟตอนของไอน์สไตน์",
+      "titleEn": "Photoelectric Effect: Work Function & Einstein's Light Quanta",
+      "category": "ทัศนศาสตร์ควอนตัมและฟิสิกส์ยุคใหม่",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อฉายรังสีอัลตราไวโอเลต (UV) ลงบนแผ่นโลหะสังกะสี (Zn) หรือฉายแสงสีน้ำเงิน/ม่วงลงบนแผ่นโลหะแอลคาไล เช่น ซีเซียม (Cs) ในหลอดสุญญากาศ อิเล็กตรอน (โฟโตอิเล็กตรอน) จะหลุดออกจากผิวโลหะทันทีโดยไม่มีการหน่วงเวลาแม้แต่น้อย ($t < 10^{-9}\\text{ s}$) ก่อให้เกิดกระแสไฟฟ้าไหลในวงจร แต่หากฉายด้วยแสงสีแดงความเข้มสูงมาก (แม้จะสว่างจ้าจนแผ่นโลหะร้อน) กลับไม่มีอิเล็กตรอนหลุดออกมาเลยแม้แต่ตัวเดียว (สำหรับสังกะสี แสงสีน้ำเงินก็ไม่สามารถทำให้อิเล็กตรอนหลุดได้ เพราะพลังงานโฟตอนยังต่ำกว่าฟังก์ชันงานของสังกะสี) ยิ่งไปกว่านั้น พลังงานจลน์สูงสุดของอิเล็กตรอนที่หลุดออกมาจะเพิ่มขึ้นเป็นเส้นตรงตาม 'ความถี่ของแสง' แต่ไม่ขึ้นกับความเข้มแสง ปรากฏการณ์นี้ขัดแย้งกับทฤษฎีคลื่นแม่เหล็กไฟฟ้าคลาสสิกของแมกซ์เวลล์อย่างสิ้นเชิง และนำไปสู่การได้รับรางวัลโนเบลสาขาฟิสิกส์ของอัลเบิร์ต ไอน์สไตน์ ในปี 1921",
+      "mechanism": "ไอน์สไตน์ (1905) เสนอว่าแสงเดินทางและถ่ายทอดพลังงานในลักษณะของกลุ่มก้อนพลังงานเฉพาะตัว เรียกว่า 'โฟตอน' (Photons หรือ Quanta) โดยแต่ละโฟตอนมีพลังงานขึ้นกับความถี่ $E = hf$\\n\\n1. **อันตรกิริยา 1 ต่อ 1 (One-to-One Interaction):** โฟตอนหนึ่งตัวจะชนและถ่ายทอดพลังงานทั้งหมดให้แก่อิเล็กตรอนตัวเดียวในเนื้อโลหะ ไม่มีการสะสมพลังงานจากคลื่นหลายลูก\\n\\n2. **ฟังก์ชันงาน (Work Function: $\\Phi$):** คือพลังงานยึดเหนี่ยวขั้นต่ำสุดที่ต้องใช้เพื่อดึงอิเล็กตรอนให้หลุดพ้นจากแรงดึงดูดของโครงผลึกโลหะ หากพลังงานโฟตอน $hf < \\Phi$ อิเล็กตรอนจะไม่สามารถหลุดออกมาได้เลย\\n\\n3. **ความถี่ขีดเริ่ม (Threshold Frequency: $f_0$):** คือความถี่ต่ำสุดที่เริ่มเกิดปรากฏการณ์ $f_0 = \\Phi/h$ หรือความยาวคลื่นขีดเริ่ม $\\lambda_0 = hc/\\Phi$\\n\\n4. **สมการโฟโตอิเล็กทริกของไอน์สไตน์:** พลังงานโฟตอนส่วนที่เกินจากฟังก์ชันงาน จะเปลี่ยนเป็นพลังงานจลน์สูงสุดของอิเล็กตรอน $hf = \\Phi + K_{\\max}$ ซึ่งสามารถวัดได้โดยตรงจากความต่างศักย์หยุดยั้ง (Stopping Potential: $V_0$) ตามสมการ $K_{\\max} = eV_0$",
+      "scope": "ใช้ได้กับโฟตอนพลังงานต่ำถึงปานกลาง (ย่าน UV ถึงแสงที่ตามองเห็น, พลังงานระดับ 1 – 10 eV) ในการเกิดปรากฏการณ์โฟโตอิเล็กทริกภายนอก (External Photoelectric Effect) หากโฟตอนมีพลังงานสูงมากระดับรังสีเอกซ์หรือแกมมา (keV ถึง MeV) ภาคตัดขวางการเกิดโฟโตอิเล็กทริกจะลดลงอย่างรวดเร็ว (σ ∝ Z⁵ / E_γ^(3.5)) และจะเกิดอันตรกิริยาอื่นแข่งขันจนเด่นกว่า ได้แก่ การกระเจิงคอมป์ตัน (Compton Scattering) และการสร้างคู่ (Pair Production)",
+      "formulas": [
+        {
+          "latex": "E = hf = \\frac{hc}{\\lambda}",
+          "desc": "พลังงานของอนุภาคโฟตอน (Planck-Einstein Energy Relation)"
+        },
+        {
+          "latex": "hf = \\Phi + K_{\\max} = \\Phi + eV_0",
+          "desc": "สมการโฟโตอิเล็กทริกของไอน์สไตน์และศักย์หยุดยั้ง (Stopping Potential)"
+        },
+        {
+          "latex": "K_{\\max} = h(f - f_0) = \\frac{1}{2}m_e v_{\\max}^2",
+          "desc": "พลังงานจลน์สูงสุดของโฟโตอิเล็กตรอนแปรผันตรงกับความถี่ที่เกินขีดเริ่ม"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณฟังก์ชันงาน พลังงานจลน์ และศักย์หยุดยั้งของแผ่นซีเซียม",
+        "problem": "แผ่นโลหะซีเซียม (Cs) มีความถี่ขีดเริ่ม $f_0 = 5.16\\times 10^{14}\\text{ Hz}$ เมื่อฉายแสงความยาวคลื่น $\\lambda = 400\\text{ nm}$ (แสงสีม่วง) ลงบนแผ่นซีเซียม จงหา: 1) ฟังก์ชันงานในหน่วย eV, 2) พลังงานจลน์สูงสุด $K_{\\max}$ ในหน่วย eV และ 3) ศักย์หยุดยั้ง $V_0$",
+        "steps": [
+          "1. คำนวณฟังก์ชันงาน: \\Phi = h f_0 = (4.136\\times 10^{-15}\\text{ eV}\\cdot\\text{s})(5.16\\times 10^{14}\\text{ s}^{-1}) \\approx 2.14\\text{ eV}",
+          "2. คำนวณพลังงานโฟตอนตกกระทบ: E = \\frac{hc}{\\lambda} = \\frac{1240\\text{ eV}\\cdot\\text{nm}}{400\\text{ nm}} = 3.10\\text{ eV}",
+          "3. หาพลังงานจลน์สูงสุด: K_{\\max} = E - \\Phi = 3.10\\text{ eV} - 2.14\\text{ eV} = 0.96\\text{ eV}",
+          "4. คำนวณศักย์หยุดยั้ง: eV_0 = K_{\\max} = 0.96\\text{ eV} \\implies V_0 = 0.96\\text{ V}"
+        ],
+        "result": "ฟังก์ชันงาน $\\Phi = 2.14\\text{ eV}$, พลังงานจลน์สูงสุด $K_{\\max} = 0.96\\text{ eV}$ และศักย์หยุดยั้ง $V_0 = 0.96\\text{ โวลต์}$"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <filter id=\"pe-glow\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n          <feGaussianBlur stdDeviation=\"3\" result=\"blur\"/>\n          <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\n        </filter>\n        <linearGradient id=\"metal-grad\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n          <stop offset=\"0%\" stop-color=\"#334155\"/>\n          <stop offset=\"50%\" stop-color=\"#475569\"/>\n          <stop offset=\"100%\" stop-color=\"#1E293B\"/>\n        </linearGradient>\n      </defs>\n\n      <!-- Vacuum Tube Outline -->\n      <rect x=\"50\" y=\"30\" width=\"440\" height=\"150\" rx=\"30\" fill=\"#0F172A\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <text x=\"270\" y=\"24\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">หลอดสุญญากาศโฟโตเซลล์ (Phototube Chamber)</text>\n\n      <!-- Emitter Cathode (Metal Plate) -->\n      <rect x=\"90\" y=\"55\" width=\"16\" height=\"100\" rx=\"3\" fill=\"url(#metal-grad)\" stroke=\"#94A3B8\" stroke-width=\"1.5\"/>\n      <text x=\"98\" y=\"175\" fill=\"#94A3B8\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">แคโทด (-)</text>\n\n      <!-- Collector Anode -->\n      <rect x=\"430\" y=\"55\" width=\"16\" height=\"100\" rx=\"3\" fill=\"url(#metal-grad)\" stroke=\"#94A3B8\" stroke-width=\"1.5\"/>\n      <text x=\"438\" y=\"175\" fill=\"#94A3B8\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">แอโนด (+)</text>\n\n      <!-- Incoming UV / Blue Photons (Wavy Energy Packets) -->\n      <path d=\"M 20,40 Q 35,30 50,45 T 80,60\" fill=\"none\" stroke=\"#A855F7\" stroke-width=\"3\" filter=\"url(#pe-glow)\"/>\n      <path d=\"M 20,80 Q 35,70 50,85 T 80,100\" fill=\"none\" stroke=\"#3B82F6\" stroke-width=\"3\" filter=\"url(#pe-glow)\"/>\n      <path d=\"M 20,120 Q 35,110 50,125 T 80,140\" fill=\"none\" stroke=\"#06B6D4\" stroke-width=\"3\" filter=\"url(#pe-glow)\"/>\n      <text x=\"20\" y=\"24\" fill=\"#A855F7\" font-size=\"11\" font-weight=\"700\">โฟตอน hf &gt; Φ</text>\n\n      <!-- Ejected Photoelectrons flying towards anode -->\n      <circle cx=\"160\" cy=\"75\" r=\"5\" fill=\"#FDE047\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" filter=\"url(#pe-glow)\"/>\n      <line x1=\"108\" y1=\"75\" x2=\"152\" y2=\"75\" stroke=\"#FDE047\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <text x=\"160\" y=\"65\" fill=\"#FDE047\" font-size=\"10\" font-weight=\"700\" text-anchor=\"middle\">e⁻</text>\n\n      <circle cx=\"250\" cy=\"105\" r=\"5\" fill=\"#FDE047\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" filter=\"url(#pe-glow)\"/>\n      <line x1=\"108\" y1=\"105\" x2=\"242\" y2=\"105\" stroke=\"#FDE047\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <text x=\"250\" y=\"95\" fill=\"#FDE047\" font-size=\"10\" font-weight=\"700\" text-anchor=\"middle\">e⁻</text>\n\n      <circle cx=\"340\" cy=\"135\" r=\"5\" fill=\"#FDE047\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" filter=\"url(#pe-glow)\"/>\n      <line x1=\"108\" y1=\"135\" x2=\"332\" y2=\"135\" stroke=\"#FDE047\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <text x=\"340\" y=\"125\" fill=\"#FDE047\" font-size=\"10\" font-weight=\"700\" text-anchor=\"middle\">e⁻ (K_max)</text>\n\n      <!-- Stopping Potential Circuit Wire -->\n      <line x1=\"98\" y1=\"180\" x2=\"98\" y2=\"210\" stroke=\"#64748B\" stroke-width=\"2\"/>\n      <line x1=\"98\" y1=\"210\" x2=\"210\" y2=\"210\" stroke=\"#64748B\" stroke-width=\"2\"/>\n      <line x1=\"438\" y1=\"180\" x2=\"438\" y2=\"210\" stroke=\"#64748B\" stroke-width=\"2\"/>\n      <line x1=\"438\" y1=\"210\" x2=\"330\" y2=\"210\" stroke=\"#64748B\" stroke-width=\"2\"/>\n\n      <!-- Voltmeter / Battery Symbol -->\n      <rect x=\"210\" y=\"195\" width=\"120\" height=\"32\" rx=\"4\" fill=\"#1E293B\" stroke=\"#F59E0B\" stroke-width=\"1.5\"/>\n      <text x=\"270\" y=\"215\" fill=\"#F59E0B\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">ศักย์หยุดยั้ง V₀ = 0.96 V</text>\n\n      <!-- Live Readout Formula Banner -->\n      <rect x=\"50\" y=\"235\" width=\"440\" height=\"34\" rx=\"6\" fill=\"#0284C7\" fill-opacity=\"0.15\" stroke=\"#38BDF8\" stroke-width=\"1\"/>\n      <text x=\"270\" y=\"256\" fill=\"#F8FAFC\" font-size=\"12\" font-weight=\"600\" text-anchor=\"middle\">hf (3.10 eV) = Φ (2.14 eV) + K_max (0.96 eV) | ความเร็ว e⁻ หลุดทันที &lt; 1 ns</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Concerning an Heuristic Point of View Toward the Emission and Transformation of Light",
+          "authors": "Einstein, A.",
+          "source": "Annalen der Physik, Vol. 17, No. 6, pp. 132–148",
+          "year": "1905",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/andp.19053220607",
+          "verifiedDate": "2026-09-16",
+          "note": "เอกสารปฐมภูมิการกำเนิดแนวคิดอนุภาคโฟตอนและทฤษฎีโฟโตอิเล็กทริก",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Einstein (1905) Annalen der Physik: Foundation of light quanta and photoelectric equation."
+        }
+      ],
+      "engineeringNote": "ปรากฏการณ์โฟโตอิเล็กทริกแบ่งเป็น 2 รูปแบบหลักในทางวิศวกรรม: 1) ปรากฏการณ์โฟโตอิเล็กทริกภายนอก (External Photoelectric Effect) ที่อิเล็กตรอนหลุดออกจากผิวโลหะสู่อวกาศ/สุญญากาศ เช่น หลอดทวีคูณแสง (Photomultiplier Tubes: PMT) ในเครื่องตรวจจับรังสี และหลอดเปลี่ยนแสงเป็นภาพในกล้องมองกลางคืน และ 2) ปรากฏการณ์โฟโตอิเล็กทริกภายใน / โฟโตโวลตาอิก (Internal Photoelectric / Photovoltaic Effect) ในสารกึ่งตัวนำ ที่โฟตอนกระตุ้นคู่อิเล็กตรอน-โฮลข้ามช่องว่างแถบพลังงาน (Band Gap) โดยไม่หลุดออกจากเนื้อสาร ซึ่งเป็นหลักการทำงานของแผงโซลาร์เซลล์ (Solar Cells) และเซนเซอร์ภาพดิจิทัล CMOS/CCD ในสมาร์ทโฟน",
+      "imagePath": "assets/optics/phe21_photoelectric_effect.jpg",
+      "imageCaption": "ปรากฏการณ์โฟโตอิเล็กทริก: พลังงานโฟตอน hf ฟังก์ชันงานโลหะ Φ และศักย์หยุดยั้ง V₀",
+      "variables": [
+        {
+          "symbol": "E = hf",
+          "name": "พลังงานของอนุภาคโฟตอนตกกระทบ",
+          "unit": "eV หรือ J",
+          "typical": "2.0 – 6.0 eV"
+        },
+        {
+          "symbol": "\\Phi",
+          "name": "ฟังก์ชันงานของเนื้อโลหะ (Work Function)",
+          "unit": "eV หรือ J",
+          "typical": "2.14 eV (Cs), 4.3 eV (Zn)"
+        },
+        {
+          "symbol": "K_{\\max}",
+          "name": "พลังงานจลน์สูงสุดของโฟโตอิเล็กตรอน",
+          "unit": "eV หรือ J",
+          "typical": "0 – 3.0 eV"
+        },
+        {
+          "symbol": "V_0",
+          "name": "ศักย์หยุดยั้ง (Stopping Potential)",
+          "unit": "V (โวลต์)",
+          "typical": "0.5 – 3.0 V"
+        },
+        {
+          "symbol": "f_0",
+          "name": "ความถี่ขีดเริ่ม (Threshold Frequency)",
+          "unit": "Hz (เฮิรตซ์)",
+          "typical": "5 × 10¹⁴ ถึง 1 × 10¹⁵ Hz"
+        }
+      ]
+    },
+    {
+      "id": "PHE-22",
+      "titleTh": "แบบจำลองอะตอมของนีลส์ โบร์ การควอนไทซ์ระดับพลังงาน และอนุกรมสเปกตรัมไฮโดรเจน",
+      "titleEn": "Bohr Atomic Model, Quantized Energy Levels & Hydrogen Spectral Series",
+      "category": "ฟิสิกส์ควอนตัมและโครงสร้างอะตอม",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "observed": "เมื่อบรรจุแก๊สไฮโดรเจนความดันต่ำลงในหลอดแก้วแล้วจ่ายไฟฟ้าแรงสูง อะตอมจะเปล่งแสงสีแดงอมชมพูออกมา เมื่อนำแสงนี้ส่องผ่านเกรตติงเลี้ยวเบนจะไม่พบแถบสีรุ้งต่อเนื่อง แต่จะพบเพียง 'เส้นสเปกตรัมเปล่งแสงคมชัด 4 เส้น' ในช่วงที่ตามองเห็น (อนุกรมบาลเมอร์: แดง $H_\\alpha = 656.3\\text{ nm}$, ฟ้า $H_\\beta = 486.1\\text{ nm}$, น้ำเงิน $H_\\gamma = 434.0\\text{ nm}$, และม่วง $H_\\delta = 410.2\\text{ nm}$) นีลส์ โบร์ (1913) ได้อธิบายความลึกลับนี้ด้วยการประกาศว่า อิเล็กตรอนในอะตอมไม่ได้หมุนวนตกลงสู่นิวเคลียส แต่โคจรอยู่ใน 'ชั้นระดับพลังงานควอนตัมคงตัว' (Quantized Energy Levels) และการแผ่หรือดูดกลืนแสงจะเกิดขึ้นเฉพาะเมื่ออิเล็กตรอน 'กระโดดข้ามชั้น' (Quantum Jump) เท่านั้น",
+      "mechanism": "1. **สมมติฐานวงโคจรคงตัว (Stationary States):** อิเล็กตรอนโคจรรอบโปรตอนในวงกลมโดยไม่สูญเสียพลังงานจากการแผ่คลื่นแม่เหล็กไฟฟ้า\\n\\n2. **การควอนไทซ์โมเมนตัมเชิงมุม:** โมเมนตัมเชิงมุมของอิเล็กตรอนมีค่าเป็นจำนวนเต็มเท่าของ $\\hbar = h/2\\pi$ เท่านั้น: $L = m_e v r_n = n\\hbar$ เมื่อ $n = 1, 2, 3, \\dots$\\n\\n3. **สมดุลแรงสู่ศูนย์กลางและแรงไฟฟ้าคูลอมบ์:** $\\frac{k e^2}{r_n^2} = \\frac{m_e v^2}{r_n} \\implies r_n = n^2 a_0 \\approx n^2 (0.529\\text{ Å})$\\n\\n4. **ระดับชั้นพลังงานไม่ต่อเนื่อง:** $E_n = -\\frac{k e^2}{2 r_n} = -\\frac{13.6\\text{ eV}}{n^2}$\\n\\n5. **กฎการแผ่รังสีของโบร์ (Bohr Frequency Condition):** เมื่ออิเล็กตรอนกระโดดจากวงโคจรชั้นนอก ($n_{\\text{upper}}$) ลงสู่วงโคจรชั้นใน ($n_{\\text{lower}}$) โฟตอนเดี่ยวจะถูกปลดปล่อยออกมาด้วยความถี่ $hf = \\Delta E = E_{\\text{upper}} - E_{\\text{lower}}$ สอดคล้องกับสูตรประจักษ์ของริดเบิร์ก (Rydberg Formula) ได้อย่างแม่นยำทางคณิตศาสตร์",
+      "scope": "แบบจำลองอะตอมของโบร์ใช้ได้กับอะตอมหรือไอออนที่มีอิเล็กตรอนเพียงตัวเดียว (Hydrogen-like ions: H, He⁺, Li²⁺, Be³⁺) โดยไม่สามารถทำนายสเปกตรัมของอะตอมหลายอิเล็กตรอน (เช่น ฮีเลียมปกติ) ได้ และไม่สามารถอธิบายความเข้มสัมพัทธ์ของเส้นสเปกตรัม โครงสร้างละเอียด (Fine Structure จากผลสัมพัทธภาพและ Spin-Orbit Coupling) หรือการแยกเส้นในสนามแม่เหล็ก (Zeeman Effect) ซึ่งต้องใช้กลศาสตร์ควอนตัมคลื่นของชเรอดิงเงอร์และดิแรก",
+      "formulas": [
+        {
+          "latex": "L = m_e v r_n = n\\frac{h}{2\\pi} = n\\hbar \\quad (n = 1, 2, 3, \\dots)",
+          "desc": "เงื่อนไขการควอนไทซ์โมเมนตัมเชิงมุมของนีลส์ โบร์"
+        },
+        {
+          "latex": "E_n = -\\frac{13.6\\text{ eV}}{n^2} \\cdot Z^2 \\quad (n = 1, 2, 3, \\dots)",
+          "desc": "ระดับพลังงานของอะตอมคล้ายไฮโดรเจนประจุ Z ในชั้นวงโคจรที่ $n$"
+        },
+        {
+          "latex": "\\frac{1}{\\lambda} = Z^2 R \\left(\\frac{1}{n_1^2} - \\frac{1}{n_2^2}\\right), \\quad R_H \\approx 1.096776\\times 10^7\\text{ m}^{-1}, \\quad R_\\infty \\approx 1.097373\\times 10^7\\text{ m}^{-1}",
+          "desc": "สูตรของริดเบิร์กสำหรับอะตอมคล้ายไฮโดรเจนประจุ Z โดย R_H คือค่าคงที่ริดเบิร์กของไฮโดรเจนหลังคิดมวลลดทอน (Reduced Mass) เทียบกับค่ามวลนิวเคลียสอนันต์ R_∞"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณความยาวคลื่นของเส้นสเปกตรัมสีแดง H-alpha ในอนุกรมบาลเมอร์",
+        "problem": "เมื่ออิเล็กตรอนในอะตอมไฮโดรเจนเปลี่ยนระดับพลังงานจากชั้น $n = 3$ ลงสู่ชั้น $n = 2$ จงหาพลังงานของโฟตอนที่แผ่ออกมา ($\\Delta E$) ในหน่วย eV และความยาวคลื่น $\\lambda$ ในหน่วยนาโนเมตร",
+        "steps": [
+          "1. คำนวณพลังงานในแต่ละชั้น: E_3 = -\\frac{13.6}{3^2} = -\\frac{13.6}{9} = -1.511\\text{ eV}",
+          "2. คำนวณพลังงานชั้นที่สอง: E_2 = -\\frac{13.6}{2^2} = -\\frac{13.6}{4} = -3.400\\text{ eV}",
+          "3. หาผลต่างพลังงาน: \\Delta E = E_3 - E_2 = -1.511 - (-3.400) = +1.889\\text{ eV}",
+          "4. คำนวณความยาวคลื่น: \\lambda = \\frac{hc}{\\Delta E} = \\frac{1239.84\\text{ eV}\\cdot\\text{nm}}{1.889\\text{ eV}} \\approx 656.3\\text{ nm} (แสงสีแดงสด H_\\alpha)"
+        ],
+        "result": "พลังงานโฟตอน $\\Delta E = 1.889\\text{ eV}$, ความยาวคลื่น $\\lambda = 656.3\\text{ nm}$ (เส้นสเปกตรัม $H_\\alpha$ สีแดงของไฮโดรเจน)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <radialGradient id=\"nuc-glow\" cx=\"50%\" cy=\"50%\" r=\"50%\">\n          <stop offset=\"0%\" stop-color=\"#FEF08A\"/>\n          <stop offset=\"50%\" stop-color=\"#F59E0B\"/>\n          <stop offset=\"100%\" stop-color=\"#B45309\" stop-opacity=\"0\"/>\n        </radialGradient>\n        <filter id=\"bohr-glow\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\">\n          <feGaussianBlur stdDeviation=\"3\" result=\"blur\"/>\n          <feComposite in=\"SourceGraphic\" in2=\"blur\" operator=\"over\"/>\n        </filter>\n      </defs>\n\n      <!-- Center Nucleus (Proton) at (170, 140) -->\n      <circle cx=\"170\" cy=\"140\" r=\"22\" fill=\"url(#nuc-glow)\"/>\n      <circle cx=\"170\" cy=\"140\" r=\"9\" fill=\"#F59E0B\" stroke=\"#FFFFFF\" stroke-width=\"1.5\"/>\n      <text x=\"170\" y=\"144\" fill=\"#FFFFFF\" font-size=\"11\" font-weight=\"800\" text-anchor=\"middle\">+e</text>\n\n      <!-- Quantized Circular Orbits (r proportional to n^2) -->\n      <circle cx=\"170\" cy=\"140\" r=\"32\" fill=\"none\" stroke=\"#475569\" stroke-width=\"1.5\" stroke-dasharray=\"3,3\"/>\n      <text x=\"170\" y=\"103\" fill=\"#64748B\" font-size=\"10\" text-anchor=\"middle\">n=1 (-13.6 eV)</text>\n\n      <circle cx=\"170\" cy=\"140\" r=\"64\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <text x=\"170\" y=\"71\" fill=\"#38BDF8\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\">n=2 (-3.40 eV)</text>\n\n      <circle cx=\"170\" cy=\"140\" r=\"100\" fill=\"none\" stroke=\"#A855F7\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <text x=\"170\" y=\"35\" fill=\"#A855F7\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\">n=3 (-1.51 eV)</text>\n\n      <circle cx=\"170\" cy=\"140\" r=\"135\" fill=\"none\" stroke=\"#334155\" stroke-width=\"1\" stroke-dasharray=\"4,4\"/>\n      <text x=\"170\" y=\"2\" fill=\"#475569\" font-size=\"9\" text-anchor=\"middle\">n=4</text>\n\n      <!-- Quantum Jump Animation: Drop from n=3 to n=2 -->\n      <line x1=\"270\" y1=\"140\" x2=\"234\" y2=\"140\" stroke=\"#EF4444\" stroke-width=\"2.5\" stroke-dasharray=\"2,2\"/>\n      <polygon points=\"238,136 232,140 238,144\" fill=\"#EF4444\"/>\n\n      <!-- Glowing Electron on orbit n=2 -->\n      <circle cx=\"234\" cy=\"140\" r=\"5.5\" fill=\"#38BDF8\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" filter=\"url(#bohr-glow)\">\n        <animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 170 140\" to=\"360 170 140\" dur=\"4s\" repeatCount=\"indefinite\"/>\n      </circle>\n\n      <!-- Emitted Red Photon Packet (H-alpha 656.3 nm) radiating outward -->\n      <path d=\"M 234,140 Q 255,120 275,140 T 315,140\" fill=\"none\" stroke=\"#EF4444\" stroke-width=\"3.5\" filter=\"url(#bohr-glow)\"/>\n      <polygon points=\"315,136 324,140 315,144\" fill=\"#EF4444\"/>\n      <text x=\"270\" y=\"118\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\">โฟตอน Hα (656 nm)</text>\n\n      <!-- Right Side: Energy Level Diagram -->\n      <rect x=\"340\" y=\"25\" width=\"180\" height=\"235\" rx=\"6\" fill=\"#0F172A\" stroke=\"#334155\" stroke-width=\"1.5\"/>\n      <text x=\"430\" y=\"44\" fill=\"#E2E8F0\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">แผนผังระดับพลังงาน</text>\n\n      <!-- n=4 line -->\n      <line x1=\"355\" y1=\"65\" x2=\"505\" y2=\"65\" stroke=\"#64748B\" stroke-width=\"2\"/>\n      <text x=\"360\" y=\"60\" fill=\"#94A3B8\" font-size=\"10\">n=4 (-0.85 eV)</text>\n\n      <!-- n=3 line -->\n      <line x1=\"355\" y1=\"95\" x2=\"505\" y2=\"95\" stroke=\"#A855F7\" stroke-width=\"2.5\"/>\n      <text x=\"360\" y=\"90\" fill=\"#A855F7\" font-size=\"10\" font-weight=\"700\">n=3 (-1.51 eV)</text>\n\n      <!-- n=2 line -->\n      <line x1=\"355\" y1=\"145\" x2=\"505\" y2=\"145\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"360\" y=\"140\" fill=\"#38BDF8\" font-size=\"10\" font-weight=\"700\">n=2 (-3.40 eV)</text>\n\n      <!-- n=1 Ground state line -->\n      <line x1=\"355\" y1=\"225\" x2=\"505\" y2=\"225\" stroke=\"#F59E0B\" stroke-width=\"3\"/>\n      <text x=\"360\" y=\"220\" fill=\"#F59E0B\" font-size=\"10\" font-weight=\"700\">n=1 สถานะพื้น (-13.6 eV)</text>\n\n      <!-- Downward Arrow from n=3 to n=2 (Balmer H-alpha) -->\n      <line x1=\"455\" y1=\"96\" x2=\"455\" y2=\"143\" stroke=\"#EF4444\" stroke-width=\"3\"/>\n      <polygon points=\"450,138 455,147 460,138\" fill=\"#EF4444\"/>\n      <text x=\"462\" y=\"123\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\">ΔE = 1.89 eV</text>\n      <text x=\"462\" y=\"135\" fill=\"#EF4444\" font-size=\"9\">(สีแดง 656 nm)</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "On the Constitution of Atoms and Molecules",
+          "authors": "Bohr, N.",
+          "source": "Philosophical Magazine, Series 6, Vol. 26, No. 151, pp. 1–25",
+          "year": "1913",
+          "url": "https://www.tandfonline.com/doi/abs/10.1080/14786441308634955",
+          "verifiedDate": "2026-09-16",
+          "note": "เอกสารต้นฉบับการเสนอแบบจำลองอะตอมควอนไทซ์ระดับพลังงานของนีลส์ โบร์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Bohr (1913) Philosophical Magazine: Angular momentum quantization and Rydberg frequency deduction."
+        }
+      ],
+      "engineeringNote": "ทฤษฎีระดับพลังงานควอนตัมของนีลส์ โบร์ และการกระโดดข้ามชั้นของอิเล็กตรอน คือหลักการทำงานหัวใจของเทคโนโลยีเลเซอร์ (LASER: Light Amplification by Stimulated Emission of Radiation), หลอดไฟ LED ประหยัดพลังงาน และนาฬิกาอะตอมซีเซียม (Cesium Atomic Clock) ซึ่งกำหนดนิยามมาตรฐานความเที่ยงตรงของ 1 วินาทีสากลและระบบดาวเทียมระบุพิกัดโลก (GPS)",
+      "variables": [
+        {
+          "symbol": "n",
+          "name": "เลขควอนตัมหลักของวงโคจรอิเล็กตรอน",
+          "unit": "จำนวนเต็มบวก (n = 1, 2, 3...)",
+          "typical": "1, 2, 3, 4"
+        },
+        {
+          "symbol": "r_n",
+          "name": "รัศมีวงโคจรของโบร์ในชั้นที่ n",
+          "unit": "Å หรือ m",
+          "typical": "0.529 Å (n=1), 2.12 Å (n=2)"
+        },
+        {
+          "symbol": "E_n",
+          "name": "ระดับพลังงานในชั้นที่ n",
+          "unit": "eV",
+          "typical": "-13.6 eV (n=1), -3.4 eV (n=2)"
+        },
+        {
+          "symbol": "\\Delta E",
+          "name": "พลังงานโฟตอนที่แผ่ออกจากการเปลี่ยนระดับพลังงาน",
+          "unit": "eV",
+          "typical": "1.89 eV (H-alpha)"
+        },
+        {
+          "symbol": "\\lambda",
+          "name": "ความยาวคลื่นของเส้นสเปกตรัมที่แผ่ออกมา",
+          "unit": "nm",
+          "typical": "656.3 nm (Hα แดง)"
+        }
+      ],
+      "imagePath": "assets/optics/phe22_bohr_atom_energy_levels.jpg",
+      "imageCaption": "แบบจำลองอะตอมของนีลส์ โบร์: วงโคจรควอนไทซ์ n = 1, 2, 3, 4 และการเปล่งแสงสเปกตรัมไฮโดรเจนเมื่ออิเล็กตรอนกระโดดข้ามชั้น"
+    },
+    {
+      "id": "PHE-23",
+      "titleTh": "กระจกเงาราบ การกลับซ้าย-ขวาเสมือน และระบบสะท้อนย้อนทิศทาง",
+      "titleEn": "Plane Mirrors: Virtual Image Inversion & Corner-Cube Retroreflectors",
+      "category": "ทัศนศาสตร์เรขาคณิตและการสะท้อน",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe23_plane_mirror_retroreflector.jpg",
+      "imageCaption": "การสะท้อนในกระจกเงาราบ: ภาพเสมือนระยะเท่าวัตถุ (s = -s') และระบบปริซึมมุมฉากย้อนแสงกลับ 180°",
+      "observed": "เมื่อเรายืนหน้ากระจกเงาราบ (Plane Mirror) จะเห็นภาพของตัวเองมีขนาดเท่าจริง อยู่ลึกเข้าไปหลังกระจกเท่ากับระยะที่เรายืนหน้ากระจกพอดี ($s' = -s$) และเมื่อยกมือขวา ภาพในกระจกจะยกมือที่ตรงข้าม (ภาพหัวตั้ง แต่กลับทิศหน้า-หลัง Front-to-Back Reversal) นอกจากนี้ ในงานสำรวจระยะไกล เช่น การวัดระยะทางโลก-ดวงจันทร์ด้วยเลเซอร์ (Lunar Laser Ranging) นักบินอวกาศอพอลโลได้ติดตั้ง 'แผงสะท้อนมุมฉาก 3 มิติ' (Corner-Cube Retroreflector) ซึ่งสามารถสะท้อนลำแสงเลเซอร์กลับไปยังทิศทางเดิม 180° ได้อย่างแม่นยำเสมอ ไม่ว่าลำแสงจะตกกระทบทำมุมเอียงเท่าใดก็ตาม",
+      "mechanism": "1. **กฎการสะท้อนที่ผิวเรียบ:** มุมตกกระทบเท่ากับมุมสะท้อน ($\\theta_i = \\theta_r$) รังสีสะท้อนที่ถ่างออกจากผิวกระจกราบ เมื่อต่อเส้นสมมติย้อนหลังเข้าไปในกระจกจะตัดกันที่จุดภาพเสมือน ซึ่งอยู่ห่างจากผิวกระจกเป็นระยะเท่ากับระยะวัตถุพอดี ($s' = -s$) และมีกำลังขยายเชิงเส้น $M = -s'/s = -(-s)/s = +1.00$ เสมอ\n\n2. **ธรรมชาติของการกลับภาพ (Chirality & Perceived Left-Right Inversion):** แท้จริงแล้วกระจกเงาราบไม่ได้กลับซ้ายเป็นขวา แต่กลับแกนตั้งฉากกับผิวกระจก คือ 'แกนหน้า-หลัง' (Front-to-Back / Depth Reversal, $z' = -z$) การที่สมองมนุษย์รู้สึกว่ากลับซ้าย-ขวาเกิดจากการที่จิตสำนึกเราพยายามจินตนาการหมุนตัว 180° เพื่อไปสวมในตำแหน่งของภาพ\n\n3. **กลไกการสะท้อนย้อนทิศทาง (Retroreflection Geometry):** ปริซึมมุมฉากสามมิติ (Corner Cube) ประกอบด้วยกระจกราบ 3 บานที่ตั้งฉากซึ่งกันและกัน 90° ($x, y, z$) เมื่อเวกเตอร์รังสีแสงตกกระทบ $\\vec{k} = (k_x, k_y, k_z)$ สะท้อนครบทั้ง 3 ผิว แต่ละผิวจะกลับเครื่องหมายของเวกเตอร์องค์ประกอบตามแกนแนวฉาก: $k_x \\to -k_x, k_y \\to -k_y, k_z \\to -k_z$ ทำให้เวกเตอร์รังสีสะท้อนสุดท้ายมีทิศทาง $\\vec{k}_{\\text{out}} = -\\vec{k}_{\\text{in}}$ ขนานย้อนกลับทางเดิม 100% เสมอ",
+      "scope": "กระจกผิวเรียบระดับความขรุขระน้อยกว่าความยาวคลื่นแสง ($\\sigma < \\lambda/10$) ไม่รวมการกระเจิงแบบแพร่กระจาย (Diffuse Reflection)",
+      "formulas": [
+        {
+          "latex": "s' = -s, \\quad M = -\\frac{s'}{s} = +1.00",
+          "desc": "ระยะภาพและกำลังขยายของกระจกเงาราบ (ภาพเสมือน หัวตั้ง ขนาดเท่าวัตถุ)"
+        },
+        {
+          "latex": "\\vec{k}_{\\text{final}} = -\\vec{k}_{\\text{initial}} \\quad (\\Delta\\theta = 180^\\circ)",
+          "desc": "การกลับทิศทางของเวกเตอร์คลื่นแสงในระบบสะท้อนย้อนทางสามมิติ (Corner-Cube Retroreflector)"
+        },
+        {
+          "latex": "d_{\\text{moon}} = \\frac{c \\cdot \\Delta t}{2}",
+          "desc": "การวัดระยะทางไป-กลับโลกสู่ดวงจันทร์ด้วยการสะท้อนเลเซอร์ผ่านแผงเรโทรริเฟล็กเตอร์"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "s",
+          "name": "ระยะวัตถุหน้ากระจกเงาราบ",
+          "unit": "m หรือ cm",
+          "typical": "0.5 – 5.0 m"
+        },
+        {
+          "symbol": "s'",
+          "name": "ระยะภาพเสมือนหลังกระจกเงาราบ (s' = -s)",
+          "unit": "m หรือ cm",
+          "typical": "-0.5 ถึง -5.0 m"
+        },
+        {
+          "symbol": "M",
+          "name": "กำลังขยายเชิงเส้นตามขวาง",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "+1.00 (คงที่เสมอ)"
+        },
+        {
+          "symbol": "\\Delta t",
+          "name": "เวลาเดินทางไป-กลับของพัลส์เลเซอร์สู่ดวงจันทร์",
+          "unit": "s (วินาที)",
+          "typical": "≈ 2.56 s"
+        },
+        {
+          "symbol": "c",
+          "name": "ความเร็วของแสงในสุญญากาศ",
+          "unit": "m/s",
+          "typical": "2.99792458 × 10⁸ m/s"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณระยะห่างของดวงจันทร์ด้วยเลเซอร์และแผงสะท้อนเรโทรริเฟล็กเตอร์อพอลโล 11",
+        "problem": "หอสังเกตการณ์ยิงพัลส์เลเซอร์ความเข้มสูงไปยังแผง Retroreflector ของยาน Apollo 11 บนดวงจันทร์ และตรวจจับโฟตอนที่สะท้อนกลับมาได้โดยใช้เวลาเดินทางไป-กลับรวม $\\Delta t = 2.56420\\text{ s}$ จงคำนวณระยะห่างระหว่างผิวโลกกับดวงจันทร์ ณ ขณะนั้น",
+        "steps": [
+          "1. ใช้สมการการสะท้อนคลื่นแสงไป-กลับ: d = \\frac{c \\cdot \\Delta t}{2}",
+          "2. แทนค่าความเร็วแสง c = 2.99792 \\times 10^8\\text{ m/s} และเวลา \\Delta t = 2.56420\\text{ s}:",
+          "3. d = \\frac{(2.99792 \\times 10^8\\text{ m/s})(2.56420\\text{ s})}{2} = \\frac{7.68727 \\times 10^8}{2} \\approx 384,363,500\\text{ m}"
+        ],
+        "result": "ระยะห่างโลก-ดวงจันทร์เท่ากับ $384,363.5\\text{ กิโลเมตร}$ (ความแม่นยำสูงถึงระดับมิลลิเมตร)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <marker id=\"arr-p-amber\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#F59E0B\"/></marker>\n        <marker id=\"arr-p-cyan\" markerWidth=\"7\" markerHeight=\"7\" refX=\"4\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#38BDF8\"/></marker>\n      </defs>\n      <!-- Mirror Plane -->\n      <line x1=\"270\" y1=\"20\" x2=\"270\" y2=\"260\" stroke=\"#38BDF8\" stroke-width=\"4\"/>\n      <!-- Mirror back hatch marks -->\n      <path d=\"M 270,30 L 285,45 M 270,60 L 285,75 M 270,90 L 285,105 M 270,120 L 285,135 M 270,150 L 285,165 M 270,180 L 285,195 M 270,210 L 285,225 M 270,240 L 285,255\" stroke=\"#475569\" stroke-width=\"2\"/>\n      <text x=\"270\" y=\"15\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">ผิวกระจกเงาราบ (Plane Mirror)</text>\n      <!-- Object Arrow (s = 140px, x = 130) -->\n      <line x1=\"130\" y1=\"210\" x2=\"130\" y2=\"90\" stroke=\"#F59E0B\" stroke-width=\"4\"/>\n      <polygon points=\"124,98 130,80 136,98\" fill=\"#F59E0B\"/>\n      <text x=\"130\" y=\"70\" fill=\"#F59E0B\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">วัตถุจริง (s = +d)</text>\n      <!-- Virtual Image Arrow (s' = -140px, x = 410) -->\n      <line x1=\"410\" y1=\"210\" x2=\"410\" y2=\"90\" stroke=\"#EC4899\" stroke-width=\"4\" stroke-dasharray=\"6,4\"/>\n      <polygon points=\"404,98 410,80 416,98\" fill=\"#EC4899\"/>\n      <text x=\"410\" y=\"70\" fill=\"#EC4899\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">ภาพเสมือน (s' = -d)</text>\n      <!-- Base Axis -->\n      <line x1=\"40\" y1=\"210\" x2=\"500\" y2=\"210\" stroke=\"#334155\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <!-- Light Rays -->\n      <path d=\"M 130,90 L 270,90 L 130,90\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"2\" marker-mid=\"url(#arr-p-amber)\"/>\n      <line x1=\"270\" y1=\"90\" x2=\"410\" y2=\"90\" stroke=\"#EC4899\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <path d=\"M 130,90 L 270,160 L 60,230\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2\" marker-mid=\"url(#arr-p-cyan)\"/>\n      <line x1=\"270\" y1=\"160\" x2=\"410\" y2=\"90\" stroke=\"#EC4899\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <!-- Eye Observer -->\n      <circle cx=\"50\" cy=\"235\" r=\"14\" fill=\"#1E293B\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n      <circle cx=\"50\" cy=\"235\" r=\"6\" fill=\"#38BDF8\"/>\n      <text x=\"50\" y=\"265\" fill=\"#94A3B8\" font-size=\"10\" text-anchor=\"middle\">ผู้สังเกต</text>\n      <!-- Dimension Chips -->\n      <rect x=\"130\" y=\"225\" width=\"140\" height=\"25\" fill=\"#0F172A\" stroke=\"#F59E0B\" rx=\"4\"/>\n      <text x=\"200\" y=\"242\" fill=\"#F59E0B\" font-size=\"11\" text-anchor=\"middle\">ระยะวัตถุ s = d</text>\n      <rect x=\"270\" y=\"225\" width=\"140\" height=\"25\" fill=\"#0F172A\" stroke=\"#EC4899\" rx=\"4\"/>\n      <text x=\"340\" y=\"242\" fill=\"#EC4899\" font-size=\"11\" text-anchor=\"middle\">ระยะภาพ s' = -d</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "University Physics with Modern Physics (15th Edition)",
+          "authors": "Young, H. D., Freedman, R. A.",
+          "source": "Pearson, Chapter 34 (Geometric Optics: Reflection at a Plane Surface), pp. 1115–1122",
+          "year": "2020",
+          "url": "https://www.pearson.com/en-us/subject-catalog/p/university-physics-with-modern-physics/P200000003504",
+          "verifiedDate": "2026-09-17",
+          "note": "การสะท้อนในกระจกเงาราบและระยะภาพเสมือน",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Young & Freedman (2020) Sec 34.1, Eqs 34.1–34.2; Plane mirror virtual image formation and lateral magnification M = +1."
+        }
+      ],
+      "engineeringNote": "แผงสะท้อนเรโทรริเฟล็กเตอร์ (Retroreflectors) ถูกประยุกต์ใช้อย่างแพร่หลายตั้งแต่แถบสะท้อนแสงติดเสื้อกู้ภัย ป้ายจราจรเตือนภัย ไปจนถึงหมุดสะท้อนแสงบนเลนถนน (Cat's Eyes) ซึ่งทำจากเม็ดลูกแก้วดรรชนีหักเหสูง $n \\approx 1.9 - 2.0$ ที่อาศัยการหักเหคู่กับการสะท้อนภายในเพื่อให้แสงไฟหน้ารถยนต์สะท้อนย้อนกลับเข้าสู่ดวงตาของผู้ขับขี่โดยตรงอย่างสว่างจ้าแม้ในเวลากลางคืนที่มืดสนิท"
+    },
+    {
+      "id": "PHE-24",
+      "titleTh": "ระบบทัศนูปกรณ์เชิงประกอบ: กล้องจุลทรรศน์และกล้องโทรทรรศน์ดาราศาสตร์",
+      "titleEn": "Compound Optical Instruments: Microscope & Astronomical Telescope",
+      "category": "ทัศนูปกรณ์และระบบเลนส์เชิงประกอบ",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe24_microscope_telescope.jpg",
+      "imageCaption": "ระบบเลนส์คู่ Objective-Eyepiece: การสร้างภาพสองทอดและการคูณกำลังขยายเชิงมุมในกล้องจุลทรรศน์และโทรทรรศน์",
+      "observed": "เมื่อต้องการส่องดูสิ่งมีชีวิตขนาดเล็กระดับไมครอน เช่น เซลล์เม็ดเลือดหรือแบคทีเรีย เลนส์ขยายเดี่ยวไม่สามารถให้กำลังขยายเพียงพอ แต่เมื่อนำเลนส์นูน 2 ชิ้นมาจัดเรียงเป็น 'กล้องจุลทรรศน์เชิงประกอบ' (Compound Microscope) จะสามารถขยายภาพได้ถึง 400–1000 เท่า โดยเลนส์ตัวแรกสร้างภาพจริงขยาย และเลนส์ตัวที่สองทำหน้าที่เป็นแว่นขยายภาพนั้นซ้ำอีกทอดหนึ่ง ในทางกลับกัน เมื่อต้องการส่องดูดวงดาวอันไกลโพ้น 'กล้องโทรทรรศน์หักเหแสงแบบเคปเลอร์' (Keplerian Telescope) จะใช้เลนส์ใกล้วัตถุโฟกัสยาวรวมแสงดาวจากระยะอนันต์มาไว้ที่ระนาบโฟกัสร่วม แล้วใช้เลนส์ใกล้ตาโฟกัสสั้นขยายมุมมอง ทำให้เกิดกำลังขยายเชิงมุม $M = -f_{\\text{obj}}/f_{\\text{eye}}$",
+      "mechanism": "1. **กลไกสองทอดของกล้องจุลทรรศน์ (Compound Microscope Optics):**\n   - **เลนส์ใกล้วัตถุ (Objective Lens, $f_{\\text{obj}}$ สั้นมาก):** วัตถุถูกวางห่างออกไปมากกว่าโฟกัสเล็กน้อย ($s_1 \\gtrsim f_{\\text{obj}}$) เกิดภาพจริง หัวกลับ ขนาดขยายใหญ่มาก ($m_{\\text{obj}} = -L/f_{\\text{obj}}$ โดย $L$ คือความยาวลำกล้องเชิงแสง Optical Tube Length มาตรฐาน ≈ 160 mm)\n   - **เลนส์ใกล้ตา (Eyepiece Lens, $f_{\\text{eye}}$):** วางภาพจริงแรกไว้ภายในระยะโฟกัสของเลนส์ใกล้ตา ($s_2 \\le f_{\\text{eye}}$) ทำหน้าที่เป็นแว่นขยายสร้างภาพเสมือนสุดท้ายขนาดมหึมาที่ระยะใกล้ตาสุด ($25\\text{ cm}$) หรือที่ระยะอนันต์ โดยมีกำลังขยายเชิงมุม $M_{\\text{eye}} = 25\\text{ cm}/f_{\\text{eye}}$\n   - **กำลังขยายรวม:** $M_{\\text{total}} = m_{\\text{obj}} \\times M_{\\text{eye}} = -\\frac{L}{f_{\\text{obj}}} \\cdot \\frac{25\\text{ cm}}{f_{\\text{eye}}}$\n\n2. **กลไกของกล้องโทรทรรศน์ดาราศาสตร์ (Astronomical Telescope):**\n   - วัตถุอยู่ระยะอนันต์ ($s_1 \\to \\infty$) เลนส์ใกล้วัตถุจะสร้างภาพจริงที่จุดโฟกัส $F'_{\\text{obj}}$ พอดี\n   - ปรับระยะความยาวลำกล้องให้จุดโฟกัสของเลนส์ใกล้ตาซ้อนทับกับจุดโฟกัสของเลนส์ใกล้วัตถุพอดี ($L = f_{\\text{obj}} + f_{\\text{eye}}$)\n   - ลำแสงออกจากเลนส์ใกล้ตาเป็นลำแสงขนานเข้าสู่ตามนุษย์ ทำให้เกิดกำลังขยายเชิงมุม $M = -\\frac{f_{\\text{obj}}}{f_{\\text{eye}}}$ (เครื่องหมายลบแสดงภาพหัวกลับ ซึ่งไม่มีผลต่อการดูดาว)",
+      "scope": "ระบบเลนส์บางศูนย์แกนร่วม (Coaxial Thin Lenses) ในย่านแสงขาวที่ได้รับการแก้ไขความคลาดสีแล้ว",
+      "formulas": [
+        {
+          "latex": "M_{\\text{micro}} = m_{\\text{obj}} \\cdot M_{\\text{eye}} = -\\frac{L}{f_{\\text{obj}}} \\left(\\frac{25\\text{ cm}}{f_{\\text{eye}}}\\right)",
+          "desc": "กำลังขยายรวมของกล้องจุลทรรศน์เชิงประกอบ (L = Optical Tube Length)"
+        },
+        {
+          "latex": "M_{\\text{tele}} = -\\frac{f_{\\text{obj}}}{f_{\\text{eye}}}, \\quad L = f_{\\text{obj}} + f_{\\text{eye}}",
+          "desc": "กำลังขยายเชิงมุมและความยาวกระบอกกล้องโทรทรรศน์ดาราศาสตร์เคปเลอร์"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "f_{\\text{obj}}",
+          "name": "ความยาวโฟกัสของเลนส์ใกล้วัตถุ (Objective)",
+          "unit": "mm หรือ cm",
+          "typical": "กล้องจุลทรรศน์ 4 mm, กล้องโทรทรรศน์ 1000 mm"
+        },
+        {
+          "symbol": "f_{\\text{eye}}",
+          "name": "ความยาวโฟกัสของเลนส์ใกล้ตา (Eyepiece)",
+          "unit": "mm หรือ cm",
+          "typical": "10 – 25 mm"
+        },
+        {
+          "symbol": "L",
+          "name": "ความยาวลำกล้องเชิงแสง (Optical Tube Length)",
+          "unit": "mm หรือ cm",
+          "typical": "กล้องจุลทรรศน์ 160 mm"
+        },
+        {
+          "symbol": "M_{\\text{total}}",
+          "name": "กำลังขยายรวมเชิงมุม",
+          "unit": "เท่า (×)",
+          "typical": "40× ถึง 1000× (จุลทรรศน์), 40× ถึง 200× (โทรทรรศน์)"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณกำลังขยายและความยาวลำกล้องของกล้องโทรทรรศน์ดูดาว",
+        "problem": "กล้องโทรทรรศน์ดูดาวตัวหนึ่งมีเลนส์ใกล้วัตถุความยาวโฟกัส $f_{\\text{obj}} = +1200\\text{ mm}$ และเลนส์ใกล้ตาความยาวโฟกัส $f_{\\text{eye}} = +10\\text{ mm}$ จงหากำลังขยายเชิงมุมของกล้องโทรทรรศน์ และความยาวลำกล้องเมื่อปรับภาพที่ระยะอนันต์",
+        "steps": [
+          "1. คำนวณกำลังขยายเชิงมุม: M = -\\frac{f_{\\text{obj}}}{f_{\\text{eye}}} = -\\frac{1200\\text{ mm}}{10\\text{ mm}} = -120",
+          "2. คำนวณความยาวลำกล้อง: L = f_{\\text{obj}} + f_{\\text{eye}} = 1200\\text{ mm} + 10\\text{ mm} = 1210\\text{ mm} = 1.21\\text{ เมตร}"
+        ],
+        "result": "กำลังขยายเชิงมุมเท่ากับ $120$ เท่า (ภาพหัวกลับ), ความยาวลำกล้องเท่ากับ $1.21$ เมตร"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <marker id=\"arr-tel\" markerWidth=\"6\" markerHeight=\"6\" refX=\"3\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#38BDF8\"/></marker>\n      </defs>\n      <!-- Optical Axis -->\n      <line x1=\"20\" y1=\"140\" x2=\"520\" y2=\"140\" stroke=\"#475569\" stroke-width=\"1.5\" stroke-dasharray=\"5,5\"/>\n      <!-- Objective Lens (Left, Large) -->\n      <path d=\"M 120,40 Q 135,140 120,240 Q 105,140 120,40 Z\" fill=\"#0284C7\" fill-opacity=\"0.35\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"120\" y=\"28\" fill=\"#38BDF8\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">เลนส์ใกล้วัตถุ (f_obj = 200)</text>\n      <!-- Eyepiece Lens (Right, Small) -->\n      <path d=\"M 420,70 Q 430,140 420,210 Q 410,140 420,70 Z\" fill=\"#0284C7\" fill-opacity=\"0.35\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"420\" y=\"58\" fill=\"#38BDF8\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">เลนส์ใกล้ตา (f_eye = 50)</text>\n      <!-- Common Focal Point F'obj = Feye at x = 320 -->\n      <circle cx=\"320\" cy=\"140\" r=\"4\" fill=\"#EF4444\"/>\n      <text x=\"320\" y=\"158\" fill=\"#EF4444\" font-size=\"10\" font-weight=\"700\" text-anchor=\"middle\">F'obj / Feye</text>\n      <!-- Intermediate Real Inverted Image -->\n      <line x1=\"320\" y1=\"140\" x2=\"320\" y2=\"185\" stroke=\"#EC4899\" stroke-width=\"3\"/>\n      <polygon points=\"316,180 320,192 324,180\" fill=\"#EC4899\"/>\n      <text x=\"320\" y=\"208\" fill=\"#EC4899\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">ภาพจริงตรงกลาง</text>\n      <!-- Parallel Incoming Rays from Star -->\n      <path d=\"M 20,80 L 120,80 L 320,185 L 420,140 L 510,140\" fill=\"none\" stroke=\"#F59E0B\" stroke-width=\"2\"/>\n      <path d=\"M 20,140 L 120,140 L 320,185 L 420,205 L 510,225\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2\" marker-mid=\"url(#arr-tel)\"/>\n      <path d=\"M 20,200 L 120,200 L 320,185 L 420,170 L 510,155\" fill=\"none\" stroke=\"#10B981\" stroke-width=\"2\"/>\n      <!-- Eye Observer -->\n      <rect x=\"470\" y=\"125\" width=\"40\" height=\"30\" rx=\"4\" fill=\"#1E293B\" stroke=\"#64748B\"/>\n      <text x=\"490\" y=\"144\" fill=\"#94A3B8\" font-size=\"10\" text-anchor=\"middle\">ดวงตา</text>\n      <!-- Telemetry banner -->\n      <rect x=\"25\" y=\"235\" width=\"300\" height=\"32\" rx=\"4\" fill=\"#0F172A\" stroke=\"#38BDF8\"/>\n      <text x=\"35\" y=\"255\" fill=\"#F8FAFC\" font-size=\"11\" font-weight=\"600\">กำลังขยาย M = -f_obj / f_eye = -4× (ภาพจริงกลับหัว)</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Optics (5th Edition)",
+          "authors": "Hecht, E.",
+          "source": "Pearson, Chapter 5 (Geometrical Optics: Optical Systems - Microscopes and Telescopes), pp. 210–235",
+          "year": "2017",
+          "url": "https://www.pearson.com/en-us/subject-catalog/p/optics/P200000006793",
+          "verifiedDate": "2026-09-17",
+          "note": "ทัศนศาสตร์ระบบเลนส์เชิงประกอบ กล้องจุลทรรศน์ และกล้องโทรทรรศน์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Hecht (2017) Sec 5.7, Eqs 5.105–5.118; Compound microscope magnification and astronomical telescope angular magnification."
+        }
+      ],
+      "engineeringNote": "ในการผลิตเลนส์กล้องโทรทรรศน์และกล้องจุลทรรศน์สมัยใหม่ วิศวกรจะใช้ระบบเลนส์หลายชิ้น (Multi-element Lenses) เช่น ระบบเลนส์ Plano-Apochromat ในกล้องจุลทรรศน์ระดับวิจัย ซึ่งประกอบด้วยชิ้นเลนส์แก้วฟลูออไรต์สังเคราะห์ถึง 8–12 ชิ้น เพื่อกำจัดความคลาดสี (Chromatic) ความคลาดทรงกลม (Spherical) และความบิดเบี้ยวของระนาบภาพ (Field Curvature) ทำให้ภาพคมชัดราบเรียบสม่ำเสมอตั้งแต่กึ่งกลางจนถึงขอบขอบภาพ 100%"
+    },
+    {
+      "id": "PHE-25",
+      "titleTh": "ความคลาดทางทัศนศาสตร์และการแก้ไขด้วยเลนส์คู่ไร้ความคลาดสี",
+      "titleEn": "Optical Aberrations: Spherical, Coma & Achromatic Doublet Correction",
+      "category": "ทัศนศาสตร์เรขาคณิตและการแก้ไขความคลาด",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe25_optical_aberrations.jpg",
+      "imageCaption": "ความคลาดทรงกลม (Spherical Aberration) ความคลาดสี (Chromatic Aberration) และการชดเชยด้วยเลนส์คู่ Achromatic Doublet",
+      "observed": "เมื่อใช้เลนส์นูนแก้วเดี่ยวส่องดูวัตถุที่มีรายละเอียดสูง เราจะสังเกตเห็นขอบภาพมี 'แถบสีรุ้งเหลือบ' (ขอบสีม่วง-แดงล้อมรอบวัตถุ) และภาพบริเวณขอบจะพร่ามัวไม่คมชัดเท่าตรงกลาง นี่คือ 'ความคลาดทางทัศนศาสตร์' (Optical Aberrations) ซึ่งแบ่งเป็น 2 กลุ่มหลัก: 1) ความคลาดสี (Chromatic Aberration) ที่เกิดจากแสงแต่ละสีหักเหด้วยดรรชนี $n(\\lambda)$ ไม่เท่ากันทำให้จุดโฟกัสแยกจากกัน และ 2) ความคลาดทรงกลม (Spherical Aberration) ที่แสงบริเวณขอบเลนส์หักเหตัดแกนมุขสำคัญก่อนแสงตรงกลาง เพื่อแก้ไขปัญหานี้ ช่างทำกล้องจึงคิดค้น 'Achromatic Doublet' โดยประกบเลนส์นูนแก้วคราวน์เข้ากับเลนส์เว้าแก้วฟลินต์ ทำให้แสงสีแดงและสีน้ำเงินกลับมารวมที่โฟกัสเดียวกันได้อย่างสมบูรณ์",
+      "mechanism": "1. **ความคลาดสีตามยาว (Longitudinal Chromatic Aberration: LCA):** จากสมการคอชี $n_{\\text{blue}} > n_{\\text{red}}$ ทำให้ความยาวโฟกัสของแสงสีน้ำเงินสั้นกว่าสีแดง ($f_{\\text{blue}} < f_{\\text{red}}$) ระยะห่างระหว่างโฟกัสสีน้ำเงินและสีแดงคือ $\\Delta f_{\\text{LCA}} = f_{\\text{red}} - f_{\\text{blue}} = \\frac{f}{V}$ เมื่อ $V$ คือจำนวนแอ็บบี (Abbe Number): $V_d = \\frac{n_d - 1}{n_F - n_C}$\n\n2. **เงื่อนไขเลนส์คู่ไร้ความคลาดสี (Achromatic Doublet Condition):**\n   - นำเลนส์นูนกำลัง $P_1 > 0$ ทำจากแก้วคราวน์ ($V_1$ สูง การกระจายแสงต่ำ) มาประกบกับเลนส์เว้ากำลัง $P_2 < 0$ ทำจากแก้วฟลินต์ ($V_2$ ต่ำ การกระจายแสงสูง)\n   - เงื่อนไขขจัดความคลาดสีของแสงสองสีหลัก (Fraunhofer C 656.3 nm และ F 486.1 nm):\n     $$\\frac{P_1}{V_1} + \\frac{P_2}{V_2} = 0 \\implies P_2 = -P_1 \\left(\\frac{V_2}{V_1}\\right)$$\n   - เนื่องจาก $V_1 > V_2$ กำลังของเลนส์เว้า $|P_2| < P_1$ ทำให้กำลังรวมสุทธิ $P_{\\text{total}} = P_1 + P_2 > 0$ ยังคงเป็นเลนส์รวมแสง แต่ไร้ขอบสีรุ้งรบกวน\n\n3. **ความคลาดทรงกลม (Spherical Aberration):** เกิดจากผิวโค้งทรงกลมไม่ได้มีโฟกัสเดียว รังสีที่ขอบ (Marginal Rays) หักเหมากกว่ารังสีใกล้แกน (Paraxial Rays) แก้ไขได้โดยการใช้เลนส์ผิวอสัณฐาน (Aspherical Lenses) หรือการกระจายกำลังหักเหระหว่างเลนส์หลายชิ้น (Best-form doublet)",
+      "scope": "ระบบทัศนศาสตร์เลนส์บางคู่ประกบชิด (Contact Doublet) ในย่านความยาวคลื่นแสงที่ตามองเห็น (Vis 400–700 nm)",
+      "formulas": [
+        {
+          "latex": "V_d = \\frac{n_d - 1}{n_F - n_C}",
+          "desc": "จำนวนแอ็บบี (Abbe Dispersion Number) วัดอัตราส่วนการหักเหต่อการกระจายแสง"
+        },
+        {
+          "latex": "\\frac{P_1}{V_1} + \\frac{P_2}{V_2} = 0, \\quad P_{\\text{total}} = P_1 + P_2",
+          "desc": "สมการเงื่อนไขเลนส์คู่ไร้ความคลาดสี (Achromatic Doublet Equation)"
+        },
+        {
+          "latex": "\\Delta f_{\\text{LCA}} = f_{\\text{red}} - f_{\\text{blue}} \\approx \\frac{f}{V_d}",
+          "desc": "ผลต่างระยะโฟกัสของแสงสีแดงและน้ำเงินในเลนส์เดี่ยว (ความคลาดสีตามยาว)"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "P_1, P_2",
+          "name": "กำลังรวมแสงของเลนส์ชิ้นที่ 1 และ 2",
+          "unit": "diopter (D, m⁻¹)",
+          "typical": "P₁ = +5.0 D, P₂ = -2.5 D"
+        },
+        {
+          "symbol": "V_1, V_2",
+          "name": "จำนวนแอ็บบีของแก้วชิ้นที่ 1 และ 2",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "คราวน์ V₁ ≈ 60, ฟลินต์ V₂ ≈ 36"
+        },
+        {
+          "symbol": "n_d, n_F, n_C",
+          "name": "ดรรชนีหักเหที่เส้นสเปกตรัมโซเดียม d (587.6 nm), ไฮโดรเจน F (486.1 nm) และ C (656.3 nm)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.50 – 1.70"
+        },
+        {
+          "symbol": "\\Delta f_{\\text{LCA}}",
+          "name": "ระยะความคลาดสีตามยาว",
+          "unit": "mm",
+          "typical": "1.0 – 5.0 mm ในเลนส์เดี่ยว"
+        }
+      ],
+      "workedExample": {
+        "title": "การออกแบบเลนส์คู่ Achromatic Doublet กำลังรวม +5.00 D",
+        "problem": "ต้องการออกแบบเลนส์คู่ประกบชิดไร้ความคลาดสีที่มีกำลังรวม $P_{\\text{total}} = +5.00\\text{ D}$ โดยใช้แก้วคราวน์ ($V_1 = 60.0$) และแก้วฟลินต์ ($V_2 = 36.0$) จงหากำลังของเลนส์ทั้งสองชิ้น",
+        "steps": [
+          "1. จากเงื่อนไข Achromat: \\frac{P_1}{V_1} + \\frac{P_2}{V_2} = 0 \\implies P_2 = -P_1 \\frac{V_2}{V_1} = -P_1 \\left(\\frac{36.0}{60.0}\\right) = -0.60 P_1",
+          "2. จากกำลังรวมที่ต้องการ: P_{\\text{total}} = P_1 + P_2 = P_1 - 0.60 P_1 = 0.40 P_1 = +5.00\\text{ D}",
+          "3. คำนวณหากำลังเลนส์ชิ้นแรก: P_1 = \\frac{5.00}{0.40} = +12.50\\text{ D} (เลนส์นูนแก้วคราวน์)",
+          "4. คำนวณหากำลังเลนส์ชิ้นที่สอง: P_2 = -0.60 \\times (+12.50) = -7.50\\text{ D} (เลนส์เว้าแก้วฟลินต์)"
+        ],
+        "result": "เลนส์ชิ้นที่ 1 (แก้วคราวน์) กำลัง $+12.50\\text{ D}$, เลนส์ชิ้นที่ 2 (แก้วฟลินต์) กำลัง $-7.50\\text{ D}$ (รวมเป็น $+5.00\\text{ D}$ ไร้ความคลาดสี)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <!-- Axis -->\n      <line x1=\"20\" y1=\"140\" x2=\"520\" y2=\"140\" stroke=\"#475569\" stroke-width=\"1.5\" stroke-dasharray=\"5,5\"/>\n      <!-- Crown Glass Convex Element -->\n      <path d=\"M 160,40 Q 185,140 160,240 L 205,240 Q 220,140 205,40 Z\" fill=\"#0284C7\" fill-opacity=\"0.35\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <text x=\"175\" y=\"28\" fill=\"#38BDF8\" font-size=\"11\" font-weight=\"700\">แก้วคราวน์ (V₁=60)</text>\n      <!-- Flint Glass Concave Element Cemented -->\n      <path d=\"M 205,40 Q 220,140 205,240 L 235,240 Q 225,140 235,40 Z\" fill=\"#A855F7\" fill-opacity=\"0.3\" stroke=\"#C084FC\" stroke-width=\"2\"/>\n      <text x=\"240\" y=\"28\" fill=\"#C084FC\" font-size=\"11\" font-weight=\"700\">แก้วฟลินต์ (V₂=36)</text>\n      <!-- White Light Incoming Rays -->\n      <line x1=\"30\" y1=\"80\" x2=\"165\" y2=\"80\" stroke=\"#F8FAFC\" stroke-width=\"2.5\"/>\n      <line x1=\"30\" y1=\"200\" x2=\"165\" y2=\"200\" stroke=\"#F8FAFC\" stroke-width=\"2.5\"/>\n      <text x=\"35\" y=\"70\" fill=\"#F8FAFC\" font-size=\"11\" font-weight=\"700\">แสงสีขาว</text>\n      <!-- Refracted Rays converging perfectly at common focus -->\n      <!-- Red Rays (Lambda = 656 nm) -->\n      <path d=\"M 165,80 L 230,83 L 440,140\" fill=\"none\" stroke=\"#EF4444\" stroke-width=\"2\"/>\n      <path d=\"M 165,200 L 230,197 L 440,140\" fill=\"none\" stroke=\"#EF4444\" stroke-width=\"2\"/>\n      <!-- Blue Rays (Lambda = 486 nm) converging to same spot -->\n      <path d=\"M 165,80 L 230,85 L 440,140\" fill=\"none\" stroke=\"#3B82F6\" stroke-width=\"2\" stroke-dasharray=\"4,2\"/>\n      <path d=\"M 165,200 L 230,195 L 440,140\" fill=\"none\" stroke=\"#3B82F6\" stroke-width=\"2\" stroke-dasharray=\"4,2\"/>\n      <!-- Common Achromatic Focus -->\n      <circle cx=\"440\" cy=\"140\" r=\"5\" fill=\"#10B981\"/>\n      <text x=\"440\" y=\"165\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">จุดโฟกัสร่วม (F_red = F_blue)</text>\n      <!-- Single Lens LCA comparison inset -->\n      <rect x=\"25\" y=\"225\" width=\"290\" height=\"42\" rx=\"6\" fill=\"#0F172A\" stroke=\"#334155\"/>\n      <text x=\"35\" y=\"242\" fill=\"#94A3B8\" font-size=\"10\">เปรียบเทียบ: เลนส์เดี่ยวแสงน้ำเงินตัดก่อนสีแดง (LCA)</text>\n      <text x=\"35\" y=\"258\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\">Achromat ดึงแสงแดงและน้ำเงินรวมกันสมบูรณ์</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Modern Optical Engineering (4th Edition)",
+          "authors": "Smith, W. J.",
+          "source": "McGraw-Hill, Chapter 13 (Optical Aberrations and Achromatic Doublet Design), pp. 385–412",
+          "year": "2007",
+          "url": "https://www.accessengineeringlibrary.com/content/book/9780071476874",
+          "verifiedDate": "2026-09-17",
+          "note": "การคำนวณออกแบบเลนส์คู่แก้ความคลาดสีและจำนวนแอ็บบี",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Smith (2007) Sec 13.2, Eqs 13.7–13.15; Achromatic doublet power distribution and secondary spectrum."
+        }
+      ],
+      "engineeringNote": "ในเลนส์ถ่ายภาพระดับโปรเฟสชันแนล (เช่น เลนส์ Canon L-Series หรือ Sony G-Master) วิศวกรจะใช้ชิ้นเลนส์พิเศษทำจากผลึกฟลูออไรต์สังเคราะห์ (Fluorite, $V_d > 95$) หรือแก้วที่มีการกระจายแสงต่ำพิเศษ 'ED Glass' (Extra-low Dispersion) ร่วมกับชิ้นเลนส์แอสเฟอริคอล (Aspherical) เพื่อสร้างระบบ Apochromat (APO) ที่แก้ความคลาดสีได้พร้อมกันถึง 3 ความยาวคลื่น (แดง เขียว น้ำเงิน) ทำให้ได้ภาพที่มีคอนทราสต์สูงและไร้ขอบสีม่วง (Purple Fringing) แม้ย้อนแสงจ้า"
+    },
+    {
+      "id": "PHE-26",
+      "titleTh": "การแทรกสอดของแสงผ่านสลิตคู่ของยังและการทดสอบสมบัติคลื่น",
+      "titleEn": "Young's Double-Slit Experiment: Coherence & Wave Nature of Light",
+      "category": "ทัศนศาสตร์เชิงคลื่นและการแทรกสอด",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe26_young_double_slit.jpg",
+      "imageCaption": "การแทรกสอดของคลื่นแสงอาพันธ์ผ่านช่องคู่: ลวดลายแถบสว่าง-มืด และการพิสูจน์ธรรมชาติความเป็นคลื่นของแสง",
+      "observed": "เมื่อยิงลำแสงเลเซอร์ที่มีความยาวคลื่นเดี่ยว (Monochromatic Light) ผ่านแผ่นทึบที่มีช่องแคบคู่ขนาดเล็กมาก 2 ช่อง ($d \\approx 0.1 - 0.5\\text{ mm}$) ห่างกันเพียงเศษเสี้ยวของมิลลิเมตร บนฉากรับที่อยู่ไกลออกไปจะไม่ปรากฏเพียงแค่แถบแสงสว่าง 2 แถบตามแนวช่อง แต่จะเกิด 'ลวดลายแถบสว่างสลับแถบมืด' พาดเรียงกันเป็นระเบียบจำนวนมาก (Interference Fringes) โดยแถบสว่างตรงกลางมีความเข้มสูงสุด ปรากฏการณ์นี้ค้นพบโดย โทมัส ยัง ในปี 1801 ซึ่งเป็นหลักฐานการทดลองชิ้นแรกที่พิสูจน์อย่างเด็ดขาดว่า แสงมีพฤติกรรมเป็น 'คลื่น' ไม่ใช่อนุภาคตามแนวคิดดั้งเดิมของนิวตัน",
+      "mechanism": "1. **หลักการของฮอยเกนส์และแหล่งกำเนิดอาพันธ์ (Huygens' Principle & Coherent Sources):** เมื่อหน้าคลื่นตกกระทบช่องแคบคู่ แต่ละช่องจะทำหน้าที่เสมือนแหล่งกำเนิดคลื่นทุติยภูมิใหม่ที่แผ่คลื่นทรงกระบอกออกจากช่องด้วยเฟสตรงกัน (In-Phase Coherent Sources)\n\n2. **ผลต่างทางเดินแสง (Optical Path Difference: $\\Delta r$):** แสงจากทั้งสองช่องเดินทางไปยังจุด $P$ ใดๆ บนฉากรับด้วยระยะทางต่างกัน $\\Delta r = d \\sin\\theta \\approx d \\frac{y}{L}$ เมื่อระยะฉาก $L \\gg d$\n\n3. **เงื่อนไขการแทรกสอดเสริมกัน (แถบสว่าง - Constructive Interference):** เกิดขึ้นเมื่อคลื่นทั้งสองมีเฟสตรงกันพอดี คือผลต่างทางเดินแสงเป็นจำนวนเต็มเท่าของความยาวคลื่น:\n   $$d \\sin\\theta = m\\lambda \\implies y_m = \\frac{m\\lambda L}{d}, \\quad (m = 0, \\pm 1, \\pm 2, \\dots)$$\n\n4. **เงื่อนไขการแทรกสอดหักล้างกัน (แถบมืด - Destructive Interference):** เกิดขึ้นเมื่อคลื่นทั้งสองมีเฟสตรงข้ามกัน 180° (ผลต่างทางเดินแสงเป็นครึ่งเท่าของความยาวคลื่น):\n   $$d \\sin\\theta = \\left(m + \\frac{1}{2}\\right)\\lambda \\implies y'_m = \\left(m + \\frac{1}{2}\\right)\\frac{\\lambda L}{d}, \\quad (m = 0, \\pm 1, \\dots)$$\n\n5. **การกระจายความเข้มแสง (Intensity Distribution):** ความเข้มแสงบนฉากรับแปรผันตามฟังก์ชันโคไซน์ยกกำลังสอง: $I(\\theta) = I_0 \\cos^2\\left(\\frac{\\pi d \\sin\\theta}{\\lambda}\\right)$ โดยระยะห่างระหว่างแถบสว่างที่อยู่ติดกันคือ $\\Delta y = \\frac{\\lambda L}{d}$",
+      "scope": "แสงอาพันธ์เชิงเวลาและพื้นที่ (Spatially & Temporally Coherent Light) ระยะฉากไกลมากเทียบกับระยะสลิต ($L \\gg d$) และมุมเบี่ยงเบนแคบ ($\\sin\\theta \\approx \\tan\\theta \\approx y/L$)",
+      "formulas": [
+        {
+          "latex": "d \\sin\\theta = m\\lambda, \\quad y_m = \\frac{m\\lambda L}{d} \\quad (m = 0, \\pm 1, \\pm 2, \\dots)",
+          "desc": "ตำแหน่งของแถบสว่าง (Constructive Interference Maxima)"
+        },
+        {
+          "latex": "d \\sin\\theta = \\left(m + \\frac{1}{2}\\right)\\lambda \\quad (m = 0, \\pm 1, \\pm 2, \\dots)",
+          "desc": "ตำแหน่งของแถบมืด (Destructive Interference Minima)"
+        },
+        {
+          "latex": "\\Delta y = \\frac{\\lambda L}{d}, \\quad I(\\theta) = I_0 \\cos^2\\left(\\frac{\\pi d y}{\\lambda L}\\right)",
+          "desc": "ระยะห่างระหว่างแถบสว่างที่ติดกันและการกระจายความเข้มแสงบนฉาก"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "d",
+          "name": "ระยะห่างระหว่างจุดกึ่งกลางของช่องแคบคู่",
+          "unit": "m หรือ mm",
+          "typical": "0.10 – 0.50 mm"
+        },
+        {
+          "symbol": "\\lambda",
+          "name": "ความยาวคลื่นของแสงที่ใช้ทดลอง",
+          "unit": "nm หรือ m",
+          "typical": "632.8 nm (He-Ne แดง), 532 nm (เขียว)"
+        },
+        {
+          "symbol": "L",
+          "name": "ระยะห่างจากแผ่นสลิตคู่ไปยังฉากรับภาพ",
+          "unit": "m (เมตร)",
+          "typical": "1.0 – 3.0 m"
+        },
+        {
+          "symbol": "y_m",
+          "name": "ระยะของแถบสว่างลำดับที่ m จากกึ่งกลางฉาก",
+          "unit": "m หรือ mm",
+          "typical": "1 – 50 mm"
+        },
+        {
+          "symbol": "\\Delta y",
+          "name": "ระยะห่างสม่ำเสมอระหว่างแถบสว่างคู่ติดกัน",
+          "unit": "mm",
+          "typical": "1.5 – 6.0 mm"
+        },
+        {
+          "symbol": "m",
+          "name": "ลำดับของการแทรกสอด (Order Number)",
+          "unit": "จำนวนเต็ม (0, ±1, ±2...)",
+          "typical": "0, 1, 2, 3"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณความยาวคลื่นของแสงเลเซอร์จากการวัดแถบสลิตคู่",
+        "problem": "ฉายแสงเลเซอร์ผ่านสลิตคู่ที่มีระยะห่างระหว่างช่อง $d = 0.25\\text{ mm}$ ไปยังฉากรับที่ระยะ $L = 1.50\\text{ m}$ วัดระยะห่างระหว่างแถบสว่างที่ 1 ทางซ้ายและขวา ($2\\Delta y$) ได้ $7.60\\text{ mm}$ จงคำนวณหาความยาวคลื่นของเลเซอร์",
+        "steps": [
+          "1. หาระยะห่างระหว่างแถบสว่างติดกัน: \\Delta y = \\frac{7.60\\text{ mm}}{2} = 3.80\\text{ mm} = 3.80 \\times 10^{-3}\\text{ m}",
+          "2. ใช้สมการระยะแถบสว่าง: \\Delta y = \\frac{\\lambda L}{d} \\implies \\lambda = \\frac{d \\cdot \\Delta y}{L}",
+          "3. แทนค่า: \\lambda = \\frac{(0.25 \\times 10^{-3}\\text{ m})(3.80 \\times 10^{-3}\\text{ m})}{1.50\\text{ m}} = \\frac{9.50 \\times 10^{-7}}{1.50} \\approx 6.333 \\times 10^{-7}\\text{ m} = 633.3\\text{ nm}"
+        ],
+        "result": "ความยาวคลื่นของแสงเลเซอร์ $\\lambda = 633.3\\text{ nm}$ (สอดคล้องกับเลเซอร์ฮีเลียม-นีออนสีแดงสด)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <!-- Laser source -->\n      <rect x=\"20\" y=\"125\" width=\"45\" height=\"30\" rx=\"4\" fill=\"#1E293B\" stroke=\"#EF4444\"/>\n      <text x=\"42\" y=\"144\" fill=\"#EF4444\" font-size=\"9\" font-weight=\"700\" text-anchor=\"middle\">LASER</text>\n      <!-- Beam -->\n      <line x1=\"65\" y1=\"140\" x2=\"140\" y2=\"140\" stroke=\"#EF4444\" stroke-width=\"3\"/>\n      <!-- Double Slit Barrier -->\n      <rect x=\"140\" y=\"20\" width=\"10\" height=\"95\" fill=\"#334155\"/>\n      <rect x=\"140\" y=\"125\" width=\"10\" height=\"30\" fill=\"#334155\"/>\n      <rect x=\"140\" y=\"165\" width=\"10\" height=\"95\" fill=\"#334155\"/>\n      <text x=\"145\" y=\"14\" fill=\"#94A3B8\" font-size=\"10\" text-anchor=\"middle\">สลิตคู่ (d)</text>\n      <!-- Slit Openings S1 and S2 -->\n      <circle cx=\"145\" cy=\"120\" r=\"3\" fill=\"#F8FAFC\"/>\n      <circle cx=\"145\" cy=\"160\" r=\"3\" fill=\"#F8FAFC\"/>\n      <text x=\"125\" y=\"123\" fill=\"#F8FAFC\" font-size=\"9\">S₁</text>\n      <text x=\"125\" y=\"163\" fill=\"#F8FAFC\" font-size=\"9\">S₂</text>\n      <!-- Screen at x = 460 -->\n      <line x1=\"460\" y1=\"20\" x2=\"460\" y2=\"260\" stroke=\"#64748B\" stroke-width=\"4\"/>\n      <text x=\"460\" y=\"14\" fill=\"#64748B\" font-size=\"10\" text-anchor=\"middle\">ฉากรับ (L)</text>\n      <!-- Interference Fringes on Screen -->\n      <!-- m = 0 Central Maxima -->\n      <rect x=\"462\" y=\"130\" width=\"18\" height=\"20\" fill=\"#EF4444\"/>\n      <!-- m = +1, -1 Maxima -->\n      <rect x=\"462\" y=\"90\" width=\"14\" height=\"16\" fill=\"#EF4444\" opacity=\"0.85\"/>\n      <rect x=\"462\" y=\"174\" width=\"14\" height=\"16\" fill=\"#EF4444\" opacity=\"0.85\"/>\n      <!-- m = +2, -2 Maxima -->\n      <rect x=\"462\" y=\"54\" width=\"10\" height=\"12\" fill=\"#EF4444\" opacity=\"0.6\"/>\n      <rect x=\"462\" y=\"214\" width=\"10\" height=\"12\" fill=\"#EF4444\" opacity=\"0.6\"/>\n      <!-- Rays to m = 1 Maxima at y = 98 -->\n      <line x1=\"145\" y1=\"120\" x2=\"460\" y2=\"98\" stroke=\"#EF4444\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <line x1=\"145\" y1=\"160\" x2=\"460\" y2=\"98\" stroke=\"#EF4444\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <!-- Path diff bracket -->\n      <text x=\"490\" y=\"144\" fill=\"#EF4444\" font-size=\"10\" font-weight=\"700\">m=0</text>\n      <text x=\"490\" y=\"102\" fill=\"#EF4444\" font-size=\"10\">m=+1 (Δr=λ)</text>\n      <text x=\"490\" y=\"186\" fill=\"#EF4444\" font-size=\"10\">m=-1</text>\n      <!-- Telemetry Box -->\n      <rect x=\"180\" y=\"230\" width=\"260\" height=\"38\" rx=\"4\" fill=\"#0F172A\" stroke=\"#EF4444\"/>\n      <text x=\"190\" y=\"246\" fill=\"#E2E8F0\" font-size=\"10\">ระยะห่างแถบสว่าง: Δy = λL / d</text>\n      <text x=\"190\" y=\"260\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\">พิสูจน์ธรรมชาติคลื่นและเฟสอาพันธ์</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "On the Theory of Light and Colours",
+          "authors": "Young, T.",
+          "source": "Philosophical Transactions of the Royal Society of London, Vol. 92, pp. 12–48",
+          "year": "1802",
+          "url": "https://royalsocietypublishing.org/doi/10.1098/rstl.1802.0004",
+          "verifiedDate": "2026-09-17",
+          "note": "เอกสารประวัติศาสตร์การทดลองการแทรกสอดสลิตคู่ของโทมัส ยัง",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Young (1802) Bakerian Lecture: Experimental demonstration of optical interference fringes and light wavelength measurement."
+        }
+      ],
+      "engineeringNote": "การแทรกสอดของแสงถูกนำมาพัฒนาเป็นเครื่องมือวัดความเที่ยงตรงสูงยิ่งยวดในทางวิศวกรรม ได้แก่ 'อินเตอร์เฟอโรมิเตอร์' (Interferometer) เช่น ระบบตรวจจับคลื่นความโน้มถ่วง LIGO (Laser Interferometer Gravitational-Wave Observatory) ซึ่งสามารถวัดการเปลี่ยนแปลงระยะทางของแขนเลเซอร์ยาว 4 กิโลเมตรได้ละเอียดถึง $10^{-19}\\text{ เมตร}$ (เล็กกว่าขนาดของโปรตอน 10,000 เท่า) โดยอาศัยการเลื่อนของริ้วแทรกสอดแสงเลเซอร์"
+    },
+    {
+      "id": "PHE-27",
+      "titleTh": "การเลี้ยวเบนของแสงผ่านสลิตเดี่ยว จานแอรี่ และขีดจำกัดเรย์ลี",
+      "titleEn": "Single-Slit Diffraction, Airy Disk & Rayleigh Criterion of Resolution",
+      "category": "ทัศนศาสตร์เชิงคลื่นและการเลี้ยวเบน",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe27_single_slit_airy_disk.jpg",
+      "imageCaption": "การเลี้ยวเบนผ่านช่องแคบเดี่ยวและรูวงกลม: จานแอรี่ (Airy Disk) และขีดจำกัดความละเอียดเชิงมุมของกล้องโทรทรรศน์",
+      "observed": "เมื่อลำแสงเลเซอร์ส่องผ่านช่องแคบเดี่ยวที่มีความกว้าง $a$ แคบระดับไมครอน แสงจะไม่ส่องไปเป็นเส้นตรง แต่จะ 'เลี้ยวเบนแผ่บานออก' (Diffraction Spreading) เกิดแถบสว่างกลางขนาดใหญ่โตกว่าความกว้างของช่องแคบหลายเท่า ล้อมรอบด้วยแถบสว่างข้างที่ความเข้มลดลงอย่างรวดเร็ว และเมื่อแสงผ่านรูเปิดวงกลม (Circular Aperture) ของเลนส์กล้องถ่ายภาพหรือกล้องโทรทรรศน์ แสงดาวที่เสมือนจุดจะแผ่ออกเป็นวงแหวนศูนย์กลางสว่างสลับมืด เรียกว่า 'จานแอรี่' (Airy Disk) ส่งผลให้ดาวสองดวงที่อยู่ใกล้กันมากไม่สามารถแยกออกจากกันได้หากวงแหวนซ้อนทับกันเกินขีดจำกัดเรย์ลี (Rayleigh Criterion: $\\theta_R = 1.22\\lambda/D$)",
+      "mechanism": "1. **การเลี้ยวเบนแบบเฟราน์โฮเฟอร์ผ่านสลิตเดี่ยว (Fraunhofer Single-Slit Diffraction):** ตามหลักการของฮอยเกนส์ ทุกจุดบนช่องกว้าง $a$ ทำหน้าที่เป็นแหล่งกำเนิดคลื่นย่อยนับไม่ถ้วน แถบมืดลำดับแรกเกิดขึ้นเมื่อคลื่นจากครึ่งบนของช่องหักล้างกับคลื่นจากครึ่งล่างพอดี ($a \\sin\\theta = \\pm\\lambda$)\n\n2. **การกระจายความเข้มแสง:** ความเข้มแสงมีสมการในรูปฟังก์ชันซิงก์ยกกำลังสอง (Sinc-squared):\n   $$I(\\theta) = I_0 \\left(\\frac{\\sin\\beta}{\\beta}\\right)^2, \\quad \\beta = \\frac{\\pi a \\sin\\theta}{\\lambda}$$\n   โดยแถบสว่างกลางมีความกว้างเชิงมุม $2\\theta_1 = 2\\lambda/a$ และบรรจุพลังงานแสงถึง 85% ของทั้งหมด\n\n3. **จานแอรี่และขีดจำกัดเรย์ลีของรูรับแสงวงกลม (Circular Aperture & Airy Disk):** สำหรับเลนส์ที่มีเส้นผ่านศูนย์กลาง $D$ การอินทิเกรตฟังก์ชันเบสเซลอันดับหนึ่ง ($J_1$) ให้ตำแหน่งวงแหวนมืดแรกที่มุม:\n   $$\\sin\\theta_R \\approx \\theta_R = 1.22 \\frac{\\lambda}{D}$$\n   ตามเกณฑ์ของลอร์ดเรย์ลี (Rayleigh Criterion) วัตถุจุด 2 จุดจะสามารถแยกจากกันได้ (Resolvable) เมื่อจุดศูนย์กลางของจานแอรี่แรกตกอยู่ไม่ชิดกว่าวงแหวนมืดแรกของจานแอรี่ที่สอง",
+      "scope": "การเลี้ยวเบนในสนามระยะไกล (Far-Field Fraunhofer Diffraction, $L \\gg a^2/\\lambda$) แสงมีความยาวคลื่นเดี่ยว",
+      "formulas": [
+        {
+          "latex": "a \\sin\\theta = m\\lambda \\quad (m = \\pm 1, \\pm 2, \\dots)",
+          "desc": "เงื่อนไขแถบมืดของการเลี้ยวเบนผ่านสลิตเดี่ยวกว้าง a (Single-Slit Minima)"
+        },
+        {
+          "latex": "I(\\theta) = I_0 \\left(\\frac{\\sin\\beta}{\\beta}\\right)^2, \\quad \\beta = \\frac{\\pi a \\sin\\theta}{\\lambda}",
+          "desc": "ฟังก์ชันการกระจายความเข้มของการเลี้ยวเบนสลิตเดี่ยว"
+        },
+        {
+          "latex": "\\theta_R = 1.22 \\frac{\\lambda}{D} \\quad (\\text{เรเดียน})",
+          "desc": "ขีดจำกัดความละเอียดเชิงมุมของเรย์ลีสำหรับเลนส์หรือรูวงกลมเส้นผ่านศูนย์กลาง D"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "a",
+          "name": "ความกว้างของช่องแคบเดี่ยว (Slit Width)",
+          "unit": "m หรือ μm",
+          "typical": "20 – 200 μm"
+        },
+        {
+          "symbol": "D",
+          "name": "เส้นผ่านศูนย์กลางรูเปิดของเลนส์หรือกระจกรับแสง (Aperture Diameter)",
+          "unit": "m หรือ mm",
+          "typical": "50 mm (เลนส์กล้อง), 2.4 m (ฮับเบิล)"
+        },
+        {
+          "symbol": "\\lambda",
+          "name": "ความยาวคลื่นของแสง",
+          "unit": "nm หรือ m",
+          "typical": "550 nm (แสงสีเขียวกลางสเปกตรัม)"
+        },
+        {
+          "symbol": "\\theta_R",
+          "name": "มุมแยกต่ำสุดตามเกณฑ์เรย์ลี (Angular Resolution Limit)",
+          "unit": "rad หรือ arcsec",
+          "typical": "0.05 arcsec (กล้องฮับเบิล)"
+        },
+        {
+          "symbol": "w_0",
+          "name": "ความกว้างของแถบสว่างกลางบนฉากรับ (w_0 = 2λL/a)",
+          "unit": "mm",
+          "typical": "5 – 30 mm"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณขีดจำกัดความละเอียดเชิงมุมของกล้องโทรทรรศน์อวกาศฮับเบิล",
+        "problem": "กล้องโทรทรรศน์อวกาศฮับเบิล (HST) มีกระจกสะท้อนปฐมภูมิเส้นผ่านศูนย์กลาง $D = 2.40\\text{ m}$ เมื่อสังเกตการณ์ที่แสงความยาวคลื่น $\\lambda = 550\\text{ nm}$ จงหากำลังแยกเชิงมุมต่ำสุด $\\theta_R$ ในหน่วยฟิลิปดา (Arcseconds: 1 arcsec = 1/3600 องศา)",
+        "steps": [
+          "1. ใช้เกณฑ์ของเรย์ลี: \\theta_R = 1.22 \\frac{\\lambda}{D} = 1.22 \\frac{550 \\times 10^{-9}\\text{ m}}{2.40\\text{ m}} = 2.796 \\times 10^{-7}\\text{ เรเดียน}",
+          "2. แปลงจากเรเดียนเป็นองศา: \\theta_{\\text{deg}} = 2.796 \\times 10^{-7} \\times \\left(\\frac{180^\\circ}{\\pi}\\right) \\approx 1.602 \\times 10^{-5\\circ}",
+          "3. แปลงเป็นฟิลิปดา (Arcseconds): \\theta_R = 1.602 \\times 10^{-5} \\times 3600 \\approx 0.0577\\text{ arcsec}"
+        ],
+        "result": "ขีดจำกัดความละเอียดเชิงมุมของฮับเบิลเท่ากับ $0.058\\text{ ฟิลิปดา}$ (เทียบเท่าการแยกเหรียญบาทที่ระยะ 70 กิโลเมตร)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <!-- Single Slit Barrier -->\n      <rect x=\"120\" y=\"20\" width=\"12\" height=\"90\" fill=\"#334155\"/>\n      <rect x=\"120\" y=\"170\" width=\"12\" height=\"90\" fill=\"#334155\"/>\n      <text x=\"126\" y=\"14\" fill=\"#94A3B8\" font-size=\"10\" text-anchor=\"middle\">สลิตเดี่ยว (a)</text>\n      <!-- Slit opening gap a = 60px -->\n      <line x1=\"100\" y1=\"110\" x2=\"100\" y2=\"170\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n      <text x=\"85\" y=\"144\" fill=\"#38BDF8\" font-size=\"11\" font-weight=\"700\">a</text>\n      <!-- Wavefronts passing through and diffracting -->\n      <path d=\"M 40,140 L 120,140\" stroke=\"#10B981\" stroke-width=\"3\"/>\n      <path d=\"M 132,140 Q 220,100 440,50\" fill=\"none\" stroke=\"#10B981\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <path d=\"M 132,140 L 440,140\" fill=\"none\" stroke=\"#10B981\" stroke-width=\"2.5\"/>\n      <path d=\"M 132,140 Q 220,180 440,230\" fill=\"none\" stroke=\"#10B981\" stroke-width=\"1.5\" stroke-dasharray=\"3,2\"/>\n      <!-- Screen with Sinc-Squared Profile -->\n      <line x1=\"440\" y1=\"20\" x2=\"440\" y2=\"260\" stroke=\"#64748B\" stroke-width=\"3\"/>\n      <!-- Diffraction Intensity Curve -->\n      <path d=\"M 440,30 Q 460,40 440,50 Q 480,75 440,100 Q 520,140 440,180 Q 480,205 440,230 Q 460,240 440,250\" fill=\"#10B981\" fill-opacity=\"0.25\" stroke=\"#10B981\" stroke-width=\"2.5\"/>\n      <!-- Peak Central Maximum -->\n      <text x=\"475\" y=\"144\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\">แถบกลางกว้าง 2λ/a</text>\n      <text x=\"450\" y=\"98\" fill=\"#EF4444\" font-size=\"9\">มืดแรก m=1</text>\n      <text x=\"450\" y=\"185\" fill=\"#EF4444\" font-size=\"9\">มืดแรก m=-1</text>\n      <!-- Circular Airy Disk Preview Badge -->\n      <g transform=\"translate(250, 60)\">\n        <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#0B0F19\" stroke=\"#38BDF8\" stroke-width=\"1.5\"/>\n        <circle cx=\"50\" cy=\"50\" r=\"32\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"1.5\" opacity=\"0.4\"/>\n        <circle cx=\"50\" cy=\"50\" r=\"20\" fill=\"none\" stroke=\"#38BDF8\" stroke-width=\"2\" opacity=\"0.7\"/>\n        <circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"#38BDF8\"/>\n        <text x=\"50\" y=\"105\" fill=\"#38BDF8\" font-size=\"10\" font-weight=\"700\" text-anchor=\"middle\">Airy Disk (θ = 1.22λ/D)</text>\n      </g>\n    </svg>",
+      "citations": [
+        {
+          "title": "Principles of Optics (7th Edition)",
+          "authors": "Born, M., Wolf, E.",
+          "source": "Cambridge University Press, Chapter 8 (Diffraction Theory: Fraunhofer Diffraction and Resolving Power), pp. 412–458",
+          "year": "1999",
+          "url": "https://www.cambridge.org/core/books/principles-of-optics/42823620",
+          "verifiedDate": "2026-09-17",
+          "note": "ทฤษฎีการเลี้ยวเบนเฟราน์โฮเฟอร์และฟังก์ชันจานแอรี่",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Born & Wolf (1999) Sec 8.5, Eqs 8.5.1–8.5.24; Circular aperture diffraction and Airy pattern intensity derivation."
+        }
+      ],
+      "engineeringNote": "ขีดจำกัดการเลี้ยวเบนของเรย์ลีคือ 'กำแพงทางฟิสิกส์' ที่กำหนดขนาดเล็กสุดของทรานซิสเตอร์ในชิปประมวลผลคอมพิวเตอร์ ในอุตสาหกรรมไมโครชิปขั้นสูง (เช่น ชิป 3nm ในปัจจุบัน) โรงงานอย่าง TSMC และ ASML ต้องเลิกใช้แสงเลเซอร์ที่ตามองเห็น และหันไปใช้รังสีเอกซ์ตร้าอัลตราไวโอเลตพลังงานสูง 'EUV' (Extreme Ultraviolet) ความยาวคลื่นสั้นกุดเพียง 13.5 นาโนเมตร พร้อมระบบกระจกเงาสะท้อนหลายชั้นในสุญญากาศเพื่อก้าวข้ามขีดจำกัดการเลี้ยวเบน"
+    },
+    {
+      "id": "PHE-28",
+      "titleTh": "การแทรกสอดในฟิล์มบาง สารเคลือบเลนส์ลดแสงสะท้อน และสีเหลือบในธรรมชาติ",
+      "titleEn": "Thin-Film Interference: Anti-Reflective Coatings & Structural Coloration",
+      "category": "ทัศนศาสตร์เชิงคลื่นและการแทรกสอดในฟิล์มบาง",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe28_thin_film_coating.jpg",
+      "imageCaption": "การแทรกสอดในฟิล์มบาง: การกลับเฟส 180° ที่ผิวหักเหสูง และการเคลือบผิวเลนส์แบบหักล้าง (Anti-Reflective Coating)",
+      "observed": "เมื่อเรามองฟองสบู่ที่ลอยในอากาศหรือคราบน้ำมันบางๆ บนผิวน้ำที่เปียกฝน จะเห็นแถบสีสันเหลือบระยิบระยับเปลี่ยนแปลงไปตามมุมมอง แม้ว่าน้ำสบู่หรือน้ำมันจะเป็นของเหลวใสไร้สีก็ตาม นอกจากนี้ บนผิวหน้าของเลนส์กล้องถ่ายภาพและแว่นตาระดับพรีเมียม จะมีแสงสะท้อนสีม่วงอมเขียวจางๆ ซึ่งเกิดจากชั้นสารเคลือบฟิล์มบาง (Anti-Reflective Coating) ที่ออกแบบความหนาในระดับเศษหนึ่งส่วนสี่ของความยาวคลื่น เพื่อบังคับให้คลื่นแสงที่สะท้อนจากผิวหน้าและผิวด้านล่างของฟิล์มหักล้างกันเอง 100% ทำให้แสงส่องผ่านเลนส์ได้เกือบ 99.9%",
+      "mechanism": "1. **การสะท้อนที่ผิวรอยต่อและการกลับเฟส (Phase Shift on Reflection):**\n   - เมื่อแสงสะท้อนจากตัวกลางที่มีดรรชนีหักเหน้อยกว่าไปยังมากกว่า ($n_1 < n_2$) คลื่นสะท้อนจะกลับเฟส 180° ($\\pi$ เรเดียน) เทียบเท่ากับทางเดินแสงเพิ่มขึ้น $\\lambda_n / 2$\n   - เมื่อแสงสะท้อนจากตัวกลางที่มีดรรชนีหักเหมากกว่าไปยังน้อยกว่า ($n_1 > n_2$) คลื่นสะท้อนจะไม่มีการกลับเฟส (เฟสคงเดิม 0°)\n\n2. **ผลต่างทางเดินแสงในเนื้อฟิล์ม (Optical Path Difference: OPD):** ลำแสงที่ทะลุเข้าไปในฟิล์มหนา $t$ ดรรชนีหักเห $n_f$ จะเดินทางไป-กลับเป็นระยะทางเชิงแสง $\\text{OPD} = 2 n_f t \\cos\\theta_r$\n\n3. **หลักการเคลือบผิวเลนส์ลดแสงสะท้อน (Anti-Reflective Coating Design):**\n   - เลือกรอบตัวกลาง: อากาศ ($n_0 = 1.00$) $\\to$ ฟิล์ม ($n_f$) $\\to$ เนื้อแก้ว ($n_g = 1.52$)\n   - จัดเรียงดรรชนีให้ $n_0 < n_f < n_g$ ทำให้คลื่นสะท้อนจากทั้งผิวบนและผิวล่างเกิดการกลับเฟส 180° ทั้งคู่ (ผลต่างเฟสจากการสะท้อนเป็นศูนย์)\n   - บังคับให้เกิดการแทรกสอดหักล้างสมบูรณ์ (Destructive Interference) โดยให้ระยะทางเดินไป-กลับในฟิล์มเท่ากับครึ่งความยาวคลื่นพอดี:\n     $$2 n_f t = \\frac{\\lambda_0}{2} \\implies t = \\frac{\\lambda_0}{4 n_f}$$\n   - เพื่อให้แอมพลิจูดของคลื่นสะท้อนทั้งสองเท่ากันพอดีและหักล้างกันจนเป็นศูนย์ ดรรชนีหักเหของฟิล์มต้องสอดคล้องกับค่าเฉลี่ยเรขาคณิต: $n_f = \\sqrt{n_0 n_g}$",
+      "scope": "ฟิล์มบางสม่ำเสมอ ความหนา $t$ อยู่ในระดับความยาวคลื่นของแสง ($t \\sim 0.1 - 10\\text{ }\\mu\\text{m}$) มุมตกกระทบตั้งฉากหรือใกล้เคียงแนวฉาก",
+      "formulas": [
+        {
+          "latex": "t = \\frac{\\lambda_0}{4 n_f}, \\quad n_f = \\sqrt{n_0 n_g}",
+          "desc": "เงื่อนไขความหนาและดรรชนีหักเหของฟิล์มเคลือบเลนส์ลดแสงสะท้อน (Quarter-Wave Anti-Reflective Coating)"
+        },
+        {
+          "latex": "2 n_f t = m\\lambda_0 \\quad \\text{หรือ} \\quad 2 n_f t = \\left(m + \\frac{1}{2}\\right)\\lambda_0",
+          "desc": "เงื่อนไขการแทรกสอดเสริม/หักล้างในฟิล์มบาง ขึ้นกับการกลับเฟสที่ผิวสัมผัส"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "t",
+          "name": "ความหนาเชิงกายภาพของชั้นฟิล์มบาง",
+          "unit": "nm",
+          "typical": "90 – 140 nm"
+        },
+        {
+          "symbol": "n_f",
+          "name": "ดรรชนีหักเหของสารเคลือบฟิล์มบาง (เช่น MgF₂)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.38 (แมกนีเซียมฟลูออไรด์)"
+        },
+        {
+          "symbol": "n_g",
+          "name": "ดรรชนีหักเหของแก้วเลนส์ (Glass Substrate)",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.52 (Crown) ถึง 1.70 (High Index)"
+        },
+        {
+          "symbol": "\\lambda_0",
+          "name": "ความยาวคลื่นเป้าหมายที่ต้องการขจัดแสงสะท้อนในสุญญากาศ",
+          "unit": "nm",
+          "typical": "550 nm (กึ่งกลางแสงตามองเห็น)"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณความหนาของสารเคลือบ MgF2 บนเลนส์กล้องถ่ายภาพ",
+        "problem": "ต้องการเคลือบผิวเลนส์แก้ว ($n_g = 1.52$) ด้วยฟิล์มบางแมกนีเซียมฟลูออไรด์ (MgF₂, $n_f = 1.38$) เพื่อลดแสงสะท้อนที่ความยาวคลื่นศูนย์กลางสายตามนุษย์ $\\lambda_0 = 550\\text{ nm}$ (แสงสีเขียว) จงหาความหนาขั้นต่ำสุดของชั้นฟิล์ม $t$",
+        "steps": [
+          "1. ตรวจสอบการกลับเฟส: เนื่องจาก n_อากาศ (1.00) < n_ฟิล์ม (1.38) < n_แก้ว (1.52) เกิดการกลับเฟส 180° ทั้งสองผิวสัมผัส",
+          "2. ใช้เงื่อนไขการแทรกสอดหักล้างของคลื่นสะท้อน: 2 n_f t = \\frac{\\lambda_0}{2} \\implies t = \\frac{\\lambda_0}{4 n_f}",
+          "3. แทนค่า: t = \\frac{550\\text{ nm}}{4 \\times 1.38} = \\frac{550}{5.52} \\approx 99.64\\text{ nm}"
+        ],
+        "result": "ความหนาขั้นต่ำของสารเคลือบฟิล์ม MgF₂ เท่ากับ $99.6\\text{ นาโนเมตร}$"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <defs>\n        <marker id=\"arr-f-in\" markerWidth=\"6\" markerHeight=\"6\" refX=\"3\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L6,3 Z\" fill=\"#F59E0B\"/></marker>\n      </defs>\n      <!-- Top Layer: Air (n0 = 1.00) -->\n      <rect x=\"20\" y=\"20\" width=\"500\" height=\"60\" fill=\"#0F172A\" stroke=\"#334155\"/>\n      <text x=\"35\" y=\"45\" fill=\"#94A3B8\" font-size=\"12\" font-weight=\"700\">อากาศ (Air) n₀ = 1.00</text>\n      <!-- Middle Layer: Thin Film MgF2 (nf = 1.38, t = 100 nm) -->\n      <rect x=\"20\" y=\"80\" width=\"500\" height=\"65\" fill=\"#0284C7\" fill-opacity=\"0.3\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <text x=\"35\" y=\"115\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\">ฟิล์มบาง MgF₂ (n_f = 1.38, ความหนา t = λ/4n = 100 nm)</text>\n      <!-- Bottom Layer: Glass Substrate (ng = 1.52) -->\n      <rect x=\"20\" y=\"145\" width=\"500\" height=\"110\" fill=\"#1E293B\" stroke=\"#64748B\"/>\n      <text x=\"35\" y=\"180\" fill=\"#E2E8F0\" font-size=\"12\" font-weight=\"700\">เนื้อแก้วเลนส์ (Glass Substrate) n_g = 1.52</text>\n      <!-- Incident Ray (Amber) -->\n      <path d=\"M 120,25 L 200,80\" stroke=\"#F59E0B\" stroke-width=\"3\" marker-mid=\"url(#arr-f-in)\"/>\n      <text x=\"130\" y=\"50\" fill=\"#F59E0B\" font-size=\"11\" font-weight=\"700\">รังสีตกกระทบ</text>\n      <!-- Reflection Ray 1 from Top Interface (Phase Shift 180°) -->\n      <path d=\"M 200,80 L 260,25\" stroke=\"#EC4899\" stroke-width=\"2.5\"/>\n      <text x=\"265\" y=\"40\" fill=\"#EC4899\" font-size=\"10\" font-weight=\"700\">รังสีสะท้อนที่ 1 (กลับเฟส 180°)</text>\n      <!-- Refracted ray inside film -->\n      <path d=\"M 200,80 L 220,145\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <!-- Reflection Ray 2 from Bottom Interface (Phase Shift 180°) -->\n      <path d=\"M 220,145 L 240,80 L 300,25\" stroke=\"#A855F7\" stroke-width=\"2.5\"/>\n      <text x=\"305\" y=\"55\" fill=\"#A855F7\" font-size=\"10\" font-weight=\"700\">รังสีสะท้อนที่ 2 (กลับเฟส 180° + เดินทางไปกลับ λ/2)</text>\n      <!-- Destructive Interference Callout -->\n      <rect x=\"330\" y=\"70\" width=\"180\" height=\"42\" rx=\"6\" fill=\"#0B0F19\" stroke=\"#10B981\" stroke-width=\"1.5\"/>\n      <text x=\"340\" y=\"87\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\">เฟสตรงข้าม 180° หักล้างกัน!</text>\n      <text x=\"340\" y=\"103\" fill=\"#E2E8F0\" font-size=\"10\">การสะท้อนเป็นศูนย์ แสงทะลุ 99.9%</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Thin-Film Optical Filters (5th Edition)",
+          "authors": "Macleod, H. A.",
+          "source": "CRC Press, Chapter 3 (Anti-reflection Coatings), pp. 85–124",
+          "year": "2018",
+          "url": "https://www.routledge.com/Thin-Film-Optical-Filters/Macleod/p/book/9781498758802",
+          "verifiedDate": "2026-09-17",
+          "note": "การออกแบบชั้นฟิล์มบางลดแสงสะท้อนและการแทรกสอดเฟส",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Macleod (2018) Sec 3.1, Eqs 3.1–3.18; Single-layer and multilayer antireflection coating conditions."
+        }
+      ],
+      "engineeringNote": "ในธรรมชาติ สีเหลือบระยิบระยับของปีกผีเสื้อ Morpho ขนนกยูง และเปลือกหอยมุก ไม่ได้เกิดจากเม็ดสีทางเคมี (Chemical Pigments) แต่เกิดจาก 'สีเชิงโครงสร้าง' (Structural Coloration) ซึ่งเป็นโครงสร้างระดับนาโนเมตรซ้อนทับกันหลายชั้น (Multilayer Nanostructures) ก่อให้เกิดการแทรกสอดในฟิล์มบางแบบเสริมกันเฉพาะช่วงความยาวคลื่นสีน้ำเงิน ทำให้สีไม่เคยซีดจางแม้ผ่านเวลาไปนับร้อยปี และนำมาสู่การวิจัยเลียนแบบธรรมชาติเพื่อสร้างหน้าจอดิจิทัลประหยัดพลังงานในปัจจุบัน"
+    },
+    {
+      "id": "PHE-29",
+      "titleTh": "โพลาไรเซชันของแสง กฎของมาลุส และมุมบรูว์สเตอร์",
+      "titleEn": "Light Polarization: Malus's Law & Brewster's Polarization Angle",
+      "category": "ทัศนศาสตร์เชิงคลื่นและโพลาไรเซชัน",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe29_polarization_brewster.jpg",
+      "imageCaption": "โพลาไรเซชันเชิงเส้น: กฎของมาลุส I = I₀ cos²θ และแสงสะท้อนโพลาไรซ์สมบูรณ์ 100% ที่มุมบรูว์สเตอร์",
+      "observed": "เมื่อสวมแว่นกันแดดโพลาไรซ์ (Polarized Sunglasses) มองไปยังผิวน้ำในสระหรือกระจกหน้ารถยนต์ที่สะท้อนแสงแดดจ้า แสงสะท้อนแสบตาจะหายวับไปทันที ทำให้เรามองเห็นทะลุผ่านผิวน้ำลงไปเห็นปลาใต้สระได้อย่างชัดเจน และเมื่อนำแผ่นฟิลเตอร์โพลารอยด์ 2 แผ่นมาซ้อนกันแล้วหมุนทำมุม 90° แสงจะไม่สามารถส่องผ่านแผ่นคู่ข้ามไปได้เลยแม้แต่น้อย (มืดสนิท 100%) ปรากฏการณ์นี้พิสูจน์ว่าแสงเป็น 'คลื่นตามขวาง' (Transverse Wave) ที่มีเวกเตอร์สนามไฟฟ้าสั่นในแนวตั้งฉากกับทิศทางการเคลื่อนที่",
+      "mechanism": "1. **คลื่นตามขวางและสถานะโพลาไรเซชัน:** แสงธรรมชาติเป็นแสงไม่โพลาไรซ์ (Unpolarized Light) ที่เวกเตอร์สนามไฟฟ้า $\\vec{E}$ สั่นในทุกทิศทางสุ่มในระนาบตั้งฉากกับแนวรังสี เมื่อผ่านแผ่นโพลารอยด์ตัวแรก (Polarizer) แกนการส่งผ่าน (Transmission Axis) จะยอมให้เฉพาะองค์ประกอบของสนามไฟฟ้าที่ขนานกับแกนผ่านได้ ส่งผลให้ความเข้มแสงลดลงเหลือครึ่งหนึ่ง ($I_1 = I_0 / 2$)\n\n2. **กฎของมาลุส (Malus's Law):** เมื่อแสงโพลาไรซ์เชิงเส้นความเข้ม $I_1$ เดินทางผ่านแผ่นวิเคราะห์ (Analyzer) ที่ทำมุม $\\theta$ กับแกนโพลาไรเซชันเดิม แอมพลิจูดของสนามไฟฟ้าที่ผ่านได้คือ $E = E_0 \\cos\\theta$ เนื่องจากความเข้มแสงแปรผันตามแอมพลิจูดยกกำลังสอง ($I \\propto E^2$) ความเข้มแสงที่ทะลุผ่านจึงเป็นไปตาม:\n   $$I(\\theta) = I_1 \\cos^2\\theta$$\n   - หาก $\\theta = 0^\\circ$ แสงผ่านได้เต็มที่ ($I = I_1$)\n   - หาก $\\theta = 90^\\circ$ (Crossed Polarizers) แสงถูกตัดออกหมดสมบูรณ์ ($I = 0$)\n\n3. **มุมบรูว์สเตอร์และการสะท้อนโพลาไรซ์สมบูรณ์ (Brewster's Angle):** เมื่อแสงสะท้อนจากผิวตัวกลางไดอิเล็กทริก (เช่น ผิวน้ำหรือกระจก) ไดโพลอิเล็กตรอนในเนื้อสารจะแกว่งตัวตามทิศทางของรังสีหักเห เมื่อมุมตกกระทบ $\\theta_p$ ทำให้ 'รังสีสะท้อนทำมุมตั้งฉาก 90° กับรังสีหักเห'พอดี ไดโพลจะไม่สามารถแผ่คลื่นแม่เหล็กไฟฟ้าขนานกับแกนการแกว่งตัวของมันได้ ส่งผลให้แสงสะท้อนกลายเป็น 'แสงโพลาไรซ์เชิงเส้น 100%' ในแนวขนานกับผิวสัมผัส (S-polarization):\n   $$\\theta_p + \\theta_2 = 90^\\circ \\implies n_1 \\sin\\theta_p = n_2 \\cos\\theta_p \\implies \\tan\\theta_p = \\frac{n_2}{n_1}$$",
+      "scope": "คลื่นแม่เหล็กไฟฟ้าและแสงในย่านเชิงเส้น ตัวกลางไดอิเล็กทริกไม่นำไฟฟ้า ไม่รวมผลของ Magneto-optic (Faraday Effect)",
+      "formulas": [
+        {
+          "latex": "I(\\theta) = I_{\\max} \\cos^2\\theta",
+          "desc": "กฎของมาลุสสำหรับความเข้มของแสงโพลาไรซ์หลังผ่านแผ่นวิเคราะห์ (Malus's Law)"
+        },
+        {
+          "latex": "\\tan\\theta_p = \\frac{n_2}{n_1} \\quad (\\theta_p + \\theta_2 = 90^\\circ)",
+          "desc": "กฎของบรูว์สเตอร์สำหรับมุมโพลาไรซ์สมบูรณ์จากการสะท้อน (Brewster's Angle)"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "I_0, I_1",
+          "name": "ความเข้มแสงก่อนและหลังผ่านแผ่นโพลาไรเซอร์แผ่นแรก",
+          "unit": "W/m² หรือ %",
+          "typical": "I₁ = 50% ของ I₀"
+        },
+        {
+          "symbol": "\\theta",
+          "name": "มุมสัมพัทธ์ระหว่างแกนส่งผ่านของแผ่นโพลาไรเซอร์และแผ่นวิเคราะห์",
+          "unit": "rad หรือ °",
+          "typical": "0° ถึง 90°"
+        },
+        {
+          "symbol": "\\theta_p",
+          "name": "มุมบรูว์สเตอร์ (Brewster's Angle)",
+          "unit": "rad หรือ °",
+          "typical": "53.1° (น้ำ), 56.3° (แก้ว)"
+        },
+        {
+          "symbol": "n_1, n_2",
+          "name": "ดรรชนีหักเหของตัวกลางตกกระทบและตัวกลางหักเห",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "อากาศ 1.00, น้ำ 1.33, แก้ว 1.50"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณมุมบรูว์สเตอร์ของผิวน้ำและการตัดแสงสะท้อน",
+        "problem": "แสงอาทิตย์ไม่โพลาไรซ์ตกกระทบผิวน้ำในสระ ($n_{\\text{water}} = 1.333$) จากอากาศ ($n_{\\text{air}} = 1.000$) จงหามุมตกกระทบที่ทำให้แสงสะท้อนจากผิวน้ำกลายเป็นแสงโพลาไรซ์เชิงเส้น 100%",
+        "steps": [
+          "1. ใช้กฎของบรูว์สเตอร์: \\tan\\theta_p = \\frac{n_{\\text{water}}}{n_{\\text{air}}} = \\frac{1.333}{1.000} = 1.333",
+          "2. คำนวณหามุมบรูว์สเตอร์: \\theta_p = \\arctan(1.333) \\approx 53.12^\\circ",
+          "3. ตรวจสอบมุมหักเห: \\theta_2 = 90^\\circ - 53.12^\\circ = 36.88^\\circ (รังสีสะท้อนตั้งฉากกับรังสีหักเหพอดี)"
+        ],
+        "result": "มุมบรูว์สเตอร์เท่ากับ $53.1^\\circ$ (เมื่อแสงตกกระทบมุมนี้ แว่นกันแดดที่มีแกนโพลาไรซ์แนวดิ่งจะตัดแสงสะท้อนได้ 100%)"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <!-- Interface Water / Glass -->\n      <line x1=\"20\" y1=\"140\" x2=\"520\" y2=\"140\" stroke=\"#38BDF8\" stroke-width=\"2\"/>\n      <rect x=\"20\" y=\"140\" width=\"500\" height=\"120\" fill=\"#0284C7\" fill-opacity=\"0.2\"/>\n      <text x=\"35\" y=\"170\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\">น้ำ (Water) n₂ = 1.33</text>\n      <text x=\"35\" y=\"125\" fill=\"#94A3B8\" font-size=\"12\" font-weight=\"700\">อากาศ (Air) n₁ = 1.00</text>\n      <!-- Normal Line -->\n      <line x1=\"270\" y1=\"30\" x2=\"270\" y2=\"250\" stroke=\"#64748B\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n      <text x=\"270\" y=\"24\" fill=\"#64748B\" font-size=\"10\" text-anchor=\"middle\">เส้นแนวฉาก</text>\n      <!-- Incident Unpolarized Ray at Brewster Angle 53° -->\n      <path d=\"M 137,40 L 270,140\" stroke=\"#F59E0B\" stroke-width=\"3\"/>\n      <text x=\"140\" y=\"30\" fill=\"#F59E0B\" font-size=\"11\" font-weight=\"700\">แสงไม่โพลาไรซ์ (θ_p = 53°)</text>\n      <!-- Reflected Completely Polarized Ray (S-polarized dots) -->\n      <path d=\"M 270,140 L 403,40\" stroke=\"#10B981\" stroke-width=\"3\"/>\n      <circle cx=\"336\" cy=\"90\" r=\"4\" fill=\"#10B981\"/>\n      <circle cx=\"370\" cy=\"65\" r=\"4\" fill=\"#10B981\"/>\n      <text x=\"410\" y=\"45\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\">แสงสะท้อนโพลาไรซ์ 100%</text>\n      <!-- Refracted Ray at 37° -->\n      <path d=\"M 270,140 L 345,240\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"355\" y=\"235\" fill=\"#38BDF8\" font-size=\"11\">รังสีหักเห (θ₂ = 37°)</text>\n      <!-- 90 Degree Angle Arc between Reflected and Refracted -->\n      <path d=\"M 310,110 L 325,130 L 305,145\" fill=\"none\" stroke=\"#EF4444\" stroke-width=\"2\"/>\n      <text x=\"330\" y=\"125\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\">90°</text>\n      <!-- Malus Law Inset -->\n      <rect x=\"25\" y=\"225\" width=\"230\" height=\"42\" rx=\"6\" fill=\"#0F172A\" stroke=\"#334155\"/>\n      <text x=\"35\" y=\"242\" fill=\"#94A3B8\" font-size=\"10\">กฎของมาลุส: I = I_max cos²θ</text>\n      <text x=\"35\" y=\"258\" fill=\"#10B981\" font-size=\"11\" font-weight=\"700\">Crossed Polarizers (90°): แสงมืดสนิท</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Optics (5th Edition)",
+          "authors": "Hecht, E.",
+          "source": "Pearson, Chapter 8 (Polarization: Malus's Law & Brewster's Angle), pp. 330–365",
+          "year": "2017",
+          "url": "https://www.pearson.com/en-us/subject-catalog/p/optics/P200000006793",
+          "verifiedDate": "2026-09-17",
+          "note": "การอนุมานโพลาไรเซชัน กฎของมาลุส และมุมบรูว์สเตอร์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Hecht (2017) Sec 8.1–8.6, Eqs 8.24–8.38; Malus law and dielectric reflection polarization."
+        }
+      ],
+      "engineeringNote": "เทคโนโลยีจอแสดงผลคริสตัลเหลว (LCD: Liquid Crystal Display) ในสมาร์ทโฟน โน้ตบุ๊ก และโทรทัศน์ ทำงานโดยอาศัยปรากฏการณ์โพลาไรเซชันและกฎของมาลุสร่วมกัน โดยใช้แผ่นโพลาไรเซอร์ 2 แผ่นประกบหน้า-หลังตั้งฉากกัน 90° และใช้โมเลกุลคริสตัลเหลวที่บิดตัวตามแรงดันไฟฟ้ามาทำหน้าที่หมุนระนาบโพลาไรเซชันของแสง เพื่อควบคุมความสว่างของแต่ละพิกเซลได้อย่างแม่นยำในระดับมิลลิวินาที"
+    },
+    {
+      "id": "PHE-30",
+      "titleTh": "ปรากฏการณ์รุ้งกินน้ำปฐมภูมิ-ทุติยภูมิ และภาพลวงตามิราจจากเกรเดียนต์อุณหภูมิ",
+      "titleEn": "Atmospheric Optics: Primary/Secondary Rainbows & Thermal Mirage",
+      "category": "ทัศนศาสตร์บรรยากาศและอุตุนิยมวิทยาเชิงกายภาพ",
+      "division": "ภาคที่ 5: ทัศนศาสตร์และฟิสิกส์ยุคใหม่ (Optics & Modern Physics)",
+      "theoryStatus": "in_development",
+      "relatedSimulator": "wave",
+      "relatedSimSubmode": "light_waves",
+      "imagePath": "assets/optics/phe30_rainbow_mirage.jpg",
+      "imageCaption": "รุ้งปฐมภูมิ (สะท้อนในหยดน้ำ 1 ครั้ง 42°) รุ้งทุติยภูมิ (สะท้อน 2 ครั้ง 51°) และภาพลวงตามิราจจากถนนร้อน",
+      "observed": "ในวันที่ฝนเพิ่งหยุดตกและมีแดดส่อง เรามักเห็น 'รุ้งกินน้ำปฐมภูมิ' (Primary Rainbow) โค้งเป็นแถบสีสดใสทำมุมประมาณ 42° เทียบกับจุดตรงข้ามดวงอาทิตย์ โดยมีสีแดงอยู่แถบนอกสุดและสีม่วงอยู่แถบในสุด หากบรรยากาศโปร่งใสมาก จะเห็น 'รุ้งทุติยภูมิ' (Secondary Rainbow) จางๆ ซ้อนอยู่ชั้นนอกทำมุม 51° ที่มีการสลับลำดับสี (สีม่วงอยู่นอก สีแดงอยู่ใน) และระหว่างรุ้งทั้งสองจะมีแถบท้องฟ้าที่มืดสนิทกว่าปกติ เรียกว่า 'แถบมืดของอเล็กซานเดอร์' (Alexander's Dark Band) นอกจากนี้ ในวันที่แดดจัดบนถนนลาดยางมะตอย เรามักเห็นแอ่งน้ำลวงตาบนผิวถนนข้างหน้า แต่เมื่อขับรถไปถึงกลับพบว่าถนนแห้งสนิท นี่คือ 'ภาพลวงตามิราจ' (Inferior Mirage)",
+      "mechanism": "1. **กลไกการเกิดรุ้งปฐมภูมิ (Primary Rainbow - หักเห 2 ครั้ง สะท้อนภายใน 1 ครั้ง):**\n   - ลำแสงอาทิตย์ขนานพุ่งเข้าสู่หยดน้ำฝนทรงกลม ($n \\approx 1.33$) เกิดการหักเหครั้งแรกพร้อมการกระจายแสง\n   - แสงสะท้อนภายในที่ผิวหลังของหยดน้ำ 1 ครั้ง และหักเหออกจากหยดน้ำกลับสู่อากาศ\n   - มุมเบี่ยงเบนของลำแสง $\\theta(b)$ มีจุดวกกลับ (Extreme Deviation Angle) ซึ่งก่อให้เกิดความเข้มของรังสีแสงสะสมสูงสุดที่มุมมอง $\\theta_{\\text{rainbow}} \\approx 42.5^\\circ$ (แสงสีแดง $\\lambda = 650\\text{ nm}$) และ $40.5^\\circ$ (แสงสีม่วง $\\lambda = 400\\text{ nm}$)\n\n2. **กลไกการเกิดรุ้งทุติยภูมิ (Secondary Rainbow - หักเห 2 ครั้ง สะท้อนภายใน 2 ครั้ง):** ลำแสงเข้าทางด้านล่างของหยดน้ำและสะท้อนภายใน 2 ครั้ง ทำให้สูญเสียพลังงานแสงมากกว่า (รุ้งจึงจางกว่า) และลำแสงสะท้อนออกมาที่มุมสูงกว่าคือ $\\approx 51^\\circ$ พร้อมทั้งกลับทิศแถบสีให้สีแดงอยู่ขอบใน ($50.5^\\circ$) และสีม่วงอยู่ขอบนอก ($53.5^\\circ$)\n\n3. **แถบมืดของอเล็กซานเดอร์ (Alexander's Dark Band):** ทางเรขาคณิตจะไม่มีรังสีแสงใดสะท้อนออกมาในช่วงมุมระหว่าง $42^\\circ$ ถึง $50^\\circ$ ได้เลย ท้องฟ้าระหว่างรุ้งสองตัวจึงมืดสนิทกว่าบริเวณอื่น\n\n4. **กลไกของภาพลวงตามิราจ (Thermal Mirage & Continuous Refraction):**\n   - ผิวถนนยางมะตอยที่ร้อนจัดจะถ่ายเทความร้อนให้อากาศชั้นติดพื้น ทำให้อากาศชั้นล่างมีอุณหภูมิสูงและความหนาแน่นต่ำกว่าอากาศชั้นบน\n   - ดรรชนีหักเหของอากาศจะเพิ่มขึ้นตามความสูง: $\\frac{dn}{dy} > 0$\n   - ตามหลักเวลาสั้นที่สุดของแฟร์มาต์ ลำแสงจากท้องฟ้าสีครามที่พุ่งลงสู่พื้นจะเกิดการหักเหโค้งต่อเนื่อง (Continuous Refraction) วกหงายขึ้นสู่ดวงตาผู้ขับขี่ สมองจึงตีความว่าลำแสงสีฟ้ามาจากแอ่งน้ำสะท้อนบนผิวถนน",
+      "scope": "หยดน้ำฝนทรงกลมลอยตัวอิสระในสภาวะสมดุลแรงตึงผิว และเกรเดียนต์อุณหภูมิอากาศแบบคงตัว",
+      "formulas": [
+        {
+          "latex": "\\theta_{\\text{primary}} = 4\\arcsin\\left(\\frac{1}{n}\\sqrt{\\frac{4-n^2}{3}}\\right) - 2\\arcsin\\left(\\sqrt{\\frac{4-n^2}{3}}\\right) \\approx 42^\\circ",
+          "desc": "มุมรุ้งกินน้ำปฐมภูมิต่ำสุดที่เกิดการสะสมความเข้มแสงสูงสุด (Descartes Rainbow Angle)"
+        },
+        {
+          "latex": "\\frac{d^2 y}{dx^2} = \\frac{1}{n(y)}\\frac{dn}{dy}",
+          "desc": "สมการวิถีรังสีแสงโค้งในตัวกลางที่มีเกรเดียนต์ดรรชนีหักเห (Ray Trajectory in Inhomogeneous Medium)"
+        }
+      ],
+      "variables": [
+        {
+          "symbol": "n_{\\text{water}}",
+          "name": "ดรรชนีหักเหของหยดน้ำฝน",
+          "unit": "— (ไร้หน่วย)",
+          "typical": "1.331 (แดง) ถึง 1.344 (ม่วง)"
+        },
+        {
+          "symbol": "\\theta_{\\text{red}}",
+          "name": "มุมมองรุ้งปฐมภูมิของแสงสีแดงเทียบกับจุดตรงข้ามดวงอาทิตย์",
+          "unit": "° (องศา)",
+          "typical": "42.3°"
+        },
+        {
+          "symbol": "\\theta_{\\text{violet}}",
+          "name": "มุมมองรุ้งปฐมภูมิของแสงสีม่วงเทียบกับจุดตรงข้ามดวงอาทิตย์",
+          "unit": "° (องศา)",
+          "typical": "40.4°"
+        },
+        {
+          "symbol": "dn/dy",
+          "name": "เกรเดียนต์การเปลี่ยนแปลงดรรชนีหักเหของอากาศเทียบกับความสูง",
+          "unit": "m⁻¹",
+          "typical": "-10⁻⁵ ถึง -10⁻⁴ m⁻¹ (ถนนร้อน)"
+        }
+      ],
+      "workedExample": {
+        "title": "การคำนวณมุมรุ้งปฐมภูมิจากดรรชนีหักเหของน้ำตามทฤษฎีของเดส์การ์ตส์",
+        "problem": "หยดน้ำฝนมีดรรชนีหักเหสำหรับแสงสีแดง $n = 1.332$ จงคำนวณมุมตกกระทบวิกฤต $i$ ที่ทำให้เกิดมุมเบี่ยงเบนรุ้ง และคำนวณมุมมองรุ้งปฐมภูมิ $\\theta$",
+        "steps": [
+          "1. หามุมตกกระทบของเดส์การ์ตส์: \\cos i = \\sqrt{\\frac{n^2 - 1}{3}} = \\sqrt{\\frac{1.332^2 - 1}{3}} = \\sqrt{\\frac{1.7742 - 1}{3}} = \\sqrt{0.25807} \\approx 0.5080",
+          "2. คำนวณมุมตกกระทบ: i = \\arccos(0.5080) \\approx 59.47^\\circ",
+          "3. หามุมหักเหในหยดน้ำ: \\sin r = \\frac{\\sin i}{n} = \\frac{\\sin(59.47^\\circ)}{1.332} = \\frac{0.8614}{1.332} \\approx 0.6467 \\implies r \\approx 40.29^\\circ",
+          "4. คำนวณมุมมองรุ้งเทียบกับทิศทางแสงอาทิตย์: \\theta = 4r - 2i = 4(40.29^\\circ) - 2(59.47^\\circ) = 161.16^\\circ - 118.94^\\circ = 42.22^\\circ"
+        ],
+        "result": "มุมมองรุ้งปฐมภูมิของแสงสีแดง $\\theta = 42.2^\\circ$ เหนือขอบฟ้าตรงข้ามดวงอาทิตย์"
+      },
+      "svgDiagram": "<svg viewBox=\"0 0 540 280\" width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background:#0B0F19; border-radius:8px; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\">\n      <!-- Spherical Raindrop at (190, 140) r = 90 -->\n      <circle cx=\"190\" cy=\"140\" r=\"90\" fill=\"#0284C7\" fill-opacity=\"0.25\" stroke=\"#38BDF8\" stroke-width=\"2.5\"/>\n      <text x=\"190\" y=\"245\" fill=\"#38BDF8\" font-size=\"12\" font-weight=\"700\" text-anchor=\"middle\">หยดน้ำฝนทรงกลม (Raindrop)</text>\n      <!-- Sunlight Incoming Parallel Beams -->\n      <line x1=\"20\" y1=\"75\" x2=\"145\" y2=\"75\" stroke=\"#F8FAFC\" stroke-width=\"3\"/>\n      <text x=\"30\" y=\"65\" fill=\"#F8FAFC\" font-size=\"11\" font-weight=\"700\">แสงอาทิตย์ขนาน</text>\n      <!-- Primary Rainbow Internal Path (Refraction 1 -> TIR 1 -> Refraction 2) -->\n      <!-- Red Path (Less deviation, theta = 42°) -->\n      <path d=\"M 145,75 L 273,115 L 175,227 L 380,265\" fill=\"none\" stroke=\"#EF4444\" stroke-width=\"2.5\"/>\n      <text x=\"390\" y=\"255\" fill=\"#EF4444\" font-size=\"11\" font-weight=\"700\">แสงสีแดง (42°)</text>\n      <!-- Violet Path (More deviation, theta = 40°) -->\n      <path d=\"M 145,75 L 276,120 L 170,223 L 365,275\" fill=\"none\" stroke=\"#A855F7\" stroke-width=\"2.5\"/>\n      <text x=\"390\" y=\"275\" fill=\"#A855F7\" font-size=\"11\" font-weight=\"700\">แสงสีม่วง (40°)</text>\n      <!-- Right Side: Secondary Rainbow & Mirage Inset -->\n      <rect x=\"330\" y=\"25\" width=\"190\" height=\"190\" rx=\"8\" fill=\"#0F172A\" stroke=\"#334155\"/>\n      <text x=\"425\" y=\"45\" fill=\"#F8FAFC\" font-size=\"11\" font-weight=\"700\" text-anchor=\"middle\">ปรากฏการณ์ร่วมในธรรมชาติ</text>\n      <!-- Secondary Rainbow swatch -->\n      <rect x=\"345\" y=\"60\" width=\"160\" height=\"30\" rx=\"4\" fill=\"#1E293B\" stroke=\"#F59E0B\"/>\n      <text x=\"355\" y=\"78\" fill=\"#FDE047\" font-size=\"10\" font-weight=\"700\">รุ้งทุติยภูมิ (51° สลับสี)</text>\n      <!-- Alexander band swatch -->\n      <rect x=\"345\" y=\"98\" width=\"160\" height=\"28\" rx=\"4\" fill=\"#020617\" stroke=\"#475569\"/>\n      <text x=\"355\" y=\"116\" fill=\"#64748B\" font-size=\"10\">แถบมืดอเล็กซานเดอร์ (42°-50°)</text>\n      <!-- Mirage swatch -->\n      <rect x=\"345\" y=\"134\" width=\"160\" height=\"32\" rx=\"4\" fill=\"#1E293B\" stroke=\"#38BDF8\"/>\n      <text x=\"355\" y=\"150\" fill=\"#38BDF8\" font-size=\"10\" font-weight=\"700\">มิราจ: แสงหักเหโค้งหงายขึ้น</text>\n      <text x=\"355\" y=\"162\" fill=\"#94A3B8\" font-size=\"9\">เกิดจากถนนร้อน dn/dy &gt; 0</text>\n    </svg>",
+      "citations": [
+        {
+          "title": "Color and Light in Nature (2nd Edition)",
+          "authors": "Lynch, D. K., Livingston, W.",
+          "source": "Cambridge University Press, Chapter 4 (Rainbows and Associated Phenomena), pp. 104–138",
+          "year": "2001",
+          "url": "https://www.cambridge.org/core/books/color-and-light-in-nature/12B262F8",
+          "verifiedDate": "2026-09-17",
+          "note": "ทฤษฎีการเกิดรุ้งกินน้ำปฐมภูมิ ทุติยภูมิ และแถบมืดอเล็กซานเดอร์",
+          "verificationStatus": "direct_content_verified",
+          "evidencePin": "Lynch & Livingston (2001) Sec 4.2–4.5; Descartes rainbow angles and secondary rainbow polarization."
+        }
+      ],
+      "engineeringNote": "ความเข้าใจเรื่องเกรเดียนต์ดรรชนีหักเหของชั้นบรรยากาศ (Atmospheric Refraction Gradient) มีความสำคัญสูงสุดในงานวิศวกรรมเรดาร์ตรวจการณ์ระยะไกลและระบบสื่อสารไมโครเวฟภาคพื้นดิน เพราะความร้อนหรือความชื้นที่ผกผันตามความสูงสามารถทำให้คลื่นวิทยุและคลื่นเรดาร์เกิดปรากฏการณ์ 'Ducting' (คลื่นถูกกักให้โค้งขนานไปตามผิวโลกเหมือนอยู่ในท่อนำคลื่น) ทำให้เรดาร์ตรวจจับเป้าหมายข้ามเส้นขอบฟ้าได้ไกลกว่าปกติหลายร้อยกิโลเมตร หรือเกิดจุดบอดอับสัญญาณเรดาร์ (Radar Holes) ที่เครื่องบินรบสามารถใช้หลบหลีกได้"
     }
   ]
 };

@@ -81,6 +81,12 @@
       this.barT = new Float64Array(this.barNodes);
       this.initHeatConduction();
 
+      // Resolution setup & resize handling
+      this._setupCanvasResolution();
+      if (typeof window !== 'undefined') {
+        window.addEventListener('resize', () => this.resize());
+      }
+
       // Animation & Loop Control
       this.isPlaying = true;
       this.animId = null;
@@ -88,6 +94,32 @@
 
       // Start loop
       this.start();
+    }
+
+    _setupCanvasResolution() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+
+      let w = parentW > 0 ? parentW : (rect.width > 0 ? rect.width : Math.min(window.innerWidth - 32, 800));
+      w = Math.max(w, 280);
+      const aspect = 480 / 800;
+      const h = Math.round(w * aspect);
+
+      this.canvas.width = Math.round(w * dpr);
+      this.canvas.height = Math.round(h * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
+
+      this.width = w;
+      this.height = h;
+      this.dpr = dpr;
+    }
+
+    resize() {
+      this._setupCanvasResolution();
+      this.render();
     }
 
     // ==========================================
@@ -337,8 +369,14 @@
 
     render() {
       const ctx = this.ctx;
-      const w = this.canvas.width;
-      const h = this.canvas.height;
+      const dpr = this.dpr || 1;
+      const scale = (this.width || 800) / 800;
+
+      ctx.save();
+      ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
+
+      const w = 800;
+      const h = 480;
 
       // Dark theme background
       ctx.fillStyle = '#0f172a';
@@ -351,6 +389,8 @@
       } else if (this.subMode === 'heat_conduction') {
         this.renderHeatConduction(ctx, w, h);
       }
+
+      ctx.restore();
     }
 
     // ----------------------------------------------------

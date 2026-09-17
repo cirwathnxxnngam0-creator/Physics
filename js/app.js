@@ -10,6 +10,7 @@
   // Global App State
   let currentChapter = 'ch01';            // 'ch01' | 'ch02' | ...
   let currentView = 'view-landing';
+  let lastLessonView = 'view-theory';
   let currentTier = 'highSchool';
   let activeDivisionFilter = 'all';
   let activeFormulaDivisionFilter = 'all';
@@ -307,6 +308,50 @@
     setupMobileAccessModal();
     setupBackgroundExecution();
 
+    // Global window resize handler for active simulator canvas
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (currentView === 'view-simulator') {
+          if (activeSimMode === 'projectile' && simulatorInstance) {
+            simulatorInstance._setupCanvasResolution();
+            simulatorInstance.render();
+          } else if (activeSimMode === 'vehicle' && vehicleSimulatorInstance) {
+            vehicleSimulatorInstance.resize();
+            vehicleSimulatorInstance.render();
+          } else if (activeSimMode === 'collision' && collisionSimulatorInstance) {
+            collisionSimulatorInstance.resize();
+            collisionSimulatorInstance.render();
+          } else if (activeSimMode === 'threejs' && threejsSimulatorInstance) {
+            threejsSimulatorInstance.resize();
+            threejsSimulatorInstance.render();
+          } else if (activeSimMode === 'circular' && circularSimulatorInstance) {
+            circularSimulatorInstance.resize();
+            circularSimulatorInstance.render();
+          } else if (activeSimMode === 'oscillation' && oscillationSimulatorInstance) {
+            oscillationSimulatorInstance.resize();
+            oscillationSimulatorInstance.render();
+          } else if (activeSimMode === 'wave' && waveSimulatorInstance) {
+            waveSimulatorInstance.resize();
+            waveSimulatorInstance.render();
+          } else if (activeSimMode === 'thermo' && thermoSimulatorInstance) {
+            thermoSimulatorInstance.resize();
+            thermoSimulatorInstance.render();
+          } else if (activeSimMode === 'em' && emSimulatorInstance) {
+            emSimulatorInstance.resize();
+            emSimulatorInstance.render();
+          } else if (activeSimMode === 'nuclear' && nuclearSimulatorInstance) {
+            nuclearSimulatorInstance.resize();
+            nuclearSimulatorInstance.render();
+          } else if (activeSimMode === 'civil' && civilSimulatorInstance) {
+            civilSimulatorInstance.resize();
+            civilSimulatorInstance.render();
+          }
+        }
+      }, 100);
+    });
+
     // Determine initial view based on URL hash or default to Landing Page
     const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-analytical', 'view-practice'];
     const initialHash = window.location.hash.replace(/^#/, '');
@@ -339,6 +384,12 @@
 
   function switchView(viewId, force = false) {
     if (!force && currentView === viewId) return;
+
+    // Track previous lesson view before switching to analytical or chapter selection
+    if (currentView && currentView !== 'view-analytical' && currentView !== 'view-chapter-select' && currentView !== 'view-landing') {
+      lastLessonView = currentView;
+    }
+
     if (viewId === 'view-practice' && typeof renderPracticeProblems === 'function') {
       renderPracticeProblems();
     }
@@ -374,12 +425,13 @@
 
     const isLanding = (viewId === 'view-landing');
     const isChapterSelect = (viewId === 'view-chapter-select');
+    const isAnalytical = (viewId === 'view-analytical');
     const isLesson = !isLanding && !isChapterSelect;
 
     if (backBtn) backBtn.style.display = isLesson ? 'inline-flex' : 'none';
     if (chapterWrapper) chapterWrapper.style.display = isLesson ? 'inline-flex' : 'none';
     if (mainViewNav) mainViewNav.style.display = isLesson ? 'flex' : 'none';
-    if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator') ? 'block' : 'none';
+    if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator' && !isAnalytical) ? 'block' : 'none';
 
     currentView = viewId;
 
@@ -391,8 +443,10 @@
         simulatorInstance.render();
       } else if (activeSimMode === 'vehicle' && vehicleSimulatorInstance) {
         vehicleSimulatorInstance.resize();
+        vehicleSimulatorInstance.render();
       } else if (activeSimMode === 'collision' && collisionSimulatorInstance) {
         collisionSimulatorInstance.resize();
+        collisionSimulatorInstance.render();
       } else if (activeSimMode === 'threejs' && threejsSimulatorInstance) {
         setTimeout(() => {
           threejsSimulatorInstance.resize();
@@ -401,6 +455,24 @@
       } else if (activeSimMode === 'circular' && circularSimulatorInstance) {
         circularSimulatorInstance.resize();
         circularSimulatorInstance.render();
+      } else if (activeSimMode === 'oscillation' && oscillationSimulatorInstance) {
+        oscillationSimulatorInstance.resize();
+        oscillationSimulatorInstance.render();
+      } else if (activeSimMode === 'wave' && waveSimulatorInstance) {
+        waveSimulatorInstance.resize();
+        waveSimulatorInstance.render();
+      } else if (activeSimMode === 'thermo' && thermoSimulatorInstance) {
+        thermoSimulatorInstance.resize();
+        thermoSimulatorInstance.render();
+      } else if (activeSimMode === 'em' && emSimulatorInstance) {
+        emSimulatorInstance.resize();
+        emSimulatorInstance.render();
+      } else if (activeSimMode === 'nuclear' && nuclearSimulatorInstance) {
+        nuclearSimulatorInstance.resize();
+        nuclearSimulatorInstance.render();
+      } else if (activeSimMode === 'civil' && civilSimulatorInstance) {
+        civilSimulatorInstance.resize();
+        civilSimulatorInstance.render();
       }
     }
 
@@ -541,7 +613,7 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.35rem;">
           <a href="#view-analytical" class="drawer-theory-link" onclick="window.PhysicsApp.switchView('view-analytical'); window.PhysicsApp.closeDrawer();">
-            🏛️ กลศาสตร์วิเคราะห์ (Analytical Mechanics)
+            🏛️ การวิเคราะห์กลศาสตร์ / คำอธิบายขั้นสูง (Analytical Mechanics)
           </a>
           <div style="font-size: 0.78rem; color: var(--text-muted); padding: 0.4rem 0.6rem;">
             วิศวกรรมโยธา, ไฟฟ้า, เครื่องกล, ข้อสอบ สอวน., ก.ว. [ดูที่หน้าเลือกบท]
@@ -661,6 +733,7 @@
     const btnOpenAnalytical = document.getElementById('btn-open-analytical-from-select');
     if (btnOpenAnalytical) {
       btnOpenAnalytical.addEventListener('click', () => {
+        lastLessonView = 'view-chapter-select';
         switchView('view-analytical');
       });
     }
@@ -895,9 +968,16 @@
             }).join('')}
           </div>
         </div>
-        <button id="btn-open-drawer-catalog" class="btn-outline-catalog" title="เปิดสารบัญทฤษฎีเรียงเลข">
-          ☰ สารบัญทฤษฎีเรียงเลข (${data.theories.length} ทฤษฎี)
-        </button>
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          ${(chapterId === 'ch01' || chapterId === 'ch02') ? `
+            <button id="btn-open-analytical-expl" class="btn-outline-analytical" title="เปิดคำอธิบายหน้า: การวิเคราะห์กลศาสตร์ (Lagrangian & Hamiltonian)">
+              🏛️ การวิเคราะห์กลศาสตร์ (คำอธิบายขั้นสูง)
+            </button>
+          ` : ''}
+          <button id="btn-open-drawer-catalog" class="btn-outline-catalog" title="เปิดสารบัญทฤษฎีเรียงเลข">
+            ☰ สารบัญทฤษฎีเรียงเลข (${data.theories.length} ทฤษฎี)
+          </button>
+        </div>
       </div>
 
       <!-- Master Divisions & Theories Container -->
@@ -963,6 +1043,22 @@
         }
       });
     }
+
+    // Attach Open Analytical Mechanics Explanations button
+    const btnOpenAnalyticalExpl = container.querySelector('#btn-open-analytical-expl');
+    if (btnOpenAnalyticalExpl) {
+      btnOpenAnalyticalExpl.addEventListener('click', () => {
+        lastLessonView = currentView || 'view-theory';
+        switchView('view-analytical');
+      });
+    }
+
+    container.querySelectorAll('.btn-open-analytical-inline').forEach(btn => {
+      btn.addEventListener('click', () => {
+        lastLessonView = currentView || 'view-theory';
+        switchView('view-analytical');
+      });
+    });
 
     // Attach Direct Jump to Formula buttons on Theory Cards
     container.querySelectorAll('.btn-jump-to-formula').forEach(btn => {
@@ -1041,7 +1137,7 @@
               <span>นิยามและความหมาย (Definition & Meaning)</span>
             </div>
             <div class="theory-prose">
-              ${formatTextProse(t.definition.text)}
+              ${formatTextProse(t.definition ? (t.definition.text || t.definition) : (t.overviewTh || t.summary || ''))}
             </div>
           </div>
 
@@ -1052,7 +1148,7 @@
               <span>หลักการและคำอธิบาย (Principle & Conceptual Foundation)</span>
             </div>
             <div class="theory-prose">
-              ${formatTextProse(t.principle.text)}
+              ${formatTextProse(t.principle ? (t.principle.text || t.principle) : (Array.isArray(t.pedagogicalPoints) ? t.pedagogicalPoints.join('\n\n') : ''))}
             </div>
           </div>
 
@@ -1063,7 +1159,7 @@
               <span>สูตร สัญลักษณ์ หน่วย และการอนุมานตามระดับ (Formulas, Symbols & Derivations)</span>
             </div>
             
-            ${t.formulas.map((f, fIdx) => {
+            ${(t.formulas || []).map((f, fIdx) => {
               const symList = f.symbols || f.variables || [];
               return `
               <div class="formula-subcard">
@@ -1119,7 +1215,7 @@
               <span>การใช้งานและเงื่อนไข (Applications, Scope & Validity Boundaries)</span>
             </div>
             <div class="theory-prose">
-              ${formatTextProse(t.application.text)}
+              ${formatTextProse(t.application ? (t.application.text || t.application) : '')}
             </div>
 
             <div class="app-bounds-grid">
@@ -1127,13 +1223,13 @@
                 <div class="app-bound-title">
                   <span>✓ ขอบเขตที่ใช้ได้ (Valid Scope)</span>
                 </div>
-                <p>${t.application.validWhen}</p>
+                <p>${t.application ? (t.application.validWhen || 'การประมาณรังสีใกล้แกน (Paraxial rays)') : 'การประมาณมาตรฐาน'}</p>
               </div>
               <div class="app-bound-box invalid">
                 <div class="app-bound-title">
                   <span>✗ เมื่อใดที่ใช้ไม่ได้ / ข้อควรระวัง (Invalid Bounds)</span>
                 </div>
-                <p>${t.application.invalidWhen}</p>
+                <p>${t.application ? (t.application.invalidWhen || 'เมื่อมุมตกกระทบกว้างเกินขอบเขต') : 'เมื่ออยู่นอกเงื่อนไข'}</p>
               </div>
             </div>
           </div>
@@ -1145,21 +1241,21 @@
               <span>ตัวอย่างการคำนวณพร้อมภาพ/แบบจำลอง (Worked Example & Interactive Simulator)</span>
             </div>
             <div class="example-box">
-              ${t.example.diagramSvg ? `
+              ${t.example && t.example.diagramSvg ? `
                 <div class="theory-diagram-wrapper" style="margin: 0.75rem 0; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; overflow-x: auto;">
                   ${t.example.diagramSvg}
                   ${t.example.diagramCaption ? `<div class="diagram-caption" style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: center; max-width: 90%;">${t.example.diagramCaption}</div>` : ''}
                 </div>
               ` : ''}
               <div class="example-prob">
-                <strong>โจทย์ตัวอย่าง:</strong> ${t.example.problem}
+                <strong>โจทย์ตัวอย่าง:</strong> ${t.example ? (t.example.problem || '') : ''}
               </div>
               <div class="step-container" style="margin: 0.75rem 0;">
-                ${t.example.steps.map((st, sIdx) => `
+                ${t.example && Array.isArray(t.example.steps) ? t.example.steps.map((st, sIdx) => `
                   <div class="step-card" style="padding: 0.6rem 0.85rem;">
                     <p style="font-size: 0.9rem; margin: 0;">${st}</p>
                   </div>
-                `).join('')}
+                `).join('') : ''}
               </div>
               <button class="sim-deep-link-btn" data-theory-id="${t.id}" aria-label="นำพารามิเตอร์ของทฤษฎีนี้ไปจำลองจริงในแบบจำลอง">
                 🎯 ทดลองในแบบจำลอง (Launch in Simulator) &rarr;
@@ -1176,6 +1272,25 @@
               <ul class="observation-list">
                 ${t.observations.map(obs => `<li>${obs}</li>`).join('')}
               </ul>
+            </div>
+          ` : ''}
+
+          <!-- Bridging to Analytical Mechanics (Explanatory Callout Card) -->
+          ${t.id === 15 ? `
+            <div class="analytical-callout-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                  <div style="font-weight: 800; font-size: 0.95rem; color: #7C3AED; margin-bottom: 0.25rem;">
+                    🏛️ คำอธิบายหน้าเพิ่มเติม: การวิเคราะห์กลศาสตร์ (Lagrangian & Hamiltonian Mechanics)
+                  </div>
+                  <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                    กระบวนทัศน์กลศาสตร์วิเคราะห์ขั้นสูง กฎการกระทำน้อยที่สุด การแปลงเลอฌ็องดร์ วงเล็บปัวซง และระนาบเฟสสเปซเชิงพลศาสตร์
+                  </div>
+                </div>
+                <button class="btn-open-analytical-inline" data-theory-id="15" aria-label="เปิดคำอธิบายหน้าการวิเคราะห์กลศาสตร์">
+                  🏛️ ปุ่มอธิบายหน้า: การวิเคราะห์กลศาสตร์ &rarr;
+                </button>
+              </div>
             </div>
           ` : ''}
 
@@ -1710,9 +1825,20 @@
   let activePhenomenaFilter = 'all';
   let activePhenomenaSearch = '';
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function renderPhenomenaContent(chapterId = currentChapter) {
     const container = document.getElementById('phenomena-content-target');
     if (!container) return;
+    container.innerHTML = '';
 
     let allPhenomena = [];
     let meta = {
@@ -1725,7 +1851,8 @@
       { id: 'div1', label: 'ภาคที่ 1: จลนศาสตร์' },
       { id: 'div2', label: 'ภาคที่ 2: พลศาสตร์' },
       { id: 'div3', label: 'ภาคที่ 3: กฎการอนุรักษ์' },
-      { id: 'div4', label: 'ภาคที่ 4: การหมุน & ของไหล' }
+      { id: 'div4', label: 'ภาคที่ 4: การหมุน & ของไหล' },
+      { id: 'div5', label: 'ภาคที่ 5: ทัศนศาสตร์ & ควอนตัม' }
     ];
 
     if (chapterId === 'ch02') {
@@ -1763,14 +1890,15 @@
       if (dataModule && dataModule.phenomena) {
         allPhenomena = dataModule.phenomena;
         meta = {
-          titleTh: "บทที่ 04: ปรากฏการณ์คลื่นกลและเสียงในวิศวกรรมและธรรมชาติ",
-          titleEn: "Mechanical Waves & Acoustics Phenomena in Engineering & Nature",
-          descriptionTh: "โซนิกบูมและกรวยมัค, ท่อคุนด์และการวัดความเร็วเสียง, สวนศาสตร์ในหอแสดงดนตรี และอัลตราซาวด์ดอปเปลอร์วัดการไหลของเลือด"
+          titleTh: "บทที่ 04: ปรากฏการณ์คลื่นกล เสียง และทัศนศาสตร์เชิงเรขาคณิต",
+          titleEn: "Mechanical Waves, Acoustics & Geometric Optics Phenomena in Engineering & Nature",
+          descriptionTh: "โซนิกบูม, ท่อคุนด์, อัลตราซาวด์ดอปเปลอร์, เส้นใยแก้วนำแสง TIR และเลนส์อรงค์แก้ความคลาดรงค์"
         };
         filterTabs = [
           { id: 'all', label: `ทั้งหมด (${allPhenomena.length} รายการ)` },
           { id: 'div-ch04-wave-mechanics', label: 'ภาคที่ 1: กลศาสตร์คลื่น' },
-          { id: 'div-ch04-acoustics-interference', label: 'ภาคที่ 2: สวนศาสตร์ & ดอปเปลอร์' }
+          { id: 'div-ch04-acoustics-interference', label: 'ภาคที่ 2: สวนศาสตร์ & ดอปเปลอร์' },
+          { id: 'div-ch04-geometric-optics', label: 'ภาคที่ 3: กระจก & เลนส์' }
         ];
       }
     } else if (chapterId === 'ch05') {
@@ -1827,7 +1955,16 @@
       }
     }
 
-    if (!allPhenomena || allPhenomena.length === 0) return;
+    if (!allPhenomena || allPhenomena.length === 0) {
+      container.innerHTML = `
+        <div class="phenomena-empty-state" style="padding: 3rem; text-align: center; color: #94A3B8;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔬</div>
+          <h3 style="color: #F8FAFC; margin-bottom: 0.5rem;">อยู่ระหว่างรวบรวมปรากฏการณ์สำหรับบทนี้</h3>
+          <p>ข้อมูลสำหรับบทที่ ${chapterId} กำลังได้รับการจัดเตรียมตามมาตรฐานวิชาการ 6 มิติ</p>
+        </div>
+      `;
+      return;
+    }
 
     let html = `
       <div class="content-header">
@@ -1860,15 +1997,52 @@
     `;
 
     allPhenomena.forEach((p) => {
+      const pId = p.id || 'PHE-GENERIC';
+      const pDiv = p.division || 'ภาควิชาทั่วไป';
+      const pCat = p.category || p.categoryTh || 'ฟิสิกส์ประยุกต์';
+      const pTitleTh = p.titleTh || p.title || 'ปรากฏการณ์ทางฟิสิกส์';
+      const pTitleEn = p.titleEn || p.subtitle || '';
+      const pObserved = p.observed || p.summary || p.application || '-';
+      const pMechanism = p.mechanism || p.description || '-';
+      const pScope = p.scope || p.scientificSignificance || '-';
+      const pFormulas = p.formulas || (p.mathProof ? [{ latex: p.mathProof, desc: 'สมการและบทพิสูจน์ทางคณิตศาสตร์' }] : []);
+      const pVariables = p.variables || (p.parameters ? p.parameters.map(param => ({
+        symbol: param.symbol || '—',
+        name: param.name || 'พารามิเตอร์',
+        unit: param.unit || '—',
+        typical: param.value || param.typical || param.note || '—'
+      })) : []);
+      const pCitations = p.citations || (p.citation ? [{
+        title: typeof p.citation === 'string' ? p.citation : (p.citation.title || 'ตำราวิชาการ'),
+        year: p.citation.year || '',
+        authors: p.citation.authors || '',
+        source: p.citation.source || '',
+        verificationStatus: 'verified_direct_content',
+        evidencePin: typeof p.citation === 'string' ? p.citation : (p.citation.evidencePin || '')
+      }] : []);
+      const pSvgDiagram = p.svgDiagram || p.svgSchematic || '';
+      const pImagePath = p.imagePath || '';
+      const pImageCaption = p.imageCaption || '';
+
       // Determine all matching division keys for multi-division cards
       const divisionKeys = [];
-      if (p.division) {
-        if (p.division.includes('1') || p.division.includes('จลนศาสตร์') || p.division.includes('Kinematics')) divisionKeys.push('div1');
-        if (p.division.includes('2') || p.division.includes('พลศาสตร์') || p.division.includes('Dynamics')) divisionKeys.push('div2');
-        if (p.division.includes('3') || p.division.includes('อนุรักษ์') || p.division.includes('Conservation')) divisionKeys.push('div3');
-        if (p.division.includes('4') || p.division.includes('ของไหล') || p.division.includes('หมุน') || p.division.includes('Rotation') || p.division.includes('Fluids')) divisionKeys.push('div4');
+      const divStr = (pDiv + ' ' + (p.id || '')).toLowerCase();
+      if (divStr.includes('1') || divStr.includes('จลนศาสตร์') || divStr.includes('kinematics') || divStr.includes('กลศาสตร์คลื่น') || divStr.includes('พื้นฐาน') || divStr.includes('ไฟฟ้าสถิต') || divStr.includes('โครงสร้าง') || divStr.includes('ch02-01') || divStr.includes('ch02-02') || divStr.includes('ch03-01') || divStr.includes('ch03-02') || divStr.includes('ch04-01') || divStr.includes('ch04-02') || divStr.includes('ch05-01') || divStr.includes('ch05-03') || divStr.includes('ch06-01') || divStr.includes('ch06-04') || divStr.includes('ch07-01') || divStr.includes('ch07-02')) {
+        divisionKeys.push('div1', 'div-ch02-kinematics', 'div-ch03-kinematics-shm', 'div-ch04-wave-mechanics', 'div-ch05-fundamentals', 'div-ch06-electrostatics-circuits', 'div-ch07-nuclear-structure');
       }
-      if (divisionKeys.length === 0) divisionKeys.push('div2');
+      if (divStr.includes('2') || divStr.includes('พลศาสตร์') || divStr.includes('dynamics') || divStr.includes('ความหน่วง') || divStr.includes('สั่นพ้อง') || divStr.includes('สวนศาสตร์') || divStr.includes('ดอปเปลอร์') || divStr.includes('วัฏจักร') || divStr.includes('แม่เหล็ก') || divStr.includes('กัมมันตรังสี') || divStr.includes('ch02-03') || divStr.includes('ch02-04') || divStr.includes('ch03-03') || divStr.includes('ch03-04') || divStr.includes('ch04-03') || divStr.includes('ch04-04') || divStr.includes('ch05-02') || divStr.includes('ch05-04') || divStr.includes('ch06-02') || divStr.includes('ch06-03') || divStr.includes('ch07-03') || divStr.includes('ch07-04')) {
+        divisionKeys.push('div2', 'div-ch02-dynamics', 'div-ch03-damping-resonance', 'div-ch04-acoustics-interference', 'div-ch05-cycles-entropy', 'div-ch06-magnetism-induction', 'div-ch07-radioactivity-reactions');
+      }
+      if (divStr.includes('3') || divStr.includes('อนุรักษ์') || divStr.includes('conservation') || divStr.includes('เรขาคณิต') || divStr.includes('กระจก') || divStr.includes('เลนส์') || divStr.includes('optics') || divStr.includes('ch04-05') || divStr.includes('ch04-06') || divStr.includes('ch07-05') || divStr.includes('ch07-06') || divStr.includes('ch07-07')) {
+        divisionKeys.push('div3', 'div-ch04-geometric-optics');
+      }
+      if (divStr.includes('4') || divStr.includes('ของไหล') || divStr.includes('หมุน') || divStr.includes('rotation') || divStr.includes('fluids')) {
+        divisionKeys.push('div4');
+      }
+      if (divStr.includes('5') || divStr.includes('ทัศนศาสตร์') || divStr.includes('ควอนตัม') || divStr.includes('quantum') || divStr.includes('แสง')) {
+        divisionKeys.push('div5');
+      }
+      if (divisionKeys.length === 0) divisionKeys.push('div1', 'div2');
       const divAttr = divisionKeys.join(' ');
 
       const simNameMap = {
@@ -1876,45 +2050,46 @@
         vehicle: 'โหมดที่ 2: รถแข่ง & เวกเตอร์ลม',
         collision: 'โหมดที่ 3: การชน & การดล 1D',
         threejs: 'โหมดที่ 4: วิถี 3 มิติ Three.js',
-        circular: 'โหมดที่ 5: แบบจำลองวงกลมและทางโค้งเอียง'
+        circular: 'โหมดที่ 5: แบบจำลองวงกลมและทางโค้งเอียง',
+        wave: 'แบบจำลองคลื่น & คลื่นแสง'
       };
       const simLabel = p.relatedSimulator ? simNameMap[p.relatedSimulator] || 'เปิดแบบจำลอง' : null;
 
       html += `
-        <article class="phenomena-card" id="${p.id}" data-id="${p.id}" data-division="${divisionKeys[0]}" data-divisions="${divAttr}" data-keywords="${(p.titleTh + ' ' + p.titleEn + ' ' + p.category + ' ' + p.id + ' ' + (p.observed || '')).toLowerCase()}">
+        <article class="phenomena-card" id="${pId}" data-id="${pId}" data-division="${divisionKeys[0]}" data-divisions="${divAttr}" data-keywords="${(pTitleTh + ' ' + pTitleEn + ' ' + pCat + ' ' + pId + ' ' + pObserved).toLowerCase()}">
           <!-- Left Column: Academic Content & Formulas -->
           <div class="phenomena-info-col">
             <div class="phenomena-badge-row">
-              <span class="phenomena-id-chip">${p.id}</span>
-              <span class="phenomena-div-chip">${p.division}</span>
-              <span class="phenomena-cat-chip">${p.category}</span>
+              <span class="phenomena-id-chip">${pId}</span>
+              <span class="phenomena-div-chip">${pDiv}</span>
+              <span class="phenomena-cat-chip">${pCat}</span>
             </div>
 
-            <h3 class="phenomena-card-title-th">${p.titleTh}</h3>
-            <div class="phenomena-card-title-en">${p.titleEn}</div>
+            <h3 class="phenomena-card-title-th">${pTitleTh}</h3>
+            <div class="phenomena-card-title-en">${pTitleEn}</div>
 
             <!-- 1. What is Observed -->
             <div class="phenomena-section-item">
               <span class="phenomena-section-label">👀 สิ่งที่สังเกตเห็นในโลกจริง (Observation)</span>
-              <div>${p.observed}</div>
+              <div>${pObserved}</div>
             </div>
 
             <!-- 2. Physical Mechanism -->
             <div class="phenomena-section-item">
               <span class="phenomena-section-label">⚙️ กลไกทางฟิสิกส์เชิงลึก (Physical Mechanism)</span>
-              <div>${p.mechanism ? p.mechanism.replace(/\\n/g, '<br/><br/>') : ''}</div>
+              <div>${pMechanism ? pMechanism.replace(/\\n/g, '<br/><br/>') : ''}</div>
             </div>
 
             <!-- 3. Scope & Boundary Conditions -->
             <div class="phenomena-section-item">
               <span class="phenomena-section-label">📏 ขอบเขตและเงื่อนไขการบังคับใช้ (Boundary Conditions & Validity)</span>
-              <div style="color: #CBD5E1;">${p.scope || '-'}</div>
+              <div style="color: #CBD5E1;">${pScope || '-'}</div>
             </div>
 
             <!-- 4. Mathematical Formulas with KaTeX -->
             <div class="phenomena-section-item">
               <span class="phenomena-section-label">📐 สมการคณิตศาสตร์และกฎที่เกี่ยวข้อง (Governing Equations)</span>
-              ${(p.formulas || []).map(f => `
+              ${(pFormulas || []).map(f => `
                 <div class="phenomena-formula-container">
                   <div class="math-display">$$${f.latex}$$</div>
                   <div class="phenomena-formula-desc">&bull; ${f.desc}</div>
@@ -1923,7 +2098,7 @@
             </div>
 
             <!-- 5. Variables & SI Units Table -->
-            ${p.variables && p.variables.length > 0 ? `
+            ${pVariables && pVariables.length > 0 ? `
               <div class="phenomena-section-item">
                 <span class="phenomena-section-label">📊 ตัวแปรและหน่วย SI สากล (Variables & Dimensions)</span>
                 <div class="phenomena-table-wrapper">
@@ -1937,7 +2112,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      ${p.variables.map(v => `
+                      ${pVariables.map(v => `
                         <tr>
                           <td class="phenomena-symbol">$${v.symbol}$</td>
                           <td>${v.name}</td>
@@ -1955,10 +2130,10 @@
             <div class="phenomena-section-item">
               <span class="phenomena-section-label">📚 แหล่งอ้างอิงวิชาการเปิดและหน้าตำรา (Academic Citations)</span>
               <div class="phenomena-citations-list">
-                ${(p.citations || []).map(c => `
+                ${(pCitations || []).map(c => `
                   <div class="phenomena-citation-card">
-                    <div class="phenomena-citation-title">📖 ${c.title} (${c.year})</div>
-                    <div class="phenomena-citation-meta">${c.authors} &mdash; <em>${c.source}</em></div>
+                    <div class="phenomena-citation-title">📖 ${c.title} (${c.year || ''})</div>
+                    <div class="phenomena-citation-meta">${c.authors || ''} &mdash; <em>${c.source || ''}</em></div>
                     ${c.url ? `<div class="phenomena-citation-url" style="margin: 0.25rem 0;"><a href="${c.url}" target="_blank" rel="noopener noreferrer" style="color: #38BDF8; font-size: 0.8rem; text-decoration: underline; word-break: break-all;">🔗 ลิงก์เอกสารต้นฉบับ: ${c.url}</a></div>` : ''}
                     ${c.verificationStatus === 'verified_direct_content' ? `
                       <div style="margin-top: 0.35rem;">
@@ -1987,10 +2162,61 @@
             ` : ''}
           </div>
 
-          <!-- Right Column: Visual SVG Diagram & Navigation Actions -->
+          <!-- Right Column: Visual SVG Diagram, Realistic Photo & Navigation Actions -->
           <div class="phenomena-visual-column">
+            ${pImagePath ? `
+              <div class="phenomena-photo-frame">
+                <div class="phenomena-photo-wrapper" style="position: relative; overflow: hidden; border-radius: 6px;">
+                  <img src="${pImagePath}" alt="${escapeHtml(pTitleEn)}" class="phenomena-photo-img" loading="lazy"
+                    data-full-src="${pImagePath}"
+                    data-full-title="${escapeHtml(pTitleTh + ' — ' + pTitleEn)}"
+                    data-full-caption="${escapeHtml(`
+                      <div style="margin-bottom: 0.75rem;">
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4); margin-bottom: 0.4rem;">
+                          ${pDiv} &bull; ${pCat}
+                        </span>
+                        <h4 style="color: #F8FAFC; font-size: 1.05rem; margin: 0 0 0.4rem 0;">${pTitleTh}</h4>
+                        <div style="color: #94A3B8; font-size: 0.85rem; font-style: italic; margin-bottom: 0.6rem;">${pTitleEn}</div>
+                      </div>
+                      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong style="color: #38BDF8;">📷 คำอธิบายภาพกายภาพจริง:</strong>
+                        <p style="margin: 0.35rem 0 0 0; color: #E2E8F0; line-height: 1.55;">${pImageCaption}</p>
+                      </div>
+                      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 0.75rem;">
+                        <strong style="color: #10B981;">⚙️ กลไกและแรงที่กระทำตามหลักฟิสิกส์:</strong>
+                        <p style="margin: 0.35rem 0 0 0; color: #CBD5E1; line-height: 1.55;">${(pMechanism || '').split('\n\n')[0]}</p>
+                      </div>
+                    `)}"
+                  />
+                  <button type="button" class="phenomena-photo-btn-full"
+                    data-full-src="${pImagePath}"
+                    data-full-title="${escapeHtml(pTitleTh + ' — ' + pTitleEn)}"
+                    data-full-caption="${escapeHtml(`
+                      <div style="margin-bottom: 0.75rem;">
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4); margin-bottom: 0.4rem;">
+                          ${pDiv} &bull; ${pCat}
+                        </span>
+                        <h4 style="color: #F8FAFC; font-size: 1.05rem; margin: 0 0 0.4rem 0;">${pTitleTh}</h4>
+                        <div style="color: #94A3B8; font-size: 0.85rem; font-style: italic; margin-bottom: 0.6rem;">${pTitleEn}</div>
+                      </div>
+                      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                        <strong style="color: #38BDF8;">📷 คำอธิบายภาพกายภาพจริง:</strong>
+                        <p style="margin: 0.35rem 0 0 0; color: #E2E8F0; line-height: 1.55;">${pImageCaption}</p>
+                      </div>
+                      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 0.75rem;">
+                        <strong style="color: #10B981;">⚙️ กลไกและแรงที่กระทำตามหลักฟิสิกส์:</strong>
+                        <p style="margin: 0.35rem 0 0 0; color: #CBD5E1; line-height: 1.55;">${(pMechanism || '').split('\n\n')[0]}</p>
+                      </div>
+                    `)}"
+                    title="คลิกเพื่อดูภาพขนาดเต็มพร้อมคำอธิบายกายภาพ">
+                    🔍 ดูภาพเต็ม
+                  </button>
+                </div>
+                ${pImageCaption ? `<div class="phenomena-photo-caption">📷 <strong>ภาพกายภาพจริง:</strong> ${pImageCaption}</div>` : ''}
+              </div>
+            ` : ''}
             <div class="phenomena-diagram-frame">
-              ${p.svgDiagram}
+              ${pSvgDiagram}
             </div>
 
             <div class="phenomena-actions-group">
@@ -1998,7 +2224,11 @@
                 <button class="phenomena-action-btn phenomena-btn-theory btn-jump-theory" data-theory-id="${p.relatedTheoryId}" title="ไปยังเนื้อหา ${p.relatedTheoryTitle}">
                   📖 อ่านทฤษฎี: ${(p.relatedTheoryTitle || '').split(':')[0]}
                 </button>
-              ` : ''}
+              ` : (p.theoryStatus === 'in_development' ? `
+                <div style="font-size: 0.72rem; color: #94a3b8; padding: 0.45rem 0.6rem; background: rgba(30, 41, 59, 0.7); border-radius: var(--radius-sm); border: 1px dashed rgba(56, 189, 248, 0.35); line-height: 1.4;">
+                  📚 <strong>ภาคทฤษฎีเฉพาะทาง:</strong> ทัศนศาสตร์ &amp; ควอนตัม อยู่ระหว่างการจัดเตรียมหลักสูตรฉบับสมบูรณ์ &mdash; ศึกษาทฤษฎีและสมการอย่างละเอียดได้ในการ์ดนี้
+                </div>
+              ` : '')}
 
               ${p.relatedSimulator ? `
                 <button class="phenomena-action-btn phenomena-btn-sim btn-jump-sim" data-sim-mode="${p.relatedSimulator}" ${p.relatedSimSubmode ? `data-submode="${p.relatedSimSubmode}"` : ''} title="เปิดแบบจำลองเสมือนจริง ${simLabel}">
@@ -2018,7 +2248,7 @@
     html += `
         <div id="phenomena-no-results" class="phenomena-empty-state" style="display: none;">
           <h3>ไม่พบปรากฏการณ์ที่ตรงกับคำค้นหา</h3>
-          <p>กรุณาลองเปลี่ยนคำค้นหา หรือคลิกเลือก "ทั้งหมด" เพื่อดูรายการปรากฏการณ์ทั้งหมด 16 รายการ</p>
+          <p>กรุณาลองเปลี่ยนคำค้นหา หรือคลิกเลือก "ทั้งหมด" เพื่อดูรายการปรากฏการณ์ทั้งหมด ${allPhenomena.length} รายการ</p>
         </div>
       </div>
     `;
@@ -2095,6 +2325,71 @@
         switchSimMode(simMode, subMode);
       });
     });
+
+    // Lightbox modal handlers for phenomena photos
+    const lightboxModal = document.getElementById('photo-lightbox-modal');
+    const lightboxHeading = document.getElementById('photo-lightbox-heading');
+    const lightboxImg = document.getElementById('photo-lightbox-img');
+    const lightboxCaption = document.getElementById('photo-lightbox-caption');
+    const btnCloseLightbox = document.getElementById('btn-close-photo-lightbox');
+
+    function openLightbox(src, title, captionHtml) {
+      if (!lightboxModal) return;
+      if (lightboxImg) {
+        lightboxImg.src = src;
+        lightboxImg.alt = title || 'ภาพถ่ายปรากฏการณ์';
+      }
+      if (lightboxHeading) {
+        lightboxHeading.textContent = title || 'ภาพกายภาพจริงและรายละเอียดปรากฏการณ์';
+      }
+      if (lightboxCaption) {
+        lightboxCaption.innerHTML = captionHtml || '';
+        if (window.MathRenderer) {
+          window.MathRenderer.typeset(lightboxCaption);
+        }
+      }
+      lightboxModal.classList.add('active');
+      lightboxModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lightboxModal) return;
+      lightboxModal.classList.remove('active');
+      lightboxModal.style.display = 'none';
+      document.body.style.overflow = '';
+      if (lightboxImg) lightboxImg.src = '';
+    }
+
+    if (btnCloseLightbox) {
+      btnCloseLightbox.onclick = closeLightbox;
+    }
+    if (lightboxModal) {
+      lightboxModal.onclick = (e) => {
+        if (e.target === lightboxModal) closeLightbox();
+      };
+    }
+
+    // Attach click listener to all photo images and "ดูภาพเต็ม" buttons
+    document.querySelectorAll('.phenomena-photo-img, .phenomena-photo-btn-full').forEach(target => {
+      target.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const src = target.dataset.fullSrc || target.getAttribute('src');
+        const title = target.dataset.fullTitle || '';
+        const caption = target.dataset.fullCaption || '';
+        openLightbox(src, title, caption);
+      });
+    });
+
+    // Handle ESC key to close modal
+    if (!window._lightboxEscAttached) {
+      window._lightboxEscAttached = true;
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightboxModal && lightboxModal.classList.contains('active')) {
+          closeLightbox();
+        }
+      });
+    }
   }
 
   function filterPhenomenaCards() {
@@ -2138,6 +2433,21 @@
     if (!afData) return;
 
     let html = `
+      <!-- Analytical Return & Explanatory Navigation Header -->
+      <div class="analytical-return-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          <button id="btn-analytical-back-lesson" class="btn-analytical-back-primary" aria-label="ย้อนกลับไปหน้าบทเรียน">
+            ← ย้อนกลับไปหน้าบทเรียน (Back to Lesson)
+          </button>
+          <button id="btn-analytical-back-chapter" class="btn-analytical-back-secondary" aria-label="กลับไปหน้าเลือกบท">
+            📚 กลับไปหน้าเลือกบท (Chapter Selection)
+          </button>
+        </div>
+        <div class="analytical-badge-group">
+          <span class="badge-analytical-tag">🏛️ คำอธิบายหน้า: การวิเคราะห์กลศาสตร์ขั้นสูง</span>
+        </div>
+      </div>
+
       <div class="content-header">
         <h2 class="content-title">${afData.meta.titleTh}</h2>
         <p class="content-subtitle">${afData.meta.subtitleTh} &mdash; ${afData.meta.description}</p>
@@ -2246,6 +2556,21 @@
     `;
 
     container.innerHTML = html;
+
+    // Attach Return & Navigation Button Listeners
+    const btnBackLesson = container.querySelector('#btn-analytical-back-lesson');
+    if (btnBackLesson) {
+      btnBackLesson.addEventListener('click', () => {
+        switchView(lastLessonView || 'view-theory');
+      });
+    }
+
+    const btnBackChapter = container.querySelector('#btn-analytical-back-chapter');
+    if (btnBackChapter) {
+      btnBackChapter.addEventListener('click', () => {
+        switchView('view-chapter-select');
+      });
+    }
 
     initPhaseSpaceCanvas();
 
@@ -3017,6 +3342,7 @@
         const waterGroup = document.getElementById('group-wave-water');
         const lightGroup = document.getElementById('group-wave-light');
         const polGroup = document.getElementById('group-wave-polarization');
+        const opticsGroup = document.getElementById('group-wave-optics');
 
         const isTraveling = (submode === 'traveling');
         const isStanding = (submode === 'standing');
@@ -3024,6 +3350,7 @@
         const isWater = (submode === 'water_waves');
         const isLight = (submode === 'light_waves');
         const isPol = (submode === 'polarization');
+        const isOptics = (submode === 'geometric_optics');
 
         if (ampGroup) ampGroup.style.display = (isTraveling || isStanding) ? 'block' : 'none';
         if (freqGroup) freqGroup.style.display = isTraveling ? 'block' : 'none';
@@ -3035,6 +3362,7 @@
         if (waterGroup) waterGroup.style.display = isWater ? 'block' : 'none';
         if (lightGroup) lightGroup.style.display = isLight ? 'block' : 'none';
         if (polGroup) polGroup.style.display = isPol ? 'block' : 'none';
+        if (opticsGroup) opticsGroup.style.display = isOptics ? 'block' : 'none';
       }
       if (mode === 'thermo') {
         callSub(thermoSimulatorInstance, submode);
@@ -3140,11 +3468,13 @@
       waveSimulatorInstance.resize();
       waveSimulatorInstance.render();
     } else if (mode === 'thermo' && thermoSimulatorInstance) {
+      thermoSimulatorInstance.resize();
       thermoSimulatorInstance.render();
     } else if (mode === 'em' && emSimulatorInstance) {
       emSimulatorInstance.resize();
       emSimulatorInstance.render();
     } else if (mode === 'nuclear' && nuclearSimulatorInstance) {
+      nuclearSimulatorInstance.resize();
       nuclearSimulatorInstance.render();
     } else if (mode === 'civil' && civilSimulatorInstance) {
       civilSimulatorInstance.resize();
@@ -4282,6 +4612,7 @@
           const waterGroup = document.getElementById('group-wave-water');
           const lightGroup = document.getElementById('group-wave-light');
           const polGroup = document.getElementById('group-wave-polarization');
+          const opticsGroup = document.getElementById('group-wave-optics');
 
           const isTraveling = (sm === 'traveling');
           const isStanding = (sm === 'standing');
@@ -4289,6 +4620,7 @@
           const isWater = (sm === 'water_waves');
           const isLight = (sm === 'light_waves');
           const isPol = (sm === 'polarization');
+          const isOptics = (sm === 'geometric_optics');
 
           if (ampGroup) ampGroup.style.display = (isTraveling || isStanding) ? 'block' : 'none';
           if (freqGroup) freqGroup.style.display = isTraveling ? 'block' : 'none';
@@ -4300,6 +4632,7 @@
           if (waterGroup) waterGroup.style.display = isWater ? 'block' : 'none';
           if (lightGroup) lightGroup.style.display = isLight ? 'block' : 'none';
           if (polGroup) polGroup.style.display = isPol ? 'block' : 'none';
+          if (opticsGroup) opticsGroup.style.display = isOptics ? 'block' : 'none';
         });
       });
     }
@@ -4540,6 +4873,44 @@
         }
       });
     });
+
+    // 7. Geometric Optics Controls (Curved Mirrors & Thin Lenses)
+    const opticsElemSelect = document.getElementById('optics-element-type');
+    if (opticsElemSelect) {
+      opticsElemSelect.addEventListener('change', (e) => {
+        if (waveSimulatorInstance) {
+          waveSimulatorInstance.setParam('opticsType', e.target.value);
+        }
+      });
+    }
+
+    bindWaveSlider('optics-slider-focal', 'optics-val-focal', ' cm', 1, (val) => {
+      if (waveSimulatorInstance) waveSimulatorInstance.setParam('opticsFocal', val);
+    });
+    bindWaveSlider('optics-slider-s', 'optics-val-s', ' cm', 1, (val) => {
+      if (waveSimulatorInstance) waveSimulatorInstance.setParam('opticsS', val);
+    });
+    bindWaveSlider('optics-slider-h', 'optics-val-h', ' cm', 1, (val) => {
+      if (waveSimulatorInstance) waveSimulatorInstance.setParam('opticsH', val);
+    });
+
+    const opticsChips = document.querySelectorAll('.optics-presets-row .btn-preset-chip');
+    opticsChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        opticsChips.forEach(c => c.classList.toggle('active', c === chip));
+        const sVal = parseFloat(chip.dataset.s);
+        const sSlider = document.getElementById('optics-slider-s');
+        const sValDisplay = document.getElementById('optics-val-s');
+        if (sSlider) {
+          sSlider.value = sVal;
+          sSlider.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (sValDisplay) sValDisplay.textContent = sVal.toFixed(1) + ' cm';
+        if (waveSimulatorInstance) {
+          waveSimulatorInstance.setParam('opticsS', sVal);
+        }
+      });
+    });
   }
 
   function bindWaveSlider(sliderId, labelId, unit, decimals, onChange) {
@@ -4584,6 +4955,36 @@
       setText('wave-telem-omega', telem.omega.toFixed(3) + ' rad/s');
       setText('wave-telem-power', telem.powerAvg.toFixed(1) + ' J/m²');
       setText('wave-telem-beat', '—');
+    } else if (sm === 'geometric_optics') {
+      const s = telem.opticsS !== undefined ? telem.opticsS : 30;
+      const sPrime = telem.opticsSPrime !== undefined ? telem.opticsSPrime : 30;
+      const f = telem.opticsF !== undefined ? telem.opticsF : 15;
+      const m = telem.opticsM !== undefined ? telem.opticsM : -1.0;
+      const isReal = telem.opticsIsReal;
+      const isInf = telem.opticsIsAtInfinity;
+
+      setText('wave-telem-speed', 's = ' + s.toFixed(1) + ' cm');
+      setText('wave-telem-lambda', isInf ? "s' → ∞ (อนันต์)" : ("s' = " + (sPrime > 0 ? '+' : '') + sPrime.toFixed(1) + ' cm'));
+      setText('wave-telem-freq', 'f = ' + (f > 0 ? '+' : '') + f.toFixed(1) + ' cm');
+      setText('wave-telem-period', isInf ? 'm → ∞' : ('m = ' + m.toFixed(2) + '×'));
+      setText('wave-telem-k', '1/f = ' + (100 / f).toFixed(2) + ' D');
+      setText('wave-telem-omega', isInf ? 'รังสีขนาน' : (isReal ? 'ตัดจริง (Convergent)' : 'เสมือน (Divergent)'));
+      setText('wave-telem-power', isInf ? 'ที่ระยะอนันต์' : (isReal ? 'ภาพจริง (Real)' : 'ภาพเสมือน (Virtual)'));
+      setText('wave-telem-beat', isInf ? 'แสงขนาน' : (m < 0 ? 'หัวกลับ (Inverted)' : 'หัวตั้ง (Upright)'));
+
+      // Also update optics badge readouts
+      setText('optics-readout-sprime', isInf ? '∞ (ระยะอนันต์)' : ((sPrime > 0 ? '+' : '') + sPrime.toFixed(1) + ' cm'));
+      setText('optics-readout-m', isInf ? '∞' : (m.toFixed(2) + '×'));
+      let natureStr = '';
+      if (isInf) {
+        natureStr = 'รังสีขนาน ไม่ตัดกัน (ภาพอยู่ที่ระยะอนันต์)';
+      } else {
+        const typeStr = isReal ? 'ภาพจริง' : 'ภาพเสมือน';
+        const orientStr = m < 0 ? 'หัวกลับ' : 'หัวตั้ง';
+        const sizeStr = Math.abs(Math.abs(m) - 1.0) < 0.05 ? 'ขนาดเท่าวัตถุพอดี' : (Math.abs(m) > 1.0 ? 'ขนาดขยายใหญ่' : 'ขนาดย่อส่วน');
+        natureStr = `${typeStr} ${orientStr} ${sizeStr}`;
+      }
+      setText('optics-readout-nature', natureStr);
     } else {
       setText('wave-telem-speed', telem.waveSpeed.toFixed(2) + ' m/s');
       setText('wave-telem-lambda', telem.wavelength.toFixed(2) + ' m');
@@ -4626,6 +5027,25 @@
       targetSubMode = 'interference_beats';
       waveSimulatorInstance.setParam('freq1', 2.0);
       waveSimulatorInstance.setParam('freq2', 2.4);
+    } else if (num === 7 || num === 8 || num === 9) {
+      // Geometric Optics: Curved Mirrors & Thin Lenses
+      targetSubMode = 'geometric_optics';
+      if (num === 7) {
+        waveSimulatorInstance.setParam('opticsType', 'concave_mirror');
+        waveSimulatorInstance.setParam('opticsFocal', 15.0);
+        waveSimulatorInstance.setParam('opticsS', 30.0);
+        waveSimulatorInstance.setParam('opticsH', 6.0);
+      } else if (num === 8) {
+        waveSimulatorInstance.setParam('opticsType', 'convex_lens');
+        waveSimulatorInstance.setParam('opticsFocal', 15.0);
+        waveSimulatorInstance.setParam('opticsS', 22.0);
+        waveSimulatorInstance.setParam('opticsH', 6.0);
+      } else {
+        waveSimulatorInstance.setParam('opticsType', 'convex_lens');
+        waveSimulatorInstance.setParam('opticsFocal', 10.0);
+        waveSimulatorInstance.setParam('opticsS', 18.0);
+        waveSimulatorInstance.setParam('opticsH', 5.0);
+      }
     }
 
     waveSimulatorInstance.reset();
@@ -4971,6 +5391,13 @@
       });
     }
 
+    const selectParticle = document.getElementById('select-particle-type');
+    if (selectParticle) {
+      selectParticle.addEventListener('change', (e) => {
+        if (emSimulatorInstance) emSimulatorInstance.setParticleType(e.target.value);
+      });
+    }
+
     // Submode 3: RC controls
     const selSwitch = document.getElementById('select-rc-switch');
     if (selSwitch) {
@@ -5250,7 +5677,7 @@
       setBoth(1, 'สนามแม่เหล็ก \\(B\\)', bVal + ' T');
       setBoth(2, 'สนามไฟฟ้า \\(E\\)', eVal + ' V/m');
       setBoth(3, 'ความเร็วต้น \\(v_0\\)', vVal + ' m/s');
-      setBoth(4, 'รัศมีไซโคลตรอน \\(r\\)', rVal + ' px');
+      setBoth(4, 'รัศมีไซโคลตรอน \\(r\\)', rVal + ' m');
     } else if (sub === 'faraday_induction') {
       setBoth(1, 'แรงเคลื่อนไฟฟ้า \\(\\mathcal{E}\\)', telem.faradayEmf || '0.00 V');
       setBoth(2, 'ฟลักซ์แม่เหล็ก \\(\\Phi_B\\)', telem.faradayFlux || '0.00 mWb');
@@ -5319,10 +5746,27 @@
       emSimulatorInstance.reset();
     } else if (num >= 16 && num <= 20) {
       targetSubMode = 'lorentz_cyclotron';
+      const partType = (num === 18) ? 'electron' : ((num === 19) ? 'alpha' : 'proton');
+      emSimulatorInstance.setParticleType(partType);
       emSimulatorInstance.setParam('magFieldB', 0.8);
       emSimulatorInstance.setParam('elecFieldE', (num === 17) ? 20 : 0);
       emSimulatorInstance.setParam('particleVelocity', 240);
+      const selPart = document.getElementById('select-particle-type');
+      if (selPart) selPart.value = partType;
+      const sB = document.getElementById('slider-lorentz-b');
+      const lB = document.getElementById('label-lorentz-b');
+      if (sB) sB.value = 0.8;
+      if (lB) lB.textContent = '0.80 T';
+      const sE = document.getElementById('slider-lorentz-e');
+      const lE = document.getElementById('label-lorentz-e');
+      if (sE) sE.value = (num === 17) ? 20 : 0;
+      if (lE) lE.textContent = (num === 17 ? '20' : '0') + ' V/m';
+      const sV = document.getElementById('slider-lorentz-v');
+      const lV = document.getElementById('label-lorentz-v');
+      if (sV) sV.value = 240;
+      if (lV) lV.textContent = '240 m/s';
       emSimulatorInstance.reset();
+      if (window.syncAllNumericInputs) window.syncAllNumericInputs();
     } else if (num >= 21 && num <= 23) {
       targetSubMode = 'biot_savart';
       const biotType = (num === 21) ? 'loop' : (num === 22 ? 'solenoid' : 'parallel');

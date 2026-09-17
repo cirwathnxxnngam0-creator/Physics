@@ -45,6 +45,12 @@
         frequency: 1.2,         // Hz (f)
         tension: 80.0,          // N (T_s)
         linearDensity: 0.05,    // kg/m (\mu)
+
+        // Geometric Optics (Curved Mirrors & Thin Lenses)
+        opticsType: 'convex_lens', // 'concave_mirror' | 'convex_mirror' | 'convex_lens' | 'concave_lens'
+        opticsFocal: 15.0,         // cm (|f|)
+        opticsS: 30.0,             // cm (s)
+        opticsH: 6.0,              // cm (y)
         direction: 1,           // +1 for right, -1 for left
 
         // Standing Waves
@@ -212,6 +218,34 @@
         this.state.frequency = f;
         this.state.powerAvg = powerAvg;
 
+      } else if (this.subMode === 'geometric_optics') {
+        const isMirror = p.opticsType.includes('mirror');
+        const isDiverging = p.opticsType.includes('convex_mirror') || p.opticsType.includes('concave_lens');
+        const f = (isDiverging ? -1 : 1) * Math.abs(p.opticsFocal || 15.0);
+        const s = Math.max(1.0, p.opticsS || 30.0);
+        const y = p.opticsH || 6.0;
+
+        let sPrime = 0;
+        let m = 0;
+        let yPrime = 0;
+        const isAtInfinity = Math.abs(s - f) < 0.05;
+
+        if (!isAtInfinity) {
+          sPrime = (s * f) / (s - f);
+          m = -sPrime / s;
+          yPrime = m * y;
+        }
+
+        this.state.opticsF = f;
+        this.state.opticsS = s;
+        this.state.opticsSPrime = sPrime;
+        this.state.opticsM = m;
+        this.state.opticsY = y;
+        this.state.opticsYPrime = yPrime;
+        this.state.opticsIsAtInfinity = isAtInfinity;
+        this.state.opticsIsReal = sPrime > 0;
+        this.state.opticsIsInverted = m < 0;
+
       } else if (this.subMode === 'light_waves') {
         const c = 299792458; // m/s
         const wlNm = Math.max(380, Math.min(750, p.wavelengthNm));
@@ -242,16 +276,25 @@
     }
 
     _setupCanvasResolution() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const rect = this.canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const width = rect.width || 800;
-      const height = rect.height || 480;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
 
-      this.canvas.width = Math.round(width * dpr);
-      this.canvas.height = Math.round(height * dpr);
+      let w = parentW > 0 ? parentW : (rect.width > 0 ? rect.width : Math.min(window.innerWidth - 32, 800));
+      w = Math.max(w, 280);
+      const aspect = 480 / 800;
+      const h = Math.round(w * aspect);
+
+      this.canvas.width = Math.round(w * dpr);
+      this.canvas.height = Math.round(h * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.width = width;
-      this.height = height;
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
+      this.width = w;
+      this.height = h;
     }
 
     resize() {
@@ -260,7 +303,7 @@
     }
 
     setSubMode(mode) {
-      if (['traveling', 'standing', 'interference_beats', 'water_waves', 'light_waves', 'polarization'].includes(mode)) {
+      if (['traveling', 'standing', 'interference_beats', 'water_waves', 'light_waves', 'polarization', 'geometric_optics'].includes(mode)) {
         this.subMode = mode;
         this._stopAudio();
         this.reset();
@@ -432,6 +475,8 @@
         this._renderLightWavesMode(ctx, w, h);
       } else if (this.subMode === 'polarization') {
         this._renderPolarizationMode(ctx, w, h);
+      } else if (this.subMode === 'geometric_optics') {
+        this._renderGeometricOpticsMode(ctx, w, h);
       }
     }
 
@@ -1592,6 +1637,490 @@
     }
 
     // ==========================================
+    // 7. GEOMETRIC OPTICS (MIRRORS & LENSES) RENDERER
+    // ==========================================
+    _renderGeometricOpticsMode(ctx, w, h) {
+      const p = this.params;
+      const optType = p.opticsType || 'convex_lens';
+      const isMirror = optType.includes('mirror');
+      const isDiverging = optType.includes('convex_mirror') || optType.includes('concave_lens');
+      const fAbs = Math.abs(p.opticsFocal || 15.0);
+      const fSign = isDiverging ? -1 : 1;
+      const f = fSign * fAbs;
+      const s = Math.max(2.0, p.opticsS || 30.0);
+      const y = p.opticsH || 6.0;
+
+      // Dark background
+      ctx.fillStyle = '#0B1120';
+      ctx.fillRect(0, 0, w, h);
+
+      // Coordinate System
+      const X0 = Math.round(w / 2);
+      const Y0 = Math.round(h / 2);
+
+      // Dynamic scale: fit ±60cm horizontally, ±18cm vertically
+      const scaleX = (w * 0.44) / 55.0;
+      const scaleY = (h * 0.38) / 16.0;
+      const scale = Math.min(scaleX, scaleY);
+
+      // Draw Grid
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.35)';
+      ctx.lineWidth = 1;
+      const stepGrid = 5.0 * scale;
+      for (let gx = X0 % stepGrid; gx < w; gx += stepGrid) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, h);
+        ctx.stroke();
+      }
+      for (let gy = Y0 % stepGrid; gy < h; gy += stepGrid) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(w, gy);
+        ctx.stroke();
+      }
+
+      // Principal Axis (Optical Axis)
+      ctx.strokeStyle = '#64748B';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, Y0);
+      ctx.lineTo(w, Y0);
+      ctx.stroke();
+
+      // Optical Axis Arrow & Label
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('แกนมุขสำคัญ (Principal Axis)', w - 16, Y0 - 8);
+
+      // Focal Points Positions
+      const fPx = fAbs * scale;
+      const f2Px = 2 * fPx;
+
+      // Draw Focal and 2F Markers
+      const drawPoint = (px, py, label, sub) => {
+        ctx.save();
+        ctx.fillStyle = '#38BDF8';
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#E2E8F0';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, px, py + 16);
+        if (sub) {
+          ctx.font = '9px Inter, sans-serif';
+          ctx.fillStyle = '#94A3B8';
+          ctx.fillText(sub, px, py + 27);
+        }
+        ctx.restore();
+      };
+
+      if (!isMirror) {
+        // Lens has foci on both sides
+        drawPoint(X0 - fPx, Y0, isDiverging ? "F'" : "F", `-${fAbs}cm`);
+        drawPoint(X0 + fPx, Y0, isDiverging ? "F" : "F'", `+${fAbs}cm`);
+        drawPoint(X0 - f2Px, Y0, "2F", `-${2 * fAbs}cm`);
+        drawPoint(X0 + f2Px, Y0, "2F'", `+${2 * fAbs}cm`);
+      } else {
+        // Mirror: concave has F in front (left), convex has F behind (right)
+        if (optType === 'concave_mirror') {
+          drawPoint(X0 - fPx, Y0, "F", `-${fAbs}cm`);
+          drawPoint(X0 - f2Px, Y0, "C (2F)", `-${2 * fAbs}cm`);
+        } else {
+          drawPoint(X0 + fPx, Y0, "F (เสมือน)", `+${fAbs}cm`);
+          drawPoint(X0 + f2Px, Y0, "C (2F)", `+${2 * fAbs}cm`);
+        }
+      }
+
+      // Draw Optical Element at X0
+      ctx.save();
+      if (optType === 'convex_lens') {
+        // Double convex lens shape
+        ctx.strokeStyle = '#38BDF8';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.ellipse(X0, Y0, 10, h * 0.38, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        // Arrow heads at top/bottom indicating converging lens
+        const drawArrowHead = (x, y, up) => {
+          ctx.beginPath();
+          ctx.moveTo(x - 8, y + (up ? 8 : -8));
+          ctx.lineTo(x, y);
+          ctx.lineTo(x + 8, y + (up ? 8 : -8));
+          ctx.stroke();
+        };
+        drawArrowHead(X0, Y0 - h * 0.38, true);
+        drawArrowHead(X0, Y0 + h * 0.38, false);
+
+        ctx.fillStyle = '#38BDF8';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('เลนส์นูน (Convex Lens, f > 0)', X0, 24);
+      } else if (optType === 'concave_lens') {
+        // Diverging lens shape
+        ctx.strokeStyle = '#A78BFA';
+        ctx.fillStyle = 'rgba(167, 139, 250, 0.15)';
+        ctx.lineWidth = 2.5;
+        const topY = Y0 - h * 0.38;
+        const botY = Y0 + h * 0.38;
+        ctx.beginPath();
+        ctx.moveTo(X0 - 10, topY);
+        ctx.quadraticCurveTo(X0 - 2, Y0, X0 - 10, botY);
+        ctx.lineTo(X0 + 10, botY);
+        ctx.quadraticCurveTo(X0 + 2, Y0, X0 + 10, topY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#A78BFA';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('เลนส์เว้า (Concave Lens, f < 0)', X0, 24);
+      } else if (optType === 'concave_mirror') {
+        // Concave mirror arc curving toward left
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(X0 + 140, Y0, 150, Math.PI - 0.75, Math.PI + 0.75);
+        ctx.stroke();
+
+        // Hatching marks on rear (right side)
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+        ctx.lineWidth = 1.5;
+        for (let a = Math.PI - 0.7; a <= Math.PI + 0.7; a += 0.12) {
+          const mx = X0 + 140 + 150 * Math.cos(a);
+          const my = Y0 + 150 * Math.sin(a);
+          ctx.beginPath();
+          ctx.moveTo(mx, my);
+          ctx.lineTo(mx + 8, my - 6);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = '#F59E0B';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('กระจกเว้า (Concave Mirror, f > 0)', X0, 24);
+      } else if (optType === 'convex_mirror') {
+        // Convex mirror arc curving toward right
+        ctx.strokeStyle = '#EC4899';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.arc(X0 - 140, Y0, 150, -0.75, 0.75);
+        ctx.stroke();
+
+        // Hatching marks on rear (right side inside curve)
+        ctx.strokeStyle = 'rgba(236, 72, 153, 0.4)';
+        ctx.lineWidth = 1.5;
+        for (let a = -0.7; a <= 0.7; a += 0.12) {
+          const mx = X0 - 140 + 150 * Math.cos(a);
+          const my = Y0 + 150 * Math.sin(a);
+          ctx.beginPath();
+          ctx.moveTo(mx, my);
+          ctx.lineTo(mx + 8, my + 6);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = '#EC4899';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('กระจกนูน (Convex Mirror, f < 0)', X0, 24);
+      }
+      ctx.restore();
+
+      // Object Coordinates
+      const objX = X0 - s * scale;
+      const objTipY = Y0 - y * scale;
+
+      // Draw Object Arrow (Emerald Green)
+      const drawArrow = (fromX, fromY, toX, toY, color, isDashed = false) => {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3.0;
+        if (isDashed) ctx.setLineDash([5, 5]);
+
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        // Arrow head at (toX, toY)
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        const headLen = 10;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      };
+
+      drawArrow(objX, Y0, objX, objTipY, '#10B981', false);
+
+      // Object label
+      ctx.save();
+      ctx.fillStyle = '#10B981';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`วัตถุ (Object)`, objX, objTipY - 12);
+      ctx.font = '10px Inter, sans-serif';
+      ctx.fillStyle = '#A7F3D0';
+      ctx.fillText(`s = ${s.toFixed(1)} cm, y = ${y.toFixed(1)} cm`, objX, objTipY - 1);
+      ctx.restore();
+
+      // Calculate Image Properties
+      const isAtInfinity = Math.abs(s - f) < 0.05;
+      let sPrime = 0;
+      let m = 0;
+      let yPrime = 0;
+      let imgX = 0;
+      let imgTipY = 0;
+      let isReal = false;
+
+      if (!isAtInfinity) {
+        sPrime = (s * f) / (s - f);
+        m = -sPrime / s;
+        yPrime = m * y;
+
+        if (!isMirror) {
+          // Lens: s' > 0 -> image at right (X0 + s' * scale)
+          // s' < 0 -> image at left (X0 + s' * scale)
+          imgX = X0 + sPrime * scale;
+          isReal = sPrime > 0;
+        } else {
+          // Mirror: s' > 0 -> image in front (left, X0 - s' * scale)
+          // s' < 0 -> image behind (right, X0 - s' * scale)
+          imgX = X0 - sPrime * scale;
+          isReal = sPrime > 0;
+        }
+        imgTipY = Y0 - yPrime * scale;
+
+        // Draw Image Arrow
+        const imgColor = isReal ? '#F59E0B' : '#EC4899';
+        drawArrow(imgX, Y0, imgX, imgTipY, imgColor, !isReal);
+
+        // Image label
+        ctx.save();
+        ctx.fillStyle = imgColor;
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const natureTh = isReal ? 'ภาพจริง (หัวกลับ)' : 'ภาพเสมือน (หัวตั้ง)';
+        const labelY = m < 0 ? imgTipY + 16 : imgTipY - 12;
+        ctx.fillText(`${natureTh}`, imgX, labelY);
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText(`s' = ${sPrime > 0 ? '+' : ''}${sPrime.toFixed(1)} cm, m = ${m.toFixed(2)}×`, imgX, labelY + (m < 0 ? 12 : -11));
+        ctx.restore();
+      }
+
+      // Ray Tracing Helper
+      const drawRaySegment = (x1, y1, x2, y2, color, dashed = false) => {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.6;
+        if (dashed) ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // Direction arrow along segment
+        if (!dashed) {
+          const midX = (x1 + x2) / 2;
+          const midY = (y1 + y2) / 2;
+          const angle = Math.atan2(y2 - y1, x2 - x1);
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(midX, midY);
+          ctx.lineTo(midX - 7 * Math.cos(angle - 0.4), midY - 7 * Math.sin(angle - 0.4));
+          ctx.lineTo(midX - 7 * Math.cos(angle + 0.4), midY - 7 * Math.sin(angle + 0.4));
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      };
+
+      // ==========================================
+      // PRINCIPAL RAYS RENDERING
+      // ==========================================
+      const ray1Col = '#FACC15'; // Ray 1: Parallel
+      const ray2Col = '#38BDF8'; // Ray 2: Chief / Center
+      const ray3Col = '#C084FC'; // Ray 3: Focal
+
+      if (optType === 'convex_lens') {
+        // Ray 1: Parallel to axis, then through F2 (+f)
+        drawRaySegment(objX, objTipY, X0, objTipY, ray1Col, false);
+        const f2X = X0 + fPx;
+        const slope1 = (Y0 - objTipY) / (f2X - X0);
+        const endX1 = w;
+        const endY1 = objTipY + slope1 * (endX1 - X0);
+        drawRaySegment(X0, objTipY, endX1, endY1, ray1Col, false);
+        if (sPrime < 0) {
+          // Virtual backward extension to imgX
+          drawRaySegment(X0, objTipY, imgX, imgTipY, ray1Col, true);
+        }
+
+        // Ray 2: Through optical center undeviated
+        const slope2 = (Y0 - objTipY) / (X0 - objX);
+        const endX2 = w;
+        const endY2 = objTipY + slope2 * (endX2 - objX);
+        drawRaySegment(objX, objTipY, endX2, endY2, ray2Col, false);
+        if (sPrime < 0) {
+          drawRaySegment(objX, objTipY, imgX, imgTipY, ray2Col, true);
+        }
+
+        // Ray 3: Through F1 (-f), then parallel
+        if (s > fAbs + 1.0) {
+          const f1X = X0 - fPx;
+          const slope3 = (Y0 - objTipY) / (f1X - objX);
+          const yAtLens = objTipY + slope3 * (X0 - objX);
+          drawRaySegment(objX, objTipY, X0, yAtLens, ray3Col, false);
+          drawRaySegment(X0, yAtLens, w, yAtLens, ray3Col, false);
+        } else if (s < fAbs - 1.0) {
+          // Apparent from F1
+          const f1X = X0 - fPx;
+          const slope3 = (objTipY - Y0) / (objX - f1X);
+          const yAtLens = objTipY + slope3 * (X0 - objX);
+          drawRaySegment(objX, objTipY, X0, yAtLens, ray3Col, false);
+          drawRaySegment(X0, yAtLens, w, yAtLens, ray3Col, false);
+          drawRaySegment(X0, yAtLens, imgX, imgTipY, ray3Col, true);
+        }
+
+      } else if (optType === 'concave_lens') {
+        // Ray 1: Parallel to axis, refracts diverging away from F1 (-f)
+        drawRaySegment(objX, objTipY, X0, objTipY, ray1Col, false);
+        const f1X = X0 - fPx;
+        const slope1 = (objTipY - Y0) / (X0 - f1X);
+        const endX1 = w;
+        const endY1 = objTipY + slope1 * (endX1 - X0);
+        drawRaySegment(X0, objTipY, endX1, endY1, ray1Col, false);
+        drawRaySegment(X0, objTipY, f1X, Y0, ray1Col, true);
+
+        // Ray 2: Through optical center undeviated
+        const slope2 = (Y0 - objTipY) / (X0 - objX);
+        drawRaySegment(objX, objTipY, X0, Y0, ray2Col, false);
+        drawRaySegment(X0, Y0, w, Y0 + slope2 * (w - X0), ray2Col, false);
+
+      } else if (optType === 'concave_mirror') {
+        // Ray 1: Parallel to axis, reflects through F (left)
+        drawRaySegment(objX, objTipY, X0, objTipY, ray1Col, false);
+        const fX = X0 - fPx;
+        const slope1 = (Y0 - objTipY) / (fX - X0);
+        const endX1 = 0;
+        const endY1 = objTipY + slope1 * (endX1 - X0);
+        drawRaySegment(X0, objTipY, endX1, endY1, ray1Col, false);
+        if (sPrime < 0) {
+          // Virtual image behind mirror
+          drawRaySegment(X0, objTipY, imgX, imgTipY, ray1Col, true);
+        }
+
+        // Ray 2: Strikes vertex (X0, Y0) and reflects at equal angle
+        drawRaySegment(objX, objTipY, X0, Y0, ray2Col, false);
+        const slope2 = -(Y0 - objTipY) / (X0 - objX);
+        const endX2 = 0;
+        const endY2 = Y0 + slope2 * (endX2 - X0);
+        drawRaySegment(X0, Y0, endX2, endY2, ray2Col, false);
+        if (sPrime < 0) {
+          drawRaySegment(X0, Y0, imgX, imgTipY, ray2Col, true);
+        }
+
+      } else if (optType === 'convex_mirror') {
+        // Ray 1: Parallel to axis, reflects as if coming from F (right, virtual)
+        drawRaySegment(objX, objTipY, X0, objTipY, ray1Col, false);
+        const fX = X0 + fPx;
+        const slope1 = (objTipY - Y0) / (X0 - fX);
+        const endX1 = 0;
+        const endY1 = objTipY + slope1 * (endX1 - X0);
+        drawRaySegment(X0, objTipY, endX1, endY1, ray1Col, false);
+        drawRaySegment(X0, objTipY, fX, Y0, ray1Col, true);
+
+        // Ray 2: Toward vertex (X0, Y0) reflects at equal angle
+        drawRaySegment(objX, objTipY, X0, Y0, ray2Col, false);
+        const slope2 = -(Y0 - objTipY) / (X0 - objX);
+        drawRaySegment(X0, Y0, 0, Y0 + slope2 * (0 - X0), ray2Col, false);
+        drawRaySegment(X0, Y0, imgX, imgTipY, ray2Col, true);
+      }
+
+      // Distance Dimension Indicator Lines
+      const drawDimLine = (x1, x2, py, label, color) => {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x1, py);
+        ctx.lineTo(x2, py);
+        ctx.stroke();
+
+        // Ticks
+        ctx.beginPath();
+        ctx.moveTo(x1, py - 4);
+        ctx.lineTo(x1, py + 4);
+        ctx.moveTo(x2, py - 4);
+        ctx.lineTo(x2, py + 4);
+        ctx.stroke();
+
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, (x1 + x2) / 2, py - 3);
+        ctx.restore();
+      };
+
+      const dimY = h - 22;
+      drawDimLine(objX, X0, dimY, `s = ${s.toFixed(1)} cm`, '#10B981');
+      if (!isAtInfinity) {
+        const imgDimColor = isReal ? '#F59E0B' : '#EC4899';
+        drawDimLine(X0, imgX, dimY - 14, `s' = ${sPrime.toFixed(1)} cm`, imgDimColor);
+      }
+
+      // Compact Telemetry Card overlay at top-left
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      const cardW = 240;
+      const cardH = 88;
+      const cardX = 14;
+      const cardY = 14;
+      ctx.beginPath();
+      ctx.roundRect(cardX, cardY, cardW, cardH, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('📐 การคำนวณรังสี (Ray Equations)', cardX + 10, cardY + 18);
+
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = '11px monospace';
+      ctx.fillText(`1/s + 1/s' = 1/f  |  m = -s'/s`, cardX + 10, cardY + 36);
+
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.fillText(`f = ${f > 0 ? '+' : ''}${f.toFixed(1)} cm | s = ${s.toFixed(1)} cm`, cardX + 10, cardY + 52);
+
+      if (isAtInfinity) {
+        ctx.fillStyle = '#EF4444';
+        ctx.fillText(`s' = ∞ (ขนาน ไม่เกิดภาพในระยะอนันต์)`, cardX + 10, cardY + 68);
+      } else {
+        const natureShort = isReal ? 'ภาพจริง (หัวกลับ)' : 'ภาพเสมือน (หัวตั้ง)';
+        ctx.fillStyle = isReal ? '#34D399' : '#F472B6';
+        ctx.fillText(`s' = ${sPrime > 0 ? '+' : ''}${sPrime.toFixed(1)} cm | m = ${m.toFixed(2)}×`, cardX + 10, cardY + 68);
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillText(`ลักษณะ: ${natureShort}`, cardX + 10, cardY + 80);
+      }
+      ctx.restore();
+    }
+
+
+    // ==========================================
     // WEB AUDIO API SYNTHESIZER
     // ==========================================
     _startAudio() {
@@ -1697,6 +2226,17 @@
         malusTransmissionPct: this.state.malusTransmissionPct,
         transmissionPct: this.state.malusTransmissionPct,
         deltaThetaDeg: deltaDeg,
+        opticsType: this.params.opticsType,
+        opticsFocal: this.params.opticsFocal,
+        opticsS: this.state.opticsS,
+        opticsSPrime: this.state.opticsSPrime,
+        opticsF: this.state.opticsF,
+        opticsM: this.state.opticsM,
+        opticsY: this.state.opticsY,
+        opticsYPrime: this.state.opticsYPrime,
+        opticsIsReal: this.state.opticsIsReal,
+        opticsIsInverted: this.state.opticsIsInverted,
+        opticsIsAtInfinity: this.state.opticsIsAtInfinity,
         energy_eV: this.state.photonEnergyEv,
         freq_THz: this.state.lightFreqThz,
         wl_nm: this.subMode === 'light_waves' ? this.params.wavelengthNm : undefined

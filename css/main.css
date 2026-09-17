@@ -953,12 +953,194 @@ body {
   top: 90px;
 }
 
-.phenomena-diagram-frame {
-  background-color: #0F172A;
-  border: 1px solid var(--border-dark);
+.phenomena-photo-frame {
+  background-color: #0B0F19;
+  border: 1.5px solid var(--border-dark);
   border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.phenomena-photo-frame:hover {
+  border-color: #38BDF8;
+}
+
+.phenomena-photo-img {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  background: #0B0F19;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  cursor: zoom-in;
+  transition: transform 0.2s ease;
+}
+
+.phenomena-photo-img:hover {
+  transform: scale(1.015);
+}
+
+.phenomena-photo-btn-full {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #F8FAFC;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.15s ease;
+  z-index: 5;
+}
+
+.phenomena-photo-btn-full:hover {
+  background: #0284C7;
+  border-color: #38BDF8;
+  color: #FFFFFF;
+}
+
+.phenomena-photo-caption {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  color: #CBD5E1;
+  background: rgba(15, 23, 42, 0.95);
+  line-height: 1.5;
+  border-top: 1px solid rgba(51, 65, 85, 0.3);
+}
+
+/* Lightbox Modal for Full Uncropped Image View */
+.photo-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.photo-lightbox-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.photo-lightbox-card {
+  background: #0F172A;
+  border: 1.5px solid #334155;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.photo-lightbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  background: #1E293B;
+  border-bottom: 1px solid #334155;
+}
+
+.photo-lightbox-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #F8FAFC;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.photo-lightbox-close {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.photo-lightbox-close:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.photo-lightbox-body {
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.photo-lightbox-img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: #030712;
+}
+
+.photo-lightbox-details {
+  width: 100%;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  font-size: 0.88rem;
+  color: #E2E8F0;
+  line-height: 1.6;
+}
+
+.phenomena-diagram-frame {
+  background-color: #0B0F19;
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.phenomena-diagram-frame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.canvas-drag-surface,
+.simulator-canvas,
+canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .phenomena-actions-group {
@@ -3090,6 +3272,127 @@ body {
   color: #EA580C;
 }
 
+/* Analytical Mechanics Explanatory UI */
+.btn-outline-analytical {
+  background: var(--bg-card);
+  color: #7C3AED;
+  border: 1px solid #C4B5FD;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.btn-outline-analytical:hover {
+  background: #F5F3FF;
+  border-color: #7C3AED;
+  color: #6D28D9;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.15);
+}
+
+.analytical-return-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid #7C3AED;
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.btn-analytical-back-primary {
+  background: #7C3AED;
+  color: #FFFFFF;
+  border: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.btn-analytical-back-primary:hover {
+  background: #6D28D9;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.25);
+}
+
+.btn-analytical-back-secondary {
+  background: var(--bg-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-dark);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.btn-analytical-back-secondary:hover {
+  background: var(--bg-card);
+  border-color: #7C3AED;
+  color: #7C3AED;
+}
+
+.badge-analytical-tag {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7C3AED;
+  background: #F5F3FF;
+  border: 1px solid #DDD6FE;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.analytical-callout-card {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid #DDD6FE;
+  border-left: 4px solid #7C3AED;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.06);
+}
+
+.btn-open-analytical-inline {
+  background: #7C3AED;
+  color: #FFFFFF;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.btn-open-analytical-inline:hover {
+  background: #6D28D9;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.25);
+}
+
 /* 6. Simulator Educational Context Frame */
 .sim-edu-context-card {
   background: var(--bg-card);
@@ -3862,3 +4165,64 @@ body {
   color: #FFFFFF !important;
   box-shadow: 0 0 16px rgba(56, 189, 248, 0.4) !important;
 }
+
+/* ======================================================================
+   RESPONSIVE CANVAS ARCHITECTURE (P1 MOBILE ANTI-CLIPPING FIX)
+   ====================================================================== */
+.simulator-canvas,
+.canvas-drag-surface,
+.canvas-wrapper canvas,
+#simulator-canvas,
+#projectile-canvas,
+#circular-canvas,
+#oscillation-canvas,
+#wave-canvas,
+#thermo-canvas,
+#collision-canvas,
+#vehicle-canvas,
+#em-canvas,
+#nuclear-canvas,
+#civil-canvas,
+#civil-beam-canvas,
+#threejs-canvas {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.canvas-wrapper,
+.simulator-canvas-container,
+.simulator-layout,
+.simulator-visual-column {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.sim-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.25rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1024px) {
+  .sim-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.sim-stage-container,
+.sim-sidebar {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+

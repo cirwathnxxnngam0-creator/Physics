@@ -227,14 +227,20 @@
     }
 
     resize() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const rect = this.canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const width = Math.max(rect.width || 400, 320);
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+      const width = parentW > 0 ? parentW : Math.max(rect.width || 400, 320);
       const height = Math.max(rect.height || 300, 240);
 
-      this.canvas.width = width * dpr;
-      this.canvas.height = height * dpr;
+      this.canvas.width = Math.round(width * dpr);
+      this.canvas.height = Math.round(height * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
       this.render();
     }
 

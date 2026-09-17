@@ -46,6 +46,7 @@
       // Physical Constants (Normalized SI for numerical stability)
       this.MU0 = 4 * Math.PI * 1e-7;
       this.EPS0 = 8.8541878e-12;
+      this.LORENTZ_PX_PER_METER = 1.0; // Graphic rendering scale: 1.0 meter (SI) = 1.0 canvas pixel
 
       // Simulation Parameters
       this.params = {
@@ -58,6 +59,7 @@
         chargeQ2: -5.0,           // uC
 
         // Submode 2: Lorentz & Cyclotron
+        particleType: 'proton',   // 'proton' | 'electron' | 'alpha'
         magFieldB: 0.8,           // Tesla (into screen if positive)
         elecFieldE: 0,            // V/m (downward)
         particleCharge: 1.0,      // rel e
@@ -94,6 +96,9 @@
         acC: 10.0,                // microFarad
         acSpeed: 0.15             // Visual animation speed factor (0.02 - 0.50)
       };
+
+      // Resolution and interaction (Setup resolution first so cx/cy use true width/height)
+      this._setupCanvasResolution();
 
       // Submode 1 State: Point Charges in 2D
       this.charges = [];
@@ -145,8 +150,6 @@
       this.acQ = 0;
       this.recalcACParameters();
 
-      // Resolution and interaction
-      this._setupCanvasResolution();
       window.addEventListener('resize', () => this.resize());
       this.setupInteraction();
 
@@ -160,20 +163,46 @@
     }
 
     _setupCanvasResolution() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
       const rect = this.canvas.getBoundingClientRect();
-      const width = rect.width > 0 ? Math.round(rect.width) : 850;
-      const height = rect.height > 0 ? Math.round(rect.height) : 480;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
 
-      if (this.canvas.width !== width || this.canvas.height !== height) {
-        this.canvas.width = width;
-        this.canvas.height = height;
-        this.width = width;
-        this.height = height;
-      }
+      let w = parentW > 0 ? parentW : (rect.width > 0 ? rect.width : Math.min(window.innerWidth - 32, 850));
+      w = Math.max(w, 280);
+      const aspect = 480 / 850;
+      const h = Math.round(w * aspect);
+
+      this.canvas.width = Math.round(w * dpr);
+      this.canvas.height = Math.round(h * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
+      this.width = w;
+      this.height = h;
     }
 
     resize() {
+      const oldW = this.canvas.width;
+      const oldH = this.canvas.height;
       this._setupCanvasResolution();
+      const newW = this.canvas.width;
+      const newH = this.canvas.height;
+
+      if (this.charges && this.charges.length > 0) {
+        if (this.charges[0] && (this.charges[0].x < 70 || this.charges[0].x > newW - 70)) {
+          this.initCharges(true);
+        } else if (oldW > 0 && oldH > 0 && (oldW !== newW || oldH !== newH)) {
+          const scaleX = newW / oldW;
+          const scaleY = newH / oldH;
+          for (const c of this.charges) {
+            c.x = Math.max(75, Math.min(newW - 75, c.x * scaleX));
+            c.y = Math.max(60, Math.min(newH - 60, c.y * scaleY));
+          }
+        }
+      }
       this.render();
     }
 
@@ -193,9 +222,24 @@
 
       const getColor = (val) => val > 0 ? '#ef4444' : (val < 0 ? '#38bdf8' : '#64748b');
 
+      // Helper to validate and clamp existing charge positions to avoid edge clipping or stuck corrupted values
+      const clampPos = (pt, defaultX, defaultY) => {
+        if (!pt || typeof pt.x !== 'number' || isNaN(pt.x) || typeof pt.y !== 'number' || isNaN(pt.y)) {
+          return { x: defaultX, y: defaultY };
+        }
+        // If coordinate was stuck at edge (< 65px or > w - 65px) from prior hidden/fallback canvas, restore clean default
+        if (pt.x < 65 || pt.x > w - 65 || pt.y < 50 || pt.y > h - 55) {
+          return { x: defaultX, y: defaultY };
+        }
+        return {
+          x: Math.max(65, Math.min(w - 65, pt.x)),
+          y: Math.max(50, Math.min(h - 55, pt.y))
+        };
+      };
+
       if (config === 'dipole') {
-        const p1 = (!resetPositions && this.charges[0]) ? { x: this.charges[0].x, y: this.charges[0].y } : { x: cx - 140, y: cy };
-        const p2 = (!resetPositions && this.charges[1]) ? { x: this.charges[1].x, y: this.charges[1].y } : { x: cx + 140, y: cy };
+        const p1 = (!resetPositions && this.charges[0]) ? clampPos(this.charges[0], cx - 140, cy) : { x: cx - 140, y: cy };
+        const p2 = (!resetPositions && this.charges[1]) ? clampPos(this.charges[1], cx + 140, cy) : { x: cx + 140, y: cy };
         this.charges = [
           { id: 'q1', x: p1.x, y: p1.y, q: q1, r: 16, color: getColor(q1), label: 'q1' },
           { id: 'q2', x: p2.x, y: p2.y, q: q2, r: 16, color: getColor(q2), label: 'q2' }
@@ -203,21 +247,21 @@
       } else if (config === 'two_pos') {
         const val1 = Math.abs(q1) || 5.0;
         const val2 = Math.abs(q2) || 5.0;
-        const p1 = (!resetPositions && this.charges[0]) ? { x: this.charges[0].x, y: this.charges[0].y } : { x: cx - 140, y: cy };
-        const p2 = (!resetPositions && this.charges[1]) ? { x: this.charges[1].x, y: this.charges[1].y } : { x: cx + 140, y: cy };
+        const p1 = (!resetPositions && this.charges[0]) ? clampPos(this.charges[0], cx - 140, cy) : { x: cx - 140, y: cy };
+        const p2 = (!resetPositions && this.charges[1]) ? clampPos(this.charges[1], cx + 140, cy) : { x: cx + 140, y: cy };
         this.charges = [
           { id: 'q1', x: p1.x, y: p1.y, q: val1, r: 16, color: '#ef4444', label: 'q1' },
           { id: 'q2', x: p2.x, y: p2.y, q: val2, r: 16, color: '#ef4444', label: 'q2' }
         ];
       } else if (config === 'single_pos') {
         const val1 = q1 !== 0 ? q1 : 5.0;
-        const p1 = (!resetPositions && this.charges[0]) ? { x: this.charges[0].x, y: this.charges[0].y } : { x: cx, y: cy };
+        const p1 = (!resetPositions && this.charges[0]) ? clampPos(this.charges[0], cx, cy) : { x: cx, y: cy };
         this.charges = [
           { id: 'q1', x: p1.x, y: p1.y, q: val1, r: 18, color: getColor(val1), label: 'q1' }
         ];
       } else if (config === 'quadrupole') {
         const val = Math.abs(q1) || 5.0;
-        const d = 95;
+        const d = Math.min(95, Math.min(w, h) * 0.22);
         this.charges = [
           { id: 'q1', x: cx - d, y: cy - d, q: val, r: 14, color: '#ef4444', label: '+q' },
           { id: 'q2', x: cx + d, y: cy - d, q: -val, r: 14, color: '#38bdf8', label: '-q' },
@@ -301,8 +345,8 @@
       window.addEventListener('mousemove', (e) => {
         const pos = getPos(e);
         if (this.draggedCharge && this.subMode === 'field_charges') {
-          this.draggedCharge.x = Math.max(40, Math.min(this.canvas.width - 40, pos.x));
-          this.draggedCharge.y = Math.max(40, Math.min(this.canvas.height - 40, pos.y));
+          this.draggedCharge.x = Math.max(65, Math.min(this.canvas.width - 65, pos.x));
+          this.draggedCharge.y = Math.max(50, Math.min(this.canvas.height - 55, pos.y));
         } else if (this.isDraggingMagnet && this.subMode === 'faraday_induction') {
           const newX = Math.max(80, Math.min(this.canvas.width - 120, pos.x));
           this.magnetVx = (newX - this.magnetX) / 0.016;
@@ -369,6 +413,22 @@
       }
     }
 
+    setParticleType(type) {
+      this.params.particleType = type;
+      if (type === 'proton') {
+        this.params.particleCharge = 1.0;
+        this.params.particleMass = 1.0;
+      } else if (type === 'electron') {
+        this.params.particleCharge = -1.0;
+        this.params.particleMass = 0.2; // Normalized light mass for clear pedagogical trajectory
+      } else if (type === 'alpha') {
+        this.params.particleCharge = 2.0;
+        this.params.particleMass = 4.0;
+      }
+      this.render();
+      this.emitTelemetry();
+    }
+
     setParam(key, value) {
       if (this.params[key] !== undefined) {
         this.params[key] = value;
@@ -378,6 +438,8 @@
           this.initCharges(true);
         } else if (key === 'chargeQ1' || key === 'chargeQ2') {
           this.initCharges(false);
+        } else if (key === 'particleType') {
+          this.setParticleType(value);
         }
       }
     }
@@ -524,27 +586,33 @@
       this.gunTimer = (this.gunTimer || 0) + dt;
       if (this.gunTimer > 0.4) {
         this.gunTimer = 0;
+        const type = this.params.particleType || 'proton';
         this.lorentzParticles.push({
+          x_m: 0,
+          y_m: 0,
           x: 40,
           y: 240,
           vx: this.params.particleVelocity,
           vy: 0,
+          q: this.params.particleCharge,
+          m: Math.max(1e-6, this.params.particleMass),
+          type: type,
           trail: []
         });
       }
 
       const B = this.params.magFieldB; // Tesla (SI)
       const E = this.params.elecFieldE; // V/m (SI)
-      const q = this.params.particleCharge;
-      const m = Math.max(1e-6, this.params.particleMass);
 
       // Energy-conserving Boris pusher with 4 sub-steps per frame for precision and work=0 in pure B-field
       const subSteps = 4;
       const h = dt / subSteps;
-      const q_over_m = q / m;
 
       for (let i = this.lorentzParticles.length - 1; i >= 0; i--) {
         const p = this.lorentzParticles[i];
+        const q = p.q !== undefined ? p.q : this.params.particleCharge;
+        const m = Math.max(1e-6, p.m !== undefined ? p.m : this.params.particleMass);
+        const q_over_m = q / m;
 
         for (let step = 0; step < subSteps; step++) {
           // 1. Half electric acceleration (E is along y downward):
@@ -566,13 +634,17 @@
           p.vx = v_plus_x;
           p.vy = v_plus_y + 0.5 * q_over_m * E * h;
 
-          // 4. Update position:
-          p.x += p.vx * h;
-          p.y += p.vy * h;
+          // 4. Update SI position in meters:
+          p.x_m += p.vx * h;
+          p.y_m += p.vy * h;
+
+          // 5. Update canvas pixel coordinates via explicit graphic scale (Rule #4):
+          p.x = 40 + p.x_m * this.LORENTZ_PX_PER_METER;
+          p.y = 240 + p.y_m * this.LORENTZ_PX_PER_METER;
         }
 
         p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 80) p.trail.shift();
+        if (p.trail.length > 100) p.trail.shift();
 
         if (this.canvas && (p.x < 0 || p.x > this.canvas.width || p.y < 0 || p.y > this.canvas.height)) {
           this.lorentzParticles.splice(i, 1);
@@ -936,10 +1008,11 @@
     // SUBMODE 2: LORENTZ FORCE & CYCLOTRON
     // ----------------------------------------------------
     renderLorentz(ctx, w, h) {
-      const magX = 140;
-      const magY = 60;
-      const magW = 600;
-      const magH = 360;
+      const isMobile = w < 600;
+      const magX = Math.round(Math.max(75, w * 0.14));
+      const magW = Math.round(w - magX - 15);
+      const magY = isMobile ? 45 : 55;
+      const magH = Math.round(Math.min(360, h - (isMobile ? 60 : 75)));
 
       ctx.fillStyle = '#020617';
       ctx.fillRect(magX, magY, magW, magH);
@@ -950,47 +1023,56 @@
       ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
       ctx.font = '14px monospace';
       ctx.textAlign = 'center';
-      for (let x = magX + 40; x < magX + magW; x += 60) {
-        for (let y = magY + 35; y < magY + magH; y += 50) {
+      for (let x = magX + 30; x < magX + magW; x += 55) {
+        for (let y = magY + 30; y < magY + magH; y += 45) {
           ctx.fillText(this.params.magFieldB >= 0 ? '⊗' : '⊙', x, y);
         }
       }
 
       if (Math.abs(this.params.elecFieldE) > 1) {
+        const plateW = Math.min(220, magW - 40);
         ctx.fillStyle = '#ef4444';
-        ctx.fillRect(magX + 50, magY + 40, 220, 10);
+        ctx.fillRect(magX + 20, magY + 30, plateW, 8);
         ctx.fillStyle = '#38bdf8';
-        ctx.fillRect(magX + 50, magY + 280, 220, 10);
+        ctx.fillRect(magX + 20, magY + magH - 40, plateW, 8);
         ctx.fillStyle = '#ffffff';
-        ctx.font = '10px sans-serif';
-        ctx.fillText('+ + + แผ่นบวก E_plate + + +', magX + 160, magY + 32);
-        ctx.fillText('- - - แผ่นลบ E_plate - - -', magX + 160, magY + 305);
+        ctx.font = '9px sans-serif';
+        ctx.fillText('+ + + E_plate + + +', magX + 20 + plateW / 2, magY + 24);
+        ctx.fillText('- - - E_plate - - -', magX + 20 + plateW / 2, magY + magH - 22);
       }
 
+      const gunW = Math.max(55, magX - 15);
+      const gunY = Math.round(magY + magH * 0.5 - 14);
       ctx.fillStyle = '#475569';
-      ctx.fillRect(20, 225, 90, 30);
+      ctx.fillRect(10, gunY, gunW, 28);
       ctx.strokeStyle = '#94a3b8';
-      ctx.strokeRect(20, 225, 90, 30);
+      ctx.strokeRect(10, gunY, gunW, 28);
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 11px sans-serif';
+      ctx.font = 'bold 10.5px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('ปืนประจุ (Gun)', 65, 243);
+      ctx.fillText(isMobile ? 'ปืน' : 'ปืนประจุ', 10 + gunW / 2, gunY + 18);
 
       for (const p of this.lorentzParticles) {
+        const isNeg = (p.q < 0);
+        const isAlpha = (p.type === 'alpha');
+        const pColor = isNeg ? '#38bdf8' : (isAlpha ? '#f59e0b' : '#ef4444');
+        const trailColor = isNeg ? 'rgba(56, 189, 248, 0.7)' : (isAlpha ? 'rgba(245, 158, 11, 0.7)' : 'rgba(239, 68, 68, 0.7)');
+        const pRadius = isAlpha ? 7 : (isNeg ? 3.5 : 5.5);
+
         if (p.trail.length > 1) {
           ctx.beginPath();
           ctx.moveTo(p.trail[0].x, p.trail[0].y);
           for (let i = 1; i < p.trail.length; i++) {
             ctx.lineTo(p.trail[i].x, p.trail[i].y);
           }
-          ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+          ctx.strokeStyle = trailColor;
           ctx.lineWidth = 2.5;
           ctx.stroke();
         }
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 6, 0, 2 * Math.PI);
-        ctx.fillStyle = '#ef4444';
+        ctx.arc(p.x, p.y, pRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = pColor;
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 1.5;
@@ -1005,10 +1087,22 @@
       }
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 13px sans-serif';
       ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
       const r_calc = (this.params.particleMass * this.params.particleVelocity) / Math.max(0.01, Math.abs(this.params.particleCharge * this.params.magFieldB));
-      ctx.fillText(`สนามแม่เหล็ก B = ${this.params.magFieldB.toFixed(2)} T | สนามไฟฟ้า E = ${this.params.elecFieldE.toFixed(1)} V/m | รัศมีไซโคลตรอน r = mv/(|q|B) = ${r_calc.toFixed(1)} px`, 30, 25);
+      if (isMobile) {
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillText(`B = ${this.params.magFieldB.toFixed(2)} T | E = ${this.params.elecFieldE.toFixed(0)} V/m | R_norm = ${r_calc.toFixed(1)} m`, 15, 8);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px sans-serif';
+        ctx.fillText(`* สเกลจำลองการศึกษา (m_norm) | มวลธรรมชาติจริง m_e/m_p ≈ 1/1836.15`, 15, 24);
+      } else {
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(`สนามแม่เหล็ก B = ${this.params.magFieldB.toFixed(2)} T | สนามไฟฟ้า E = ${this.params.elecFieldE.toFixed(1)} V/m | รัศมีไซโคลตรอน R_norm = ${r_calc.toFixed(1)} m`, 20, 10);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10.5px sans-serif';
+        ctx.fillText(`* สเกลการศึกษามาตรฐาน (Normalized Educational Scale m_norm) | อัตราส่วนมวลธรรมชาติจริง m_e / m_p ≈ 1 / 1836.15`, 20, 30);
+      }
     }
 
     // ----------------------------------------------------
@@ -2101,6 +2195,9 @@
         resCurrent: (this.resCurrent * 1000).toFixed(3) + ' mA',
         tau: tau,
         magB: this.params.magFieldB + ' T',
+        // Lorentz
+        lorentzR: ((this.params.particleMass * this.params.particleVelocity) / Math.max(0.01, Math.abs(this.params.particleCharge * this.params.magFieldB))).toFixed(1) + ' m (norm)',
+        particleType: this.params.particleType || 'proton',
         // Faraday
         faradayFlux: (this.faradayFlux * 1000).toFixed(2) + ' mWb',
         faradayEmf: this.faradayEmf.toFixed(2) + ' V',

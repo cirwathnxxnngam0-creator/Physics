@@ -115,7 +115,7 @@
       alpha: false
     });
     this.renderer.setSize(width, height, false);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(Math.max(window.devicePixelRatio || 1, 2));
 
     // 4. Lights
     const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.7);

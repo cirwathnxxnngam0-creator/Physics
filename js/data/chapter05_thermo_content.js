@@ -669,83 +669,212 @@
     ],
 
     phenomena: [
+  {
+    "id": "PHE-CH05-01",
+    "chapterId": "ch05",
+    "division": "ภาคที่ 1: พื้นฐาน & กฎข้อที่ 1",
+    "category": "วิศวกรรมยานยนต์และพลังงาน",
+    "titleTh": "การจุดระเบิดด้วยการอัดแบบแอเดียแบติกในเครื่องยนต์ดีเซล",
+    "titleEn": "Diesel Engine Compression Ignition & Adiabatic Heating",
+    "observed": "เครื่องยนต์ดีเซลอาศัยหลักการอัดอากาศแบบแอเดียแบติกด้วยอัตราส่วนกำลังอัดสูงยิ่งยวด ทำให้อุณหภูมิอากาศในห้องเผาไหม้พุ่งสูงเกินจุดวาบไฟและติดไฟได้เองโดยไม่ต้องพึ่งพาหัวเทียน",
+    "mechanism": "ในเครื่องยนต์ดีเซล ลูกสูบดูดเฉพาะอากาศบริสุทธิ์เข้าสู่กระบอกสูบ จากนั้นเคลื่อนที่ขึ้นบีบอัดอากาศอย่างรวดเร็วด้วยอัตราส่วนกำลังอัด r = V_max / V_min สูงถึง 16:1 ถึง 22:1 เนื่องจากกระบวนการอัดเกิดขึ้นในเสี้ยววินาที ความร้อนจึงแทบไม่สามารถถ่ายเทผ่านผนังกระบอกสูบออกสู่ภายนอกได้ทัน (Adiabatic, Q ≈ 0) ส่งผลให้งานกลจากการอัดถูกเปลี่ยนไปเป็นพลังงานภายในของอากาศทั้งหมด (ΔU = -W > 0) อุณหภูมิอากาศจึงพุ่งสูงเกิน 700°C ถึง 900°C และความดันสูงกว่า 40 bar เมื่อหัวฉีดพ่นละอองน้ำมันดีเซลเข้าไป น้ำมันจะระเหยและลุกไหม้ได้เองในทันที (Self-Ignition)",
+    "scope": "อัตราส่วนกำลังอัด r = 16:1 ถึง 22:1, ความดันหลังการอัด 35 - 50 bar, อุณหภูมิหลังการอัด 700°C - 900°C สูงกว่าจุดวาบไฟน้ำมันดีเซล (~210°C)",
+    "formulas": [
       {
-        id: "PHE-CH05-01",
-        chapterId: "ch05",
-        number: 1,
-        titleTh: "การจุดระเบิดด้วยการอัดแบบแอเดียแบติกในเครื่องยนต์ดีเซล",
-        titleEn: "Diesel Engine Compression Ignition & Adiabatic Heating",
-        categoryTh: "วิศวกรรมยานยนต์และพลังงาน",
-        categoryEn: "Automotive & Energy Engineering",
-        summary: "เครื่องยนต์ดีเซลอาศัยหลักการอัดอากาศแบบแอเดียแบติกด้วยอัตราส่วนกำลังอัดสูงยิ่งยวด ทำให้อุณหภูมิอากาศในห้องเผาไหม้พุ่งสูงเกินจุดวาบไฟและติดไฟได้เองโดยไม่ต้องพึ่งพาหัวเทียน",
-        description: "ในเครื่องยนต์ดีเซล (Compression-Ignition Engine) แตกต่างจากเครื่องยนต์เบนซินอย่างสิ้นเชิง โดยในจังหวะดูด ลูกสูบจะดูดเฉพาะ 'อากาศบริสุทธิ์' เข้าสู่กระบอกสูบ จากนั้นในจังหวะอัด ลูกสูบจะเคลื่อนที่ขึ้นอย่างรวดเร็วเพื่อบีบอัดอากาศด้วยอัตราส่วนกำลังอัด (Compression Ratio, r = V_max / V_min) สูงถึง 16:1 ถึง 22:1 เนื่องจากกระบวนการอัดเกิดขึ้นในเสี้ยววินาที ความร้อนจึงแทบไม่สามารถถ่ายเทผ่านผนังกระบอกสูบออกสู่ภายนอกได้ทัน สอดคล้องกับกระบวนการแอเดียแบติก (Adiabatic Process, Q ≈ 0) ส่งผลให้งานกลจากการอัด (W < 0) ถูกเปลี่ยนไปเป็นพลังงานภายในของอากาศทั้งหมด (ΔU = -W > 0) อุณหภูมิของอากาศจึงพุ่งสูงขึ้นอย่างฉับพลันเกิน 700°C ถึง 900°C และความดันสูงกว่า 40 bar เมื่อหัวฉีดพ่นละอองน้ำมันดีเซลความดันสูงเข้าไปในอากาศร้อนจัดนี้ น้ำมันจะระเหยและลุกไหม้ได้เองในทันที (Self-Ignition) ก่อให้เกิดแรงระเบิดผลักดันลูกสูบสร้างกำลังงานกลมหาศาล",
-        scientificSignificance: "เป็นการประยุกต์ใช้กฎข้อที่หนึ่งของอุณหพลศาสตร์และสมการกระบวนการแอเดียแบติก T_2 = T_1 · r^(γ-1) ในระดับอุตสาหกรรม การทำงานที่อัตราส่วนกำลังอัดสูงทำให้เครื่องยนต์ดีเซลมีประสิทธิภาพเชิงความร้อนสูงกว่าเครื่องยนต์เบนซินอย่างมีนัยสำคัญ",
-        parameters: [
-          { name: "อัตราส่วนกำลังอัด (Compression Ratio, r)", value: "16:1 ถึง 22:1", note: "อัตราส่วนระหว่างปริมาตรสูงสุดต่อปริมาตรต่ำสุดในกระบอกสูบ" },
-          { name: "อุณหภูมิอากาศหลังการอัด", value: "700°C ถึง 900°C (973 K - 1173 K)", note: "สูงกว่าอุณหภูมิติดไฟได้เองของน้ำมันดีเซล (~210°C)" },
-          { name: "ความดันอากาศสูงสุดหลังการอัด", value: "35 ถึง 50 bar (3.5 - 5.0 MPa)", note: "ความดันก่อนเริ่มการฉีดเชื้อเพลิง" },
-          { name: "ดัชนีแอเดียแบติกของอากาศ (γ)", value: "1.35 ถึง 1.40", note: "แปรผันตามอุณหภูมิสูง" }
-        ],
-        svgDiagram: '<svg viewBox="0 0 500 240" class="w-full h-56 bg-slate-900 rounded-lg"><rect x="170" y="30" width="160" height="160" fill="none" stroke="#64748b" stroke-width="4" rx="4"/><rect x="175" y="60" width="150" height="60" fill="#475569" stroke="#94a3b8" stroke-width="2"/><rect x="175" y="120" width="150" height="65" fill="#ef4444" fill-opacity="0.3" stroke="none"/><path d="M 250 120 L 250 200" stroke="#94a3b8" stroke-width="8"/><circle cx="250" cy="200" r="8" fill="#38bdf8"/><polygon points="250,5 245,30 255,30" fill="#f59e0b" stroke="#b45309"/><path d="M 247 30 L 240 55 M 253 30 L 260 55 M 250 30 L 250 58" stroke="#ef4444" stroke-width="2" stroke-dasharray="2"/><text x="250" y="20" fill="#f59e0b" font-size="11" font-weight="bold" text-anchor="middle">หัวฉีดดีเซล (Fuel Injector)</text><text x="250" y="95" fill="#f8fafc" font-size="12" font-weight="bold" text-anchor="middle">ลูกสูบเคลื่อนที่ขึ้น (อัดเร็ว)</text><text x="250" y="150" fill="#fca5a5" font-size="14" font-weight="bold" text-anchor="middle">T &gt; 700°C | P &gt; 40 bar</text><text x="80" y="90" fill="#38bdf8" font-size="12" text-anchor="middle">อัดแบบแอเดียแบติก</text><text x="80" y="110" fill="#94a3b8" font-size="10" text-anchor="middle">Q ≈ 0, ΔU = -W</text><path d="M 125 95 L 170 95" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/><text x="250" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle">หลักการจุดระเบิดด้วยการอัด (Compression Ignition) ในเครื่องยนต์ดีเซล</text></svg>',
-        citation: "Heywood, J. B. (1988). Internal Combustion Engine Fundamentals, Chapter 1: Engine Types and Their Operation & Chapter 9: Combustion in Compression-Ignition Engines, pp. 1-41, 491-566. McGraw-Hill."
+        "latex": "T_2 = T_1 \\cdot \\left(\\frac{V_1}{V_2}\\right)^{\\gamma - 1} = T_1 \\cdot r^{\\gamma - 1}",
+        "desc": "ความสัมพันธ์อุณหภูมิและอัตราส่วนกำลังอัดในกระบวนการแอเดียแบติกย้อนกลับได้"
       },
       {
-        id: "PHE-CH05-02",
-        chapterId: "ch05",
-        number: 2,
-        titleTh: "ระบบทำความเย็นแบบอัดไอและปั๊มความร้อน",
-        titleEn: "Vapor-Compression Refrigeration Cycle & Heat Pumps",
-        categoryTh: "วิศวกรรมความร้อนและการปรับอากาศ",
-        categoryEn: "Thermal & HVAC Engineering",
-        summary: "การสูบความร้อนย้อนทิศทางธรรมชาติจากแหล่งเย็นสู่แหล่งร้อนโดยอาศัยงานกลจากคอมเพรสเซอร์และการเปลี่ยนสถานะของสารทำความเย็นตามกฎข้อที่สองแห่งอุณหพลศาสตร์",
-        description: "ตามกฎข้อที่สองแห่งอุณหพลศาสตร์ ความร้อนไม่สามารถไหลจากที่เย็นไปยังที่ร้อนได้เองโดยปราศจากพลังงานภายนอก ระบบทำความเย็นแบบอัดไอ (Vapor-Compression Refrigeration Cycle) ในตู้เย็นและเครื่องปรับอากาศจึงใช้สารทำความเย็น (Refrigerant) ไหลเวียนเป็นวัฏจักรปิดผ่าน 4 องค์ประกอบหลัก:\n1. คอมเพรสเซอร์ (Compressor): อัดไอสารทำความเย็นความดันต่ำให้กลายเป็นไอความดันสูงและอุณหภูมิสูงมาก (รับงานกล W_in เข้ามา)\n2. คอนเดนเซอร์ (Condenser): แผงระบายความร้อนภายนอก ไอความดันสูงจะคายความร้อน Q_H สู่บรรยากาศรอบนอกและควบแน่นเป็นของเหลว\n3. วาล์วขยายตัว (Expansion Valve): ฉีดของเหลวความดันสูงผ่านรูแคบ (Throttling) ความดันและอุณหภูมิตกลงฉับพลันกลายเป็นของผสมของเหลว-ไอที่เย็นจัด\n4. อีวาพอเรเตอร์ (Evaporator): แผงทำความเย็นภายในห้อง ของเหลวเย็นจัดจะดูดกลืนความร้อน Q_C จากภายในห้องเพื่อระเหยกลายเป็นไอ ทำให้อุณหภูมิห้องลดลง\nสมรรถนะของระบบวัดด้วยค่าสัมประสิทธิ์สมรรถนะ (Coefficient of Performance, COP) ซึ่งสำหรับระบบทำความเย็นคือ COP_R = Q_C / W_in",
-        scientificSignificance: "เป็นตัวอย่างการประยุกต์ใช้วัฏจักรความร้อนย้อนกลับ (Reversed Heat Engine Cycle) และตอกย้ำข้อจำกัดของคำแถลงเคลาซิอุสในกฎข้อที่สองแห่งอุณหพลศาสตร์",
-        parameters: [
-          { name: "สัมประสิทธิ์สมรรถนะการทำความเย็น (COP_R)", value: "3.0 ถึง 4.5", note: "ตู้เย็นหรือแอร์บ้านทั่วไป (ย้ายความร้อนได้ 3-4.5 เท่าของพลังงานไฟฟ้าที่จ่าย)" },
-          { name: "สารทำความเย็นทั่วไป", value: "R-32, R-410A, R-134a, R-290", note: "สารไฮโดรฟลูออโรคาร์บอนหรือไฮโดรคาร์บอนที่มีจุดเดือดต่ำ" },
-          { name: "อุณหภูมิคอยล์เย็น (Evaporator)", value: "0°C ถึง 5°C (แอร์) / -18°C (ช่องฟรีซ)", note: "ดูดกลืนความร้อนจากพื้นที่ควบคุม" },
-          { name: "อุณหภูมิคอยล์ร้อน (Condenser)", value: "45°C ถึง 55°C", note: "คายความร้อนออกสู่บรรยากาศภายนอก" }
-        ],
-        svgDiagram: '<svg viewBox="0 0 500 240" class="w-full h-56 bg-slate-900 rounded-lg"><rect x="60" y="30" width="100" height="60" fill="#ef4444" fill-opacity="0.3" stroke="#ef4444" stroke-width="2" rx="4"/><text x="110" y="55" fill="#ef4444" font-size="12" font-weight="bold" text-anchor="middle">Condenser</text><text x="110" y="75" fill="#fca5a5" font-size="10" text-anchor="middle">คายความร้อน Q_H</text><rect x="340" y="30" width="100" height="60" fill="#334155" stroke="#f59e0b" stroke-width="2" rx="4"/><text x="390" y="55" fill="#f59e0b" font-size="12" font-weight="bold" text-anchor="middle">Compressor</text><text x="390" y="75" fill="#cbd5e1" font-size="10" text-anchor="middle">รับงานกล W_in</text><rect x="60" y="150" width="100" height="60" fill="#38bdf8" fill-opacity="0.3" stroke="#38bdf8" stroke-width="2" rx="4"/><text x="110" y="175" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">Expansion Valve</text><text x="110" y="195" fill="#93c5fd" font-size="10" text-anchor="middle">ลดความดันฉับพลัน</text><rect x="340" y="150" width="100" height="60" fill="#0284c7" fill-opacity="0.3" stroke="#0284c7" stroke-width="2" rx="4"/><text x="390" y="175" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">Evaporator</text><text x="390" y="195" fill="#bae6fd" font-size="10" text-anchor="middle">ดูดความร้อน Q_C</text><path d="M 160 50 L 340 50" stroke="#ef4444" stroke-width="3"/><polygon points="245,46 255,50 245,54" fill="#ef4444"/><path d="M 390 90 L 390 150" stroke="#38bdf8" stroke-width="3"/><path d="M 340 190 L 160 190" stroke="#38bdf8" stroke-width="3"/><polygon points="255,186 245,190 255,194" fill="#38bdf8"/><path d="M 110 150 L 110 90" stroke="#ef4444" stroke-width="3"/><text x="250" y="120" fill="#fbbf24" font-size="13" font-weight="bold" text-anchor="middle">COP = Q_C / W_in</text><text x="250" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle">วัฏจักรทำความเย็นแบบอัดไอ (Vapor-Compression Refrigeration)</text></svg>',
-        citation: "Moran, M. J., Shapiro, H. N., Boettner, D. D., & Bailey, M. B. (2018). Fundamentals of Engineering Thermodynamics (9th Ed.), Chapter 10: Refrigeration and Heat Pump Systems, pp. 542-595. Wiley."
-      },
-      {
-        id: "PHE-CH05-03",
-        chapterId: "ch05",
-        number: 3,
-        titleTh: "อัตราการลดลงของอุณหภูมิตามระดับความสูงในบรรยากาศและลมเฟิน",
-        titleEn: "Atmospheric Adiabatic Lapse Rate & Foehn Wind Phenomenon",
-        categoryTh: "อุตุนิยมวิทยาและฟิสิกส์บรรยากาศ",
-        categoryEn: "Meteorology & Atmospheric Physics",
-        summary: "การลดลงของอุณหภูมิอากาศเมื่อลอยตัวสูงขึ้นเนื่องจากการขยายตัวแบบแอเดียแบติกในบรรยากาศ และการเกิดลมร้อนแห้งเฟินหลังเทือกเขาอันเกิดจากการคายความร้อนแฝงขณะไอน้ำกลั่นตัว",
-        description: "เมื่อมวลอากาศเคลื่อนที่ลอยตัวสูงขึ้นในชั้นบรรยากาศ ความดันบรรยากาศโดยรอบจะลดลงตามระดับความสูงตามสมการสถิตศาสตร์ของไหล (Hydrostatic Equation: dP = -ρ g dz) มวลอากาศจึงต้องขยายตัวออกดันอากาศแวดล้อม การขยายตัวนี้เกิดขึ้นอย่างรวดเร็วและมวลอากาศมีขนาดใหญ่มากจนการแลกเปลี่ยนความร้อนกับภายนอกน้อยมากจนถือเป็นกระบวนการแอเดียแบติก (Q ≈ 0)\n\nผลลัพธ์คือ อากาศที่แห้งจะเย็นตัวลงด้วยอัตราคงที่เรียกว่า 'อัตราการลดอุณหภูมิแอเดียแบติกแห้ง' (Dry Adiabatic Lapse Rate, Γ_d = g / c_p ≈ 9.8 K/km หรือประมาณ 1°C ต่อทุกๆ 100 เมตร)\n\nเมื่อมวลอากาศชื้นพัดปะทะเทือกเขาและถูกยกตัวขึ้น อุณหภูมิจะลดลงจนถึงจุดกลั่นตัว (Dew point) ไอน้ำจะควบแน่นกลายเป็นเมฆและฝนบนฝั่งรับลม (Windward slope) ในกระบวนการควบแน่นนี้จะมีการ 'คายความร้อนแฝง' (Latent Heat Release) มหาศาลคืนกลับสู่อากาศ ทำให้อัตราการเย็นตัวลดลงเหลือเพียง ~5-6 K/km (Moist Adiabatic Lapse Rate) แต่เมื่อมวลอากาศแห้งที่สูญเสียความชื้นไปแล้วไหลข้ามยอดเขาและจมตัวลงฝั่งหลังเขา (Leeward slope) อากาศจะถูกบีบอัดและร้อนขึ้นด้วยอัตราแอเดียแบติกแห้งเต็มที่ (9.8 K/km) ส่งผลให้อากาศที่พัดลงสู่ที่ราบหลังเขากลายเป็น 'ลมร้อนและแห้งจัด' ซึ่งรู้จักกันในชื่อ ลมเฟิน (Foehn wind) หรือลมชินุก (Chinook wind)",
-        scientificSignificance: "แสดงให้เห็นการเชื่อมโยงระหว่างอุณหพลศาสตร์บรรยากาศ กฎแก๊สอุดมคติ ความร้อนแฝงของการเปลี่ยนเฟส และการขยายตัวแบบแอเดียแบติกที่ส่งผลกระทบต่อภูมิอากาศระดับทวีป",
-        parameters: [
-          { name: "อัตราลดอุณหภูมิแอเดียแบติกแห้ง (Dry Lapse Rate, Γ_d)", value: "9.8 K/km (≈ 1.0°C / 100 m)", note: "คำนวณจาก g / c_p = 9.81 / 1005" },
-          { name: "อัตราลดอุณหภูมิแอเดียแบติกชื้น (Moist Lapse Rate, Γ_m)", value: "4.0 ถึง 6.5 K/km", note: "ชะลอลงเนื่องจากความร้อนแฝงของการควบแน่นไอน้ำ" },
-          { name: "ความร้อนแฝงของการกลายเป็นไอของน้ำ (L_v)", value: "2.50 × 10⁶ J/kg (ที่ 0°C)", note: "พลังงานความร้อนที่คายออกมาขณะฝนตก" }
-        ],
-        svgDiagram: '<svg viewBox="0 0 500 240" class="w-full h-56 bg-slate-900 rounded-lg"><path d="M 40 200 L 220 60 L 320 60 L 460 200 Z" fill="#334155" stroke="#64748b" stroke-width="2"/><path d="M 50 190 Q 130 160 180 100" stroke="#38bdf8" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/><text x="100" y="180" fill="#38bdf8" font-size="11" font-weight="bold">อากาศชื้นพัดขึ้น (เย็นตัว)</text><ellipse cx="190" cy="70" rx="35" ry="18" fill="#94a3b8" fill-opacity="0.7"/><text x="190" y="73" fill="#ffffff" font-size="9" text-anchor="middle">เมฆ/ฝนคาย L_v</text><line x1="180" y1="90" x2="170" y2="115" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="2"/><line x1="195" y1="90" x2="185" y2="115" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="2"/><path d="M 300 80 Q 360 120 440 180" stroke="#ef4444" stroke-width="3" fill="none" marker-end="url(#arrow-red)"/><text x="380" y="120" fill="#ef4444" font-size="11" font-weight="bold">ลมแห้งจมตัวลง (ร้อนจัด)</text><text x="380" y="140" fill="#fca5a5" font-size="10">อัดแบบแอเดียแบติก 9.8°C/km</text><text x="90" y="225" fill="#38bdf8" font-size="11">ฝั่งรับลม: ชื้น ฝนตก</text><text x="390" y="225" fill="#f87171" font-size="11">ฝั่งหลังเขา: ลมเฟิน ร้อนแห้ง</text><text x="250" y="25" fill="#cbd5e1" font-size="12" font-weight="bold" text-anchor="middle">ปรากฏการณ์ลมเฟิน (Foehn Effect) และอัตราลดอุณหภูมิบรรยากาศ</text></svg>',
-        citation: "Holton, J. R. (2004). An Introduction to Dynamic Meteorology (4th Ed.), Chapter 2: Basic Conservation Laws, Section 2.7: Thermodynamics of the Dry and Moist Atmosphere, pp. 48-56. Elsevier Academic Press."
-      },
-      {
-        id: "PHE-CH05-04",
-        chapterId: "ch05",
-        number: 4,
-        titleTh: "การผลิตก๊าซเหลวอุณหภูมิต่ำยิ่งยวดด้วยกระบวนการลินเดอและปรากฏการณ์จูล-ทอมสัน",
-        titleEn: "Cryogenic Gas Liquefaction & Joule-Thomson Effect",
-        summary: "การเปลี่ยนก๊าซจริงให้กลายเป็นของเหลวอุณหภูมิต่ำยิ่งยวด (ไนโตรเจนเหลว ออกซิเจนเหลว) โดยการขยายตัวผ่านวาล์วหรี่ต่ำกว่าอุณหภูมิผกผัน (Inversion Temperature) ในวัฏจักรลินเดอ",
-        description: "สำหรับแก๊สอุดมคติ พลังงานภายในขึ้นกับอุณหภูมิเพียงอย่างเดียว ดังนั้นเมื่อเกิดการขยายตัวแบบไอแซนแธลปิก (Isenthalpic Throttling, H = คงที่) อุณหภูมิจะไม่เปลี่ยนแปลงเลย แต่สำหรับ 'แก๊สจริง' (Real Gas) ซึ่งมีแรงดึงดูดระหว่างโมเลกุลแบบแวนเดอร์วาลส์ เมื่อแก๊สขยายตัวผ่านรูพรุนหรือวาล์วหรี่ (Expansion valve) โดยไม่มีการถ่ายเทความร้อน โมเลกุลจะต้องสูญเสียพลังงานจลน์เพื่อเอาชนะแรงดึงดูดระหว่างกัน ส่งผลให้อุณหภูมิของแก๊สลดลง ปรากฏการณ์นี้เรียกว่า ปรากฏการณ์จูล-ทอมสัน (Joule-Thomson Effect)\n\nอัตราการเปลี่ยนแปลงของอุณหภูมิต่อความดันถูกวัดด้วยสัมประสิทธิ์จูล-ทอมสัน: μ_JT = (∂T / ∂P)_H ซึ่งแก๊สจะเย็นตัวลงเมื่อลดความดัน (μ_JT > 0) ได้ก็ต่อเมื่ออุณหภูมิเริ่มต้นของแก๊สอยู่ต่ำกว่า 'อุณหภูมิผกผัน' (Inversion Temperature, T_inv) ของแก๊สนั้นๆ\n\nในกระบวนการลินเดอ (Hampson-Linde Cycle) แก๊สไนโตรเจนหรืออากาศจะถูกอัดความดันสูงถึง 200 bar แล้วระบายความร้อนเบื้องต้น จากนั้นส่งผ่านอุปกรณ์แลกเปลี่ยนความร้อนแบบย้อนทาง (Counter-flow heat exchanger) เพื่อลดอุณหภูมิให้ต่ำกว่า T_inv ก่อนจะฉีดผ่านวาล์วหรี่ขยายตัวฉับพลัน อุณหภูมิจะดิ่งลงจนแก๊สบางส่วนควบแน่นเป็นของเหลวอุณหภูมิต่ำยิ่งยวด (-196°C สำหรับไนโตรเจนเหลว) และไอก๊าซเย็นส่วนที่เหลือจะถูกส่งย้อนกลับไปช่วยระบายความร้อนให้แก่ก๊าซระลอกถัดไป",
-        scientificSignificance: "เป็นรากฐานของอุตสาหกรรมไครโอเจนิกส์ (Cryogenics) ทั่วโลก การสกัดก๊าซทางการแพทย์ การขนส่งก๊าซธรรมชาติเหลว (LNG) และเชื้อเพลิงขับเคลื่อนจรวดอวกาศ",
-        parameters: [
-          { name: "จุดเดือดของไนโตรเจนเหลว (Liquid N₂)", value: "-195.8°C (77.36 K)", note: "ที่ความดันบรรยากาศปกติ 1 atm" },
-          { name: "อุณหภูมิผกผันสูงสุดของไนโตรเจน (Max T_inv)", value: "621 K (348°C)", note: "ไนโตรเจนที่อุณหภูมิห้องต่ำกว่า T_inv จึงเย็นตัวลงได้ทันทีเมื่อขยายตัว" },
-          { name: "อุณหภูมิผกผันสูงสุดของฮีเลียม (Max T_inv)", value: "51 K (-222°C)", note: "ต้องพรีคูลด้วยไฮโดรเจนเหลวก่อนจึงจะทำเป็นฮีเลียมเหลวได้" },
-          { name: "ความดันใช้งานในกระบวนการลินเดอ", value: "150 ถึง 200 bar (15 - 20 MPa)", note: "ความดันด้านสูงก่อนเข้าวาล์วหรี่" }
-        ],
-        svgDiagram: '<svg viewBox="0 0 500 240" class="w-full h-56 bg-slate-900 rounded-lg"><rect x="40" y="30" width="90" height="50" fill="#334155" stroke="#94a3b8" stroke-width="2" rx="4"/><text x="85" y="55" fill="#f8fafc" font-size="11" font-weight="bold" text-anchor="middle">Compressor</text><text x="85" y="70" fill="#cbd5e1" font-size="9" text-anchor="middle">P = 200 bar</text><rect x="170" y="30" width="80" height="50" fill="#ef4444" fill-opacity="0.3" stroke="#ef4444" stroke-width="2" rx="4"/><text x="210" y="60" fill="#fca5a5" font-size="11" font-weight="bold" text-anchor="middle">Aftercooler</text><rect x="290" y="30" width="100" height="120" fill="#1e293b" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3" rx="4"/><text x="340" y="50" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">Counter-flow HX</text><path d="M 340 70 L 340 130" stroke="#38bdf8" stroke-width="3"/><polygon points="336,100 340,110 344,100" fill="#38bdf8"/><polygon points="410,135 430,130 430,140" fill="#fbbf24" stroke="#f59e0b"/><text x="440" y="125" fill="#fbbf24" font-size="10" font-weight="bold">วาล์วหรี่ J-T</text><rect x="390" y="160" width="80" height="60" fill="#0284c7" fill-opacity="0.4" stroke="#38bdf8" stroke-width="2" rx="4"/><text x="430" y="185" fill="#bae6fd" font-size="10" font-weight="bold" text-anchor="middle">Liquid N₂</text><text x="430" y="205" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">-196°C</text><path d="M 390 170 Q 320 170 320 130" stroke="#94a3b8" stroke-width="2" fill="none"/><path d="M 320 70 Q 320 40 130 40" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3" fill="none"/><text x="250" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle">กระบวนการลินเดอผลิตก๊าซเหลวด้วยปรากฏการณ์จูล-ทอมสัน (Joule-Thomson Cryogenics)</text></svg>',
-        citation: "Barron, R. F. (1985). Cryogenic Systems (2nd Ed.), Chapter 3: Gas-Liquefaction Systems, Section 3.2: Simple Linde-Hampson System, pp. 63-88. Oxford University Press."
+        "latex": "P_1 V_1^\\gamma = P_2 V_2^\\gamma,\\quad \\Delta U = -W = n C_v (T_2 - T_1)",
+        "desc": "กฎข้อที่หนึ่งของอุณหพลศาสตร์เมื่อไม่มีการถ่ายเทความร้อน (Q = 0)"
       }
-    ]
+    ],
+    "variables": [
+      {
+        "symbol": "r",
+        "name": "อัตราส่วนกำลังอัด (Compression Ratio)",
+        "unit": "—",
+        "typical": "16 - 22"
+      },
+      {
+        "symbol": "\\gamma",
+        "name": "ดัชนีแอเดียแบติกของอากาศ (C_p / C_v)",
+        "unit": "—",
+        "typical": "1.35 - 1.40"
+      },
+      {
+        "symbol": "T_1, T_2",
+        "name": "อุณหภูมิอากาศก่อนและหลังการอัด",
+        "unit": "\\text{K}",
+        "typical": "300 K → 1000 K"
+      },
+      {
+        "symbol": "P_2",
+        "name": "ความดันอากาศสูงสุดหลังการอัด",
+        "unit": "\\text{bar}",
+        "typical": "40 - 50 bar"
+      }
+    ],
+    "citations": [
+      {
+        "title": "Internal Combustion Engine Fundamentals",
+        "year": 1988,
+        "authors": "Heywood, J. B.",
+        "source": "McGraw-Hill, Ch. 1 & 9, pp. 1-41, 491-566",
+        "verificationStatus": "verified_direct_content",
+        "evidencePin": "Heywood (1988), pp. 491-505: ทฤษฎีการลุกไหม้ด้วยกำลังอัดและเทอร์โมไดนามิกส์กระบอกสูบ"
+      }
+    ],
+    "svgDiagram": "<svg viewBox=\"0 0 500 240\" class=\"w-full h-56 bg-slate-900 rounded-lg\"><rect x=\"170\" y=\"30\" width=\"160\" height=\"160\" fill=\"none\" stroke=\"#64748b\" stroke-width=\"4\" rx=\"4\"/><rect x=\"175\" y=\"60\" width=\"150\" height=\"60\" fill=\"#475569\" stroke=\"#94a3b8\" stroke-width=\"2\"/><rect x=\"175\" y=\"120\" width=\"150\" height=\"65\" fill=\"#ef4444\" fill-opacity=\"0.3\" stroke=\"none\"/><path d=\"M 250 120 L 250 200\" stroke=\"#94a3b8\" stroke-width=\"8\"/><circle cx=\"250\" cy=\"200\" r=\"8\" fill=\"#38bdf8\"/><polygon points=\"250,5 245,30 255,30\" fill=\"#f59e0b\" stroke=\"#b45309\"/><path d=\"M 247 30 L 240 55 M 253 30 L 260 55 M 250 30 L 250 58\" stroke=\"#ef4444\" stroke-width=\"2\" stroke-dasharray=\"2\"/><text x=\"250\" y=\"20\" fill=\"#f59e0b\" font-size=\"11\" font-weight=\"bold\" text-anchor=\"middle\">หัวฉีดดีเซล (Fuel Injector)</text><text x=\"250\" y=\"95\" fill=\"#f8fafc\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">ลูกสูบเคลื่อนที่ขึ้น (อัดเร็ว)</text><text x=\"250\" y=\"150\" fill=\"#fca5a5\" font-size=\"14\" font-weight=\"bold\" text-anchor=\"middle\">T &gt; 700°C | P &gt; 40 bar</text><text x=\"80\" y=\"90\" fill=\"#38bdf8\" font-size=\"12\" text-anchor=\"middle\">อัดแบบแอเดียแบติก</text><text x=\"80\" y=\"110\" fill=\"#94a3b8\" font-size=\"10\" text-anchor=\"middle\">Q ≈ 0, ΔU = -W</text><text x=\"250\" y=\"230\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">หลักการจุดระเบิดด้วยการอัด (Compression Ignition) ในเครื่องยนต์ดีเซล</text></svg>",
+    "imageCaption": "การจุดระเบิดในกระบอกสูบดีเซลด้วยอุณหภูมิการอัดแอเดียแบติกสูงยิ่งยวด"
+  },
+  {
+    "id": "PHE-CH05-02",
+    "chapterId": "ch05",
+    "division": "ภาคที่ 2: วัฏจักร & กฎข้อที่ 2",
+    "category": "วิศวกรรมปรับอากาศและพลังงาน",
+    "titleTh": "ระบบทำความเย็นแบบอัดไอและปั๊มความร้อน",
+    "titleEn": "Vapor-Compression Refrigeration Cycle & Heat Pump",
+    "observed": "ตู้เย็นและเครื่องปรับอากาศสามารถดึงความร้อนจากพื้นที่อุณหภูมิต่ำ (ภายในห้อง/ตู้เย็น) ไประบายทิ้งยังสิ่งแวดล้อมที่มีอุณหภูมิสูงกว่าได้อย่างต่อเนื่อง โดยอาศัยงานกลจากคอมเพรสเซอร์",
+    "mechanism": "สอดคล้องกับข้อความเคลวิน-พลังค์และเคลาซิอุสของกฎข้อที่สองของอุณหพลศาสตร์ ความร้อนไม่สามารถถ่ายเทจากแหล่งความเย็นไปยังแหล่งความร้อนได้เองโดยธรรมชาติ แต่สามารถทำได้หากมีงานภายนอก (W_in) เข้ามาขับเคลื่อน โดยสารทำความเย็นจะระเหยรับความร้อนที่ความดันต่ำในคอยล์เย็น (Evaporator) ถูกคอมเพรสเซอร์อัดเป็นไอความดันสูงอุณหภูมิสูง ไประบายความร้อนควบแน่นที่คอยล์ร้อน (Condenser) แล้วลดความดันผ่านวาล์วขยายตัว",
+    "scope": "สัมประสิทธิ์สมรรถนะ COP_R = Q_L / W_in โดยทั่วไปอยู่ในช่วง 2.5 - 4.5 สำหรับเครื่องปรับอากาศในบ้าน",
+    "formulas": [
+      {
+        "latex": "\\text{COP}_R = \\frac{Q_L}{W_{\\text{in}}} = \\frac{h_1 - h_4}{h_2 - h_1},\\quad \\text{COP}_{\\text{Carnot}} = \\frac{T_L}{T_H - T_L}",
+        "desc": "สัมประสิทธิ์สมรรถนะของตู้เย็นและขีดจำกัดสูงสุดตามวัฏจักรคาร์โนต์ย้อนกลับ"
+      }
+    ],
+    "variables": [
+      {
+        "symbol": "Q_L",
+        "name": "ปริมาณความร้อนที่ดึงออกจากบริเวณทำความเย็น",
+        "unit": "\\text{kJ/kg}",
+        "typical": "150 - 200 kJ/kg"
+      },
+      {
+        "symbol": "W_{\\text{in}}",
+        "name": "งานกลสุทธิที่คอมเพรสเซอร์ป้อนเข้าสู่วัฏจักร",
+        "unit": "\\text{kJ/kg}",
+        "typical": "30 - 60 kJ/kg"
+      },
+      {
+        "symbol": "T_L, T_H",
+        "name": "อุณหภูมิคอยล์เย็นและคอยล์ร้อนสัมบูรณ์",
+        "unit": "\\text{K}",
+        "typical": "270 K, 315 K"
+      }
+    ],
+    "citations": [
+      {
+        "title": "Thermodynamics: An Engineering Approach",
+        "year": 2019,
+        "authors": "Cengel, Y. A., & Boles, M. A.",
+        "source": "McGraw-Hill (9th Ed.), Chapter 11: Refrigeration Cycles, pp. 607-640",
+        "verificationStatus": "verified_direct_content",
+        "evidencePin": "Cengel & Boles (2019), pp. 609-620: วัฏจักรการทำความเย็นแบบอัดไอมาตรฐาน"
+      }
+    ],
+    "svgDiagram": "<svg viewBox=\"0 0 500 240\" class=\"w-full h-56 bg-slate-900 rounded-lg\"><rect width=\"500\" height=\"240\" fill=\"#0F172A\"/><rect x=\"60\" y=\"30\" width=\"100\" height=\"50\" fill=\"#ef4444\" fill-opacity=\"0.3\" stroke=\"#ef4444\" stroke-width=\"2\" rx=\"4\"/><text x=\"110\" y=\"60\" fill=\"#fca5a5\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Condenser</text><rect x=\"340\" y=\"30\" width=\"100\" height=\"50\" fill=\"#334155\" stroke=\"#94a3b8\" stroke-width=\"2\" rx=\"4\"/><text x=\"390\" y=\"60\" fill=\"#f8fafc\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Compressor</text><rect x=\"60\" y=\"150\" width=\"100\" height=\"50\" fill=\"#f59e0b\" fill-opacity=\"0.3\" stroke=\"#f59e0b\" stroke-width=\"2\" rx=\"4\"/><text x=\"110\" y=\"180\" fill=\"#fde68a\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Expansion Valve</text><rect x=\"340\" y=\"150\" width=\"100\" height=\"50\" fill=\"#0284c7\" fill-opacity=\"0.3\" stroke=\"#38bdf8\" stroke-width=\"2\" rx=\"4\"/><text x=\"390\" y=\"180\" fill=\"#bae6fd\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Evaporator</text><path d=\"M 390 80 L 390 150\" stroke=\"#38bdf8\" stroke-width=\"2\" stroke-dasharray=\"3\"/><path d=\"M 160 55 L 340 55\" stroke=\"#ef4444\" stroke-width=\"2\"/><path d=\"M 110 80 L 110 150\" stroke=\"#f59e0b\" stroke-width=\"2\"/><path d=\"M 340 175 L 160 175\" stroke=\"#38bdf8\" stroke-width=\"2\"/><text x=\"250\" y=\"230\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">วัฏจักรทำความเย็นแบบอัดไอ (Vapor-Compression Refrigeration)</text></svg>",
+    "imageCaption": "แผนผังวัฏจักรการทำความเย็นและปั๊มความร้อนแบบอัดไอ 4 อุปกรณ์หลัก"
+  },
+  {
+    "id": "PHE-CH05-03",
+    "chapterId": "ch05",
+    "division": "ภาคที่ 1: พื้นฐาน & กฎข้อที่ 1",
+    "category": "อุตุนิยมวิทยาและฟิสิกส์บรรยากาศ",
+    "titleTh": "อัตราการลดลงของอุณหภูมิตามระดับความสูงในบรรยากาศและลมเฟิน",
+    "titleEn": "Atmospheric Lapse Rate & Foehn Wind Effect",
+    "observed": "เมื่อขึ้นสู่ยอดเขาสูง อากาศจะเย็นลงเฉลี่ย 9.8°C ต่อทุกๆ 1 กิโลเมตรในอากาศแห้ง และเมื่อมวลอากาศชื้นพัดข้ามแนวเทือกเขา อากาศที่พัดลงอีกฝั่งจะกลายเป็นลมร้อนและแห้งแล้งอย่างรวดเร็ว (ลมเฟิน/ลมชินุก)",
+    "mechanism": "เมื่อมวลอากาศลอยสูงขึ้น ความดันบรรยากาศภายนอกจะลดลงตามระดับความสูง มวลอากาศจึงขยายตัวดันสิ่งแวดล้อม การขยายตัวเกิดขึ้นเร็วโดยแทบไม่มีการแลกเปลี่ยนความร้อนกับมวลอากาศข้างเคียง (Adiabatic Expansion) ส่งผลให้อุณหภูมิดิ่งลงตาม Dry Adiabatic Lapse Rate (DALR, Γ_d = g/C_p ≈ 9.8 K/km) แต่เมื่อไอน้ำควบแน่นเป็นเมฆ ความร้อนแฝงจะถูกปล่อยออกมา ชะลออัตราการลดอุณหภูมิลงเหลือ ~5 K/km (MALR) เมื่อฝนตกหมดแล้วข้ามสันเขา มวลอากาศแห้งจะจมตัวลงและถูกบีบอัดด้วยอัตรา DALR ทำให้อุณหภูมิที่ตีนเขาฝั่งปลายลมพุ่งสูงขึ้นกว่าฝั่งต้นลม",
+    "scope": "DALR = 9.8 K/km (อากาศแห้ง), MALR = 4 - 7 K/km (อากาศอิ่มตัวไอน้ำ)",
+    "formulas": [
+      {
+        "latex": "\\Gamma_d = -\\frac{dT}{dz} = \\frac{g}{C_p} \\approx 9.8\\text{ K/km}",
+        "desc": "อัตราลดอุณหภูมิแบบแอเดียแบติกแห้งในบรรยากาศภายใต้สมดุลไฮโดรสแตติก"
+      }
+    ],
+    "variables": [
+      {
+        "symbol": "g",
+        "name": "ความเร่งโน้มถ่วงของโลก",
+        "unit": "\\text{m/s}^2",
+        "typical": "9.81 m/s²"
+      },
+      {
+        "symbol": "C_p",
+        "name": "ความจุความร้อนจำเพาะของอากาศที่ความดันคงที่",
+        "unit": "\\text{J/(kg\\cdot K)}",
+        "typical": "1005 J/(kg·K)"
+      },
+      {
+        "symbol": "z",
+        "name": "ระดับความสูงเหนือระดับน้ำทะเล",
+        "unit": "\\text{m}",
+        "typical": "0 - 10,000 m"
+      }
+    ],
+    "citations": [
+      {
+        "title": "Atmospheric Science: An Introductory Survey",
+        "year": 2006,
+        "authors": "Wallace, J. M., & Hobbs, P. V.",
+        "source": "Academic Press (2nd Ed.), Chapter 3: Atmospheric Thermodynamics, pp. 63-108",
+        "verificationStatus": "verified_direct_content",
+        "evidencePin": "Wallace & Hobbs (2006), pp. 75-82: การอนุพัทธ์อัตราลดอุณหภูมิแอเดียแบติกแห้งและชื้น"
+      }
+    ],
+    "svgDiagram": "<svg viewBox=\"0 0 500 240\" class=\"w-full h-56 bg-slate-900 rounded-lg\"><path d=\"M 40 200 L 220 50 L 320 50 L 460 200 Z\" fill=\"#334155\" stroke=\"#64748b\" stroke-width=\"2\"/><path d=\"M 50 180 Q 150 170 200 60\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"3\"/><text x=\"90\" y=\"140\" fill=\"#38bdf8\" font-size=\"11\">อากาศชื้นลอยตัว (MALR ~5 K/km)</text><path d=\"M 320 60 Q 360 140 440 180\" fill=\"none\" stroke=\"#ef4444\" stroke-width=\"3\"/><text x=\"350\" y=\"140\" fill=\"#fca5a5\" font-size=\"11\">ลมเฟินร้อนแห้ง (DALR ~9.8 K/km)</text><text x=\"250\" y=\"230\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">การเกิดลมเฟิน (Foehn Effect) จากกระบวนการแอเดียแบติกข้ามเทือกเขา</text></svg>",
+    "imageCaption": "การยกตัวและจมตัวของมวลอากาศข้ามแนวเขาและการเกิดลมเฟิน"
+  },
+  {
+    "id": "PHE-CH05-04",
+    "chapterId": "ch05",
+    "division": "ภาคที่ 2: วัฏจักร & กฎข้อที่ 2",
+    "category": "ฟิสิกส์อุณหภูมิต่ำยิ่งยวด (Cryogenics)",
+    "titleTh": "การผลิตก๊าซเหลวอุณหภูมิต่ำยิ่งยวดด้วยกระบวนการลินเดอและปรากฏการณ์จูล-ทอมสัน",
+    "titleEn": "Cryogenic Gas Liquefaction & Joule-Thomson Effect",
+    "observed": "การเปลี่ยนก๊าซจริงให้กลายเป็นของเหลวอุณหภูมิต่ำยิ่งยวด (ไนโตรเจนเหลว ออกซิเจนเหลว) โดยการขยายตัวผ่านวาล์วหรี่ต่ำกว่าอุณหภูมิผกผัน (Inversion Temperature) ในวัฏจักรลินเดอ",
+    "mechanism": "สำหรับแก๊สจริงซึ่งมีแรงดึงดูดระหว่างโมเลกุลแบบแวนเดอร์วาลส์ เมื่อแก๊สขยายตัวผ่านรูพรุนหรือวาล์วหรี่ (Throttling, H = คงที่) โดยไม่มีการถ่ายเทความร้อน โมเลกุลจะต้องสูญเสียพลังงานจลน์เพื่อเอาชนะแรงดึงดูดระหว่างกัน ส่งผลให้อุณหภูมิของแก๊สลดลง ปรากฏการณ์นี้เรียกว่า ปรากฏการณ์จูล-ทอมสัน (Joule-Thomson Effect) โดยสัมประสิทธิ์ μ_JT = (∂T/∂P)_H จะมีค่าเป็นบวก (แก๊สเย็นตัวเมื่อลดความดัน) เมื่ออุณหภูมิเริ่มต้นต่ำกว่าอุณหภูมิผกผัน (T_inv)",
+    "scope": "จุดเดือดไนโตรเจนเหลว -195.8°C (77.4 K), Max T_inv ของไนโตรเจน = 621 K (348°C), ความดันใช้งานในกระบวนการลินเดอ 150 - 200 bar",
+    "formulas": [
+      {
+        "latex": "\\mu_{\\text{JT}} = \\left(\\frac{\\partial T}{\\partial P}\\right)_H = \\frac{1}{C_p}\\left[ T\\left(\\frac{\\partial V}{\\partial T}\\right)_P - V \\right]",
+        "desc": "สัมประสิทธิ์จูล-ทอมสันสำหรับการขยายตัวแบบไอแซนแธลปิกของแก๊สจริง"
+      }
+    ],
+    "variables": [
+      {
+        "symbol": "\\mu_{\\text{JT}}",
+        "name": "สัมประสิทธิ์จูล-ทอมสัน (Joule-Thomson Coefficient)",
+        "unit": "\\text{K/bar}",
+        "typical": "> 0 (ทำความเย็น)"
+      },
+      {
+        "symbol": "H",
+        "name": "เอนทัลปีของระบบ (คงที่ระหว่างขยายตัวผ่านวาล์วหรี่)",
+        "unit": "\\text{kJ/kg}",
+        "typical": "\\Delta H = 0"
+      },
+      {
+        "symbol": "T_{\\text{inv}}",
+        "name": "อุณหภูมิผกผันสูงสุดของแก๊ส",
+        "unit": "\\text{K}",
+        "typical": "621 K (N₂), 51 K (He)"
+      }
+    ],
+    "citations": [
+      {
+        "title": "Cryogenic Systems",
+        "year": 1985,
+        "authors": "Barron, R. F.",
+        "source": "Oxford University Press (2nd Ed.), Chapter 3: Gas-Liquefaction Systems, pp. 63-88",
+        "verificationStatus": "verified_direct_content",
+        "evidencePin": "Barron (1985), pp. 63-75: ระบบลินเดอ-แฮมป์สันและการคำนวณสัดส่วนของเหลวควบแน่น"
+      }
+    ],
+    "svgDiagram": "<svg viewBox=\"0 0 500 240\" class=\"w-full h-56 bg-slate-900 rounded-lg\"><rect x=\"40\" y=\"30\" width=\"90\" height=\"50\" fill=\"#334155\" stroke=\"#94a3b8\" stroke-width=\"2\" rx=\"4\"/><text x=\"85\" y=\"55\" fill=\"#f8fafc\" font-size=\"11\" font-weight=\"bold\" text-anchor=\"middle\">Compressor</text><text x=\"85\" y=\"70\" fill=\"#cbd5e1\" font-size=\"9\" text-anchor=\"middle\">P = 200 bar</text><rect x=\"170\" y=\"30\" width=\"80\" height=\"50\" fill=\"#ef4444\" fill-opacity=\"0.3\" stroke=\"#ef4444\" stroke-width=\"2\" rx=\"4\"/><text x=\"210\" y=\"60\" fill=\"#fca5a5\" font-size=\"11\" font-weight=\"bold\" text-anchor=\"middle\">Aftercooler</text><rect x=\"290\" y=\"30\" width=\"100\" height=\"120\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"2\" stroke-dasharray=\"3\" rx=\"4\"/><text x=\"340\" y=\"50\" fill=\"#38bdf8\" font-size=\"10\" font-weight=\"bold\" text-anchor=\"middle\">Counter-flow HX</text><path d=\"M 340 70 L 340 130\" stroke=\"#38bdf8\" stroke-width=\"3\"/><polygon points=\"336,100 340,110 344,100\" fill=\"#38bdf8\"/><polygon points=\"410,135 430,130 430,140\" fill=\"#fbbf24\" stroke=\"#f59e0b\"/><text x=\"440\" y=\"125\" fill=\"#fbbf24\" font-size=\"10\" font-weight=\"bold\">วาล์วหรี่ J-T</text><rect x=\"390\" y=\"160\" width=\"80\" height=\"60\" fill=\"#0284c7\" fill-opacity=\"0.4\" stroke=\"#38bdf8\" stroke-width=\"2\" rx=\"4\"/><text x=\"430\" y=\"185\" fill=\"#bae6fd\" font-size=\"10\" font-weight=\"bold\" text-anchor=\"middle\">Liquid N₂</text><text x=\"430\" y=\"205\" fill=\"#ffffff\" font-size=\"11\" font-weight=\"bold\" text-anchor=\"middle\">-196°C</text><text x=\"250\" y=\"230\" fill=\"#cbd5e1\" font-size=\"11\" text-anchor=\"middle\">กระบวนการลินเดอผลิตก๊าซเหลวด้วยปรากฏการณ์จูล-ทอมสัน (Joule-Thomson Cryogenics)</text></svg>",
+    "imageCaption": "กระบวนการลินเดอผลิตไนโตรเจนเหลวอุณหภูมิต่ำยิ่งยวด (-196°C)"
+  }
+]
   };
 }));

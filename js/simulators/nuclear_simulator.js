@@ -81,7 +81,9 @@
       this.radiationParticles = [];
       this.sourceEmissionTimer = 0;
 
-      // Mouse drag / hover interaction
+      // Resolution and interaction
+      this._setupCanvasResolution();
+      window.addEventListener('resize', () => this.resize());
       this.setupInteraction();
 
       // Loop Control
@@ -90,6 +92,29 @@
       this.lastTimestamp = performance.now();
 
       this.start();
+    }
+
+    _setupCanvasResolution() {
+      const parentW = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : 0;
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = Math.max(window.devicePixelRatio || 1, 2);
+      const width = parentW > 0 ? Math.round(parentW) : (rect.width > 0 ? Math.round(rect.width) : Math.min(window.innerWidth - 32, 850));
+      const height = width < 600 ? 520 : 480;
+
+      this.canvas.width = Math.round(width * dpr);
+      this.canvas.height = Math.round(height * dpr);
+      this.canvas.style.width = '100%';
+      this.canvas.style.maxWidth = '100%';
+      this.canvas.style.height = 'auto';
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.width = width;
+      this.height = height;
+      this.dpr = dpr;
+    }
+
+    resize() {
+      this._setupCanvasResolution();
+      this.render();
     }
 
     // ==========================================
@@ -125,8 +150,8 @@
     setupInteraction() {
       const getPos = (e) => {
         const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+        const scaleX = (this.width || 800) / rect.width;
+        const scaleY = (this.height || 480) / rect.height;
         return {
           x: (e.clientX - rect.left) * scaleX,
           y: (e.clientY - rect.top) * scaleY
@@ -359,6 +384,9 @@
     // ==========================================
 
     render() {
+      if (this.canvas.width <= 300) {
+        this._setupCanvasResolution();
+      }
       const ctx = this.ctx;
       const w = this.canvas.width;
       const h = this.canvas.height;
@@ -382,34 +410,84 @@
       const w = this.canvas.width;
       const h = this.canvas.height;
 
-      const originX = 70;
-      const originY = 380;
-      const plotW = w - 120;
-      const plotH = 290;
+      const isSmallScreen = w < 600;
+      const originX = w < 500 ? 45 : 70;
+      const originY = Math.min(370, h - (isSmallScreen ? 110 : 85));
+      const plotW = Math.max(220, w - originX - (w < 500 ? 20 : 50));
+      const plotH = Math.min(270, originY - 75);
 
-      // Header Banner
+      // Header Banner - responsive and clean
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 15px sans-serif';
-      ctx.fillText('⚛️ เส้นโค้งพลังงานยึดเหนี่ยวต่อนิวคลีออน (Binding Energy per Nucleon Curve E_b/A vs A)', originX, 35);
+      ctx.font = w < 760 ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      const titleText = w < 760
+        ? '⚛️ พลังงานยึดเหนี่ยวต่อนิวคลีออน (E_b/A vs A)'
+        : '⚛️ เส้นโค้งพลังงานยึดเหนี่ยวต่อนิวคลีออน (Binding Energy per Nucleon Curve E_b/A vs A)';
+      ctx.fillText(titleText, originX, 15);
+
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('พีคสูงสุดที่ ⁵⁶Fe (~8.79 MeV) | ซ้าย: นิวเคลียร์ฟิวชัน (Fusion) | ขวา: นิวเคลียร์ฟิชชัน (Fission)', originX, 55);
+      ctx.font = w < 760 ? '10px sans-serif' : '11.5px sans-serif';
+      const subTitleText = w < 760
+        ? '⁵⁶Fe (มวล/A ต่ำสุด) | ⁶²Ni (E_b/A สูงสุด ~8.795 MeV) | ซ้าย: ฟิวชัน | ขวา: ฟิชชัน'
+        : 'เสถียรสูงสุด: ⁶²Ni (E_b/A = 8.795 MeV สูงสุด) & ⁵⁶Fe (มวล/A ต่ำสุด) | ซ้าย: Fusion | ขวา: Fission';
+      ctx.fillText(subTitleText, originX, 36);
 
-      // Shaded Regions: Fusion (left) & Fission (right)
+      // Shaded Regions: Fusion (left of Fe-56) & Fission (right of Fe-56)
       const ironX = originX + (56 / 240) * plotW;
-      // Fusion zone
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
-      ctx.fillRect(originX, originY - plotH, ironX - originX, plotH);
-      ctx.fillStyle = '#10b981';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('⚡ เขตปฏิกิริยาฟิวชัน (Fusion Region: A < 56)', originX + 15, originY - plotH + 25);
+      const fusionW = ironX - originX;
+      const fissionW = plotW - fusionW;
 
-      // Fission zone
+      // Fusion zone background
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
+      ctx.fillRect(originX, originY - plotH, fusionW, plotH);
+
+      // Fusion zone badge - placed neatly at top-left
+      const fusionBadgeW = Math.min(185, fusionW - 14);
+      if (fusionBadgeW > 50) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.fillRect(originX + 8, originY - plotH + 8, fusionBadgeW, 20);
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(originX + 8, originY - plotH + 8, fusionBadgeW, 20);
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 10.5px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(fusionBadgeW < 120 ? '⚡ ฟิวชัน (A < 56)' : '⚡ เขตฟิวชัน (Fusion: A < 56)', originX + 13, originY - plotH + 18);
+      }
+
+      // Fission zone background
       ctx.fillStyle = 'rgba(239, 68, 68, 0.06)';
-      ctx.fillRect(ironX, originY - plotH, plotW - (ironX - originX), plotH);
-      ctx.fillStyle = '#ef4444';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('💥 เขตปฏิกิริยาฟิชชัน (Fission Region: A > 56)', ironX + 25, originY - plotH + 25);
+      ctx.fillRect(ironX, originY - plotH, fissionW, plotH);
+
+      // Fission zone badge - placed well inside fission quadrant to avoid colliding with Fe-56
+      const fissionBadgeX = ironX + Math.max(35, fissionW * 0.22);
+      const fissionBadgeW = Math.min(185, plotW + originX - fissionBadgeX - 10);
+      if (fissionBadgeW > 50) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.fillRect(fissionBadgeX, originY - plotH + 8, fissionBadgeW, 20);
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(fissionBadgeX, originY - plotH + 8, fissionBadgeW, 20);
+
+        ctx.fillStyle = '#f87171';
+        ctx.font = 'bold 10.5px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(fissionBadgeW < 120 ? '💥 ฟิชชัน (A > 56)' : '💥 เขตฟิชชัน (Fission: A > 56)', fissionBadgeX + 6, originY - plotH + 18);
+      }
+
+      // Peak Fe-56 stability marker (subtle dashed vertical guide line)
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(ironX, originY);
+      ctx.lineTo(ironX, originY - plotH + 32);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
       // Grid lines
       ctx.strokeStyle = '#1e293b';
@@ -419,14 +497,17 @@
         ctx.beginPath(); ctx.moveTo(originX, y); ctx.lineTo(originX + plotW, y); ctx.stroke();
         ctx.fillStyle = '#64748b';
         ctx.font = '10px monospace';
-        ctx.fillText(e + ' MeV', originX - 45, y + 4);
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(e + ' MeV', originX - 10, y);
       }
+      ctx.textAlign = 'center';
       for (let a = 40; a <= 240; a += 40) {
         const x = originX + (a / 240) * plotW;
         ctx.beginPath(); ctx.moveTo(x, originY); ctx.lineTo(x, originY - plotH); ctx.stroke();
         ctx.fillStyle = '#64748b';
         ctx.font = '10px monospace';
-        ctx.fillText('A=' + a, x - 15, originY + 18);
+        ctx.fillText('A=' + a, x, originY + 16);
       }
 
       // Axes
@@ -443,7 +524,6 @@
         ctx.beginPath();
         for (let a = 12; a <= 240; a += 2) {
           const z = a / (2 + 0.015 * Math.pow(a, 2/3)); // Stability line estimate
-          // SEMF: av*A - as*A^(2/3) - ac*Z^2/A^(1/3) - aa*(A-2Z)^2/A
           const av = 15.75, as_ = 17.8, ac = 0.711, aa = 23.7;
           const eb = av * a - as_ * Math.pow(a, 2/3) - ac * (z * z) / Math.pow(a, 1/3) - aa * Math.pow(a - 2 * z, 2) / a;
           const ebPerA = Math.max(0, eb / a);
@@ -472,7 +552,7 @@
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Draw Nuclide Points
+      // Draw Nuclide Points & Non-overlapping Labels
       const selIdx = this.params.selectedNuclideIndex;
       this.nuclides.forEach((n, idx) => {
         const px = originX + (n.a / 240) * plotW;
@@ -480,37 +560,96 @@
         const isSel = idx === selIdx;
 
         ctx.beginPath();
-        ctx.arc(px, py, isSel ? 9 : 5, 0, Math.PI * 2);
+        ctx.arc(px, py, isSel ? 8 : (n.a === 56 ? 6 : 4.5), 0, Math.PI * 2);
         ctx.fillStyle = isSel ? '#fbbf24' : n.color;
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = isSel ? 2.5 : 1;
+        ctx.lineWidth = isSel ? 2.5 : 1.2;
         ctx.stroke();
 
-        // Label
-        ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
-        ctx.font = isSel ? 'bold 12px sans-serif' : '10px sans-serif';
-        ctx.fillText(n.sym, px - 10, py - (isSel ? 14 : 9));
+        ctx.font = isSel ? 'bold 12px sans-serif' : 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Intelligent Label positioning to prevent any adjacent overlaps:
+        let labelX = px;
+        let labelY = py - 13;
+
+        if (n.sym === '⁵⁶Fe') {
+          labelX = px - 6;
+          labelY = py - 17;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#ef4444';
+        } else if (n.sym === '⁶²Ni') {
+          labelX = px + 18;
+          labelY = py + 12; // Placed below and right to avoid collision with 56Fe
+          ctx.fillStyle = isSel ? '#fbbf24' : '#f59e0b';
+        } else if (n.sym === '²H') {
+          labelX = px + 12;
+          labelY = py - 6;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else if (n.sym === '⁴He') {
+          labelX = px - 2;
+          labelY = py - 13;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else if (n.sym === '⁶Li') {
+          labelX = px + 14;
+          labelY = py + 4;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else if (n.sym === '¹⁶O') {
+          labelX = px - 12;
+          labelY = py - 13;
+          ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else {
+          ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        }
+
+        if (isSel) {
+          const tw = ctx.measureText(n.sym).width + 8;
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+          ctx.fillRect(labelX - tw / 2, labelY - 7, tw, 14);
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(labelX - tw / 2, labelY - 7, tw, 14);
+          ctx.fillStyle = '#fbbf24';
+        }
+
+        ctx.fillText(n.sym, labelX, labelY);
       });
 
       // Selected Nuclide Detail Card at Bottom
       const sel = this.nuclides[selIdx];
       const deltaM = (sel.ebPerA * sel.a / 931.494).toFixed(4);
       const totalEb = (sel.ebPerA * sel.a).toFixed(1);
+      const cardY = originY + 20;
+      const isMobile = w < 600;
+      const cardH = isMobile ? 80 : 60;
 
       ctx.fillStyle = '#1e293b';
-      ctx.fillRect(originX, 400, plotW, 65);
+      ctx.fillRect(originX, cardY, plotW, cardH);
       ctx.strokeStyle = '#3b82f6';
       ctx.lineWidth = 1.5;
-      ctx.strokeRect(originX, 400, plotW, 65);
+      ctx.strokeRect(originX, cardY, plotW, cardH);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | เลขมวล A = ${sel.a}, เลขอะตอม Z = ${sel.z}, นิวตรอน N = ${sel.a - sel.z}`, originX + 15, 422);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
 
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = '12px monospace';
-      ctx.fillText(`พลังงานยึดเหนี่ยวเฉลี่ย E_b/A = ${sel.ebPerA.toFixed(2)} MeV/นิวคลีออน | E_b รวม = ${totalEb} MeV | มวลพร่อง Δm = ${deltaM} u`, originX + 15, 448);
+      if (isMobile) {
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | A = ${sel.a}, Z = ${sel.z}, N = ${sel.a - sel.z}`, originX + 10, cardY + 8);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`E_b/A = ${sel.ebPerA.toFixed(2)} MeV/nucleon | E_b = ${totalEb} MeV`, originX + 10, cardY + 32);
+        ctx.fillText(`มวลพร่อง Δm = ${deltaM} u`, originX + 10, cardY + 54);
+      } else {
+        ctx.font = 'bold 12.5px sans-serif';
+        ctx.fillText(`📌 นิวไคลด์ที่เลือก: ${sel.name} (${sel.sym}) | เลขมวล A = ${sel.a}, เลขอะตอม Z = ${sel.z}, นิวตรอน N = ${sel.a - sel.z}`, originX + 15, cardY + 12);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '11.5px monospace';
+        ctx.fillText(`พลังงานยึดเหนี่ยวเฉลี่ย E_b/A = ${sel.ebPerA.toFixed(2)} MeV/นิวคลีออน | E_b รวม = ${totalEb} MeV | มวลพร่อง Δm = ${deltaM} u`, originX + 15, cardY + 36);
+      }
     }
 
     // --- Submode 2: Stochastic Radioactive Decay ---
@@ -518,20 +657,21 @@
       const ctx = this.ctx;
       const w = this.canvas.width;
       const h = this.canvas.height;
+      const isMobile = w < 760;
 
       // Header
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 15px sans-serif';
-      ctx.fillText('🎲 กฎการสลายกัมมันตรังสีเชิงสถิติ (Stochastic Decay & Exponential Half-Life Law)', 30, 35);
+      ctx.font = isMobile ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
+      ctx.fillText('🎲 กฎการสลายกัมมันตรังสีเชิงสถิติ (Stochastic Decay & Half-Life)', 20, 25);
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '12px sans-serif';
-      ctx.fillText(`ไอโซโทป: ${this.params.isotope} | ครึ่งชีวิต T_1/2 = ${this.params.halfLife.toFixed(1)} s | เวลาจำลอง: ${this.simTime.toFixed(2)} s`, 30, 55);
+      ctx.font = isMobile ? '10px sans-serif' : '12px sans-serif';
+      ctx.fillText(`ไอโซโทป: ${this.params.isotope} | T_1/2 = ${this.params.halfLife.toFixed(1)} s | เวลา: ${this.simTime.toFixed(2)} s`, 20, 44);
 
       // Left Box: 2D Atom Cloud
-      const boxX = 30;
-      const boxY = 75;
-      const boxW = 440;
-      const boxH = 260;
+      const boxX = 20;
+      const boxY = 55;
+      const boxW = isMobile ? w - 40 : Math.round((w - 60) * 0.48);
+      const boxH = isMobile ? 150 : 260;
 
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(boxX, boxY, boxW, boxH);
@@ -539,13 +679,15 @@
       ctx.strokeRect(boxX, boxY, boxW, boxH);
 
       ctx.fillStyle = '#64748b';
-      ctx.font = '11px sans-serif';
-      ctx.fillText('กลุ่มนิวเคลียสกัมมันตรังสี (ส้ม = นิวเคลียสแม่ N(t) | น้ำเงิน = นิวเคลียสลูกสลายแล้ว)', boxX + 10, boxY + 20);
+      ctx.font = '10px sans-serif';
+      ctx.fillText('กลุ่มนิวเคลียส (ส้ม = N(t) | น้ำเงิน = สลายแล้ว)', boxX + 10, boxY + 16);
 
       // Draw Atoms
       this.atoms.forEach(a => {
+        const atomX = boxX + (a.x / 440) * (boxW - 20) + 10;
+        const atomY = boxY + (a.y / 260) * (boxH - 30) + 20;
         ctx.beginPath();
-        ctx.arc(a.x, a.y, 6, 0, Math.PI * 2);
+        ctx.arc(atomX, atomY, isMobile ? 4 : 6, 0, Math.PI * 2);
         if (a.decayed) {
           ctx.fillStyle = '#3b82f6'; // Decayed daughter
         } else {
@@ -556,17 +698,17 @@
         // Flash burst on decay
         if (a.flashTimer > 0) {
           ctx.beginPath();
-          ctx.arc(a.x, a.y, 14, 0, Math.PI * 2);
+          ctx.arc(atomX, atomY, isMobile ? 9 : 14, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(239, 68, 68, ' + (a.flashTimer * 2) + ')';
           ctx.fill();
         }
       });
 
-      // Right: Live Decay Curve Graph
-      const chartX = 500;
-      const chartY = 75;
-      const chartW = w - 530;
-      const chartH = 260;
+      // Right/Bottom: Live Decay Curve Graph
+      const chartX = isMobile ? 20 : boxX + boxW + 15;
+      const chartY = isMobile ? boxY + boxH + 12 : 55;
+      const chartW = isMobile ? w - 40 : w - chartX - 20;
+      const chartH = isMobile ? 140 : 260;
 
       ctx.fillStyle = '#111827';
       ctx.fillRect(chartX, chartY, chartW, chartH);
@@ -591,7 +733,7 @@
       for (let px = 0; px < chartW; px += 2) {
         const t = (px / chartW) * 25;
         const nTheory = this.totalAtoms * Math.exp(-this.params.decayConstant * t);
-        const py = chartY + chartH - (nTheory / this.totalAtoms) * (chartH - 40) - 20;
+        const py = chartY + chartH - (nTheory / this.totalAtoms) * (chartH - 35) - 15;
         if (px === 0) ctx.moveTo(chartX + px, py);
         else ctx.lineTo(chartX + px, py);
       }
@@ -607,7 +749,7 @@
         for (let i = 0; i < this.decayHistory.length; i++) {
           const pt = this.decayHistory[i];
           const px = chartX + (pt.t / 25) * chartW;
-          const py = chartY + chartH - (pt.count / this.totalAtoms) * (chartH - 40) - 20;
+          const py = chartY + chartH - (pt.count / this.totalAtoms) * (chartH - 35) - 15;
           if (i === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         }
@@ -620,19 +762,23 @@
       const activeCount = this.atoms.filter(a => !a.decayed).length;
       const decayedCount = this.atoms.length - activeCount;
       const percentLeft = ((activeCount / this.atoms.length) * 100).toFixed(1);
+      const telemY = isMobile ? chartY + chartH + 10 : 340;
+      const telemH = isMobile ? 68 : 85;
 
       ctx.fillStyle = '#1e293b';
-      ctx.fillRect(boxX, 360, w - 60, 85);
+      ctx.fillRect(boxX, telemY, w - 40, telemH);
       ctx.strokeStyle = '#475569';
-      ctx.strokeRect(boxX, 360, w - 60, 85);
+      ctx.strokeRect(boxX, telemY, w - 40, telemH);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(`⏱️ สมการการสลาย: N(t) = N_0 e^(-λt) = N_0 (1/2)^(t/T_1/2) | กัมมันตภาพ A = λN = ${(this.params.decayConstant * activeCount).toFixed(2)} Bq`, boxX + 15, 385);
+      ctx.font = isMobile ? 'bold 10.5px sans-serif' : 'bold 13px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(`⏱️ N(t) = N_0 e^(-λt) | กัมมันตภาพ A = λN = ${(this.params.decayConstant * activeCount).toFixed(2)} Bq`, boxX + 10, telemY + 10);
 
       ctx.fillStyle = '#4ade80';
-      ctx.font = '12px monospace';
-      ctx.fillText(`นิวเคลียสแม่คงเหลือ: ${activeCount} ตัว (${percentLeft}%) | นิวเคลียสลูกที่สลายแล้ว: ${decayedCount} ตัว | ผ่านแล้ว: ${(this.simTime / this.params.halfLife).toFixed(2)} ครึ่งชีวิต`, boxX + 15, 415);
+      ctx.font = isMobile ? '10px monospace' : '12px monospace';
+      ctx.fillText(`แม่: ${activeCount} (${percentLeft}%) | ลูก: ${decayedCount} | t: ${(this.simTime / this.params.halfLife).toFixed(2)} T_1/2`, boxX + 10, telemY + (isMobile ? 36 : 45));
     }
 
     // --- Submode 3: Radiation Shielding & Dosimetry ---
@@ -640,67 +786,71 @@
       const ctx = this.ctx;
       const w = this.canvas.width;
       const h = this.canvas.height;
+      const isMobile = w < 600;
 
       // Header
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 15px sans-serif';
-      ctx.fillText('🛡️ การกำบังรังสีและมาตรวิทยารังสีวิทยา (Radiation Shielding, HVL & Dosimetry)', 30, 35);
+      ctx.font = isMobile ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
+      ctx.fillText('🛡️ การกำบังรังสีและมาตรวิทยารังสีวิทยา (Radiation Shielding & Dosimetry)', 20, 25);
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('จำลองอำนาจทะลุทะลวงของรังสี แอลฟา (α) / บีตา (β) / แกมมา (γ) ผ่านวัสดุกำบังตามกฎ I = I_0 e^(-μx)', 30, 55);
+      ctx.font = isMobile ? '10px sans-serif' : '12px sans-serif';
+      ctx.fillText('จำลองอำนาจทะลุทะลวงของรังสี แอลฟา/บีตา/แกมมา ตามกฎ I = I_0 e^(-μx)', 20, 44);
 
       // Radiation Source Emitter
-      const srcX = 60;
-      const srcY = 220;
+      const srcX = 20;
+      const srcY = isMobile ? 180 : 210;
       ctx.fillStyle = '#334155';
-      ctx.fillRect(20, srcY - 45, 55, 90);
+      ctx.fillRect(srcX, srcY - 40, 50, 80);
       ctx.strokeStyle = '#ef4444';
       ctx.lineWidth = 2;
-      ctx.strokeRect(20, srcY - 45, 55, 90);
+      ctx.strokeRect(srcX, srcY - 40, 50, 80);
 
       // Trefoil radiation symbol
       ctx.fillStyle = '#fbbf24';
       ctx.beginPath();
-      ctx.arc(47, srcY, 14, 0, Math.PI * 2);
+      ctx.arc(srcX + 25, srcY, 12, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#0f172a';
-      ctx.beginPath(); ctx.arc(47, srcY, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(srcX + 25, srcY, 3.5, 0, Math.PI * 2); ctx.fill();
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.fillText('ต้นกำเนิด', 25, srcY + 35);
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('ต้นกำเนิด', srcX + 25, srcY + 30);
 
-      // Shielding Barrier
-      const shieldX = 280;
-      const shieldW = Math.max(12, this.params.shieldThickness * 2.2);
+      // Detector Target
+      const detX = w - 65;
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(detX, srcY - 50, 45, 120);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(detX, srcY - 50, 45, 120);
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText('Geiger', detX + 22, srcY);
+
+      // Shielding Barrier dynamically centered between emitter and detector
+      const shieldW = Math.max(12, Math.min(60, this.params.shieldThickness * 1.8));
+      const shieldX = Math.round(srcX + 65 + (detX - srcX - 65 - shieldW) * 0.45);
       let shieldColor = '#94a3b8'; // default
       if (this.params.shieldMaterial === 'paper') shieldColor = '#f8fafc';
       else if (this.params.shieldMaterial === 'aluminum') shieldColor = '#38bdf8';
       else if (this.params.shieldMaterial === 'lead') shieldColor = '#475569';
       else if (this.params.shieldMaterial === 'concrete') shieldColor = '#78716c';
 
+      const shieldH = isMobile ? 170 : 220;
+      const shieldY = srcY - Math.round(shieldH * 0.5);
       ctx.fillStyle = shieldColor;
-      ctx.fillRect(shieldX, 100, shieldW, 240);
+      ctx.fillRect(shieldX, shieldY, shieldW, shieldH);
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 1.5;
-      ctx.strokeRect(shieldX, 100, shieldW, 240);
+      ctx.strokeRect(shieldX, shieldY, shieldW, shieldH);
 
       // Shield Label
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText(`กำบัง: ${this.params.shieldMaterial.toUpperCase()} (${this.params.shieldThickness} mm)`, shieldX - 20, 90);
-
-      // Detector Target
-      const detX = w - 80;
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(detX, 120, 50, 200);
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(detX, 120, 50, 200);
-      ctx.fillStyle = '#10b981';
       ctx.font = 'bold 11px sans-serif';
-      ctx.fillText('หัววัด', detX + 10, 145);
-      ctx.fillText('Geiger', detX + 5, 165);
+      ctx.textAlign = 'center';
+      ctx.fillText(`กำบัง: ${this.params.shieldMaterial.toUpperCase()} (${this.params.shieldThickness} mm)`, shieldX + shieldW / 2, shieldY - 10);
 
       // Render Particles
       this.radiationParticles.forEach(p => {
@@ -733,18 +883,28 @@
       const doseRateSv = (transFrac * 10 * wR).toFixed(2);
 
       // Bottom Telemetry card
+      const telemY = isMobile ? 320 : 360;
+      const telemH = isMobile ? 75 : 85;
       ctx.fillStyle = '#1e293b';
-      ctx.fillRect(30, 360, w - 60, 85);
+      ctx.fillRect(20, telemY, w - 40, telemH);
       ctx.strokeStyle = '#475569';
-      ctx.strokeRect(30, 360, w - 60, 85);
+      ctx.strokeRect(20, telemY, w - 40, telemH);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(`☢️ ชนิดรังสี: ${this.params.radiationType.toUpperCase()} (ค่าน้ำหนักรังสี w_R = ${wR}) | ความเข้มทะลุผ่าน I/I_0 = ${(transFrac * 100).toFixed(1)}%`, 45, 385);
-
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = '12px monospace';
-      ctx.fillText(`ปริมาณรังสีดูดกลืน D = ${doseRateGy} mGy/h | ปริมาณรังสีสมมูลต่อเนื้อเยื่อ H = D·w_R = ${doseRateSv} mSv/h`, 45, 415);
+      ctx.font = isMobile ? 'bold 11px sans-serif' : 'bold 13px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      if (isMobile) {
+        ctx.fillText(`☢️ รังสี: ${this.params.radiationType.toUpperCase()} (w_R = ${wR}) | ทะลุผ่าน: ${(transFrac * 100).toFixed(1)}%`, 30, telemY + 10);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`D = ${doseRateGy} mGy/h | H = ${doseRateSv} mSv/h`, 30, telemY + 36);
+      } else {
+        ctx.fillText(`☢️ ชนิดรังสี: ${this.params.radiationType.toUpperCase()} (ค่าน้ำหนักรังสี w_R = ${wR}) | ความเข้มทะลุผ่าน I/I_0 = ${(transFrac * 100).toFixed(1)}%`, 35, telemY + 16);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '12px monospace';
+        ctx.fillText(`ปริมาณรังสีดูดกลืน D = ${doseRateGy} mGy/h | ปริมาณรังสีสมมูลต่อเนื้อเยื่อ H = D·w_R = ${doseRateSv} mSv/h`, 35, telemY + 46);
+      }
     }
 
     // ==========================================
