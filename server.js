@@ -43,7 +43,8 @@ const MIME_TYPES = {
   '.md': 'text/markdown; charset=utf-8',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf'
+  '.ttf': 'font/ttf',
+  '.pdf': 'application/pdf'
 };
 
 const ROOT_DIR = __dirname;

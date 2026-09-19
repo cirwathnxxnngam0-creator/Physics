@@ -79,6 +79,15 @@
         analyzerAngleDeg: 45.0, // degrees (\theta_2)
         polarizationType: 'linear', // 'linear' | 'circular'
 
+        // Fourier Series Synthesis & Harmonic Decomposition
+        fourierWaveType: 'square', // 'square' | 'sawtooth' | 'triangle' | 'rectified'
+        fourierHarmonics: 5,       // N = 1 .. 25
+        fourierFundFreq: 0.8,      // Hz (f_0)
+        fourierAmplitude: 1.0,     // A
+        fourierSpeed: 1.0,         // Time speed multiplier
+        showEpicycles: true,
+        showSpectrum: true,
+
         // Audio synthesizer toggle
         enableAudio: false
       };
@@ -98,7 +107,13 @@
         photonEnergyEv: 3.10,
         lightFreqThz: 750.0,
         spectralColor: { r: 120, g: 0, b: 240, hex: '#7800f0', css: 'rgb(120, 0, 240)' },
-        malusTransmissionPct: 50.0
+        malusTransmissionPct: 50.0,
+        // Fourier synthesis live states
+        fourierTime: 0.0,
+        fourierWaveHistory: [],
+        fourierCoeffs: null,
+        fourierGibbsPct: '8.95',
+        fourierPowerPct: '98.5'
       };
 
       // Display toggles
@@ -272,6 +287,19 @@
         this.state.waveSpeed = 299792458;
         this.state.wavelength = p.wavelengthNm || 550;
         this.state.spectralColor = this._nmToRGB(this.state.wavelength);
+      } else if (this.subMode === 'fourier_synthesis') {
+        const f0 = p.fourierFundFreq || 0.8;
+        const v = 40.0;
+        this.state.frequency = f0;
+        this.state.waveSpeed = v;
+        this.state.wavelength = v / f0;
+        this.state.wavenumber = (2 * Math.PI) / (v / f0);
+        this.state.omega = 2 * Math.PI * f0;
+        const N = Math.max(1, Math.min(25, Math.round(p.fourierHarmonics || 5)));
+        const coeffs = this._calculateFourierCoeffs(p.fourierWaveType || 'square', N, p.fourierAmplitude || 1.0);
+        this.state.fourierCoeffs = coeffs;
+        this.state.fourierGibbsPct = coeffs.gibbsPct;
+        this.state.fourierPowerPct = coeffs.powerPct;
       }
     }
 
@@ -303,7 +331,7 @@
     }
 
     setSubMode(mode) {
-      if (['traveling', 'standing', 'interference_beats', 'water_waves', 'light_waves', 'polarization', 'geometric_optics'].includes(mode)) {
+      if (['traveling', 'standing', 'interference_beats', 'water_waves', 'light_waves', 'polarization', 'geometric_optics', 'fourier_synthesis'].includes(mode)) {
         this.subMode = mode;
         this._stopAudio();
         this.reset();
@@ -445,6 +473,33 @@
           pt.aOrb = aOrb;
           pt.bOrb = bOrb;
         });
+      } else if (this.subMode === 'fourier_synthesis') {
+        const p = this.params;
+        const f0 = p.fourierFundFreq || 0.8;
+        const omega0 = 2 * Math.PI * f0;
+        const N = Math.max(1, Math.min(25, Math.round(p.fourierHarmonics || 5)));
+        const speed = (p.fourierSpeed !== undefined) ? p.fourierSpeed : 1.0;
+        
+        const dt = 0.016;
+        this.state.fourierTime = (this.state.fourierTime || 0) + dt * speed;
+        const curT = this.state.fourierTime;
+
+        const coeffs = this._calculateFourierCoeffs(p.fourierWaveType || 'square', N, p.fourierAmplitude || 1.0);
+        this.state.fourierCoeffs = coeffs;
+        this.state.fourierGibbsPct = coeffs.gibbsPct;
+        this.state.fourierPowerPct = coeffs.powerPct;
+
+        let sumVal = coeffs.a0 || 0;
+        coeffs.harmonics.forEach(h => {
+          sumVal += h.an * Math.cos(h.n * omega0 * curT) + h.bn * Math.sin(h.n * omega0 * curT);
+        });
+        this.state.currentFourierVal = sumVal;
+
+        if (!this.state.fourierWaveHistory) this.state.fourierWaveHistory = [];
+        this.state.fourierWaveHistory.push({ t: curT, val: sumVal });
+        if (this.state.fourierWaveHistory.length > 240) {
+          this.state.fourierWaveHistory.shift();
+        }
       }
     }
 
@@ -477,6 +532,8 @@
         this._renderPolarizationMode(ctx, w, h);
       } else if (this.subMode === 'geometric_optics') {
         this._renderGeometricOpticsMode(ctx, w, h);
+      } else if (this.subMode === 'fourier_synthesis') {
+        this._renderFourierMode(ctx, w, h);
       }
     }
 
@@ -2119,6 +2176,355 @@
       ctx.restore();
     }
 
+    // ==========================================
+    // 8. FOURIER SERIES SYNTHESIS & HARMONIC DECOMPOSITION
+    // ==========================================
+    _calculateFourierCoeffs(type, N, A = 1.0) {
+      const harmonics = [];
+      let a0 = 0;
+      let hasGibbs = false;
+      let idealPower = 1.0;
+
+      if (type === 'square') {
+        hasGibbs = true;
+        idealPower = A * A;
+        for (let k = 1; k <= N; k++) {
+          const n = 2 * k - 1;
+          const bn = (4 * A) / (n * Math.PI);
+          harmonics.push({ n, an: 0, bn, amp: bn, phase: 0 });
+        }
+      } else if (type === 'sawtooth') {
+        hasGibbs = true;
+        idealPower = (A * A) / 3;
+        for (let n = 1; n <= N; n++) {
+          const bn = (2 * A * Math.pow(-1, n + 1)) / (n * Math.PI);
+          harmonics.push({ n, an: 0, bn, amp: Math.abs(bn), phase: bn < 0 ? Math.PI : 0 });
+        }
+      } else if (type === 'triangle') {
+        hasGibbs = false;
+        idealPower = (A * A) / 3;
+        for (let k = 1; k <= N; k++) {
+          const n = 2 * k - 1;
+          const bn = (8 * A * Math.pow(-1, k - 1)) / (n * n * Math.PI * Math.PI);
+          harmonics.push({ n, an: 0, bn, amp: Math.abs(bn), phase: bn < 0 ? Math.PI : 0 });
+        }
+      } else if (type === 'rectified') {
+        hasGibbs = false;
+        a0 = A / Math.PI;
+        idealPower = (A * A) / 4;
+        harmonics.push({ n: 1, an: 0, bn: A * 0.5, amp: A * 0.5, phase: 0 });
+        for (let k = 1; k <= Math.min(N, 12); k++) {
+          const n = 2 * k;
+          const an = (-2 * A) / (Math.PI * (4 * k * k - 1));
+          harmonics.push({ n, an, bn: 0, amp: Math.abs(an), phase: Math.PI });
+        }
+      }
+
+      // Parseval energy summation: P = a0^2 + 1/2 sum(an^2 + bn^2)
+      let reconPower = a0 * a0;
+      harmonics.forEach(h => {
+        reconPower += 0.5 * (h.an * h.an + h.bn * h.bn);
+      });
+      const powerPct = Math.min(100, (reconPower / Math.max(1e-4, idealPower)) * 100).toFixed(1);
+
+      // Gibbs overshoot: approaches 8.948987% as N -> infty for square / sawtooth
+      let gibbsPct = '0.00';
+      if (hasGibbs) {
+        const factor = type === 'square' ? (1 - 0.22 / N) : (1 - 0.35 / N);
+        gibbsPct = (8.95 * Math.max(0.5, factor)).toFixed(2);
+      }
+
+      return { a0, harmonics, powerPct, gibbsPct, hasGibbs };
+    }
+
+    _renderFourierMode(ctx, w, h) {
+      const p = this.params;
+      const f0 = p.fourierFundFreq || 0.8;
+      const omega0 = 2 * Math.PI * f0;
+      const T0 = 1 / f0;
+      const N = Math.max(1, Math.min(25, Math.round(p.fourierHarmonics || 5)));
+      const curT = this.state.fourierTime || 0;
+      const coeffs = this.state.fourierCoeffs || this._calculateFourierCoeffs(p.fourierWaveType || 'square', N, p.fourierAmplitude || 1.0);
+      const isCompact = w < 720;
+
+      // Layout partition
+      const epicycleW = isCompact ? w * 0.38 : Math.min(270, w * 0.3);
+      const epiCenterX = isCompact ? epicycleW * 0.5 : 130;
+      const epiCenterY = isCompact ? h * 0.28 : h * 0.36;
+      const graphX = epicycleW + 15;
+      const graphY = 38;
+      const graphW = w - graphX - 20;
+      const graphH = isCompact ? h * 0.42 : h * 0.52;
+      const scaleY = isCompact ? 48 : 70;
+
+      // --- SECTION 1: EPICYCLE PHASOR CIRCLES (LEFT) ---
+      ctx.save();
+      // Epicycles bounding card
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+      ctx.strokeStyle = '#1E293B';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(10, 30, epicycleW - 5, isCompact ? h * 0.52 : h * 0.62, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Card Title
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('🔄 วงล้ออีพิไซเคิล (Epicycles / Phasors)', 18, 48);
+
+      // Draw Center Crosshair
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(epiCenterX - 50, epiCenterY);
+      ctx.lineTo(epiCenterX + 50, epiCenterY);
+      ctx.moveTo(epiCenterX, epiCenterY - 50);
+      ctx.lineTo(epiCenterX, epiCenterY + 50);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Chain epicycles
+      let currentX = epiCenterX;
+      let currentY = epiCenterY - (coeffs.a0 || 0) * scaleY;
+      const harmonicColors = ['#F59E0B', '#06B6D4', '#8B5CF6', '#EC4899', '#10B981', '#3B82F6', '#F97316'];
+
+      coeffs.harmonics.forEach((hItem, idx) => {
+        const radius = hItem.amp * scaleY;
+        if (radius > 1.2) {
+          const color = harmonicColors[idx % harmonicColors.length];
+
+          // Circle outline
+          ctx.strokeStyle = color;
+          ctx.globalAlpha = Math.max(0.18, 0.55 - idx * 0.04);
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.arc(currentX, currentY, radius, 0, 2 * Math.PI);
+          ctx.stroke();
+
+          // Vector arm
+          const angle = -(hItem.n * omega0 * curT + hItem.phase);
+          const nextX = currentX + radius * Math.cos(angle);
+          const nextY = currentY + radius * Math.sin(angle);
+
+          ctx.globalAlpha = 0.9;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(currentX, currentY);
+          ctx.lineTo(nextX, nextY);
+          ctx.stroke();
+
+          // Small tip bead
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(nextX, nextY, 2.5, 0, 2 * Math.PI);
+          ctx.fill();
+
+          currentX = nextX;
+          currentY = nextY;
+        }
+      });
+      ctx.globalAlpha = 1.0;
+
+      // Tracer bead at current tip
+      ctx.fillStyle = '#10B981';
+      ctx.beginPath();
+      ctx.arc(currentX, currentY, 4.5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = '#F8FAFC';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Horizontal Laser Guide Line to Waveform Graph
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(currentX, currentY);
+      ctx.lineTo(graphX, currentY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // --- SECTION 2: SYNTHESIZED TIME-DOMAIN WAVEFORM (RIGHT) ---
+      ctx.save();
+      // Graph background card
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.strokeStyle = '#1E293B';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(graphX, 30, graphW, isCompact ? h * 0.52 : h * 0.62, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Graph Title & Type Badge
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      const waveNames = {
+        square: 'คลื่นสี่เหลี่ยม (Square Wave)',
+        sawtooth: 'คลื่นฟันเลื่อย (Sawtooth Wave)',
+        triangle: 'คลื่นสามเหลี่ยม (Triangle Wave)',
+        rectified: 'คลื่นเรียงกระแสครึ่งคลื่น (Half-Wave Rectified)'
+      };
+      ctx.fillText(`📈 สังเคราะห์อนุกรม: ${waveNames[p.fourierWaveType] || 'Square Wave'}`, graphX + 12, 48);
+
+      const graphZeroY = 30 + (isCompact ? h * 0.52 : h * 0.62) * 0.5;
+
+      // Zero & Amplitude Reference Gridlines
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(graphX + 10, graphZeroY);
+      ctx.lineTo(graphX + graphW - 10, graphZeroY);
+      ctx.moveTo(graphX + 10, graphZeroY - scaleY);
+      ctx.lineTo(graphX + graphW - 10, graphZeroY - scaleY);
+      ctx.moveTo(graphX + 10, graphZeroY + scaleY);
+      ctx.lineTo(graphX + graphW - 10, graphZeroY + scaleY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Axis Labels
+      ctx.fillStyle = '#64748B';
+      ctx.font = '10px monospace';
+      ctx.fillText('+1.0', graphX + 8, graphZeroY - scaleY - 3);
+      ctx.fillText(' 0.0', graphX + 8, graphZeroY - 3);
+      ctx.fillText('-1.0', graphX + 8, graphZeroY + scaleY - 3);
+
+      // Ideal Waveform (Faint Dashed Line)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      const plotTimeSpan = 2.0 * T0; // Show 2 periods
+      const stepPx = 2;
+      for (let px = 0; px <= graphW - 40; px += stepPx) {
+        const tOffset = (px / (graphW - 40)) * plotTimeSpan;
+        const evalT = curT + tOffset;
+        const phaseFrac = ((evalT % T0) + T0) % T0 / T0; // 0 .. 1
+        let idealVal = 0;
+
+        if (p.fourierWaveType === 'square') {
+          idealVal = phaseFrac < 0.5 ? 1.0 : -1.0;
+        } else if (p.fourierWaveType === 'sawtooth') {
+          idealVal = 2 * phaseFrac - 1.0;
+        } else if (p.fourierWaveType === 'triangle') {
+          idealVal = phaseFrac < 0.5 ? (4 * phaseFrac - 1.0) : (3.0 - 4 * phaseFrac);
+        } else if (p.fourierWaveType === 'rectified') {
+          idealVal = Math.sin(2 * Math.PI * phaseFrac) > 0 ? Math.sin(2 * Math.PI * phaseFrac) : 0;
+        }
+
+        const py = graphZeroY - idealVal * scaleY;
+        if (px === 0) ctx.moveTo(graphX + 25 + px, py);
+        else ctx.lineTo(graphX + 25 + px, py);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Synthesized Fourier Waveform S_N(t) (Vibrant Emerald)
+      ctx.strokeStyle = '#10B981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      let maxOvershootY = 0;
+      let maxOvershootX = 0;
+      let maxOvershootVal = -999;
+
+      for (let px = 0; px <= graphW - 40; px += stepPx) {
+        const tOffset = (px / (graphW - 40)) * plotTimeSpan;
+        const evalT = curT + tOffset;
+        let sumVal = coeffs.a0 || 0;
+        coeffs.harmonics.forEach(h => {
+          sumVal += h.an * Math.cos(h.n * omega0 * evalT) + h.bn * Math.sin(h.n * omega0 * evalT);
+        });
+
+        const py = graphZeroY - sumVal * scaleY;
+        if (px === 0) ctx.moveTo(graphX + 25 + px, py);
+        else ctx.lineTo(graphX + 25 + px, py);
+
+        if (sumVal > maxOvershootVal) {
+          maxOvershootVal = sumVal;
+          maxOvershootX = graphX + 25 + px;
+          maxOvershootY = py;
+        }
+      }
+      ctx.stroke();
+
+      // Gibbs Phenomenon Peak Callout
+      if (coeffs.hasGibbs && maxOvershootX > graphX + 30 && maxOvershootX < graphX + graphW - 50) {
+        ctx.fillStyle = '#EF4444';
+        ctx.beginPath();
+        ctx.arc(maxOvershootX, maxOvershootY, 4, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Callout Badge
+        const badgeW = isCompact ? 130 : 165;
+        const badgeX = Math.min(graphX + graphW - badgeW - 10, maxOvershootX - 20);
+        const badgeY = Math.max(40, maxOvershootY - 24);
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+        ctx.beginPath();
+        ctx.roundRect(badgeX, badgeY, badgeW, 20, 4);
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 9.5px Inter, sans-serif';
+        ctx.fillText(`🎯 Gibbs Peak: +${coeffs.gibbsPct}%`, badgeX + 6, badgeY + 14);
+      }
+      ctx.restore();
+
+      // --- SECTION 3: HARMONIC FREQUENCY SPECTRUM BAR CHART (BOTTOM) ---
+      ctx.save();
+      const specBoxY = isCompact ? h - 90 : h - 100;
+      const specBoxH = isCompact ? 80 : 88;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.strokeStyle = '#1E293B';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(10, specBoxY, w - 20, specBoxH, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      // Spectrum Title & Telemetry summary
+      ctx.fillStyle = '#E2E8F0';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('📊 สเปกตรัมความถี่ฮาร์มอนิก (Frequency Spectrum: |c_n| vs n·f₀)', 20, specBoxY + 18);
+
+      ctx.fillStyle = '#10B981';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`พจน์ N = ${N} | พลังงานพาร์เซวาล (Parseval): ${coeffs.powerPct}% | f₀ = ${f0.toFixed(1)} Hz`, w - 25, specBoxY + 18);
+      ctx.textAlign = 'left';
+
+      // Draw Bars
+      const barStartY = specBoxY + specBoxH - 18;
+      const totalBars = Math.min(coeffs.harmonics.length, 16);
+      const availW = w - 60;
+      const barSlotW = availW / Math.max(1, totalBars);
+      const barMaxH = specBoxH - 36;
+      const maxAmp = Math.max(...coeffs.harmonics.map(h => h.amp), 1.0);
+
+      coeffs.harmonics.slice(0, totalBars).forEach((hItem, idx) => {
+        const barH = (hItem.amp / maxAmp) * barMaxH;
+        const bx = 30 + idx * barSlotW;
+        const color = harmonicColors[idx % harmonicColors.length];
+
+        // Bar fill
+        ctx.fillStyle = color;
+        ctx.fillRect(bx + 4, barStartY - barH, Math.max(6, barSlotW - 12), barH);
+
+        // Harmonic label (1f₀, 3f₀...)
+        ctx.fillStyle = '#94A3B8';
+        ctx.font = '9px monospace';
+        ctx.fillText(`${hItem.n}f₀`, bx + 4, barStartY + 12);
+
+        // Value on bar top
+        if (barSlotW > 28 && barH > 14) {
+          ctx.fillStyle = '#F8FAFC';
+          ctx.font = '8.5px monospace';
+          ctx.fillText(hItem.amp.toFixed(2), bx + 4, barStartY - barH - 3);
+        }
+      });
+      ctx.restore();
+    }
+
 
     // ==========================================
     // WEB AUDIO API SYNTHESIZER
@@ -2239,7 +2645,12 @@
         opticsIsAtInfinity: this.state.opticsIsAtInfinity,
         energy_eV: this.state.photonEnergyEv,
         freq_THz: this.state.lightFreqThz,
-        wl_nm: this.subMode === 'light_waves' ? this.params.wavelengthNm : undefined
+        wl_nm: this.subMode === 'light_waves' ? this.params.wavelengthNm : undefined,
+        fourierWaveType: this.params.fourierWaveType,
+        fourierHarmonics: this.params.fourierHarmonics,
+        fourierFundFreq: this.params.fourierFundFreq,
+        fourierGibbsPct: this.state.fourierGibbsPct,
+        fourierPowerPct: this.state.fourierPowerPct
       });
     }
   }

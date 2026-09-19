@@ -306,6 +306,7 @@
     renderSimulatorEduContext(activeSimMode);
     setupKeyboardShortcuts();
     setupMobileAccessModal();
+    setupTextbookLibraryModal();
     setupBackgroundExecution();
 
     // Global window resize handler for active simulator canvas
@@ -353,7 +354,7 @@
     });
 
     // Determine initial view based on URL hash or default to Landing Page
-    const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-analytical', 'view-practice'];
+    const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-analytical', 'view-practice', 'view-textbooks'];
     const initialHash = window.location.hash.replace(/^#/, '');
     const startView = validViews.includes(initialHash) ? initialHash : 'view-landing';
     switchView(startView, true);
@@ -431,7 +432,7 @@
     if (backBtn) backBtn.style.display = isLesson ? 'inline-flex' : 'none';
     if (chapterWrapper) chapterWrapper.style.display = isLesson ? 'inline-flex' : 'none';
     if (mainViewNav) mainViewNav.style.display = isLesson ? 'flex' : 'none';
-    if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator' && !isAnalytical) ? 'block' : 'none';
+    if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator' && !isAnalytical && viewId !== 'view-textbooks') ? 'block' : 'none';
 
     currentView = viewId;
 
@@ -441,6 +442,10 @@
       renderFormulasContent(currentChapter);
     } else if (viewId === 'view-phenomena') {
       renderPhenomenaContent(currentChapter);
+    } else if (viewId === 'view-textbooks') {
+      if (window.TextbookLibrary && typeof window.TextbookLibrary.renderTextbookLibrary === 'function') {
+        window.TextbookLibrary.renderTextbookLibrary();
+      }
     }
 
     // If entering simulator, ensure active mode canvas is sized and rendered
@@ -620,6 +625,9 @@
           สาขาวิชาการและหมวดอื่น ๆ
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <a href="#view-textbooks" class="drawer-theory-link" onclick="window.PhysicsApp.switchView('view-textbooks'); window.PhysicsApp.closeDrawer();">
+            📚 คลังตำราและ PDF ฉบับเต็ม (Textbook Library & PDF Viewer)
+          </a>
           <a href="#view-analytical" class="drawer-theory-link" onclick="window.PhysicsApp.switchView('view-analytical'); window.PhysicsApp.closeDrawer();">
             🏛️ การวิเคราะห์กลศาสตร์ / คำอธิบายขั้นสูง (Analytical Mechanics)
           </a>
@@ -2781,6 +2789,39 @@
     fetchAndRenderNetworkInfo();
   }
 
+  function setupTextbookLibraryModal() {
+    const modal = document.getElementById('textbook-reader-modal');
+    const closeBtn = document.getElementById('tb-reader-close');
+    if (!modal) return;
+
+    function closeReader() {
+      if (window.TextbookLibrary && typeof window.TextbookLibrary.closeTextbookReader === 'function') {
+        window.TextbookLibrary.closeTextbookReader();
+      } else {
+        const frame = document.getElementById('textbook-pdf-frame');
+        if (frame) frame.src = 'about:blank';
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeReader);
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeReader();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        closeReader();
+      }
+    });
+  }
+
   let backgroundInterval = null;
   function setupBackgroundExecution() {
     document.addEventListener('visibilitychange', () => {
@@ -3389,6 +3430,21 @@
           if (dpGroup) dpGroup.style.display = 'block';
         }
       }
+      if (mode === 'vehicle') {
+        callSub(vehicleSimulatorInstance, submode);
+        const kControls = document.getElementById('group-veh-kinematics-controls');
+        const dControls = document.getElementById('group-veh-divergence-controls');
+        const panelTitle = document.getElementById('title-veh-panel');
+        if (submode === 'vector_field_divergence') {
+          if (kControls) kControls.style.display = 'none';
+          if (dControls) dControls.style.display = 'block';
+          if (panelTitle) panelTitle.textContent = 'พารามิเตอร์สนามเวกเตอร์และทฤษฎีบทการลู่ออก';
+        } else {
+          if (kControls) kControls.style.display = 'block';
+          if (dControls) dControls.style.display = 'none';
+          if (panelTitle) panelTitle.textContent = 'พารามิเตอร์การขับขี่และสนามลม';
+        }
+      }
       if (mode === 'wave') {
         callSub(waveSimulatorInstance, submode);
         const nGroup = document.getElementById('group-wave-n');
@@ -3402,6 +3458,7 @@
         const lightGroup = document.getElementById('group-wave-light');
         const polGroup = document.getElementById('group-wave-polarization');
         const opticsGroup = document.getElementById('group-wave-optics');
+        const fourierGroup = document.getElementById('group-wave-fourier');
 
         const isTraveling = (submode === 'traveling');
         const isStanding = (submode === 'standing');
@@ -3410,6 +3467,7 @@
         const isLight = (submode === 'light_waves');
         const isPol = (submode === 'polarization');
         const isOptics = (submode === 'geometric_optics');
+        const isFourier = (submode === 'fourier_synthesis');
 
         if (ampGroup) ampGroup.style.display = (isTraveling || isStanding) ? 'block' : 'none';
         if (freqGroup) freqGroup.style.display = isTraveling ? 'block' : 'none';
@@ -3422,6 +3480,7 @@
         if (lightGroup) lightGroup.style.display = isLight ? 'block' : 'none';
         if (polGroup) polGroup.style.display = isPol ? 'block' : 'none';
         if (opticsGroup) opticsGroup.style.display = isOptics ? 'block' : 'none';
+        if (fourierGroup) fourierGroup.style.display = isFourier ? 'block' : 'none';
       }
       if (mode === 'thermo') {
         callSub(thermoSimulatorInstance, submode);
@@ -3745,10 +3804,129 @@
     if (selPattern) selPattern.addEventListener('change', (e) => {
       vehicleSimulatorInstance.setParams({ windPattern: e.target.value });
     });
+
+    // Submode switching: Kinematics vs Divergence Theorem
+    const submodeContainer = document.querySelector('#sim-container-vehicle .submode-selector-bar');
+    if (submodeContainer) {
+      const subBtns = submodeContainer.querySelectorAll('.submode-btn');
+      subBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sm = btn.dataset.submode;
+          subBtns.forEach(b => b.classList.toggle('active', b === btn));
+          if (vehicleSimulatorInstance) {
+            vehicleSimulatorInstance.setSubMode(sm);
+          }
+          const kControls = document.getElementById('group-veh-kinematics-controls');
+          const dControls = document.getElementById('group-veh-divergence-controls');
+          const panelTitle = document.getElementById('title-veh-panel');
+          if (sm === 'vector_field_divergence') {
+            if (kControls) kControls.style.display = 'none';
+            if (dControls) dControls.style.display = 'block';
+            if (panelTitle) panelTitle.textContent = 'พารามิเตอร์สนามเวกเตอร์และทฤษฎีบทการลู่ออก';
+          } else {
+            if (kControls) kControls.style.display = 'block';
+            if (dControls) dControls.style.display = 'none';
+            if (panelTitle) panelTitle.textContent = 'พารามิเตอร์การขับขี่และสนามลม';
+          }
+        });
+      });
+    }
+
+    // Divergence Controls
+    const selDivField = document.getElementById('div-field-type');
+    if (selDivField) {
+      selDivField.addEventListener('change', (e) => {
+        if (vehicleSimulatorInstance) {
+          vehicleSimulatorInstance.setDivergenceParams({ fieldType: e.target.value });
+        }
+      });
+    }
+
+    const sDivStrength = document.getElementById('div-slider-strength');
+    const nDivStrength = document.getElementById('div-num-strength');
+    if (sDivStrength && nDivStrength) {
+      const syncStrength = (val) => {
+        val = parseFloat(val);
+        sDivStrength.value = val;
+        nDivStrength.value = val;
+        if (vehicleSimulatorInstance) {
+          vehicleSimulatorInstance.setDivergenceParams({ fieldStrength: val });
+        }
+      };
+      sDivStrength.addEventListener('input', (e) => syncStrength(e.target.value));
+      nDivStrength.addEventListener('input', (e) => syncStrength(e.target.value));
+    }
+
+    const selDivShape = document.getElementById('div-contour-shape');
+    if (selDivShape) {
+      selDivShape.addEventListener('change', (e) => {
+        if (vehicleSimulatorInstance) {
+          vehicleSimulatorInstance.setDivergenceParams({ contourShape: e.target.value });
+        }
+      });
+    }
+
+    const sDivSize = document.getElementById('div-slider-size');
+    const nDivSize = document.getElementById('div-num-size');
+    if (sDivSize && nDivSize) {
+      const syncSize = (val) => {
+        val = parseFloat(val);
+        sDivSize.value = val;
+        nDivSize.value = val;
+        if (vehicleSimulatorInstance) {
+          vehicleSimulatorInstance.setDivergenceParams({
+            contourRadius: val,
+            contourWidth: val * 2,
+            contourHeight: val * 1.4
+          });
+        }
+      };
+      sDivSize.addEventListener('input', (e) => syncSize(e.target.value));
+      nDivSize.addEventListener('input', (e) => syncSize(e.target.value));
+    }
+
+    // Divergence field preset chips
+    const divChips = document.querySelectorAll('#group-veh-divergence-controls .btn-preset-chip');
+    divChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        divChips.forEach(c => c.classList.toggle('active', c === chip));
+        const fType = chip.dataset.type;
+        if (selDivField) selDivField.value = fType;
+        if (vehicleSimulatorInstance) {
+          vehicleSimulatorInstance.setDivergenceParams({ fieldType: fType });
+        }
+      });
+    });
   }
 
   function updateVehicleTelemetryUI(telem) {
     if (!telem) return;
+    if (telem.subMode === 'vector_field_divergence') {
+      const lhs = (telem.boundaryFluxLHS !== undefined) ? telem.boundaryFluxLHS : 0;
+      const rhs = (telem.areaDivergenceRHS !== undefined) ? telem.areaDivergenceRHS : 0;
+      const err = (telem.discrepancyErrorPct !== undefined) ? telem.discrepancyErrorPct : 0;
+      const divC = (telem.localDivAtCenter !== undefined) ? telem.localDivAtCenter : 0;
+      const curlC = (telem.localCurlAtCenter !== undefined) ? telem.localCurlAtCenter : 0;
+
+      // Update dedicated divergence readouts
+      setText('div-readout-lhs', (lhs >= 0 ? '+' : '') + lhs.toFixed(2) + ' Wb');
+      setText('div-readout-rhs', (rhs >= 0 ? '+' : '') + rhs.toFixed(2) + ' Wb');
+      setText('div-readout-error', err.toFixed(3) + '% (' + (err < 2.0 ? 'ตรงกันสมบูรณ์' : 'คลาดเคลื่อนน้อย') + ')');
+
+      // Update grid telemetry boxes
+      setText('telem-veh-s', '∮ (F·n̂)ds = ' + lhs.toFixed(2));
+      setText('telem-veh-dr', '∬ (∇·F)dA = ' + rhs.toFixed(2));
+      setText('telem-veh-vcar', '∇·F(c) = ' + divC.toFixed(2));
+      setText('telem-veh-vwind', '(∇×F)_z = ' + curlC.toFixed(2));
+      setText('telem-veh-vrel', 'Err: ' + err.toFixed(2) + '%');
+      setText('telem-veh-drag', 'ขอบเขต: ' + (telem.contourShape === 'circle' ? 'วงกลม' : 'สี่เหลี่ยม'));
+      const cx = telem.contourCenterX !== undefined ? Math.round(telem.contourCenterX) : 200;
+      const cy = telem.contourCenterY !== undefined ? Math.round(telem.contourCenterY) : 150;
+      setText('telem-veh-heading', 'จุดศูนย์กลาง (' + cx + ', ' + cy + ')');
+      setText('telem-veh-alat', err < 1.0 ? 'Exact Match ✅' : 'Normal');
+      return;
+    }
+
     setText('telem-veh-s', telem.odometer.toFixed(2) + ' m');
     setText('telem-veh-dr', telem.displacement.toFixed(2) + ' m');
     setText('telem-veh-vcar', telem.vCar.toFixed(1) + ' m/s');
@@ -4672,6 +4850,7 @@
           const lightGroup = document.getElementById('group-wave-light');
           const polGroup = document.getElementById('group-wave-polarization');
           const opticsGroup = document.getElementById('group-wave-optics');
+          const fourierGroup = document.getElementById('group-wave-fourier');
 
           const isTraveling = (sm === 'traveling');
           const isStanding = (sm === 'standing');
@@ -4680,6 +4859,7 @@
           const isLight = (sm === 'light_waves');
           const isPol = (sm === 'polarization');
           const isOptics = (sm === 'geometric_optics');
+          const isFourier = (sm === 'fourier_synthesis');
 
           if (ampGroup) ampGroup.style.display = (isTraveling || isStanding) ? 'block' : 'none';
           if (freqGroup) freqGroup.style.display = isTraveling ? 'block' : 'none';
@@ -4692,6 +4872,7 @@
           if (lightGroup) lightGroup.style.display = isLight ? 'block' : 'none';
           if (polGroup) polGroup.style.display = isPol ? 'block' : 'none';
           if (opticsGroup) opticsGroup.style.display = isOptics ? 'block' : 'none';
+          if (fourierGroup) fourierGroup.style.display = isFourier ? 'block' : 'none';
         });
       });
     }
@@ -4970,6 +5151,69 @@
         }
       });
     });
+
+    // 8. Fourier Series Synthesis Controls
+    const fourierWaveSelect = document.getElementById('fourier-wave-type');
+    if (fourierWaveSelect) {
+      fourierWaveSelect.addEventListener('change', (e) => {
+        if (waveSimulatorInstance) {
+          waveSimulatorInstance.setParam('fourierWaveType', e.target.value);
+        }
+      });
+    }
+
+    const sFourierN = document.getElementById('fourier-slider-n');
+    const nFourierN = document.getElementById('fourier-num-n');
+    const lFourierN = document.getElementById('fourier-val-n');
+    if (sFourierN && nFourierN) {
+      const syncN = (val) => {
+        val = Math.max(1, Math.min(25, Math.round(parseFloat(val) || 1)));
+        sFourierN.value = val;
+        nFourierN.value = val;
+        if (lFourierN) lFourierN.textContent = val + ' พจน์';
+        if (waveSimulatorInstance) {
+          waveSimulatorInstance.setParam('fourierHarmonics', val);
+        }
+      };
+      sFourierN.addEventListener('input', (e) => syncN(e.target.value));
+      nFourierN.addEventListener('input', (e) => syncN(e.target.value));
+    }
+
+    const sFourierF0 = document.getElementById('fourier-slider-f0');
+    const nFourierF0 = document.getElementById('fourier-num-f0');
+    const lFourierF0 = document.getElementById('fourier-val-f0');
+    if (sFourierF0 && nFourierF0) {
+      const syncF0 = (val) => {
+        val = parseFloat(val) || 0.8;
+        sFourierF0.value = val;
+        nFourierF0.value = val;
+        if (lFourierF0) lFourierF0.textContent = val.toFixed(1) + ' Hz';
+        if (waveSimulatorInstance) {
+          waveSimulatorInstance.setParam('fourierFundFreq', val);
+        }
+      };
+      sFourierF0.addEventListener('input', (e) => syncF0(e.target.value));
+      nFourierF0.addEventListener('input', (e) => syncF0(e.target.value));
+    }
+
+    const fourierChips = document.querySelectorAll('.fourier-presets-row .btn-preset-chip');
+    fourierChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        fourierChips.forEach(c => c.classList.toggle('active', c === chip));
+        const wType = chip.dataset.type;
+        const nVal = parseInt(chip.dataset.n, 10);
+        if (fourierWaveSelect && wType) fourierWaveSelect.value = wType;
+        if (sFourierN && nVal) {
+          sFourierN.value = nVal;
+          if (nFourierN) nFourierN.value = nVal;
+          if (lFourierN) lFourierN.textContent = nVal + ' พจน์';
+        }
+        if (waveSimulatorInstance) {
+          if (wType) waveSimulatorInstance.setParam('fourierWaveType', wType);
+          if (nVal) waveSimulatorInstance.setParam('fourierHarmonics', nVal);
+        }
+      });
+    });
   }
 
   function bindWaveSlider(sliderId, labelId, unit, decimals, onChange) {
@@ -5044,6 +5288,34 @@
         natureStr = `${typeStr} ${orientStr} ${sizeStr}`;
       }
       setText('optics-readout-nature', natureStr);
+    } else if (sm === 'fourier_synthesis') {
+      const f0 = telem.fourierFundFreq || 0.8;
+      const v = telem.waveSpeed || 40.0;
+      const lambda0 = v / f0;
+      const powerPct = (telem.fourierPowerPct !== undefined) ? parseFloat(telem.fourierPowerPct) : 98.5;
+      const gibbsPct = (telem.fourierGibbsPct !== undefined) ? parseFloat(telem.fourierGibbsPct) : 8.95;
+      const nHarmonics = telem.fourierHarmonics || 5;
+      const wType = telem.fourierWaveType || 'square';
+
+      setText('wave-telem-speed', 'v = ' + v.toFixed(1) + ' m/s (Phase speed)');
+      setText('wave-telem-lambda', 'λ₀ = ' + lambda0.toFixed(2) + ' m');
+      setText('wave-telem-freq', 'f₀ = ' + f0.toFixed(2) + ' Hz');
+      setText('wave-telem-period', 'T₀ = ' + (1 / f0).toFixed(2) + ' s');
+      setText('wave-telem-k', 'k₀ = ' + ((2 * Math.PI) / lambda0).toFixed(2) + ' rad/m');
+      setText('wave-telem-omega', 'ω₀ = ' + (2 * Math.PI * f0).toFixed(2) + ' rad/s');
+      setText('wave-telem-power', powerPct.toFixed(1) + '% (Parseval)');
+      setText('wave-telem-beat', 'N = ' + nHarmonics + ' พจน์');
+
+      // Update dedicated Fourier math readouts
+      const formulas = {
+        square: 'f(t) = 4/π · Σ sin((2k-1)ωt)/(2k-1)',
+        sawtooth: 'f(t) = 2/π · Σ (-1)^(n+1)·sin(nωt)/n',
+        triangle: 'f(t) = 8/π² · Σ (-1)^((k-1)/2)·sin(kωt)/k²',
+        rectified: 'f(t) = 1/π + 1/2 sin(ωt) - 2/π · Σ cos(2nωt)/(4n²-1)'
+      };
+      setText('fourier-readout-formula', formulas[wType] || formulas.square);
+      setText('fourier-readout-power', powerPct.toFixed(1) + '% (สัดส่วนกำลังงานสมบูรณ์)');
+      setText('fourier-readout-gibbs', (wType === 'triangle' ? '— (ไม่มีขอบกระโดด)' : ('+' + gibbsPct.toFixed(2) + '% (ขอบไม่ต่อเนื่อง Overshoot limit ~8.95%)')));
     } else {
       setText('wave-telem-speed', telem.waveSpeed.toFixed(2) + ' m/s');
       setText('wave-telem-lambda', telem.wavelength.toFixed(2) + ' m');

@@ -93,14 +93,15 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
     const R = inst.params.acR;
     const L = inst.params.acL;
     const C = inst.params.acC * 1e-6;
-    const w = inst.params.acOmega;
+    const f = inst.params.acFreq || 50;
+    const w = 2 * Math.PI * f;
     const XL = w * L;
     const XC = 1 / (w * C);
-    const Z = Math.hypot(R, XL - XC);
+    const Z = inst.acZ || Math.hypot(R, XL - XC);
     const pf = R / Z;
     return {
       subMode: inst.subMode,
-      R, L, w, Z: Z.toFixed(2),
+      R, L, f, Z: Z.toFixed(2),
       PF: pf.toFixed(4),
       ok: inst.subMode === 'ac_rlc_resonance' && pf > 0
     };

@@ -79,6 +79,9 @@
         <button class="view-tab" role="tab" id="tab-practice" aria-selected="false" aria-controls="view-practice" data-view="view-practice">
           📝 5. คลังโจทย์ (Practice)
         </button>
+        <button class="view-tab" role="tab" id="tab-textbooks" aria-selected="false" aria-controls="view-textbooks" data-view="view-textbooks">
+          📚 6. คลังตำรา (Textbooks)
+        </button>
       </nav>
 
       <!-- Hamburger Menu Button -->
@@ -549,6 +552,38 @@
             </div>
           </div>
         </div>
+
+        <!-- 5. Academic Textbook Library & Primary Sources -->
+        <div class="selection-category-block">
+          <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">📚</span>
+              <h3 class="category-title">5. คลังตำราและเอกสารวิชาการฉบับเต็ม (Academic Textbook Library & PDF Viewer)</h3>
+            </div>
+            <span class="category-count">8 เล่มหลัก • 39 โมดูล</span>
+          </div>
+
+          <div class="selection-cards-grid">
+            <div class="curriculum-card card-active" style="grid-column: 1 / -1; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(11, 17, 32, 0.95));">
+              <div class="card-top-row">
+                <span class="curriculum-code" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">TEXTBOOK LIBRARY</span>
+                <span class="status-badge status-active">เปิดอ่านในเว็บได้ทันที (In-App PDF Viewer)</span>
+              </div>
+              <h4 class="curriculum-title">คลังตำรามาตรฐานสากลและเอกสารบรรยายมหาวิทยาลัยเคมบริดจ์ ฮาร์วาร์ด และ MIT</h4>
+              <p class="curriculum-desc">
+                รวบรวมตำราฟิสิกส์และวิศวกรรมศาสตร์ฉบับเต็มระดับโลก เช่น David Morin (Harvard), David Tong (Cambridge University), Baker & Haynes (Statics), David Roylance (MIT) พร้อมระบบแยกบทเรียน 39 โมดูล อ่านและค้นหาได้ทันทีในเว็บ
+              </p>
+              <div class="curriculum-meta">
+                <span>📖 8 เล่มแม่บทเต็ม</span> • <span>📑 39 โมดูลแยกบท</span> • <span>🔍 ระบบสืบค้นคำสำคัญ</span> • <span>💻 เปิดอ่านในเว็บโดยตรง</span>
+              </div>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.75rem; margin-top: 0.75rem;">
+                <button class="btn-action-primary" id="btn-open-textbook-library-from-select" style="padding: 0.6rem 1.25rem; font-size: 0.92rem;" onclick="window.PhysicsApp.switchView('view-textbooks');">
+                  📚 เปิดคลังตำรา (Open Textbook Library)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -877,6 +912,16 @@
 
       <div class="sim-layout">
         <div class="sim-stage-container">
+          <!-- Sub-mode Selector Bar for Vehicle & Vector Fields -->
+          <div class="submode-selector-bar" style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="submode-btn active" data-submode="vehicle_kinematics" id="btn-submode-veh-kinematics">
+              🏎️ 1. จลนศาสตร์รถ & เวกเตอร์ลมสัมพัทธ์ (Relative Wind)
+            </button>
+            <button class="submode-btn" data-submode="vector_field_divergence" id="btn-submode-veh-divergence">
+              📐 2. สนามเวกเตอร์ & ทฤษฎีบทการลู่ออก (Divergence Theorem)
+            </button>
+          </div>
+
           <div class="canvas-wrapper">
             <canvas id="vehicle-canvas" width="800" height="480" class="canvas-drag-surface" aria-label="สนามจำลองรถแข่งและเวกเตอร์ลม คลิกบนสนามเพื่อวางจุดหมายเส้นทางใหม่ หรือลากรถแข่งโดยตรง"></canvas>
           </div>
@@ -928,53 +973,122 @@
         <!-- Vehicle Control Sidebar & Live Telemetry -->
         <aside class="sim-sidebar">
           <div class="control-panel">
-            <h3 class="panel-title">พารามิเตอร์การขับขี่และสนามลม</h3>
+            <h3 class="panel-title" id="title-veh-panel">พารามิเตอร์การขับขี่และสนามลม</h3>
 
-            <!-- Car Speed -->
-            <div class="param-group">
-              <div class="param-header">
-                <label for="slider-veh-speed" class="param-label">อัตราเร็วรถ $v_{\text{car}}$</label>
-                <span id="val-veh-speed" class="param-val">25.0 m/s</span>
+            <!-- 1. Vehicle Kinematics Controls -->
+            <div id="group-veh-kinematics-controls">
+              <!-- Car Speed -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="slider-veh-speed" class="param-label">อัตราเร็วรถ $v_{\text{car}}$</label>
+                  <span id="val-veh-speed" class="param-val">25.0 m/s</span>
+                </div>
+                <input type="range" id="slider-veh-speed" min="0" max="60" step="1" value="25" class="param-slider" aria-label="อัตราเร็วรถ">
               </div>
-              <input type="range" id="slider-veh-speed" min="0" max="60" step="1" value="25" class="param-slider" aria-label="อัตราเร็วรถ">
+
+              <!-- Manual Steering -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="slider-veh-steer" class="param-label">มุมเลี้ยวพวงมาลัย $\delta$</label>
+                  <span id="val-veh-steer" class="param-val">0.0°</span>
+                </div>
+                <input type="range" id="slider-veh-steer" min="-45" max="45" step="1" value="0" class="param-slider" aria-label="มุมเลี้ยวพวงมาลัย">
+              </div>
+
+              <!-- Wind Speed -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="slider-veh-wind-speed" class="param-label">อัตราเร็วลม $v_{\text{wind}}$</label>
+                  <span id="val-veh-wind-speed" class="param-val">15.0 m/s</span>
+                </div>
+                <input type="range" id="slider-veh-wind-speed" min="0" max="30" step="1" value="15" class="param-slider" aria-label="อัตราเร็วลม">
+              </div>
+
+              <!-- Wind Direction -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="slider-veh-wind-dir" class="param-label">ทิศทางลม $\theta_{\text{wind}}$</label>
+                  <span id="val-veh-wind-dir" class="param-val">90°</span>
+                </div>
+                <input type="range" id="slider-veh-wind-dir" min="0" max="360" step="5" value="90" class="param-slider" aria-label="ทิศทางลม">
+              </div>
+
+              <!-- Wind Field Pattern Preset -->
+              <div class="param-group">
+                <label for="select-veh-pattern" class="param-label" style="display: block; margin-bottom: 0.35rem;">รูปแบบสนามเวกเตอร์ลม</label>
+                <select id="select-veh-pattern" class="form-select" style="width: 100%; min-height: 44px; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-weight: 600; background: var(--bg-card); color: var(--text-primary);">
+                  <option value="cross">ลมขวางสนามสม่ำเสมอ (Uniform Crosswind)</option>
+                  <option value="head">ลมต้านหน้ารถโดยตรง (Headwind)</option>
+                  <option value="tail">ลมส่งท้ายรถ (Tailwind)</option>
+                  <option value="vortex">พายุลมหมุนวนกลางสนาม (Swirling Vortex)</option>
+                </select>
+              </div>
             </div>
 
-            <!-- Manual Steering -->
-            <div class="param-group">
-              <div class="param-header">
-                <label for="slider-veh-steer" class="param-label">มุมเลี้ยวพวงมาลัย $\delta$</label>
-                <span id="val-veh-steer" class="param-val">0.0°</span>
+            <!-- 2. 2D Vector Field & Divergence Theorem Controls -->
+            <div id="group-veh-divergence-controls" style="display: none;">
+              <!-- Field Topology Type -->
+              <div class="param-group">
+                <label for="div-field-type" class="param-label" style="display: block; margin-bottom: 0.35rem;">ลักษณะสนามเวกเตอร์ $\mathbf{F}(x, y)$</label>
+                <select id="div-field-type" class="form-select" style="width: 100%; min-height: 44px; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-weight: 600; background: var(--bg-card); color: var(--text-primary);">
+                  <option value="source" selected>🟢 แหล่งกำเนิดรัศมี (Radial Source: ∇·F &gt; 0)</option>
+                  <option value="sink">🔴 จุดดูดซับรัศมี (Radial Sink: ∇·F &lt; 0)</option>
+                  <option value="vortex">🌀 วอร์เทกซ์หมุนวน (Pure Swirling Vortex: ∇·F = 0, ∇×F ≠ 0)</option>
+                  <option value="saddle">🔀 จุดอานม้า (Hyperbolic Saddle: ∇·F = 0)</option>
+                  <option value="dipole">⚡ ไดโพลคู่ (Source + Sink Pair)</option>
+                  <option value="custom">🎛️ กำหนดแมทริกซ์เอง (Custom Linear Matrix)</option>
+                </select>
               </div>
-              <input type="range" id="slider-veh-steer" min="-45" max="45" step="1" value="0" class="param-slider" aria-label="มุมเลี้ยวพวงมาลัย">
-            </div>
 
-            <!-- Wind Speed -->
-            <div class="param-group">
-              <div class="param-header">
-                <label for="slider-veh-wind-speed" class="param-label">อัตราเร็วลม $v_{\text{wind}}$</label>
-                <span id="val-veh-wind-speed" class="param-val">15.0 m/s</span>
+              <!-- Field Strength Slider + Number Input -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="div-slider-strength" class="param-label">ความแรงสนาม $c$ (Strength)</label>
+                  <div style="display: flex; align-items: center; gap: 0.35rem;">
+                    <input type="number" id="div-num-strength" min="0.5" max="5.0" step="0.5" value="2.0" style="width: 52px; padding: 2px 4px; background: #0F172A; border: 1px solid #475569; color: #38BDF8; font-weight: bold; border-radius: 4px; text-align: center;">
+                    <span class="control-val-display" id="div-val-strength">×</span>
+                  </div>
+                </div>
+                <input type="range" id="div-slider-strength" min="0.5" max="5.0" step="0.5" value="2.0" class="param-slider" aria-label="ความแรงสนามเวกเตอร์">
               </div>
-              <input type="range" id="slider-veh-wind-speed" min="0" max="30" step="1" value="15" class="param-slider" aria-label="อัตราเร็วลม">
-            </div>
 
-            <!-- Wind Direction -->
-            <div class="param-group">
-              <div class="param-header">
-                <label for="slider-veh-wind-dir" class="param-label">ทิศทางลม $\theta_{\text{wind}}$</label>
-                <span id="val-veh-wind-dir" class="param-val">90°</span>
+              <!-- Contour Shape -->
+              <div class="param-group">
+                <label for="div-contour-shape" class="param-label" style="display: block; margin-bottom: 0.35rem;">รูปทรงขอบเขตปิด $\partial D$</label>
+                <select id="div-contour-shape" class="form-select" style="width: 100%; min-height: 42px; padding: 0.4rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-weight: 600; background: var(--bg-card); color: var(--text-primary);">
+                  <option value="circle" selected>⭕ วงกลม (Circle Contour)</option>
+                  <option value="rectangle">⬛ สี่เหลี่ยมผืนผ้า (Rectangular Contour)</option>
+                </select>
               </div>
-              <input type="range" id="slider-veh-wind-dir" min="0" max="360" step="5" value="90" class="param-slider" aria-label="ทิศทางลม">
-            </div>
 
-            <!-- Wind Field Pattern Preset -->
-            <div class="param-group">
-              <label for="select-veh-pattern" class="param-label" style="display: block; margin-bottom: 0.35rem;">รูปแบบสนามเวกเตอร์ลม</label>
-              <select id="select-veh-pattern" class="form-select" style="width: 100%; min-height: 44px; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-weight: 600; background: var(--bg-card); color: var(--text-primary);">
-                <option value="cross">ลมขวางสนามสม่ำเสมอ (Uniform Crosswind)</option>
-                <option value="head">ลมต้านหน้ารถโดยตรง (Headwind)</option>
-                <option value="tail">ลมส่งท้ายรถ (Tailwind)</option>
-                <option value="vortex">พายุลมหมุนวนกลางสนาม (Swirling Vortex)</option>
-              </select>
+              <!-- Contour Radius / Size Slider + Number Input -->
+              <div class="param-group">
+                <div class="param-header">
+                  <label for="div-slider-size" class="param-label">ขนาดรัศมี/ความกว้าง $R$</label>
+                  <div style="display: flex; align-items: center; gap: 0.35rem;">
+                    <input type="number" id="div-num-size" min="20" max="120" step="5" value="65" style="width: 52px; padding: 2px 4px; background: #0F172A; border: 1px solid #475569; color: #10B981; font-weight: bold; border-radius: 4px; text-align: center;">
+                    <span class="control-val-display" id="div-val-size">m</span>
+                  </div>
+                </div>
+                <input type="range" id="div-slider-size" min="20" max="120" step="5" value="65" class="param-slider" aria-label="ขนาดขอบเขตอินทิกรัล">
+              </div>
+
+              <!-- Field Presets Row -->
+              <div style="display: flex; gap: 0.35rem; margin-top: 0.6rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip active" data-type="source" title="ฟลักซ์ออกบวกสุทธิ">แหล่งกำเนิด (∇·F &gt; 0)</button>
+                <button type="button" class="btn-preset-chip" data-type="sink" title="ฟลักซ์เข้าลบสุทธิ">จุดดูดซับ (∇·F &lt; 0)</button>
+                <button type="button" class="btn-preset-chip" data-type="vortex" title="ฟลักซ์ลัพธ์เป็นศูนย์">น้ำวน (∇·F = 0)</button>
+              </div>
+
+              <!-- Real-time Divergence Verification Box -->
+              <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 0.6rem; margin-top: 0.6rem;">
+                <div style="font-size: 0.82rem; color: #94A3B8; line-height: 1.5;">
+                  <div>ทฤษฎีบท: <strong style="color: #38BDF8;">∮ (F·n̂) ds ≡ ∬ (∇·F) dA</strong></div>
+                  <div>ฟลักซ์ผิวขอบเขต (LHS): <strong id="div-readout-lhs" style="color: #10B981;">+12.56 Wb</strong></div>
+                  <div>ไดเวอร์เจนซ์พื้นที่ (RHS): <strong id="div-readout-rhs" style="color: #10B981;">+12.56 Wb</strong></div>
+                  <div>ความคลาดเคลื่อน: <strong id="div-readout-error" style="color: #FCD34D;">0.000% (ตรงกันสมบูรณ์)</strong></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1822,6 +1936,9 @@
             <button class="submode-btn" data-submode="geometric_optics" id="btn-submode-optics">
               🔍 7. กระจกและเลนส์ (Geometric Optics)
             </button>
+            <button class="submode-btn" data-submode="fourier_synthesis" id="btn-submode-fourier">
+              🔄 8. อนุกรมฟูเรียร์ & สเปกตรัม (Fourier Synthesis)
+            </button>
           </div>
 
           <div class="canvas-wrapper" style="position: relative; min-height: 480px;">
@@ -2122,6 +2239,61 @@
                   <div>ระยะภาพ $s'$: <strong id="optics-readout-sprime" style="color: #34D399;">+30.0 cm</strong></div>
                   <div>กำลังขยาย $m$: <strong id="optics-readout-m" style="color: #F59E0B;">-1.00×</strong></div>
                   <div>ลักษณะภาพ: <strong id="optics-readout-nature" style="color: #F8FAFC;">ภาพจริง หัวกลับ ขนาดเท่าวัตถุ</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 8. Fourier Series Synthesis & Harmonic Decomposition Controls Group -->
+            <div id="group-wave-fourier" class="submode-controls-group" style="display: none;">
+              <!-- Waveform Type Selector -->
+              <div class="control-group">
+                <label for="fourier-wave-type">รูปคลื่นเป้าหมาย (Target Waveform):</label>
+                <select id="fourier-wave-type" class="control-select" style="width: 100%; padding: 0.5rem; background: #1E293B; color: #F8FAFC; border: 1px solid #475569; border-radius: 6px; font-weight: bold; margin-top: 0.25rem;">
+                  <option value="square" selected>⬛ คลื่นสี่เหลี่ยม (Square Wave - พจน์คี่ 1, 3, 5...)</option>
+                  <option value="sawtooth">📐 คลื่นฟันเลื่อย (Sawtooth Wave - ทุกพจน์ 1, 2, 3...)</option>
+                  <option value="triangle">🔺 คลื่นสามเหลี่ยม (Triangle Wave - ลู่เข้าเร็ว 1/n²)</option>
+                  <option value="rectified">〰️ คลื่นเรียงกระแสครึ่งคลื่น (Half-Wave Rectified)</option>
+                </select>
+              </div>
+
+              <!-- Number of Harmonics N Slider + Number Input -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="fourier-slider-n">จำนวนพจน์ฮาร์มอนิก $N$ (Harmonics):</label>
+                  <div style="display: flex; align-items: center; gap: 0.35rem;">
+                    <input type="number" id="fourier-num-n" min="1" max="25" step="1" value="5" style="width: 52px; padding: 2px 4px; background: #0F172A; border: 1px solid #475569; color: #10B981; font-weight: bold; border-radius: 4px; text-align: center;">
+                    <span class="control-val-display" id="fourier-val-n">พจน์</span>
+                  </div>
+                </div>
+                <input type="range" id="fourier-slider-n" min="1" max="25" step="1" value="5" aria-label="จำนวนพจน์ฮาร์มอนิก">
+              </div>
+
+              <!-- Fundamental Frequency f0 Slider + Number Input -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="fourier-slider-f0">ความถี่มูลฐาน $f_0$ (Fundamental Freq):</label>
+                  <div style="display: flex; align-items: center; gap: 0.35rem;">
+                    <input type="number" id="fourier-num-f0" min="0.2" max="2.5" step="0.1" value="0.8" style="width: 54px; padding: 2px 4px; background: #0F172A; border: 1px solid #475569; color: #38BDF8; font-weight: bold; border-radius: 4px; text-align: center;">
+                    <span class="control-val-display" id="fourier-val-f0">Hz</span>
+                  </div>
+                </div>
+                <input type="range" id="fourier-slider-f0" min="0.2" max="2.5" step="0.1" value="0.8" aria-label="ความถี่มูลฐาน">
+              </div>
+
+              <!-- Presets Row -->
+              <div class="fourier-presets-row" style="display: flex; gap: 0.35rem; margin-top: 0.6rem; flex-wrap: wrap;">
+                <button type="button" class="btn-preset-chip" data-type="square" data-n="1" title="พจน์มูลฐานเดี่ยว">N = 1 (ไซน์มูลฐาน)</button>
+                <button type="button" class="btn-preset-chip active" data-type="square" data-n="5" title="5 พจน์แรก">N = 5 (เริ่มขึ้นขอบ)</button>
+                <button type="button" class="btn-preset-chip" data-type="square" data-n="15" title="15 พจน์ ยอดแหลมชัดเจน">N = 15 (ยอดกิบบส์)</button>
+                <button type="button" class="btn-preset-chip" data-type="triangle" data-n="3" title="สามเหลี่ยมลู่เข้าเร็ว">สามเหลี่ยม N = 3</button>
+              </div>
+
+              <!-- Real-time Mathematical Readout Badge -->
+              <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 0.6rem; margin-top: 0.6rem;">
+                <div style="font-size: 0.82rem; color: #94A3B8; line-height: 1.5;">
+                  <div>สมการ: <strong id="fourier-readout-formula" style="color: #38BDF8;">f(t) = 4/π · Σ sin((2k-1)ωt)/(2k-1)</strong></div>
+                  <div>พลังงานที่ประกอบได้ (Parseval): <strong id="fourier-readout-power" style="color: #34D399;">98.5%</strong></div>
+                  <div>ยอดเกินกิบบส์ (Gibbs Overshoot): <strong id="fourier-readout-gibbs" style="color: #EF4444;">+8.95% (ขอบไม่ต่อเนื่อง)</strong></div>
                 </div>
               </div>
             </div>
@@ -3138,6 +3310,13 @@
     </div>
   </section>
 
+  <!-- VIEW: TEXTBOOK LIBRARY & PDF VIEWER -->
+  <section id="view-textbooks" class="view-panel" role="region" aria-label="คลังตำราเรียนฟิสิกส์และวิศวกรรมศาสตร์ฉบับเต็ม (Textbook Library & PDF Viewer)">
+    <div id="textbook-content-target">
+      <!-- Dynamically rendered via app.js & textbook_library_content.js -->
+    </div>
+  </section>
+
 </main>
 
 <!-- Application Footer -->
@@ -3166,6 +3345,27 @@
       <div id="photo-lightbox-caption" class="photo-lightbox-details">
         <!-- Detailed physical explanation populated dynamically -->
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Textbook Reader PDF Modal -->
+<div id="textbook-reader-modal" class="pdf-reader-modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="tb-reader-title">
+  <div class="pdf-reader-card">
+    <div class="pdf-reader-toolbar">
+      <div class="tb-reader-info">
+        <div class="tb-reader-title" id="tb-reader-title">ชื่อตำรา</div>
+        <div class="tb-reader-meta" id="tb-reader-meta">ผู้เขียน / จำนวนหน้า</div>
+      </div>
+      <div class="tb-reader-actions">
+        <a id="tb-reader-newtab" href="#" target="_blank" rel="noopener noreferrer" class="btn-reader-action" title="เปิดในแท็บใหม่ หรือดาวน์โหลด">
+          <span>↗</span> เปิดแท็บใหม่
+        </a>
+        <button id="tb-reader-close" class="btn-reader-close" aria-label="ปิดหน้าต่างอ่านตำรา" title="ปิด (Esc)">✕</button>
+      </div>
+    </div>
+    <div class="pdf-reader-frame-container">
+      <iframe id="textbook-pdf-frame" class="pdf-reader-frame" src="about:blank" title="เครื่องมือเปิดอ่านไฟล์ตำรา PDF"></iframe>
     </div>
   </div>
 </div>
@@ -3244,6 +3444,7 @@
 <script src="js/simulators/civil_beam_simulator.js"></script>
 <script src="js/data/civil_engineering_content.js"></script>
 <script src="js/data/practice_problems_content.js"></script>
+<script src="js/data/textbook_library_content.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

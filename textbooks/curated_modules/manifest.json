@@ -1,0 +1,740 @@
+[
+  {
+    "module_id": "MECH-MOD-01",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Newtonian Mechanics and Equations of Motion",
+    "filename": "01_Newtonian_Mechanics_and_F_ma.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/01_Newtonian_Mechanics_and_F_ma.pdf",
+    "pages": 80,
+    "bytes": 1117632,
+    "sha256": "60D849E60091D7ABF4C355205F1A8BCBE8841E9ACC096D6CD9D3C77B62958454",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 21,
+        "end": 41,
+        "label": "Morin Ch. 1: Problem Solving Strategies"
+      },
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 71,
+        "end": 120,
+        "label": "Morin Ch. 3: Using F=ma"
+      },
+      {
+        "file": "textbooks/tong_classical_dynamics.pdf",
+        "start": 7,
+        "end": 15,
+        "label": "Tong Ch. 1: Newton's Laws"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-02",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Oscillations, Damped Motion, and Coupled Normal Modes",
+    "filename": "02_Oscillations_and_Coupled_Modes.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/02_Oscillations_and_Coupled_Modes.pdf",
+    "pages": 37,
+    "bytes": 447431,
+    "sha256": "E6BA91E0C81EB076A7A9B36B81FFDB9473A16296AABD149411A72ACFABDAC1A2",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 121,
+        "end": 157,
+        "label": "Morin Ch. 4: Oscillations & Normal Modes"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-03",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Conservation Laws, Energy, and Momentum",
+    "filename": "03_Conservation_Energy_Momentum.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/03_Conservation_Energy_Momentum.pdf",
+    "pages": 80,
+    "bytes": 870667,
+    "sha256": "95AB7E5CFA2D1EDD027F23E5188CBBAC831CB922D5A3338BC43A6F7F6CEB9416",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 158,
+        "end": 237,
+        "label": "Morin Ch. 5: Conservation of Energy & Momentum"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-04",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Lagrangian Mechanics and Stationary Action",
+    "filename": "04_Lagrangian_Formalism.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/04_Lagrangian_Formalism.pdf",
+    "pages": 98,
+    "bytes": 1115077,
+    "sha256": "3EE13FA428E8B348E24C85A311E5212C4DB551734E88E4C12E6AEA9606E81B14",
+    "sources": [
+      {
+        "file": "textbooks/tong_classical_dynamics.pdf",
+        "start": 16,
+        "end": 50,
+        "label": "Tong Ch. 2: Lagrangian Formalism"
+      },
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 238,
+        "end": 300,
+        "label": "Morin Ch. 6: The Lagrangian Method"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-05",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Central Forces, Gravity, and Keplerian Orbits",
+    "filename": "05_Central_Forces_and_Orbits.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/05_Central_Forces_and_Orbits.pdf",
+    "pages": 28,
+    "bytes": 342679,
+    "sha256": "C6F818B1CAAC567FE7D553AA6ABAECDA33909C7F478B3ABD8AF6AB0912535BB3",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 301,
+        "end": 328,
+        "label": "Morin Ch. 7: Central Forces"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-06",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Rigid Body Dynamics, Inertia Tensors, and Tops",
+    "filename": "06_Rigid_Body_Dynamics_and_Tops.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/06_Rigid_Body_Dynamics_and_Tops.pdf",
+    "pages": 183,
+    "bytes": 2386138,
+    "sha256": "E24FA8384F8B48CD1BA64491701FACD51396CA9C5DC4D92D0ECBEC18A94892D6",
+    "sources": [
+      {
+        "file": "textbooks/tong_classical_dynamics.pdf",
+        "start": 51,
+        "end": 85,
+        "label": "Tong Ch. 3: Motion of Rigid Bodies"
+      },
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 329,
+        "end": 476,
+        "label": "Morin Ch. 8-9: Angular Momentum & Inertia Tensor"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-07",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Accelerating Frames of Reference and Fictitious Forces",
+    "filename": "07_Accelerating_Frames_Coriolis.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/07_Accelerating_Frames_Coriolis.pdf",
+    "pages": 44,
+    "bytes": 611810,
+    "sha256": "481214A78954CE9C40E47182C42CDBF65E5168B7CD3F3607E0802E8017FFC70F",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 477,
+        "end": 520,
+        "label": "Morin Ch. 10: Accelerating Frames & Fictitious Forces"
+      }
+    ]
+  },
+  {
+    "module_id": "MECH-MOD-08",
+    "category": "01_mechanics_and_dynamics",
+    "title": "Hamiltonian Formalism, Phase Space, and Liouville Theorem",
+    "filename": "08_Hamiltonian_Formalism_Phase_Space.pdf",
+    "relative_path": "curated_textbook_modules/01_mechanics_and_dynamics/08_Hamiltonian_Formalism_Phase_Space.pdf",
+    "pages": 54,
+    "bytes": 593354,
+    "sha256": "7F5C7658D02412CF0AD5CC5A828F5E9729A98F428AB0D46A46AD4B1C38E71785",
+    "sources": [
+      {
+        "file": "textbooks/tong_classical_dynamics.pdf",
+        "start": 86,
+        "end": 139,
+        "label": "Tong Ch. 4: Hamiltonian Formalism"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-01",
+    "category": "02_engineering_statics",
+    "title": "Forces, Vectors, and Particle Equilibrium",
+    "filename": "01_Forces_and_Particle_Equilibrium.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/01_Forces_and_Particle_Equilibrium.pdf",
+    "pages": 120,
+    "bytes": 8195968,
+    "sha256": "425275B30F695085FBF40F5A57C85CB431B7CE72311FB20C7C819F520DB9C678",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 13,
+        "end": 132,
+        "label": "Baker Ch. 1-3: Intro, Vectors & Particle Equilibrium"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-02",
+    "category": "02_engineering_statics",
+    "title": "Moments, Static Equivalence, and Rigid Body Equilibrium",
+    "filename": "02_Moments_and_Rigid_Body_Equilibrium.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/02_Moments_and_Rigid_Body_Equilibrium.pdf",
+    "pages": 79,
+    "bytes": 2680324,
+    "sha256": "7AB934EE28B5501CF99C35E97BD82705B8B9872FA8DAC921900FE5DD30F0433C",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 133,
+        "end": 211,
+        "label": "Baker Ch. 4-5: Moments & Rigid Body Equilibrium"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-03",
+    "category": "02_engineering_statics",
+    "title": "Structural Equilibrium: Trusses, Frames, and Machines",
+    "filename": "03_Trusses_Frames_and_Machines.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/03_Trusses_Frames_and_Machines.pdf",
+    "pages": 32,
+    "bytes": 3710670,
+    "sha256": "4A2D5FE10E0C07F8C5DC3D3556E40C5331D6FC30B657FC27F7FC34CB11A0167F",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 212,
+        "end": 243,
+        "label": "Baker Ch. 6: Equilibrium of Structures"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-04",
+    "category": "02_engineering_statics",
+    "title": "Centroids, Centers of Gravity, and Distributed Loads",
+    "filename": "04_Centroids_and_Distributed_Loads.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/04_Centroids_and_Distributed_Loads.pdf",
+    "pages": 62,
+    "bytes": 1606772,
+    "sha256": "0F0D7AF4C805BE1E619B19FA6D223D55E35D23B67D289F0D40FBBE5C878EF542",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 244,
+        "end": 305,
+        "label": "Baker Ch. 7: Centroids & Centers of Gravity"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-05",
+    "category": "02_engineering_statics",
+    "title": "Internal Forces and Beam Shear/Moment Diagrams (SFD/BMD)",
+    "filename": "05_Internal_Forces_SFD_BMD.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/05_Internal_Forces_SFD_BMD.pdf",
+    "pages": 45,
+    "bytes": 1272809,
+    "sha256": "11995EAC6E16257F4F2CF46338B7148BBDB1F6F39FE4A6046CEB1A9E659535C5",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 306,
+        "end": 350,
+        "label": "Baker Ch. 8: Internal Forces in Beams"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-06",
+    "category": "02_engineering_statics",
+    "title": "Dry Friction, Wedges, Belts, and Screws",
+    "filename": "06_Dry_Friction_and_Machines.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/06_Dry_Friction_and_Machines.pdf",
+    "pages": 38,
+    "bytes": 5385302,
+    "sha256": "7114A9A6FA3D5E40BFFB6F6B59880B8A1668F048FDD7BF44268DB64FB5B6CBB6",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 351,
+        "end": 388,
+        "label": "Baker Ch. 9: Friction"
+      }
+    ]
+  },
+  {
+    "module_id": "STAT-MOD-07",
+    "category": "02_engineering_statics",
+    "title": "Area and Mass Moments of Inertia",
+    "filename": "07_Moments_of_Inertia.pdf",
+    "relative_path": "curated_textbook_modules/02_engineering_statics/07_Moments_of_Inertia.pdf",
+    "pages": 50,
+    "bytes": 1703935,
+    "sha256": "AD9736CAF11336801641942A7AE8A42F60ACF300E60CA5D310F9AEE0939B9665",
+    "sources": [
+      {
+        "file": "textbooks/engineering_statics_baker.pdf",
+        "start": 389,
+        "end": 438,
+        "label": "Baker Ch. 10: Moments of Inertia"
+      }
+    ]
+  },
+  {
+    "module_id": "MAT-MOD-01",
+    "category": "03_mechanics_of_materials",
+    "title": "Stress, Strain, and Elastic Constitutive Laws",
+    "filename": "01_Stress_Strain_Elasticity.pdf",
+    "relative_path": "curated_textbook_modules/03_mechanics_of_materials/01_Stress_Strain_Elasticity.pdf",
+    "pages": 89,
+    "bytes": 1594377,
+    "sha256": "4C04099CE238C9C10FA95AA956F5741B4567519B692473CF6EF61D197991EC60",
+    "sources": [
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 2,
+        "end": 51,
+        "label": "Roylance Modules 1-4: Elasticity & Stress-Strain"
+      },
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 98,
+        "end": 136,
+        "label": "Roylance Modules 7-9: Kinematics, Equilibrium & Constitutive"
+      }
+    ]
+  },
+  {
+    "module_id": "MAT-MOD-02",
+    "category": "03_mechanics_of_materials",
+    "title": "Transformation of Stresses and Mohr's Circle",
+    "filename": "02_Stress_Transformations_Mohr_Circle.pdf",
+    "relative_path": "curated_textbook_modules/03_mechanics_of_materials/02_Stress_Transformations_Mohr_Circle.pdf",
+    "pages": 15,
+    "bytes": 330195,
+    "sha256": "85A3A4678D974FE9911ADA221518C44033318FA2B63EC48A85058F8E5BACEF6D",
+    "sources": [
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 112,
+        "end": 126,
+        "label": "Roylance Module 8: Stress Transformation"
+      }
+    ]
+  },
+  {
+    "module_id": "MAT-MOD-03",
+    "category": "03_mechanics_of_materials",
+    "title": "Stresses and Deflections in Beams",
+    "filename": "03_Beam_Bending_Stresses_Deflections.pdf",
+    "relative_path": "curated_textbook_modules/03_mechanics_of_materials/03_Beam_Bending_Stresses_Deflections.pdf",
+    "pages": 42,
+    "bytes": 931816,
+    "sha256": "F9660BC893A971DBB968ADF9906990F96DA7CF72F7C2E09FCAE9A4A874CB41C6",
+    "sources": [
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 137,
+        "end": 178,
+        "label": "Roylance Modules 10-12: Beam Statics, Stresses & Displacements"
+      }
+    ]
+  },
+  {
+    "module_id": "MAT-MOD-04",
+    "category": "03_mechanics_of_materials",
+    "title": "Torsion, Pressure Vessels, and Column Buckling",
+    "filename": "04_Torsion_Buckling_Pressure_Vessels.pdf",
+    "relative_path": "curated_textbook_modules/03_mechanics_of_materials/04_Torsion_Buckling_Pressure_Vessels.pdf",
+    "pages": 61,
+    "bytes": 821475,
+    "sha256": "34FEBD6D5EADE51FA06CFA35606AAECD94F8671F6643FAB987DC762EE890EA04",
+    "sources": [
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 74,
+        "end": 97,
+        "label": "Roylance Modules 5-6: Pressure Vessels & Torsion"
+      },
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 235,
+        "end": 271,
+        "label": "Roylance Module 17: Viscoelasticity"
+      }
+    ]
+  },
+  {
+    "module_id": "MAT-MOD-05",
+    "category": "03_mechanics_of_materials",
+    "title": "Yield Criteria, Fracture Mechanics, and Fatigue",
+    "filename": "05_Yield_Criteria_Fracture_Fatigue.pdf",
+    "relative_path": "curated_textbook_modules/03_mechanics_of_materials/05_Yield_Criteria_Fracture_Fatigue.pdf",
+    "pages": 79,
+    "bytes": 1517637,
+    "sha256": "01C90321D5AD3FDE55C7F8FA8A975EC485ED1A114FD1D5A79D6E67F0E27F7E73",
+    "sources": [
+      {
+        "file": "textbooks/mit_mechanics_of_materials_roylance.pdf",
+        "start": 272,
+        "end": 350,
+        "label": "Roylance Modules 18-22: Yield, Dislocations, Fracture & Fatigue"
+      }
+    ]
+  },
+  {
+    "module_id": "EM-MOD-01",
+    "category": "04_electromagnetism",
+    "title": "Electrostatics, Gauss's Law, and Electrostatic Potentials",
+    "filename": "01_Electrostatics_and_Gauss_Law.pdf",
+    "relative_path": "curated_textbook_modules/04_electromagnetism/01_Electrostatics_and_Gauss_Law.pdf",
+    "pages": 40,
+    "bytes": 544815,
+    "sha256": "8879A94224802B25ED4810F8E749FB3B5CD74E25155DE7F7579FBDD4570D98C8",
+    "sources": [
+      {
+        "file": "textbooks/tong_electromagnetism.pdf",
+        "start": 9,
+        "end": 48,
+        "label": "Tong EM Ch. 1-2: Intro & Electrostatics"
+      }
+    ]
+  },
+  {
+    "module_id": "EM-MOD-02",
+    "category": "04_electromagnetism",
+    "title": "Magnetostatics, Ampère's Law, and Vector Potential",
+    "filename": "02_Magnetostatics_and_Vector_Potential.pdf",
+    "relative_path": "curated_textbook_modules/04_electromagnetism/02_Magnetostatics_and_Vector_Potential.pdf",
+    "pages": 26,
+    "bytes": 498789,
+    "sha256": "2151553A45B33BA5247805ADB2DAD9BD4742EEB82442787A1E8865F75A4326EB",
+    "sources": [
+      {
+        "file": "textbooks/tong_electromagnetism.pdf",
+        "start": 49,
+        "end": 74,
+        "label": "Tong EM Ch. 3: Magnetostatics"
+      }
+    ]
+  },
+  {
+    "module_id": "EM-MOD-03",
+    "category": "04_electromagnetism",
+    "title": "Electrodynamics, Faraday Induction, and Maxwell's Equations",
+    "filename": "03_Electrodynamics_and_Maxwell_Equations.pdf",
+    "relative_path": "curated_textbook_modules/04_electromagnetism/03_Electrodynamics_and_Maxwell_Equations.pdf",
+    "pages": 28,
+    "bytes": 684020,
+    "sha256": "05EBC9633D7B5E177D3D674FF727682E871F709D9147FDCF648BBFDA08483CC5",
+    "sources": [
+      {
+        "file": "textbooks/tong_electromagnetism.pdf",
+        "start": 75,
+        "end": 102,
+        "label": "Tong EM Ch. 4: Electrodynamics"
+      }
+    ]
+  },
+  {
+    "module_id": "EM-MOD-04",
+    "category": "04_electromagnetism",
+    "title": "Electromagnetic Radiation, Potentials, and Matter",
+    "filename": "04_Radiation_and_Fields_in_Matter.pdf",
+    "relative_path": "curated_textbook_modules/04_electromagnetism/04_Radiation_and_Fields_in_Matter.pdf",
+    "pages": 95,
+    "bytes": 1048654,
+    "sha256": "417BA021CE07BF7CD1818696600E079EBDB4792B7A78FCA49F4982BCD4EE78A4",
+    "sources": [
+      {
+        "file": "textbooks/tong_electromagnetism.pdf",
+        "start": 142,
+        "end": 236,
+        "label": "Tong EM Ch. 6-7: Radiation & Matter"
+      }
+    ]
+  },
+  {
+    "module_id": "EM-MOD-05",
+    "category": "04_electromagnetism",
+    "title": "Relativistic Electrodynamics and Field Tensor",
+    "filename": "05_Relativistic_Electrodynamics.pdf",
+    "relative_path": "curated_textbook_modules/04_electromagnetism/05_Relativistic_Electrodynamics.pdf",
+    "pages": 39,
+    "bytes": 417129,
+    "sha256": "677690A4C33D20A0D67A11703873A51DDF75D7BF03CC4B5274492A19C9B8640E",
+    "sources": [
+      {
+        "file": "textbooks/tong_electromagnetism.pdf",
+        "start": 103,
+        "end": 141,
+        "label": "Tong EM Ch. 5: Electromagnetism and Relativity"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-01",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Classical Thermodynamics, Carnot Cycle, and Entropy",
+    "filename": "01_Classical_Thermodynamics_and_Entropy.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/01_Classical_Thermodynamics_and_Entropy.pdf",
+    "pages": 27,
+    "bytes": 388059,
+    "sha256": "4DC760678BA1148AF4BC97C3D6E9DC4C1D3475DCD89FFD1F24BE2BEA0037C08C",
+    "sources": [
+      {
+        "file": "textbooks/tong_statistical_physics.pdf",
+        "start": 114,
+        "end": 140,
+        "label": "Tong SP Ch. 4: Classical Thermodynamics"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-02",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Statistical Ensembles, Partition Functions, and Potentials",
+    "filename": "02_Statistical_Ensembles_and_Partition_Functions.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/02_Statistical_Ensembles_and_Partition_Functions.pdf",
+    "pages": 31,
+    "bytes": 813128,
+    "sha256": "7C3165A3C44A8C8A21274A22EA44C2A59956457E910AD60E4B5D2597CC9CFDAD",
+    "sources": [
+      {
+        "file": "textbooks/tong_statistical_physics.pdf",
+        "start": 7,
+        "end": 37,
+        "label": "Tong SP Ch. 1: Fundamentals of Statistical Mechanics"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-03",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Classical Gases, Maxwell-Boltzmann, and Real Gases",
+    "filename": "03_Classical_Gases_and_Interactions.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/03_Classical_Gases_and_Interactions.pdf",
+    "pages": 30,
+    "bytes": 522429,
+    "sha256": "C1AC7C772D618918518A41E801BA3C5F84BB7F2B9982DE875299CB0D41C0A598",
+    "sources": [
+      {
+        "file": "textbooks/tong_statistical_physics.pdf",
+        "start": 38,
+        "end": 67,
+        "label": "Tong SP Ch. 2: Classical Gases"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-04",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Quantum Gases (Bose-Einstein and Fermi-Dirac)",
+    "filename": "04_Quantum_Gases_Bose_Fermi.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/04_Quantum_Gases_Bose_Fermi.pdf",
+    "pages": 46,
+    "bytes": 810607,
+    "sha256": "0F623B87A7844EF87EBC8A91550B4C148F3665DF9A9CDFF01D5F204FE82BA8FA",
+    "sources": [
+      {
+        "file": "textbooks/tong_statistical_physics.pdf",
+        "start": 68,
+        "end": 113,
+        "label": "Tong SP Ch. 3: Quantum Gases"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-05",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Kinetic Theory, Boltzmann Equation, and Hydrodynamics",
+    "filename": "05_Kinetic_Theory_and_Transport.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/05_Kinetic_Theory_and_Transport.pdf",
+    "pages": 52,
+    "bytes": 590633,
+    "sha256": "2474106057EB749EF9E12686E6D6CAA41F15D39C87CF0955D916CA00AD321535",
+    "sources": [
+      {
+        "file": "textbooks/tong_kinetic_theory.pdf",
+        "start": 6,
+        "end": 57,
+        "label": "Tong KT Ch. 1-2: Collisions & Kinetic Theory"
+      }
+    ]
+  },
+  {
+    "module_id": "THERMO-MOD-06",
+    "category": "05_thermodynamics_and_statphys",
+    "title": "Stochastic Processes, Langevin Equation, and Linear Response",
+    "filename": "06_Stochastic_Processes_and_Linear_Response.pdf",
+    "relative_path": "curated_textbook_modules/05_thermodynamics_and_statphys/06_Stochastic_Processes_and_Linear_Response.pdf",
+    "pages": 50,
+    "bytes": 508116,
+    "sha256": "65F90B0C5FEC034DB1493FBF4597DD17DFFCA7CBAB79F64C51F696F879CC37F5",
+    "sources": [
+      {
+        "file": "textbooks/tong_kinetic_theory.pdf",
+        "start": 58,
+        "end": 107,
+        "label": "Tong KT Ch. 3-4: Stochastic Processes & Linear Response"
+      }
+    ]
+  },
+  {
+    "module_id": "MATH-MOD-01",
+    "category": "06_vector_calculus",
+    "title": "Curves, Frenet-Serret Frame, and Line Integrals",
+    "filename": "01_Curves_Frenet_Serret_Line_Integrals.pdf",
+    "relative_path": "curated_textbook_modules/06_vector_calculus/01_Curves_Frenet_Serret_Line_Integrals.pdf",
+    "pages": 21,
+    "bytes": 543959,
+    "sha256": "62764C3A8E203271AAD67000C2BE7779CE738962149CE0775C8041EBC2B6F5DA",
+    "sources": [
+      {
+        "file": "textbooks/tong_vector_calculus.pdf",
+        "start": 10,
+        "end": 30,
+        "label": "Tong VC Ch. 1: Curves"
+      }
+    ]
+  },
+  {
+    "module_id": "MATH-MOD-02",
+    "category": "06_vector_calculus",
+    "title": "Surfaces, Volumes, Coordinate Systems, and Flux",
+    "filename": "02_Surfaces_Volumes_Flux_Integrals.pdf",
+    "relative_path": "curated_textbook_modules/06_vector_calculus/02_Surfaces_Volumes_Flux_Integrals.pdf",
+    "pages": 25,
+    "bytes": 2836982,
+    "sha256": "BDF51924991537EDFEB531F73FB9007B3733AB0DC9D02F09E9858ABFA1F29E13",
+    "sources": [
+      {
+        "file": "textbooks/tong_vector_calculus.pdf",
+        "start": 31,
+        "end": 55,
+        "label": "Tong VC Ch. 2: Surfaces and Volumes"
+      }
+    ]
+  },
+  {
+    "module_id": "MATH-MOD-03",
+    "category": "06_vector_calculus",
+    "title": "Grad, Div, Curl, and Orthogonal Curvilinear Coordinates",
+    "filename": "03_Grad_Div_Curl_Curvilinear.pdf",
+    "relative_path": "curated_textbook_modules/06_vector_calculus/03_Grad_Div_Curl_Curvilinear.pdf",
+    "pages": 15,
+    "bytes": 495133,
+    "sha256": "3F2148A39788E1FFC077045F5CC2B3CC6404A5CD8DB8380B6860110E30628BDB",
+    "sources": [
+      {
+        "file": "textbooks/tong_vector_calculus.pdf",
+        "start": 56,
+        "end": 70,
+        "label": "Tong VC Ch. 3: Grad, Div and Curl"
+      }
+    ]
+  },
+  {
+    "module_id": "MATH-MOD-04",
+    "category": "06_vector_calculus",
+    "title": "Integral Theorems: Divergence, Green, and Stokes",
+    "filename": "04_Integral_Theorems_Gauss_Stokes.pdf",
+    "relative_path": "curated_textbook_modules/06_vector_calculus/04_Integral_Theorems_Gauss_Stokes.pdf",
+    "pages": 25,
+    "bytes": 2358294,
+    "sha256": "399C5BADDB74546EC1E1D7EE82E02773C61D4AFECD4054A4BCCBC32132F1B137",
+    "sources": [
+      {
+        "file": "textbooks/tong_vector_calculus.pdf",
+        "start": 71,
+        "end": 95,
+        "label": "Tong VC Ch. 4: Integral Theorems"
+      }
+    ]
+  },
+  {
+    "module_id": "MATH-MOD-05",
+    "category": "06_vector_calculus",
+    "title": "Potential Theory, Laplace/Poisson Equations, and Tensors",
+    "filename": "05_Poisson_Laplace_and_Tensors.pdf",
+    "relative_path": "curated_textbook_modules/06_vector_calculus/05_Poisson_Laplace_and_Tensors.pdf",
+    "pages": 42,
+    "bytes": 1006994,
+    "sha256": "9A9343613013E7F59B95783C7068F59F4BB074A6464A7990A03BFFEE6CC03B80",
+    "sources": [
+      {
+        "file": "textbooks/tong_vector_calculus.pdf",
+        "start": 96,
+        "end": 137,
+        "label": "Tong VC Ch. 5-6: Poisson/Laplace & Tensors"
+      }
+    ]
+  },
+  {
+    "module_id": "REL-MOD-01",
+    "category": "07_relativity_and_modern_physics",
+    "title": "Relativistic Kinematics and Lorentz Transformations",
+    "filename": "01_Relativity_Kinematics.pdf",
+    "relative_path": "curated_textbook_modules/07_relativity_and_modern_physics/01_Relativity_Kinematics.pdf",
+    "pages": 83,
+    "bytes": 916804,
+    "sha256": "6C80AB3533CE8D6DC57891949FAEA1E614EFC7E97186D515733B2DC3A92887DC",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 521,
+        "end": 603,
+        "label": "Morin Ch. 11: Relativity Kinematics"
+      }
+    ]
+  },
+  {
+    "module_id": "REL-MOD-02",
+    "category": "07_relativity_and_modern_physics",
+    "title": "Relativistic Dynamics, Energy-Momentum, and Collisions",
+    "filename": "02_Relativity_Dynamics.pdf",
+    "relative_path": "curated_textbook_modules/07_relativity_and_modern_physics/02_Relativity_Dynamics.pdf",
+    "pages": 50,
+    "bytes": 511725,
+    "sha256": "9564024077895767E243CDA0556CD837CE17EF1D858652BB3FD415EEFBBA3E58",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 604,
+        "end": 653,
+        "label": "Morin Ch. 12: Relativity Dynamics"
+      }
+    ]
+  },
+  {
+    "module_id": "REL-MOD-03",
+    "category": "07_relativity_and_modern_physics",
+    "title": "Four-Vectors and General Relativity Foundations",
+    "filename": "03_Four_Vectors_and_General_Relativity.pdf",
+    "relative_path": "curated_textbook_modules/07_relativity_and_modern_physics/03_Four_Vectors_and_General_Relativity.pdf",
+    "pages": 41,
+    "bytes": 413991,
+    "sha256": "8B60B6570E4373ABFB34A0AF3F33AB9132B93467271884268EEAC82D24F054AA",
+    "sources": [
+      {
+        "file": "Copy of Classical Mechanics.pdf",
+        "start": 654,
+        "end": 694,
+        "label": "Morin Ch. 13-14: 4-Vectors & General Relativity"
+      }
+    ]
+  }
+]
