@@ -37,29 +37,32 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
   await new Promise(r => setTimeout(r, 600));
 
   // Switch to theory first, then click Textbook tab
+  // Switch to landing page and click #btn-portal-textbooks-open
   await page.evaluate(() => {
-    window.switchView('view-theory');
+    window.switchView('view-landing');
   });
   await new Promise(r => setTimeout(r, 400));
 
-  // Click #tab-textbooks
-  const tabExists = await page.$('#tab-textbooks');
-  console.log('Textbook Nav Tab Present:', !!tabExists);
-
-  await page.click('#tab-textbooks');
+  const portalBtn = await page.evaluate(() => {
+    const btn = document.getElementById('btn-portal-textbooks-open');
+    if (btn) {
+      btn.click();
+      return true;
+    }
+    return false;
+  });
+  console.log('Textbook Landing Portal Button Clicked:', portalBtn);
   await new Promise(r => setTimeout(r, 600));
 
   // Verify view-textbooks is active
   const isViewActive = await page.evaluate(() => {
     const view = document.getElementById('view-textbooks');
-    const tab = document.getElementById('tab-textbooks');
     return {
       viewActive: view ? view.classList.contains('active') : false,
-      tabActive: tab ? tab.classList.contains('active') : false,
       tierBarDisplay: document.getElementById('app-tier-bar')?.style.display
     };
   });
-  console.log('View & Tab Active Status:', JSON.stringify(isViewActive));
+  console.log('View Active Status:', JSON.stringify(isViewActive));
 
   // Check catalog counts
   const catalogStats = await page.evaluate(() => {

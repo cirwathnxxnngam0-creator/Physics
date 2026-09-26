@@ -12,85 +12,108 @@
 </head>
 <body>
 
-  <!-- Top Application Header -->
+  <!-- Canvas for Subtle Diamond Crystals Background Animation -->
+  <canvas id="bg-crystal-canvas" class="bg-crystal-canvas" aria-hidden="true"></canvas>
+
+  <!-- Top Application Header (BoSa Physics System) -->
   <header class="app-header" role="banner">
     <div class="header-inner">
+      <!-- Left: Branding & Author Byline -->
       <div class="brand-container">
-        <a href="#view-landing" class="brand-logo" id="header-brand-logo" aria-label="BOSA หน้าแรก">
-          <span>BOSA</span><span class="accent-dot">.</span>
+        <a href="#view-landing" class="brand-logo" id="header-brand-logo" aria-label="BoSa Physics หน้าแรก">
+          <span class="brand-name">BoSa Physics</span><span class="accent-dot">.</span>
         </a>
-        <button id="btn-back-to-chapters" class="btn-back-nav" style="display: none;" aria-label="กลับไปหน้าเลือกบทและสาขาวิชา">
-          ← เลือกบทเรียน
+        <span class="brand-reserved-slot" title="BoSa Physics Academic Suite 3.5">Academic Suite 3.5</span>
+        <span class="brand-author-badge">By Jirawat Onngam</span>
+      </div>
+
+      <!-- Center: 3 Primary Curriculum Tracks (Image 1 & 2) -->
+      <nav class="master-track-nav" id="master-track-nav" role="tablist" aria-label="หมวดหลักสูตรหลัก">
+        <button class="master-track-btn active" id="btn-master-theory" data-track="track-theory" role="tab" aria-selected="true">
+          ทฤษฎี
+        </button>
+        <button class="master-track-btn" id="btn-master-vocational" data-track="track-vocational" role="tab" aria-selected="false">
+          เนื้อหาภาควิชาชีพ
+        </button>
+        <button class="master-track-btn" id="btn-master-practice" data-track="track-practice" role="tab" aria-selected="false">
+          คลังโจทย์
+        </button>
+      </nav>
+
+      <!-- Active Chapter Breadcrumb (Image 3 & 4) -->
+      <div class="lesson-breadcrumb-group" id="header-lesson-breadcrumb" style="display: none;">
+        <button id="btn-back-to-chapters" class="btn-back-nav" aria-label="กลับไปหน้าหลักสูตร">
+          ← กลับหน้าหลักสูตร
         </button>
         <div class="chapter-dropdown-wrapper" id="header-chapter-wrapper" tabindex="0" role="region" aria-label="เลือกบทเรียน">
           <button class="chapter-badge header-chapter-badge" style="cursor: pointer; background: var(--bg-alt); border: 1px solid var(--border-dark); display: inline-flex; align-items: center; gap: 0.35rem;" aria-haspopup="true" aria-expanded="false">
-            <span>บทที่ 01 / 2D KINEMATICS & DYNAMICS</span> ▾
+            <span id="header-chapter-title-text">บทที่ 1 : การเคลื่อนที่สองมิติและโปรเจกไทล์</span> ▾
           </button>
           <div class="chapter-dropdown-menu" role="menu" aria-label="รายการบทเรียนทั้งหมดในคลัง">
             <a href="#view-theory" class="chapter-item active" data-chapter="ch01" role="menuitem">
               <span><strong>บทที่ 01:</strong> การเคลื่อนที่สองมิติและโปรเจกไทล์</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch02" role="menuitem">
               <span><strong>บทที่ 02:</strong> การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch03" role="menuitem">
               <span><strong>บทที่ 03:</strong> การแกว่งกวัดและฮาร์มอนิกอย่างง่าย</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch04" role="menuitem">
               <span><strong>บทที่ 04:</strong> คลื่นกลและเสียง</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch05" role="menuitem">
               <span><strong>บทที่ 05:</strong> อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch06" role="menuitem">
               <span><strong>บทที่ 06:</strong> ไฟฟ้าและแม่เหล็ก</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
             <a href="#view-theory" class="chapter-item" data-chapter="ch07" role="menuitem">
               <span><strong>บทที่ 07:</strong> ฟิสิกส์นิวเคลียร์และอนุภาค</span>
-              <span class="chapter-status-tag chapter-status-active">พร้อมใช้งาน (Active)</span>
             </a>
           </div>
         </div>
-        <button id="btn-mobile-access" class="mobile-access-trigger-btn" aria-label="เชื่อมต่อผ่านโทรศัพท์มือถือ (Mobile Access)" title="เปิดใช้งานบนโทรศัพท์หรือแท็บเล็ตผ่าน Wi-Fi">
-          📱 มือถือ (LAN)
-        </button>
       </div>
 
-      <!-- 5 Interconnected Primary Views -->
-      <nav class="view-nav" id="main-view-nav" role="tablist" aria-label="มุมมองเนื้อหาฟิสิกส์">
-        <button class="view-tab" role="tab" id="tab-theory" aria-selected="false" aria-controls="view-theory" data-view="view-theory">
-          📖 1. ทฤษฎี (Theory)
-        </button>
-        <button class="view-tab" role="tab" id="tab-formulas" aria-selected="false" aria-controls="view-formulas" data-view="view-formulas">
-          📐 2. สูตร & การอนุมาน (Formula)
-        </button>
-        <button class="view-tab" role="tab" id="tab-simulator" aria-selected="false" aria-controls="view-simulator" data-view="view-simulator">
-          🎯 3. แบบจำลอง (Simulator)
-        </button>
-        <button class="view-tab" role="tab" id="tab-phenomena" aria-selected="false" aria-controls="view-phenomena" data-view="view-phenomena">
-          🌍 4. ปรากฏการณ์ (Phenomena)
-        </button>
-        <button class="view-tab" role="tab" id="tab-practice" aria-selected="false" aria-controls="view-practice" data-view="view-practice">
-          📝 5. คลังโจทย์ (Practice)
-        </button>
-        <button class="view-tab" role="tab" id="tab-textbooks" aria-selected="false" aria-controls="view-textbooks" data-view="view-textbooks">
-          📚 6. คลังตำรา (Textbooks)
-        </button>
-      </nav>
-
-      <!-- Hamburger Menu Button -->
+      <!-- Right Header Actions: Top Table of Contents Menu (3 unequal lines, middle longest) -->
       <div class="header-action-group">
-        <button id="btn-hamburger-menu" class="btn-hamburger" aria-label="เปิดเมนูสารบัญบทเรียนและทฤษฎี" aria-expanded="false" aria-controls="drawer-navigation-catalog" title="เปิดสารบัญบทเรียนและทฤษฎี (☰)">
-          <span class="hamburger-icon" aria-hidden="true">☰</span>
+        <button id="btn-hamburger-menu" class="btn-hamburger" aria-label="เปิดเมนูสารบัญบทเรียนและทฤษฎี" aria-expanded="false" aria-controls="drawer-navigation-catalog" title="เปิดสารบัญบทเรียนและทฤษฎี">
+          <span class="hamburger-bars" aria-hidden="true">
+            <span class="bar bar-top"></span>
+            <span class="bar bar-mid"></span>
+            <span class="bar bar-bot"></span>
+          </span>
           <span class="hamburger-label">สารบัญ</span>
         </button>
       </div>
+    </div>
+
+    <!-- Chapter Sub-Navigation Bar: 5 Subtabs Reordered to Match Intuitive User Flow -->
+    <div class="chapter-subnav-bar" id="chapter-subnav-bar" style="display: none;">
+      <nav class="view-nav" id="main-view-nav" role="tablist" aria-label="มุมมองเนื้อหาฟิสิกส์ 5 มิติ">
+        <button class="view-tab active" role="tab" id="tab-theory" aria-selected="true" aria-controls="view-theory" data-view="view-theory">
+          📖 1. ทฤษฎี
+        </button>
+        <button class="view-tab" role="tab" id="tab-formulas" aria-selected="false" aria-controls="view-formulas" data-view="view-formulas">
+          📐 2. สูตร &amp; การคำนวณ
+        </button>
+        <button class="view-tab" role="tab" id="tab-simulator" aria-selected="false" aria-controls="view-simulator" data-view="view-simulator">
+          🎯 3. แบบจำลอง
+        </button>
+        <button class="view-tab" role="tab" id="tab-phenomena" aria-selected="false" aria-controls="view-phenomena" data-view="view-phenomena">
+          🌍 4. รูปภาพ &amp; ปรากฏการณ์
+        </button>
+        <button class="view-tab" role="tab" id="tab-summary" aria-selected="false" aria-controls="view-summary" data-view="view-summary">
+          📋 5. สรุปบทเรียน
+        </button>
+        <!-- Retain secondary buttons invisibly or as shortcuts for backward-compatibility -->
+        <button class="view-tab" role="tab" id="tab-practice" style="display: none;" aria-selected="false" aria-controls="view-practice" data-view="view-practice">
+          คลังโจทย์
+        </button>
+        <button class="view-tab" role="tab" id="tab-examples" style="display: none;" aria-selected="false" aria-controls="view-examples" data-view="view-examples">
+          🧮 6. ตัวอย่างการคำนวณ (Examples)
+        </button>
+      </nav>
     </div>
   </header>
 
@@ -124,78 +147,58 @@
         </p>
 
         <div class="landing-cta-group">
-          <button id="btn-enter-website" class="btn-action-hero" aria-label="เข้าสู่เว็บไซต์">
-            🚀 เข้าสู่แพลตฟอร์มเต็มรูปแบบ (All Chapters)
+          <button id="btn-enter-website" class="btn-action-hero" aria-label="เข้าสู่หลักสูตร 26 สาขาวิชาการ">
+            🚀 เข้าสู่หลักสูตรฟิสิกส์ 26 สาขาวิชาการ (26 Core Physics)
+          </button>
+          <button id="btn-hero-practice" class="btn-action-hero-secondary" aria-label="คลังโจทย์คำนวณและทดสอบสมรรถนะ">
+            📝 คลังโจทย์และทดสอบสมรรถนะ (Practice Engine)
           </button>
         </div>
 
-        <!-- 3-Track Curriculum & Practice Portal -->
+        <!-- 2-Track Integrated Curriculum & Engineering Portal -->
         <div class="landing-tracks-portal">
-          <!-- Track 1: Fundamental Physics -->
+          <!-- Track 1: Pure Physics & Mathematical Methods -->
           <div class="portal-track-card portal-track-fund">
             <div class="portal-track-header">
-              <span class="portal-track-badge">มัธยมศึกษา & มหาวิทยาลัยปี 1</span>
+              <span class="portal-track-badge">ฟิสิกส์ 4 ปีมหาวิทยาลัย &amp; สอวน./โอลิมปิก</span>
               <div class="portal-track-icon">⚛️</div>
             </div>
-            <h3 class="portal-track-title">1. ฟิสิกส์พื้นฐาน (Fundamental Physics)</h3>
+            <h3 class="portal-track-title">1. ฟิสิกส์บริสุทธิ์และคณิตศาสตร์ฟิสิกส์ (Pure Physics &amp; Mathematical Methods)</h3>
             <p class="portal-track-desc">
-              ครอบคลุม 7 บทเรียนหลัก: กลศาสตร์สองมิติ การเคลื่อนที่แบบวงกลม การแกว่งกวัด คลื่นกลและเสียง อุณหพลศาสตร์ ไฟฟ้าและแม่เหล็ก และฟิสิกส์นิวเคลียร์
+              ครอบคลุมหลักสูตรมหาวิทยาลัย 4 ปีเต็ม: จลนศาสตร์และโปรเจกไทล์ RK4, การหมุนและสมดุล, การแกว่งกวัด SHM, คลื่นและทัศนูปกรณ์, อุณหพลศาสตร์และทฤษฎีจลน์, แม่เหล็กไฟฟ้าและสมการแมกซ์เวลล์, ฟิสิกส์นิวเคลียร์, ควอนตัม และกลศาสตร์ลากรานเจียน/แฮมิลโทเนียน
             </p>
             <div class="portal-track-actions">
-              <button class="btn-track-action btn-track-theory" id="btn-portal-fund-theory" aria-label="ดูเนื้อหาฟิสิกส์พื้นฐาน">
-                📖 ดูทฤษฎี
+              <button class="btn-track-action btn-track-theory" id="btn-portal-fund-theory" aria-label="ดูเนื้อหาฟิสิกส์และคณิตศาสตร์">
+                📖 ดูทฤษฎี &amp; สูตร
               </button>
-              <button class="btn-track-action btn-track-sim" id="btn-portal-fund-sim" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: 1px solid #3b82f6; color: #ffffff;" aria-label="แบบจำลองฟิสิกส์พื้นฐาน">
-                🧪 แบบจำลอง
+              <button class="btn-track-action btn-track-sim" id="btn-portal-fund-sim" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;" aria-label="แบบจำลองฟิสิกส์">
+                🧪 แบบจำลองฟิสิกส์
               </button>
-              <button class="btn-track-action btn-track-practice" id="btn-portal-fund-practice" style="background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;" aria-label="ทำโจทย์ฟิสิกส์พื้นฐาน">
+              <button class="btn-track-action btn-track-practice" id="btn-portal-fund-practice" style="background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;" aria-label="ทำโจทย์คำนวณ">
                 📝 โจทย์คำนวณ
               </button>
             </div>
           </div>
 
-          <!-- Track 2: Advanced Physics & Olympiad -->
-          <div class="portal-track-card portal-track-adv">
-            <div class="portal-track-header">
-              <span class="portal-track-badge">สอวน. / โอลิมปิก & ปริญญาตรี</span>
-              <div class="portal-track-icon">🌌</div>
-            </div>
-            <h3 class="portal-track-title">2. ฟิสิกส์ขั้นสูง & สอวน. (Advanced / Olympiad)</h3>
-            <p class="portal-track-desc">
-              กระบวนทัศน์กลศาสตร์วิเคราะห์ หลักการกระทำน้อยที่สุด ลากรานเจียน (Lagrangian), แฮมิลโทเนียน (Hamiltonian), พิกัดนัยทั่วไป และโจทย์คัดเลือกผู้แทนโอลิมปิกวิชาการ
-            </p>
-            <div class="portal-track-actions">
-              <button class="btn-track-action btn-track-theory" id="btn-portal-adv-theory" aria-label="ดูกลศาสตร์วิเคราะห์">
-                🏛️ ทฤษฎีวิเคราะห์
-              </button>
-              <button class="btn-track-action btn-track-sim" id="btn-portal-adv-sim" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 1px solid #8b5cf6; color: #ffffff;" aria-label="แบบจำลองกลศาสตร์ขั้นสูง">
-                🧪 แบบจำลอง
-              </button>
-              <button class="btn-track-action btn-track-practice" id="btn-portal-adv-practice" style="background: linear-gradient(135deg, #4f46e5, #4338ca); border: 1px solid #6366f1; color: #ffffff;" aria-label="ทำโจทย์โอลิมปิก">
-                🏆 โจทย์โอลิมปิก
-              </button>
-            </div>
-          </div>
-
-          <!-- Track 3: Civil Engineering Specialties -->
+          <!-- Track 2: Applied & Professional Engineering Disciplines -->
           <div class="portal-track-card portal-track-civ">
             <div class="portal-track-header">
-              <span class="portal-track-badge">วิศวกรรมศาสตร์ประยุกต์ & ก.ว.</span>
+              <span class="portal-track-badge">วิศวกรรมศาสตร์ 3 สาขาวิชาชีพ &amp; ก.ว.</span>
               <div class="portal-track-icon">🏗️</div>
             </div>
-            <h3 class="portal-track-title">3. สาขาวิศวกรรมศาสตร์: โยธา (Civil Engineering)</h3>
+            <h3 class="portal-track-title">2. สาขาวิศวกรรมศาสตร์ประยุกต์และวิชาชีพ (Applied &amp; Professional Engineering)</h3>
             <p class="portal-track-desc">
-              สถิตยศาสตร์วิศวกรรม สมดุลวัตถุเกร็ง โครงถักสะพาน แผนภาพแรงเฉือนและโมเมนต์ดัดในคาน (SFD & BMD) ความเค้น-ความเครียด และวงกลมของมอร์
+              บูรณาการ 3 สาขาวิศวกรรมมาตรฐานสภาวิศวกร: โยธา (สถิตยศาสตร์, โครงถัก 2D Truss, SFD/BMD, วงกลมของมอร์), ไฟฟ้า (วงจร RLC, ทรานเชียนต์ RC/RL, คลื่นแม่เหล็กไฟฟ้า), เครื่องกล (พลศาสตร์กลไก, การสั่นสะเทือน, วัฏจักรเครื่องยนต์ความร้อน, กลศาสตร์ของไหล)
             </p>
             <div class="portal-track-actions">
-              <button class="btn-track-action btn-track-theory" id="btn-portal-civ-theory" aria-label="ดูเนื้อหาวิศวกรรมโยธา">
-                🏗️ ทฤษฎีโยธา
+              <button class="btn-track-action btn-track-theory" id="btn-portal-civ-theory" aria-label="ดูเนื้อหาวิศวกรรม">
+                🏗️ ทฤษฎีวิศวกรรม
               </button>
-              <button class="btn-track-action btn-track-sim" id="btn-portal-civ-sim" style="background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;" aria-label="แบบจำลองคานและวงกลมมอร์">
-                🧪 แบบจำลอง
+              <button class="btn-track-action btn-track-sim" id="btn-portal-civ-sim" style="background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;" aria-label="แบบจำลองวิศวกรรม">
+                🧪 แบบจำลองวิศวกรรม
               </button>
-              <button class="btn-track-action btn-track-practice" id="btn-portal-civ-practice" style="background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;" aria-label="ทำโจทย์วิศวกรรม">
-                📐 โจทย์คำนวณ
+              <button class="btn-track-action btn-track-practice" id="btn-portal-civ-practice" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 1px solid #8b5cf6; color: #ffffff;" aria-label="โจทย์วิศวกรรม">
+                📐 โจทย์วิศวกรรม
               </button>
             </div>
           </div>
@@ -214,223 +217,503 @@
           </p>
         </div>
 
-        <!-- 1. Fundamental Physics Modules -->
-        <div class="selection-category-block">
-          <div class="selection-category-header">
-            <div class="category-title-group">
-              <span class="category-icon">⚛️</span>
-              <h3 class="category-title">1. บทเรียนฟิสิกส์พื้นฐาน (Fundamental Physics Modules)</h3>
+        <!-- MASTER TRACK 1: PURE PHYSICS (24 SUBJECTS IN 4 ROWS OF 6 + PLASMA) - IMAGE 1 -->
+        <div id="bosa-theory-catalog" class="bosa-track-catalog-block active">
+          <div class="bosa-catalog-header">
+            <div class="bosa-catalog-title-group">
+              <span class="bosa-catalog-icon">⚛️</span>
+              <div>
+                <h3 class="bosa-catalog-title">ผังหลักสูตรฟิสิกส์ 24 สาขาวิชาการ (24 Core Physics Subjects)</h3>
+                <p class="bosa-catalog-subtitle">โครงสร้างวิชาการ 4 ระดับชั้น ครอบคลุมตั้งแต่รากฐานมัธยมศึกษา มหาวิทยาลัย จนถึงการวิจัยขั้นสูงระดับโลก</p>
+              </div>
             </div>
-            <span class="category-count">7 บทเรียน</span>
+            <span class="bosa-catalog-badge">24 วิชาการ + ฟิสิกส์พลาสมา</span>
           </div>
 
-          <div class="selection-cards-grid">
-            <!-- Active Chapter 1 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 01</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+          <!-- 6-Column x 4-Row Grid (Image 1) -->
+          <div class="bosa-24grid-container">
+            <!-- ROW 1: รากฐานฟิสิกส์ (Foundation Physics) -->
+            <div class="bosa-grid-row" data-row="1" data-tier="รากฐาน">
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-01">
+                <div class="bosa-card-num">01</div>
+                <h4 class="bosa-card-name">กลศาสตร์</h4>
+                <div class="bosa-card-en">Mechanics</div>
+                <div class="bosa-card-desc">เวกเตอร์ จลนศาสตร์ กฎนิวตัน งานและพลังงาน โมเมนตัม และวิถีโปรเจกไทล์</div>
               </div>
-              <h4 class="curriculum-title">การเคลื่อนที่สองมิติและโปรเจกไทล์ (2D Kinematics & Dynamics)</h4>
-              <p class="curriculum-desc">
-                ครอบคลุมการเคลื่อนที่แนวตรง เวกเตอร์ตำแหน่ง วิถีโปรเจกไทล์สุญญากาศ แรงต้านอากาศกำลังสอง ($F_d = -cv^2$) กฎการเคลื่อนที่ของนิวตัน งาน-พลังงาน การดล-โมเมนตัม และการคำนวณเชิงตัวเลข RK4
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 4 ภาควิชา</span> • <span>📐 15 ทฤษฎีหลัก</span> • <span>🎯 4 แบบจำลอง</span> • <span>🌍 16 ปรากฏการณ์</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch02" data-code="TH-02">
+                <div class="bosa-card-num">02</div>
+                <h4 class="bosa-card-name">การหมุนและสมดุล</h4>
+                <div class="bosa-card-en">Rotation & Equilibrium</div>
+                <div class="bosa-card-desc">ทอร์ก โมเมนต์ความเฉื่อย สถิตยศาสตร์วัตถุเกร็ง รอก และการเคลื่อนที่แบบวงกลม</div>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch01" aria-label="เปิดบทที่ 1 การเคลื่อนที่สองมิติ">
-                  📖 เปิดบท
-                </button>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch04" data-code="TH-03">
+                <div class="bosa-card-num">03</div>
+                <h4 class="bosa-card-name">คลื่นและแสง</h4>
+                <div class="bosa-card-en">Waves & Optics</div>
+                <div class="bosa-card-desc">สมการคลื่น คลื่นนิ่ง บีตส์ ดอปเปลอร์ การแทรกสอด เลี้ยวเบน และทัศนูปกรณ์</div>
               </div>
-            </div>
-
-            <!-- Active Chapter 2 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 02</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch05" data-code="TH-04">
+                <div class="bosa-card-num">04</div>
+                <h4 class="bosa-card-name">ความร้อนและแก๊ส</h4>
+                <div class="bosa-card-en">Heat & Thermodynamics</div>
+                <div class="bosa-card-desc">ทฤษฎีจลน์ของแก๊ส สี่กระบวนการความร้อน เครื่องยนต์คาร์โนต์ และเอนโทรปี</div>
               </div>
-              <h4 class="curriculum-title">การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง (Circular Motion & Centripetal Dynamics)</h4>
-              <p class="curriculum-desc">
-                พิกัดเชิงขั้ว อัตราเร็วเชิงมุม ความเร่งสู่ศูนย์กลางและความเร่งแนวสัมผัส พลศาสตร์ของแรงลัพธ์แนวรัศมี ทางโค้งราบและทางโค้งยกมุมเอียง วงกลมแนวดิ่ง ลูปคลอธอยด์ และวงโคจรดาวเทียม
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 5 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองพลศาสตร์วงกลม</span> • <span>🌍 4 ปรากฏการณ์</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch06" data-code="TH-05">
+                <div class="bosa-card-num">05</div>
+                <h4 class="bosa-card-name">ไฟฟ้าและแม่เหล็ก</h4>
+                <div class="bosa-card-en">Electricity & Magnetism</div>
+                <div class="bosa-card-desc">กฎคูลอมบ์ ศักย์ไฟฟ้า ตัวเก็บประจุ วงจร RC สนามแม่เหล็ก และแรงลอเรนซ์</div>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch02" aria-label="เปิดบทที่ 2 การเคลื่อนที่แบบวงกลม">
-                  📖 เปิดบท
-                </button>
-              </div>
-            </div>
-
-            <!-- Active Chapter 3 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 03</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
-              </div>
-              <h4 class="curriculum-title">การแกว่งกวัดและฮาร์มอนิกอย่างง่าย (Oscillations, SHM & Resonance)</h4>
-              <p class="curriculum-desc">
-                สมการอนุพันธ์อันดับสอง กฎของฮุก มวลติดสปริง ลูกตุ้มนาฬิกาอย่างง่าย การอนุรักษ์พลังงานกล การสั่นหน่วงทั้ง 3 สภาวะ (Underdamped, Critical, Overdamped) การสั่นพ้อง และค่าประกอบคุณภาพ Q
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 5 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองการแกว่งกวัด & สั่นพ้อง</span> • <span>🌍 4 ปรากฏการณ์</span>
-              </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch03" aria-label="เปิดบทที่ 3 การแกว่งกวัดและฮาร์มอนิกอย่างง่าย">
-                  📖 เปิดบท
-                </button>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-06">
+                <div class="bosa-card-num">06</div>
+                <h4 class="bosa-card-name">คลื่นแม่เหล็กไฟฟ้าและฟิสิกส์ยุคใหม่</h4>
+                <div class="bosa-card-en">EM Waves & Modern Physics</div>
+                <div class="bosa-card-desc">สมการแมกซ์เวลล์ โฟโตอิเล็กทริก ทวิภาวะคลื่น-อนุภาค และฟิสิกส์ควอนตัมยุคแรก</div>
               </div>
             </div>
 
-            <!-- Active Chapter 4 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 04</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+            <!-- ROW 2: แคลคูลัสและทฤษฎีระดับกลาง (Calculus & Intermediate) -->
+            <div class="bosa-grid-row" data-row="2" data-tier="แคลคูลัส & ขั้นสูง">
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-07">
+                <div class="bosa-card-num">07</div>
+                <h4 class="bosa-card-name">ฟิสิกส์ทั่วไปเชิงแคลคูลัส</h4>
+                <div class="bosa-card-en">Calculus General Physics</div>
+                <div class="bosa-card-desc">การอินทิเกรตการเคลื่อนที่ต่อเนื่อง ตัวแปรตามเวลา และสมการอนุพันธ์การเคลื่อนที่</div>
               </div>
-              <h4 class="curriculum-title">คลื่นกล เสียง และทัศนศาสตร์เชิงเรขาคณิต (Waves, Acoustics & Optics)</h4>
-              <p class="curriculum-desc">
-                สมการคลื่น 1 มิติ อัตราเร็วคลื่น กำลังงานส่งผ่าน การสะท้อนและหักเห คลื่นนิ่ง บีตส์ ดอปเปลอร์ คลื่นกระแทกโซนิกบูม กระจกเว้า-นูน เลนส์นูน-เว้า สูตรช่างทำเลนส์ และทัศนูปกรณ์
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 3 ภาควิชา</span> • <span>📐 9 ทฤษฎีหลัก</span> • <span>🎯 6 แบบจำลองคลื่น แสง & โพลาไรเซชัน</span> • <span>🌍 6 ปรากฏการณ์</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="view-analytical" data-code="TH-08">
+                <div class="bosa-card-num">08</div>
+                <h4 class="bosa-card-name">คณิตสำหรับฟิสิกส์</h4>
+                <div class="bosa-card-en">Mathematics for Physics</div>
+                <div class="bosa-card-desc">แคลคูลัสเวกเตอร์ การลู่ออก เคิร์ล พีชคณิตเชิงเส้น และฟังก์ชันพิเศษ</div>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch04" aria-label="เปิดบทที่ 4 คลื่นกล เสียง และทัศนศาสตร์">
-                  📖 เปิดบท
-                </button>
+              <div class="bosa-topic-card card-interactive" data-chapter="view-analytical" data-code="TH-09">
+                <div class="bosa-card-num">09</div>
+                <h4 class="bosa-card-name">กลศาสตร์คลาสสิกขั้นสูง</h4>
+                <div class="bosa-card-en">Advanced Classical Mechanics</div>
+                <div class="bosa-card-desc">กลศาสตร์ลากรานเจียน (Lagrangian) แฮมิลโทเนียน (Hamiltonian) และพิกัดนัยทั่วไป</div>
               </div>
-            </div>
-
-            <!-- Active Chapter 5 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 05</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch06" data-code="TH-10">
+                <div class="bosa-card-num">10</div>
+                <h4 class="bosa-card-name">ทฤษฎีสนามแม่เหล็กไฟฟ้า</h4>
+                <div class="bosa-card-en">Electromagnetic Field Theory</div>
+                <div class="bosa-card-desc">ทฤษฎีบทเกาส์ สมการปัวซง ศักย์เวกเตอร์แม่เหล็ก ท่อนำคลื่น และการแผ่รังสี</div>
               </div>
-              <h4 class="curriculum-title">อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส (Thermodynamics & Kinetic Theory)</h4>
-              <p class="curriculum-desc">
-                กฎข้อศูนย์ กฎแก๊สอุดมคติ ทฤษฎีจลน์ระดับโมเลกุลและการแจกแจงแมกซ์เวลล์-โบลต์ซมันน์ กฎข้อที่หนึ่ง สี่กระบวนการหลัก เครื่องยนต์ความร้อน วัฏจักรคาร์โนต์ และเอนโทรปี
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลอง P-V Engine & แก๊สจลน์</span> • <span>🌍 4 ปรากฏการณ์</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-11">
+                <div class="bosa-card-num">11</div>
+                <h4 class="bosa-card-name">กลศาสตร์ควอนตัม</h4>
+                <div class="bosa-card-en">Quantum Mechanics</div>
+                <div class="bosa-card-desc">สมการชเรอดิงเงอร์ ฟังก์ชันคลื่น บ่อศักย์ลึกอนันต์ และความน่าจะเป็นทางควอนตัม</div>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch05" aria-label="เปิดบทที่ 5 อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส">
-                  📖 เปิดบท
-                </button>
-              </div>
-            </div>
-
-            <!-- Active Chapter 6 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 06</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
-              </div>
-              <h4 class="curriculum-title">ไฟฟ้าและแม่เหล็ก (Electromagnetism & Circuits)</h4>
-              <p class="curriculum-desc">
-                ประจุไฟฟ้า กฎคูลอมบ์ สนามไฟฟ้า กฎเกาส์ ศักย์ไฟฟ้า ตัวเก็บประจุ วงจรไฟฟ้ากระแสตรง กฎเคอร์ชอฟฟ์ วงจรทรานเชียนต์ RC สนามแม่เหล็ก แรงลอเรนซ์ และการเหนี่ยวนำแม่เหล็กไฟฟ้า
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 7 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองสนามไฟฟ้า แรงลอเรนซ์ & วงจร RC</span> • <span>🌍 4 ปรากฏการณ์</span>
-              </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch06" aria-label="เปิดบทที่ 6 ไฟฟ้าและแม่เหล็ก">
-                  📖 เปิดบท
-                </button>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch05" data-code="TH-12">
+                <div class="bosa-card-num">12</div>
+                <h4 class="bosa-card-name">อุณหพลศาสตร์และกลศาสตร์สถิติ</h4>
+                <div class="bosa-card-en">Thermodynamics & Stat Mech</div>
+                <div class="bosa-card-desc">ไมโครแคนอนิคอล แคนอนิคอล พาร์ติชันฟังก์ชัน และสถิติแมกซ์เวลล์-โบลต์ซมันน์</div>
               </div>
             </div>
 
-            <!-- Active Chapter 7 -->
-            <div class="curriculum-card card-active">
-              <div class="card-top-row">
-                <span class="curriculum-code">บทที่ 07</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
+            <!-- ROW 3: ฟิสิกส์สมัยใหม่และการจำลอง (Modern & Computational) -->
+            <div class="bosa-grid-row" data-row="3" data-tier="โมเดิร์น & คำนวณ">
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-13">
+                <div class="bosa-card-num">13</div>
+                <h4 class="bosa-card-name">ฟิสิกส์นิวเคลียร์และอนุภาคเบื้องต้น</h4>
+                <div class="bosa-card-en">Nuclear & Particle Physics</div>
+                <div class="bosa-card-desc">โครงสร้างนิวเคลียส พลังงานยึดเหนี่ยว มวลพร่อง การสลายรังสี และแบบจำลองควาร์ก</div>
               </div>
-              <h4 class="curriculum-title">ฟิสิกส์นิวเคลียร์และอนุภาค (Nuclear & Particle Physics)</h4>
-              <p class="curriculum-desc">
-                โครงสร้างนิวเคลียส พลังงานยึดเหนี่ยว มวลพร่อง การสลายกัมมันตรังสี ครึ่งชีวิต ปฏิกิริยานิวเคลียร์ ฟิชชัน ฟิวชัน และการตรวจวัดรังสี
-              </p>
-              <div class="curriculum-meta">
-                <span>📚 2 ภาควิชา</span> • <span>📐 6 ทฤษฎีหลัก</span> • <span>🎯 แบบจำลองเส้นโค้งพลังงานยึดเหนี่ยว & การสลายกัมมันตรังสี</span> • <span>🌍 4 ปรากฏการณ์</span>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-14">
+                <div class="bosa-card-num">14</div>
+                <h4 class="bosa-card-name">ฟิสิกส์สสารควบแน่นสภาพของแข็ง</h4>
+                <div class="bosa-card-en">Condensed Matter Physics</div>
+                <div class="bosa-card-desc">โครงสร้างผลึก ทฤษฎีแถบพลังงาน โฟนอน รังสีเอ็กซ์เลี้ยวเบน และสารกึ่งตัวนำ</div>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-primary btn-open-chapter" data-chapter="ch07" aria-label="เปิดบทที่ 7 ฟิสิกส์นิวเคลียร์และอนุภาค">
-                  📖 เปิดบท
-                </button>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-15">
+                <div class="bosa-card-num">15</div>
+                <h4 class="bosa-card-name">ฟิสิกส์เชิงทดลองและการวัด</h4>
+                <div class="bosa-card-en">Experimental Physics</div>
+                <div class="bosa-card-desc">การกระจายความคลาดเคลื่อน การวัดละเอียด มาตรวิทยา และการปรับแก้ค่าสถิติ</div>
               </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-16">
+                <div class="bosa-card-num">16</div>
+                <h4 class="bosa-card-name">ฟิสิกส์เชิงคำนวณและแบบจำลองคอมพิวเตอร์</h4>
+                <div class="bosa-card-en">Computational Physics</div>
+                <div class="bosa-card-desc">ตัวแก้ปัญหาเชิงอนุพันธ์ RK4 ผลต่างจำกัด FDTD มอนติคาร์โล และการจำลองระบบพลศาสตร์</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch03" data-code="TH-17">
+                <div class="bosa-card-num">17</div>
+                <h4 class="bosa-card-name">กลศาสตร์คลาสสิกชั้นสูงหลายระบบไดนามิก</h4>
+                <div class="bosa-card-en">Dynamical Systems & Chaos</div>
+                <div class="bosa-card-desc">ระบบไม่เป็นเชิงเส้น ความโกลาหล เลียปูนอฟเอ็กซ์โพเนนต์ และไดนามิกส์หลายวัตถุ</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-18">
+                <div class="bosa-card-num">18</div>
+                <h4 class="bosa-card-name">ทฤษฎีสนามควอนตัม</h4>
+                <div class="bosa-card-en">Quantum Field Theory (QFT)</div>
+                <div class="bosa-card-desc">การควอนไทซ์ลำดับสอง ปริพันธ์ตามวิถี ไดอะแกรมไฟน์แมน และควอนตัมอิเล็กโทรไดนามิกส์</div>
+              </div>
+            </div>
+
+            <!-- ROW 4: พรมแดนการวิจัยขั้นสูง (Frontier & Advanced Research) -->
+            <div class="bosa-grid-row" data-row="4" data-tier="พรมแดนวิจัย">
+              <div class="bosa-topic-card card-interactive" data-chapter="ch05" data-code="TH-19">
+                <div class="bosa-card-num">19</div>
+                <h4 class="bosa-card-name">กลศาสตร์สถิติขั้นสูงและการเปลี่ยนเฟส</h4>
+                <div class="bosa-card-en">Adv Stat Mech & Phase Transitions</div>
+                <div class="bosa-card-desc">แบบจำลองไอซิง พารามิเตอร์อันดับ ความวิกฤต และกลุ่มการจัดระเบียบใหม่ (RG)</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-20">
+                <div class="bosa-card-num">20</div>
+                <h4 class="bosa-card-name">ฟิสิกส์อนุภาคพลังงานสูงและทฤษฎีสตริง</h4>
+                <div class="bosa-card-en">High Energy & String Theory</div>
+                <div class="bosa-card-desc">ทฤษฎีเกจ กลไกฮิกส์ มิติพิเศษ ทวิภาวะ AdS/CFT และซูเปอร์สตริง</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch01" data-code="TH-21">
+                <div class="bosa-card-num">21</div>
+                <h4 class="bosa-card-name">ดาราศาสตร์ ฟิสิกส์ดาราศาสตร์ จักรวาลวิทยา และสัมพัทธภาพทั่วไป</h4>
+                <div class="bosa-card-en">Astrophysics & General Relativity</div>
+                <div class="bosa-card-desc">สมการสนามไอน์สไตน์ เรขาคณิตกาล-อวกาศ หลุมดำ รูหนอน และการขยายตัวของเอกภพ</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-22">
+                <div class="bosa-card-num">22</div>
+                <h4 class="bosa-card-name">ฟิสิกส์สสารควบแน่นขั้นสูงและวัสดุควอนตัม</h4>
+                <div class="bosa-card-en">Quantum Materials & Topo Insulators</div>
+                <div class="bosa-card-desc">ฉนวนทอพอโลยี ปรากฏการณ์ควอนตัมฮอลล์ และสภาพนำยวดยิ่งอุณหภูมิสูง</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch07" data-code="TH-23">
+                <div class="bosa-card-num">23</div>
+                <h4 class="bosa-card-name">สารสนเทศควอนตัมและการคำนวณเชิงควอนตัม</h4>
+                <div class="bosa-card-en">Quantum Information & Computing</div>
+                <div class="bosa-card-desc">คิวบิต การพัวพันควอนตัม วงจรควอนตัมลอจิก และขั้นตอนวิธีควอนตัมสากล</div>
+              </div>
+              <div class="bosa-topic-card card-interactive" data-chapter="ch04" data-code="TH-24">
+                <div class="bosa-card-num">24</div>
+                <h4 class="bosa-card-name">ฟิสิกส์อะตอม โมเลกุล ทัศนศาสตร์ และควอนตัมออปติกส์</h4>
+                <div class="bosa-card-en">Atomic, Molecular & Quantum Optics</div>
+                <div class="bosa-card-desc">การดักจับอะตอมด้วยแสง โพรงควอนตัมอิเล็กโทรไดนามิกส์ และสถานะบีบอัดของแสง</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Callout (As specifically drawn at bottom of Image 1!) -->
+          <div class="bosa-plasma-callout-bar">
+            <div class="plasma-callout-inner">
+              <span class="plasma-callout-icon">⚡</span>
+              <div class="plasma-callout-text">
+                <strong>+ ฟิสิกส์พลาสมาและฟิวชัน (Plasma Physics & Controlled Thermonuclear Fusion)</strong>:
+                แมกนีโตไฮโดรไดนามิกส์ (MHD), สนามแม่เหล็กกักกันอนุภาคในโทคาแมค (Tokamak Magnetic Confinement), พลาสมาอุณหภูมิสูง และแหล่งพลังงานสะอาดแห่งอนาคต
+              </div>
+              <button class="btn-plasma-sim-jump" data-chapter="ch06" data-sim="em">
+                🧪 เปิดแบบจำลองสนามพลาสมา →
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- 2. Engineering Specialties -->
-        <div class="selection-category-block">
-          <div class="selection-category-header">
-            <div class="category-title-group">
-              <span class="category-icon">🏗️</span>
-              <h3 class="category-title">2. สาขาวิศวกรรมเฉพาะทาง (Engineering Specialties)</h3>
+        <!-- MASTER TRACK 2: VOCATIONAL & APPLIED ENGINEERING (3 ROWS OF 6 CARDS) - IMAGE 2 -->
+        <div id="bosa-vocational-catalog" class="bosa-track-catalog-block" style="display: none;">
+          <div class="bosa-catalog-header">
+            <div class="bosa-catalog-title-group">
+              <span class="bosa-catalog-icon">🏗️</span>
+              <div>
+                <h3 class="bosa-catalog-title">เนื้อหาภาควิชาชีพและวิศวกรรมศาสตร์ประยุกต์ (Applied Engineering Disciplines)</h3>
+                <p class="bosa-catalog-subtitle">3 สาขาวิศวกรรมหลัก: โยธา, ไฟฟ้า, เครื่องกล แต่ละสาขา 6 โมดูลวิชาชีพมาตรฐานสภาวิศวกร (ก.ว.)</p>
+              </div>
             </div>
-            <span class="category-count">3 สาขาวิชา</span>
+            <span class="bosa-catalog-badge">3 สาขาวิศวกรรม • 18 โมดูล</span>
+          </div>
+
+          <!-- 3 Engineering Rows (Image 2) -->
+          <div class="bosa-vocational-rows">
+            <!-- ROW 1: โยธา (Civil Engineering) -->
+            <div class="bosa-eng-discipline-block" id="eng-row-civil">
+              <div class="eng-discipline-header">
+                <span class="eng-icon">🏗️</span>
+                <h4 class="eng-name">โยธา (Civil Engineering)</h4>
+                <span class="eng-tag">6 โมดูลหลักวิศวกรรมโยธา</span>
+              </div>
+              <div class="bosa-eng-row-grid">
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="civil_eng" data-view="view-theory">
+                  <div class="bosa-card-num">CE-01</div>
+                  <h4 class="bosa-card-name">สถิตยศาสตร์วิศวกรรม</h4>
+                  <div class="bosa-card-en">Engineering Statics</div>
+                  <div class="bosa-card-desc">สมดุลของอนุภาคและวัตถุเกร็งใน 2D/3D จุดศูนย์ถ่วง และแรงเสียดทาน</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="civil_eng" data-view="view-theory">
+                  <div class="bosa-card-num">CE-02</div>
+                  <h4 class="bosa-card-name">กลศาสตร์ของแข็งและวัสดุ</h4>
+                  <div class="bosa-card-en">Mechanics of Materials</div>
+                  <div class="bosa-card-desc">ความเค้น-ความเครียด วงกลมของมอร์ การโก่งตัว และโมดูลัสของยังก์</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="civil_eng" data-view="view-simulator">
+                  <div class="bosa-card-num">CE-03</div>
+                  <h4 class="bosa-card-name">การวิเคราะห์โครงสร้างและโครงถัก</h4>
+                  <div class="bosa-card-en">Structural & Truss Analysis</div>
+                  <div class="bosa-card-desc">การวิเคราะห์โครงถักสะพาน แผนภาพแรงเฉือนและโมเมนต์ดัด (SFD & BMD)</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="civil_eng" data-view="view-theory">
+                  <div class="bosa-card-num">CE-04</div>
+                  <h4 class="bosa-card-name">ปฐพีกลศาสตร์และฐานราก</h4>
+                  <div class="bosa-card-en">Soil Mechanics & Geotechnics</div>
+                  <div class="bosa-card-desc">ความเค้นประสิทธิผล กำลังต้านทานแรงเฉือนของดิน และเสถียรภาพลาดดิน</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="ch01" data-view="view-theory">
+                  <div class="bosa-card-num">CE-05</div>
+                  <h4 class="bosa-card-name">กลศาสตร์ของไหลและชลศาสตร์</h4>
+                  <div class="bosa-card-en">Hydraulics & Fluid Mechanics</div>
+                  <div class="bosa-card-desc">สมการแบร์นูลลี แรงดันไฮโดรสแตติก การไหลในท่อ และทางน้ำเปิด</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-civil" data-chapter="ch03" data-view="view-theory">
+                  <div class="bosa-card-num">CE-06</div>
+                  <h4 class="bosa-card-name">พลศาสตร์โครงสร้างและแผ่นดินไหว</h4>
+                  <div class="bosa-card-en">Structural Dynamics</div>
+                  <div class="bosa-card-desc">การสั่นสะเทือนอิสระและบังคับ การสั่นพ้องในอาคาร และการออกแบบต้านแผ่นดินไหว</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROW 2: ไฟฟ้า (Electrical Engineering) -->
+            <div class="bosa-eng-discipline-block" id="eng-row-electrical">
+              <div class="eng-discipline-header">
+                <span class="eng-icon">⚡</span>
+                <h4 class="eng-name">ไฟฟ้า (Electrical Engineering)</h4>
+                <span class="eng-tag">6 โมดูลหลักวิศวกรรมไฟฟ้า</span>
+              </div>
+              <div class="bosa-eng-row-grid">
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch06" data-view="view-theory">
+                  <div class="bosa-card-num">EE-01</div>
+                  <h4 class="bosa-card-name">การวิเคราะห์วงจรไฟฟ้า</h4>
+                  <div class="bosa-card-en">Electric Circuit Analysis</div>
+                  <div class="bosa-card-desc">กฎเคอร์ชอฟฟ์ วงจรสมมูลเทเวนิน-นอร์ตัน การวิเคราะห์ทรานเชียนต์ RC/RL</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch06" data-view="view-theory">
+                  <div class="bosa-card-num">EE-02</div>
+                  <h4 class="bosa-card-name">คลื่นแม่เหล็กไฟฟ้าประยุกต์และสายส่ง</h4>
+                  <div class="bosa-card-en">Applied EM & Transmission Lines</div>
+                  <div class="bosa-card-desc">สมการโทรเลข อิมพีแดนซ์ลักษณะเฉพาะ การสะท้อน และแผนภูมิสมิท (Smith Chart)</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch03" data-view="view-theory">
+                  <div class="bosa-card-num">EE-03</div>
+                  <h4 class="bosa-card-name">ระบบควบคุมอัตโนมัติและพลศาสตร์ป้อนกลับ</h4>
+                  <div class="bosa-card-en">Feedback Control Systems</div>
+                  <div class="bosa-card-desc">ฟังก์ชันถ่ายโอน เสถียรภาพเราธ์-เฮอร์วิตซ์ โบเดไดอะแกรม และตัวควบคุม PID</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch06" data-view="view-theory">
+                  <div class="bosa-card-num">EE-04</div>
+                  <h4 class="bosa-card-name">อิเล็กทรอนิกส์กำลังและการแปลงผัน</h4>
+                  <div class="bosa-card-en">Power Electronics</div>
+                  <div class="bosa-card-desc">วงจรเรียงกระแส อินเวอร์เตอร์ บั๊ก-บูสต์คอนเวอร์เตอร์ และการสวิตชิ่งประสิทธิภาพสูง</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch04" data-view="view-theory">
+                  <div class="bosa-card-num">EE-05</div>
+                  <h4 class="bosa-card-name">การประมวลผลสัญญาณและฟูริเยร์</h4>
+                  <div class="bosa-card-en">Signals & Fourier Transforms</div>
+                  <div class="bosa-card-desc">อนุกรมฟูริเยร์ การแปลงลาปลาส ตัวกรองสัญญาณดิจิทัล และการสุ่มตัวอย่าง</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-electrical" data-chapter="ch06" data-view="view-theory">
+                  <div class="bosa-card-num">EE-06</div>
+                  <h4 class="bosa-card-name">เครื่องจักรกลไฟฟ้าและโครงข่ายไฟฟ้า</h4>
+                  <div class="bosa-card-en">Electric Machines & Power Grid</div>
+                  <div class="bosa-card-desc">หม้อแปลงไฟฟ้า มอเตอร์เหนี่ยวนำ เครื่องกำเนิดไฟฟ้าซิงโครนัส และการไหลของกำลัง</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ROW 3: เครื่องกล (Mechanical Engineering) -->
+            <div class="bosa-eng-discipline-block" id="eng-row-mechanical">
+              <div class="eng-discipline-header">
+                <span class="eng-icon">⚙️</span>
+                <h4 class="eng-name">เครื่องกล (Mechanical Engineering)</h4>
+                <span class="eng-tag">6 โมดูลหลักวิศวกรรมเครื่องกล</span>
+              </div>
+              <div class="bosa-eng-row-grid">
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="ch01" data-view="view-theory">
+                  <div class="bosa-card-num">ME-01</div>
+                  <h4 class="bosa-card-name">พลศาสตร์วิศวกรรมและการเคลื่อนที่เชิงกล</h4>
+                  <div class="bosa-card-en">Engineering Dynamics</div>
+                  <div class="bosa-card-desc">จลนพลศาสตร์ของกลไก กฎการเคลื่อนที่ระนาบ และแรงเสียดทานเชิงกล</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="ch05" data-view="view-theory">
+                  <div class="bosa-card-num">ME-02</div>
+                  <h4 class="bosa-card-name">อุณหพลศาสตร์วิศวกรรมประยุกต์</h4>
+                  <div class="bosa-card-en">Applied Thermodynamics</div>
+                  <div class="bosa-card-desc">วัฏจักรแรงคิน วัฏจักรอ็อตโต วัฏจักรดีเซล ปั๊มความร้อน และการทำความเย็น</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="ch01" data-view="view-theory">
+                  <div class="bosa-card-num">ME-03</div>
+                  <h4 class="bosa-card-name">กลศาสตร์ของไหลและการไหลหนืด</h4>
+                  <div class="bosa-card-en">Fluid Mechanics & Viscous Flow</div>
+                  <div class="bosa-card-desc">สมการเนเวียร์-สโตกส์ ชั้นขอบเขต (Boundary layer) แรงต้านอากาศ และการยกตัว</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="ch05" data-view="view-theory">
+                  <div class="bosa-card-num">ME-04</div>
+                  <h4 class="bosa-card-name">การถ่ายเทความร้อน (นำ พา แผ่)</h4>
+                  <div class="bosa-card-en">Heat Transfer (Cond, Conv, Rad)</div>
+                  <div class="bosa-card-desc">กฎการนำความร้อนฟูริเยร์ การพาความร้อนนิวตัน และการแผ่รังสีสเตฟาน-โบลต์ซมันน์</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="ch03" data-view="view-theory">
+                  <div class="bosa-card-num">ME-05</div>
+                  <h4 class="bosa-card-name">การสั่นสะเทือนทางกลและเรโซแนนซ์</h4>
+                  <div class="bosa-card-en">Mechanical Vibrations</div>
+                  <div class="bosa-card-desc">การสั่นสะเทือน 1 และหลายองศาอิสระ การหน่วง แดมเปอร์ และการตัดแยกแรงสั่น</div>
+                </div>
+                <div class="bosa-topic-card card-interactive card-mechanical" data-chapter="civil_eng" data-view="view-theory">
+                  <div class="bosa-card-num">ME-06</div>
+                  <h4 class="bosa-card-name">การออกแบบชิ้นส่วนเครื่องจักรกลและความล้า</h4>
+                  <div class="bosa-card-en">Machine Design & Fatigue</div>
+                  <div class="bosa-card-desc">เกณฑ์ความล้มเหลววอนมิเซส เส้นโค้ง S-N ความเค้นกระจุกตัว และการออกแบบเพลา/เกียร์</div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- EXTENDED CURRICULUM: Umbrellas, Exams, Analytical Mechanics & Textbook Library (Tied to Theory / All track) -->
+        <div id="bosa-extended-curriculum" class="bosa-extended-curriculum">
+          <!-- 1. Master Curriculum Umbrellas (7 หมวดหมู่หลัก ครอบคลุม 26+ สาขาวิชาการและวิศวกรรม) -->
+          <div class="selection-category-block" id="bosa-curriculum-umbrellas">
+            <div class="selection-category-header">
+            <div class="category-title-group">
+              <span class="category-icon">🏛️</span>
+              <div>
+                <h3 class="category-title">1. ผัง 7 หมวดหมู่หลัก ครอบคลุม 26+ สาขาวิชาการและวิศวกรรม (7 Master Umbrella Domains)</h3>
+                <p style="font-size: 0.86rem; color: #94A3B8; margin: 0.2rem 0 0 0;">จัดหมวดหมู่หลักสูตรมหาวิทยาลัย 4 ปีเต็ม สอวน./โอลิมปิก และวิศวกรรมควบคุม 3 สาขาวิชาชีพ</p>
+              </div>
+            </div>
+            <span class="category-count">7 หมวดหมู่หลัก • 42 วิชาการ</span>
           </div>
 
           <div class="selection-cards-grid">
-            <!-- Civil Engineering -->
-            <div class="curriculum-card card-active card-civil-portal" data-chapter="civil_eng" style="cursor: pointer;">
+            <!-- UMBRELLA 1: Classical Mechanics & Dynamics -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
-                <span class="curriculum-code" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">โยธา</span>
-                <span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">สถานะเปิดใช้งาน / Active</span>
+                <span class="curriculum-code" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">หมวดที่ 01</span>
               </div>
-              <h4 class="curriculum-title">วิศวกรรมโยธา (Civil Engineering: Statics & Mechanics)</h4>
+              <h4 class="curriculum-title">กลศาสตร์ดั้งเดิมและจลนศาสตร์ (Classical Mechanics & Dynamics)</h4>
               <p class="curriculum-desc">
-                สถิตยศาสตร์โครงสร้าง สมดุลวัตถุเกร็ง โครงถัก แผนภาพแรงเฉือนและโมเมนต์ดัดในคาน (SFD & BMD) การโก่งตัวของคาน และวงกลมของมอร์
+                รากฐานกลศาสตร์ฟิสิกส์: เวกเตอร์ตำแหน่ง จลนศาสตร์ 1D/2D วิถีโปรเจกไทล์สุญญากาศและแรงต้านอากาศจริง RK4 กฎการเคลื่อนที่นิวตัน ทฤษฎีบทงาน-พลังงาน การดล-โมเมนตัม และสมการจรวดมวลแปรผัน
               </p>
               <div class="curriculum-meta">
-                <span>📐 ผังทฤษฎี & แบบจำลองคาน/วงกลมมอร์</span>
+                <span>📚 ครอบคลุม: TH-01, TH-07, TH-08, TH-09, TH-17</span> • <span>🎯 5 แบบจำลองพลศาสตร์</span>
               </div>
               <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
-                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลอง</button>
-                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;">📐 โจทย์คำนวณ</button>
+                <button class="btn-chapter-launch" data-chapter="ch01" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch01" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch01" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
               </div>
             </div>
 
-            <!-- Electrical Engineering -->
-            <div class="curriculum-card card-planned">
+            <!-- UMBRELLA 2: Rotation & Gravitation -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
-                <span class="curriculum-code">ไฟฟ้า</span>
-                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+                <span class="curriculum-code" style="background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4);">หมวดที่ 02</span>
               </div>
-              <h4 class="curriculum-title">วิศวกรรมไฟฟ้า (Electrical Engineering)</h4>
+              <h4 class="curriculum-title">การหมุน การเคลื่อนที่แบบวงกลมและแรงโน้มถ่วง (Circular Motion & Rotation)</h4>
               <p class="curriculum-desc">
-                ทฤษฎีแม่เหล็กไฟฟ้าและสมการแมกซ์เวลล์ (Maxwell's Equations) การวิเคราะห์วงจรพลศาสตร์ RLC สภาพแวดล้อมสนามคลื่น และระบบทรานเชียนต์
+                พิกัดเชิงขั้ว อัตราเร็วเชิงมุม ความเร่งสู่ศูนย์กลางและแนวสัมผัส พลศาสตร์ทางโค้งราบและทางโค้งยกมุมเอียง วงกลมในระนาบดิ่ง ลูปคลอธอยด์ในรถไฟเหาะ และกฎแรงดึงดูดระหว่างมวลของนิวตัน/เคปเลอร์
               </p>
               <div class="curriculum-meta">
-                <span>⚡ สนามคลื่น & พลศาสตร์วงจร</span>
+                <span>📚 ครอบคลุม: TH-02, TH-07, TH-21</span> • <span>🎯 3 แบบจำลองวงกลม & วงโคจร</span>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="ch02" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch02" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch02" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
               </div>
             </div>
 
-            <!-- Mechanical Engineering -->
-            <div class="curriculum-card card-planned">
+            <!-- UMBRELLA 3: Oscillations & Waves -->
+            <div class="curriculum-card card-active">
               <div class="card-top-row">
-                <span class="curriculum-code">เครื่องกล</span>
-                <span class="status-badge status-planned">วางแผนในอนาคต / Planned</span>
+                <span class="curriculum-code" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);">หมวดที่ 03</span>
               </div>
-              <h4 class="curriculum-title">วิศวกรรมเครื่องกล (Mechanical Engineering)</h4>
+              <h4 class="curriculum-title">การแกว่งกวัด คลื่น และสวนศาสตร์ (Oscillations, Waves & Acoustics)</h4>
               <p class="curriculum-desc">
-                จลนพลศาสตร์ของเครื่องจักรกล (Kinematics of Machinery) การสั่นสะเทือนเชิงกลขั้นสูง พลศาสตร์ของไหลประยุกต์ และวัฏจักรอุณหพลศาสตร์เครื่องยนต์
+                สมการอนุพันธ์ฮาร์มอนิก มวลติดสปริง ลูกตุ้มนาฬิกา การสั่นหน่วง 3 สภาวะ (Under, Critical, Over) ปรากฏการณ์สั่นพ้องเรโซแนนซ์ ค่าประกอบคุณภาพ Q สมการคลื่น คลื่นนิ่ง บีตส์ ดอปเปลอร์ และทัศนูปกรณ์
               </p>
               <div class="curriculum-meta">
-                <span>⚙️ กลไกเครื่องจักร & การสั่นสะเทือน</span>
+                <span>📚 ครอบคลุม: TH-03, TH-04, TH-24</span> • <span>🎯 7 แบบจำลอง SHM, คลื่น & สั่นพ้อง</span>
               </div>
-              <div class="curriculum-action-row">
-                <button class="btn-action-disabled" disabled>วางแผนในอนาคต</button>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="ch03" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch03" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #7c3aed, #6d28d9); border: 1px solid #8b5cf6; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch03" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
+              </div>
+            </div>
+
+            <!-- UMBRELLA 4: Thermodynamics & Statistical Mechanics -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);">หมวดที่ 04</span>
+              </div>
+              <h4 class="curriculum-title">อุณหพลศาสตร์และกลศาสตร์สถิติ (Thermodynamics & Statistical Physics)</h4>
+              <p class="curriculum-desc">
+                ทฤษฎีจลน์ระดับโมเลกุลและการแจกแจงแมกซ์เวลล์-โบลต์ซมันน์ กฎข้อที่ศูนย์ หนึ่ง และสองของเทอร์โมไดนามิกส์ สี่กระบวนการหลัก เครื่องยนต์ความร้อน วัฏจักรคาร์โนต์ อ็อตโต ดีเซล และนิยามเอนโทรปี
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 ครอบคลุม: TH-05, TH-12, TH-19</span> • <span>🎯 แบบจำลอง P-V Engine & แก๊สจลน์</span>
+              </div>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="ch05" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch05" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #ea580c, #c2410c); border: 1px solid #f97316; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch05" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
+              </div>
+            </div>
+
+            <!-- UMBRELLA 5: Electromagnetism & Field Theory -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">หมวดที่ 05</span>
+              </div>
+              <h4 class="curriculum-title">แม่เหล็กไฟฟ้า ทฤษฎีสนาม และพลาสมา (Electricity, Magnetism & Plasma)</h4>
+              <p class="curriculum-desc">
+                กฎคูลอมบ์ ศักย์ไฟฟ้า ตัวเก็บประจุและไดอิเล็กทริก วงจรไฟฟ้าทรานเชียนต์ RC สนามแม่เหล็ก แรงลอเรนซ์ กฎการเหนี่ยวนำฟาราเดย์-เลนซ์ สมการแมกซ์เวลล์ คลื่นแม่เหล็กไฟฟ้า และสนามพลาสมาโทคาแมค
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 ครอบคลุม: TH-06, TH-10 + พลาสมาฟิวชัน</span> • <span>🎯 แบบจำลองสนามไฟฟ้า & แรงลอเรนซ์</span>
+              </div>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="ch06" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch06" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch06" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
+              </div>
+            </div>
+
+            <!-- UMBRELLA 6: Quantum, Nuclear & Modern Physics -->
+            <div class="curriculum-card card-active">
+              <div class="card-top-row">
+                <span class="curriculum-code" style="background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4);">หมวดที่ 06</span>
+              </div>
+              <h4 class="curriculum-title">ฟิสิกส์นิวเคลียร์ กลศาสตร์ควอนตัม และดาราศาสตร์ (Nuclear, Quantum & Astro)</h4>
+              <p class="curriculum-desc">
+                โครงสร้างนิวเคลียส พลังงานยึดเหนี่ยว มวลพร่อง กฎการสลายกัมมันตรังสีและครึ่งชีวิต ปรากฏการณ์โฟโตอิเล็กทริก ทวิภาวะคลื่น-อนุภาค การกระเจิงคอมปตัน สมการชเรอดิงเงอร์ และแบบจำลองมาตรฐานอนุภาค
+              </p>
+              <div class="curriculum-meta">
+                <span>📚 ครอบคลุม: TH-11, TH-13, TH-14, TH-18, TH-20, TH-23</span> • <span>🎯 แบบจำลองนิวเคลียร์ & ครึ่งชีวิต</span>
+              </div>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="ch07" data-view="view-theory" style="flex: 1;">📖 ดูทฤษฎี</button>
+                <button class="btn-chapter-launch" data-chapter="ch07" data-view="view-simulator" style="flex: 1; background: linear-gradient(135deg, #db2777, #be185d); border: 1px solid #f472b6; color: #ffffff;">🧪 แบบจำลอง</button>
+                <button class="btn-chapter-launch" data-chapter="ch07" data-view="view-practice" style="flex: 1; background: linear-gradient(135deg, #059669, #047857); border: 1px solid #10b981; color: #ffffff;">📐 โจทย์คำนวณ</button>
+              </div>
+            </div>
+
+            <!-- UMBRELLA 7: Applied & Professional Engineering Disciplines -->
+            <div class="curriculum-card card-active" style="grid-column: 1 / -1; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.92));">
+              <div class="card-top-row">
+                <span class="curriculum-code" style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5);">หมวดที่ 07</span>
+              </div>
+              <h4 class="curriculum-title">วิศวกรรมศาสตร์ประยุกต์ 3 สาขาวิชาชีพ (Applied & Professional Engineering)</h4>
+              <p class="curriculum-desc">
+                บูรณาการ 3 เสาหลักวิศวกรรมควบคุมมาตรฐานสภาวิศวกร (ก.ว.):<br>
+                • <strong>วิศวกรรมโยธา (Civil):</strong> สถิตยศาสตร์วิศวกรรม แผนภาพ SFD & BMD คานรับแรงดัด โครงถัก 2D Truss และวงกลมของมอร์<br>
+                • <strong>วิศวกรรมไฟฟ้า (Electrical):</strong> การวิเคราะห์วงจร RLC ระบบทรานเชียนต์ RC/RL คลื่นแม่เหล็กไฟฟ้าประยุกต์ และอิเล็กทรอนิกส์กำลัง<br>
+                • <strong>วิศวกรรมเครื่องกล (Mechanical):</strong> จลนพลศาสตร์เครื่องจักรกล การสั่นสะเทือนเชิงกล การไหลหนืด และวัฏจักรอุณหพลศาสตร์ประยุกต์
+              </p>
+              <div class="curriculum-meta">
+                <span>🏗️ โยธา 6 โมดูล</span> • <span>⚡ ไฟฟ้า 6 โมดูล</span> • <span>⚙️ เครื่องกล 6 โมดูล</span> • <span>🎯 แบบจำลองโครงถัก คาน SFD/BMD & วงกลมมอร์</span>
+              </div>
+              <div class="curriculum-action-row" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-theory" style="flex: 1; padding: 0.65rem 1rem;">📖 ทฤษฎีวิศวกรรม (ก.ว.)</button>
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-simulator" style="flex: 1; padding: 0.65rem 1rem; background: linear-gradient(135deg, #0284c7, #0369a1); border: 1px solid #38bdf8; color: #ffffff;">🧪 แบบจำลองโครงถัก & คาน</button>
+                <button class="btn-chapter-launch" data-chapter="civil_eng" data-view="view-practice" style="flex: 1; padding: 0.65rem 1rem; background: linear-gradient(135deg, #d97706, #b45309); border: 1px solid #f59e0b; color: #ffffff;">📐 คลังโจทย์วิศวกรรม</button>
               </div>
             </div>
           </div>
@@ -535,7 +818,6 @@
             <div class="curriculum-card card-active">
               <div class="card-top-row">
                 <span class="curriculum-code">Analytical Mechanics</span>
-                <span class="status-badge status-active">พร้อมใช้งาน (Active)</span>
               </div>
               <h4 class="curriculum-title">การวิเคราะห์กลศาสตร์และกระบวนทัศน์ขั้นสูง (Action Principle, Lagrangian & Hamiltonian)</h4>
               <p class="curriculum-desc">
@@ -567,7 +849,6 @@
             <div class="curriculum-card card-active" style="grid-column: 1 / -1; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(11, 17, 32, 0.95));">
               <div class="card-top-row">
                 <span class="curriculum-code" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">TEXTBOOK LIBRARY</span>
-                <span class="status-badge status-active">เปิดอ่านในเว็บได้ทันที (In-App PDF Viewer)</span>
               </div>
               <h4 class="curriculum-title">คลังตำรามาตรฐานสากลและเอกสารบรรยายมหาวิทยาลัยเคมบริดจ์ ฮาร์วาร์ด และ MIT</h4>
               <p class="curriculum-desc">
@@ -583,6 +864,8 @@
               </div>
             </div>
           </div>
+        </div>
+        <!-- End bosa-extended-curriculum -->
         </div>
       </div>
     </section>
@@ -607,7 +890,7 @@
       <div class="sim-mode-switcher-container">
         <div class="sim-mode-nav" role="tablist" aria-label="เลือกโหมดแบบจำลองพลศาสตร์">
           <!-- Chapter 1 (4 Simulators) -->
-          <button class="sim-mode-btn active" data-chapter="ch01" data-sim-mode="projectile" id="mode-btn-projectile" role="tab" aria-selected="true">
+          <button class="sim-mode-btn active" data-chapter="ch01" data-sim-mode="projectile" data-submode="trajectory" id="mode-btn-projectile" role="tab" aria-selected="true">
             🎯 1. วิถีโปรเจกไทล์ & แรงต้านอากาศ (RK4)
           </button>
           <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="vehicle" id="mode-btn-vehicle" role="tab" aria-selected="false">
@@ -618,6 +901,9 @@
           </button>
           <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="threejs" id="mode-btn-threejs" role="tab" aria-selected="false">
             🌐 4. วิถี 3 มิติ & ลมพัดขวาง (Three.js WebGL)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch01" data-sim-mode="projectile" data-submode="rocket_equation" id="mode-btn-ch01-rocket" role="tab" aria-selected="false">
+            🚀 5. สมการจรวดมวลแปรผัน (Rocket Equation)
           </button>
 
           <!-- Chapter 2 (3 Simulators) -->
@@ -643,6 +929,9 @@
           </button>
           <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="double_pendulum" id="mode-btn-ch03-double" role="tab" aria-selected="false" style="display: none;">
             🔀 4. ลูกตุ้มคู่โกลาหล (Double Pendulum Chaos)
+          </button>
+          <button class="sim-mode-btn" data-chapter="ch03" data-sim-mode="oscillation" data-submode="rotating_hoop" id="mode-btn-ch03-hoop" role="tab" aria-selected="false" style="display: none;">
+            🪐 5. ลูกปัดบนห่วงหมุน (Rotating Hoop)
           </button>
 
           <!-- Chapter 4 (6 Simulators) -->
@@ -695,8 +984,11 @@
           <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="ac_rlc_resonance" id="mode-btn-ch06-ac-rlc" role="tab" aria-selected="false" style="display: none;">
             〰️ 6. ไฟฟ้ากระแสสลับ RLC เรโซแนนซ์ (AC RLC & Phasor)
           </button>
+          <button class="sim-mode-btn" data-chapter="ch06" data-sim-mode="em" data-submode="dielectric_force" id="mode-btn-ch06-dielectric" role="tab" aria-selected="false" style="display: none;">
+            ⚡ 7. แรงดึงดูดไดอิเล็กทริก (Dielectric Force)
+          </button>
 
-          <!-- Chapter 7 (3 Simulators) -->
+          <!-- Chapter 7 (4 Simulators) -->
           <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="binding_energy" id="mode-btn-ch07-binding" role="tab" aria-selected="false" style="display: none;">
             ⚛️ 1. พลังงานยึดเหนี่ยวนิวเคลียส (Binding Energy)
           </button>
@@ -706,8 +998,11 @@
           <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="shielding_dosimetry" id="mode-btn-ch07-shielding" role="tab" aria-selected="false" style="display: none;">
             🛡️ 3. การกำบังรังสีและโดสิเมทรี (Radiation Shielding)
           </button>
+          <button class="sim-mode-btn" data-chapter="ch07" data-sim-mode="nuclear" data-submode="compton_scattering" id="mode-btn-ch07-compton" role="tab" aria-selected="false" style="display: none;">
+            🎯 4. การกระเจิงคอมป์ตัน (Compton Scattering)
+          </button>
 
-          <!-- Chapter Civil Engineering (3 Simulators) -->
+          <!-- Chapter Civil Engineering (4 Simulators) -->
           <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="simply_supported" id="mode-btn-civ-simply" role="tab" aria-selected="false" style="display: none;">
             🏗️ 1. คานช่วงเดี่ยว & แรงแผ่ (Simply Supported SFD/BMD)
           </button>
@@ -716,6 +1011,9 @@
           </button>
           <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="mohr_circle" id="mode-btn-civ-mohr" role="tab" aria-selected="false" style="display: none;">
             🔄 3. วงกลมของมอร์ & การแปลงความเค้น (Mohr's Stress Circle)
+          </button>
+          <button class="sim-mode-btn" data-chapter="civil_eng" data-sim-mode="civil" data-submode="truss_analysis" id="mode-btn-civ-truss" role="tab" aria-selected="false" style="display: none;">
+            🌉 4. โครงถัก & แรงในชิ้นส่วน (Truss Method of Joints)
           </button>
         </div>
       </div>
@@ -737,8 +1035,16 @@
           <div class="sim-stage-container">
             <div class="canvas-wrapper">
               <canvas id="simulator-canvas" width="800" height="480" class="canvas-drag-surface" aria-label="กระดานจำลองวิถีการยิงโปรเจกไทล์ ลากที่ปลายเวกเตอร์เพื่อปรับมุมและความเร็ว"></canvas>
-          </div>
-          <div class="canvas-legend" aria-hidden="true">
+              <!-- Auxiliary Inset Canvas (Image 3 Inset [ ]) -->
+              <div class="canvas-inset-box" id="canvas-inset-box" title="มุมมองจุดสูงสุดและพิกัดขยาย (Apex Inset)">
+                <div class="inset-header">
+                  <span class="inset-title">🔍 จุดสูงสุด &amp; พิกัดย่อย</span>
+                  <span class="inset-badge">[ ] ขยาย</span>
+                </div>
+                <canvas id="simulator-inset-canvas" width="160" height="100" class="inset-canvas-surface" aria-label="ภาพขยายจุดสูงสุด"></canvas>
+              </div>
+            </div>
+            <div class="canvas-legend" aria-hidden="true">
               <div class="legend-item">
                 <span class="legend-color" style="background-color: #EA580C;"></span>
                 <span>วิถีจริง (มีแรงต้าน $F_d = -cv^2$)</span>
@@ -749,9 +1055,24 @@
               </div>
               <div class="legend-item" style="margin-top: 2px; color: #475569; font-size: 0.75rem;">
                 💡 แตะ/ลากที่หัวลูกศรบนกระดานเพื่อปรับมุมและความเร็วได้โดยตรง
-              
-          </div>
-          </div>
+              </div>
+            </div>
+
+            <!-- Preset Color Dots (Image 3: Black, Pink, Green, Blue) & Step Navigation (< | >) -->
+            <div class="canvas-footer-dock">
+              <div class="canvas-preset-dots-bar" id="canvas-preset-dots-bar" aria-label="สถานะพรีเซ็ตสีด่วน">
+                <span class="preset-dots-label">พรีเซ็ตวิถี:</span>
+                <button class="preset-dot dot-black active" data-preset="standard" title="มาตรฐาน: 100 m/s @ 30° (Black)" aria-label="พรีเซ็ตมาตรฐาน"></button>
+                <button class="preset-dot dot-pink" data-preset="high-angle" title="มุมสูง: 100 m/s @ 65° (Pink)" aria-label="พรีเซ็ตมุมสูง"></button>
+                <button class="preset-dot dot-green" data-preset="heavy-drag" title="ต้านอากาศสูง: c=0.25 (Green)" aria-label="พรีเซ็ตต้านอากาศสูง"></button>
+                <button class="preset-dot dot-blue" data-preset="high-speed" title="ความเร็วสูง: 150 m/s @ 45° (Blue)" aria-label="พรีเซ็ตความเร็วสูง"></button>
+              </div>
+              <div class="sim-step-nav-group" aria-label="การนำทางขั้นตอน">
+                <button id="btn-step-prev" class="btn-step-nav" aria-label="ย้อนกลับหนึ่งขั้น">&lt;</button>
+                <span class="step-nav-indicator" id="step-nav-indicator">ขั้นตอน 1 / 4</span>
+                <button id="btn-step-next" class="btn-step-nav" aria-label="ไปข้างหน้าหนึ่งขั้น">&gt;</button>
+              </div>
+            </div>
 
           <!-- Playback Action Buttons -->
           <div class="sim-controls-bar">
@@ -804,103 +1125,247 @@
           </div>
         </div>
 
-        <!-- Right: Parameters Sidebar & Telemetry Readouts -->
+        <!-- Right: Parameters Sidebar & Telemetry Readouts (Image 3: Box 1, Box 2, Box 3) -->
         <aside class="sim-sidebar" aria-label="แผงปรับแต่งพารามิเตอร์และค่ามาตรวัด">
-          <div class="sidebar-section-title">พารามิเตอร์การปล่อย (Launch Parameters)</div>
-
-          <!-- Speed Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-v0" class="slider-name">ความเร็วต้น ($v_0$):</label>
-              <span id="val-v0" class="slider-val">100 m/s</span>
+          <!-- BOX 1: ปรับเลข & Direct Typing & Formula Display -->
+          <div class="sidebar-box-ctrls">
+            <div class="sidebar-section-title">
+              <span>( ) 1. ปรับตัวเลขพารามิเตอร์</span>
+              <span class="box-badge-hint">สไลเดอร์ / พิมพ์เลข</span>
             </div>
-            <input type="range" id="slider-v0" class="slider-input" min="10" max="150" value="100" step="1" aria-label="ความเร็วต้น">
+
+            <!-- Submode A: Projectile Trajectory Controls -->
+            <div id="controls-projectile-trajectory" class="submode-controls-group">
+              <!-- Governing Trajectory Formula Card -->
+              <div class="sim-governing-formula-mini">
+                <span class="formula-mini-label">สมการวิถีหลัก:</span>
+                <span class="formula-mini-math">$$y(x) = y_0 + x\tan\theta - \frac{g x^2}{2v_0^2\cos^2\theta}$$</span>
+              </div>
+
+              <!-- Speed Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-v0" class="slider-name">ความเร็วต้น ($v_0$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-v0" class="direct-number-input" min="10" max="150" value="100" step="1" aria-label="พิมพ์ค่าความเร็วต้น">
+                    <span id="val-v0" class="slider-val">100 m/s</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-v0" class="slider-input" min="10" max="150" value="100" step="1" aria-label="ความเร็วต้น">
+              </div>
+
+              <!-- Angle Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-theta" class="slider-name">มุมยิง ($\theta$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-theta" class="direct-number-input" min="0" max="90" value="30" step="1" aria-label="พิมพ์ค่ามุมยิง">
+                    <span id="val-theta" class="slider-val">30°</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-theta" class="slider-input" min="0" max="90" value="30" step="1" aria-label="มุมยิง">
+              </div>
+
+              <!-- Mass Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-m" class="slider-name">มวล ($m$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-m" class="direct-number-input" min="0.2" max="20" value="5.0" step="0.2" aria-label="พิมพ์ค่ามวล">
+                    <span id="val-m" class="slider-val">5.0 kg</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-m" class="slider-input" min="0.2" max="20" value="5.0" step="0.2" aria-label="มวลวัตถุ">
+              </div>
+
+              <!-- Drag Factor Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-c" class="slider-name">แรงต้าน ($c = \frac{1}{2}\rho C_D A$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-c" class="direct-number-input" min="0.00" max="0.30" value="0.05" step="0.01" aria-label="พิมพ์ค่าแรงต้าน">
+                    <span id="val-c" class="slider-val">0.05 kg/m</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-c" class="slider-input" min="0.00" max="0.30" value="0.05" step="0.01" aria-label="สัมประสิทธิ์แรงต้านอากาศ">
+              </div>
+
+              <!-- Gravity Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-g" class="slider-name">ความเร่งโน้มถ่วง ($g$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-g" class="direct-number-input" min="1.62" max="24.79" value="9.80665" step="0.1" aria-label="พิมพ์ค่าความเร่งโน้มถ่วง">
+                    <span id="val-g" class="slider-val">9.81 m/s²</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-g" class="slider-input" min="1.62" max="24.79" value="9.80665" step="0.1" aria-label="ความเร่งโน้มถ่วง">
+              </div>
+
+              <!-- Height Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-y0" class="slider-name">ความสูงฐานยิง ($y_0$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-y0" class="direct-number-input" min="0" max="60" value="0" step="1" aria-label="พิมพ์ค่าความสูงฐานยิง">
+                    <span id="val-y0" class="slider-val">0 m</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-y0" class="slider-input" min="0" max="60" value="0" step="1" aria-label="ความสูงฐานยิง">
+              </div>
+            </div>
+
+            <!-- Submode B: Rocket Equation Controls -->
+            <div id="controls-projectile-rocket" class="submode-controls-group" style="display: none;">
+              <!-- Governing Rocket Formula Card -->
+              <div class="sim-governing-formula-mini">
+                <span class="formula-mini-label">สมการจรวดไซออลคอฟสกี:</span>
+                <span class="formula-mini-math">$$\Delta v = u_{\text{ex}} \ln\left(\frac{m_0}{m_f}\right)$$</span>
+              </div>
+
+              <!-- Initial Mass m0 Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-rocket-m0" class="slider-name">มวลเริ่มต้นรวม ($m_0$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-rocket-m0" class="direct-number-input" min="2000" max="50000" value="12000" step="500" aria-label="พิมพ์ค่ามวลเริ่มต้น">
+                    <span id="val-rocket-m0" class="slider-val">12,000 kg</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-rocket-m0" class="slider-input" min="2000" max="50000" value="12000" step="500" aria-label="มวลเริ่มต้นรวม">
+              </div>
+
+              <!-- Dry Mass mf Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-rocket-mf" class="slider-name">มวลแห้งสุดท้าย ($m_f$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-rocket-mf" class="direct-number-input" min="500" max="10000" value="1200" step="100" aria-label="พิมพ์ค่ามวลแห้ง">
+                    <span id="val-rocket-mf" class="slider-val">1,200 kg</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-rocket-mf" class="slider-input" min="500" max="10000" value="1200" step="100" aria-label="มวลแห้งสุดท้าย">
+              </div>
+
+              <!-- Exhaust Speed uex Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-rocket-uex" class="slider-name">อัตราเร็วขับไอพ่น ($u_{\text{ex}}$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-rocket-uex" class="direct-number-input" min="1000" max="8000" value="3000" step="100" aria-label="พิมพ์ค่าอัตราเร็วไอพ่น">
+                    <span id="val-rocket-uex" class="slider-val">3,000 m/s</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-rocket-uex" class="slider-input" min="1000" max="8000" value="3000" step="100" aria-label="อัตราเร็วขับไอพ่น">
+              </div>
+
+              <!-- Burn Time Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="slider-rocket-time" class="slider-name">เวลาเผาไหม้รวม ($t_{\text{burn}}$):</label>
+                  <div class="slider-input-sync-wrap">
+                    <input type="number" id="input-rocket-time" class="direct-number-input" min="10" max="120" value="54" step="2" aria-label="พิมพ์ค่าเวลาเผาไหม้">
+                    <span id="val-rocket-time" class="slider-val">54 s</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-rocket-time" class="slider-input" min="10" max="120" value="54" step="2" aria-label="เวลาเผาไหม้รวม">
+              </div>
+            </div>
           </div>
 
-          <!-- Angle Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-theta" class="slider-name">มุมยิง ($\theta$):</label>
-              <span id="val-theta" class="slider-val">30°</span>
+          <!-- BOX 2: Telemetry HUD Panel -->
+          <div class="sidebar-box-telem">
+            <div class="sidebar-section-title" style="margin-top: 0.5rem;">
+              <span>📊 2. ข้อมูลตรวจวัดสด (Live Telemetry HUD)</span>
             </div>
-            <input type="range" id="slider-theta" class="slider-input" min="0" max="90" value="30" step="1" aria-label="มุมยิง">
+            <!-- Trajectory Telemetry Grid -->
+            <div id="telem-projectile-trajectory" class="telemetry-grid">
+              <div class="telem-box">
+                <div class="telem-label">ระยะตกจริง (Range)</div>
+                <div id="telem-range" class="telem-val" style="color: var(--accent-red);">0.00 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ระยะสุญญากาศ (Vac)</div>
+                <div id="telem-vac-range" class="telem-val" style="color: #64748B;">0.00 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">พิกัด x (แนวนอน)</div>
+                <div id="telem-x" class="telem-val">0.00 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">พิกัด y (ความสูง)</div>
+                <div id="telem-y" class="telem-val">0.00 m</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">ความเร็ว $v$</div>
+                <div id="telem-v" class="telem-val">0.00 m/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">เวลาบิน $t$</div>
+                <div id="telem-t" class="telem-val">0.000 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">พลังงานจลน์ $E_k$</div>
+                <div id="telem-ek" class="telem-val">0.0 J</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">พลังงานรวม $E$</div>
+                <div id="telem-etotal" class="telem-val">0.0 J</div>
+              </div>
+            </div>
+
+            <!-- Rocket Telemetry Grid -->
+            <div id="telem-projectile-rocket" class="telemetry-grid" style="display: none;">
+              <div class="telem-box">
+                <div class="telem-label">มวลปัจจุบัน $m(t)$</div>
+                <div id="telem-rocket-m" class="telem-val" style="color: #38BDF8;">12,000 kg</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">อัตราเร็ว $v(t)$</div>
+                <div id="telem-rocket-v" class="telem-val" style="color: #4ADE80;">0.00 km/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">อัตราเร็วสุทธิ $\Delta v$</div>
+                <div id="telem-rocket-deltav" class="telem-val" style="color: #FBBF24;">6.91 km/s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">เวลาเผาไหม้ $t$</div>
+                <div id="telem-rocket-t" class="telem-val">0.0 s</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">เชื้อเพลิงเหลือ</div>
+                <div id="telem-rocket-fuel" class="telem-val" style="color: #F87171;">10,800 kg</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">อัตราส่วน $m_0/m_f$</div>
+                <div id="telem-rocket-rm" class="telem-val" style="color: #C084FC;">10.0</div>
+              </div>
+            </div>
           </div>
 
-          <!-- Mass Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-m" class="slider-name">มวล ($m$):</label>
-              <span id="val-m" class="slider-val">5.0 kg</span>
+          <!-- BOX 3: เงื่อนไขการใช้งาน & ขอบเขต (Image 3 Box 3) -->
+          <div class="sidebar-box-conditions" id="sim-conditions-card">
+            <div class="conditions-header">
+              <span class="conditions-title">📋 3. เงื่อนไขการใช้งาน &amp; ขอบเขต</span>
+              <button class="btn-conditions-toggle" id="btn-conditions-toggle" aria-expanded="false" title="กดดูเพิ่มเติม">
+                ⊕ ดูเพิ่มเติม
+              </button>
             </div>
-            <input type="range" id="slider-m" class="slider-input" min="0.2" max="20" value="5.0" step="0.2" aria-label="มวลวัตถุ">
-          </div>
-
-          <!-- Drag Factor Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-c" class="slider-name">แรงต้าน ($c = \frac{1}{2}\rho C_D A$):</label>
-              <span id="val-c" class="slider-val">0.05 kg/m</span>
+            <div class="conditions-summary-text">
+              • แรงต้านอากาศ $F_d = -c v^2$ (กำลังสองตามอัตราเร็วสัมพัทธ์)<br>
+              • การเคลื่อนที่ในระนาบดิ่ง 2 มิติ พลังงานรวมลดลง $\Delta E = W_{\text{drag}} &lt; 0$
             </div>
-            <input type="range" id="slider-c" class="slider-input" min="0.00" max="0.30" value="0.05" step="0.01" aria-label="สัมประสิทธิ์แรงต้านอากาศ">
-          </div>
-
-          <!-- Gravity Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-g" class="slider-name">ความเร่งโน้มถ่วง ($g$):</label>
-              <span id="val-g" class="slider-val">9.81 m/s²</span>
+            <div class="conditions-expanded-content" id="conditions-expanded-content" style="display: none;">
+              <div class="condition-item"><strong>แบบจำลองความหนาแน่น:</strong> อากาศมาตรฐานระดับน้ำทะเล $\rho = 1.225\text{ kg/m}^3$ ที่ $15^\circ\text{C}$</div>
+              <div class="condition-item"><strong>อัลกอริทึมคำนวณ:</strong> 4th-Order Runge-Kutta (RK4) ก้าวเวลา $dt = 0.005\text{ s}$</div>
+              <div class="condition-item"><strong>ขอบเขตใช้ได้:</strong> เหมาะสมกับวัตถุทรงกลมขนาดเรย์โนลด์ $10^3 &lt; Re &lt; 10^5$ ที่ $C_D \approx 0.47$</div>
             </div>
-            <input type="range" id="slider-g" class="slider-input" min="1.62" max="24.79" value="9.80665" step="0.1" aria-label="ความเร่งโน้มถ่วง">
-          </div>
-
-          <!-- Height Slider -->
-          <div class="slider-group">
-            <div class="slider-header">
-              <label for="slider-y0" class="slider-name">ความสูงฐานยิง ($y_0$):</label>
-              <span id="val-y0" class="slider-val">0 m</span>
-            </div>
-            <input type="range" id="slider-y0" class="slider-input" min="0" max="60" value="0" step="1" aria-label="ความสูงฐานยิง">
-          </div>
-
-          <!-- Telemetry HUD Panel -->
-          <div class="sidebar-section-title" style="margin-top: 0.5rem;">ข้อมูลตรวจวัดสด (Live Telemetry HUD)</div>
-          <div class="telemetry-grid">
-            <div class="telem-box">
-              <div class="telem-label">ระยะตกจริง (Range)</div>
-              <div id="telem-range" class="telem-val" style="color: var(--accent-red);">0.00 m</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">ระยะสุญญากาศ (Vac)</div>
-              <div id="telem-vac-range" class="telem-val" style="color: #64748B;">0.00 m</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">พิกัด x (แนวนอน)</div>
-              <div id="telem-x" class="telem-val">0.00 m</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">พิกัด y (ความสูง)</div>
-              <div id="telem-y" class="telem-val">0.00 m</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">ความเร็ว $v$</div>
-              <div id="telem-v" class="telem-val">0.00 m/s</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">เวลาบิน $t$</div>
-              <div id="telem-t" class="telem-val">0.000 s</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">พลังงานจลน์ $E_k$</div>
-              <div id="telem-ek" class="telem-val">0.0 J</div>
-            </div>
-            <div class="telem-box">
-              <div class="telem-label">พลังงานรวม $E$</div>
-              <div id="telem-etotal" class="telem-val">0.0 J</div>
-            </div>
-          </div>
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-projectile -->
 
     <!-- MODE 2: RACING CAR & WIND VECTOR FIELD -->
@@ -1129,6 +1594,9 @@
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-vehicle -->
 
     <!-- MODE 3: COLLISION, IMPULSE & MOMENTUM -->
@@ -1282,6 +1750,9 @@
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-collision -->
 
     <!-- MODE 4: THREE.JS 3D BALLISTICS & CROSSWIND SIMULATOR -->
@@ -1619,6 +2090,9 @@
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-circular -->
 
 <div id="sim-container-oscillation" class="sim-mode-container" style="display: none;">
@@ -1643,6 +2117,9 @@
             </button>
             <button class="submode-btn" data-submode="double_pendulum" id="btn-submode-double-pendulum">
               🔀 4. ลูกตุ้มคู่โกลาหล (Double Pendulum Chaos)
+            </button>
+            <button class="submode-btn" data-submode="rotating_hoop" id="btn-submode-rotating-hoop">
+              ⭕ 5. บีดบนห่วงหมุน (Rotating Hoop)
             </button>
           </div>
 
@@ -1722,7 +2199,7 @@
 
           <div class="sim-panel">
             <!-- Spring / System Mass m -->
-            <div class="control-group">
+            <div class="control-group" id="group-osc-shared-mass">
               <div class="control-label-row">
                 <label for="osc-slider-mass">มวลของวัตถุ $m$ (Mass):</label>
                 <span id="osc-val-mass" class="control-val-display">2.0 kg</span>
@@ -1856,6 +2333,54 @@
                 <button type="button" class="btn-preset-chip" data-dp-th1="30" data-dp-th2="30" title="มุมเล็กคล้ายการแกว่งกวัดกึ่งเชิงเส้น">⚖️ แกว่งปกติ (30°/30°)</button>
               </div>
             </div>
+
+            <!-- Submode 5: Rotating Hoop Controls Group -->
+            <div id="group-osc-rotating-hoop" class="submode-controls-group" style="display: none;">
+              <!-- Radius R -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-hoop-r">รัศมีห่วง $R$ (Radius):</label>
+                  <span id="osc-val-hoop-r" class="control-val-display">0.50 m</span>
+                </div>
+                <input type="range" id="osc-slider-hoop-r" min="0.2" max="2.0" step="0.05" value="0.50" aria-label="รัศมีห่วง">
+              </div>
+
+              <!-- Rotation Speed Omega -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-hoop-omega">อัตราเร็วรอบหมุน $\Omega$ (Hoop Freq):</label>
+                  <span id="osc-val-hoop-omega" class="control-val-display">6.00 rad/s</span>
+                </div>
+                <input type="range" id="osc-slider-hoop-omega" min="0.0" max="15.0" step="0.5" value="6.0" aria-label="อัตราเร็วรอบหมุน">
+              </div>
+
+              <!-- Gravity g -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-hoop-g">ความเร่งโน้มถ่วง $g$:</label>
+                  <span id="osc-val-hoop-g" class="control-val-display">9.80 m/s²</span>
+                </div>
+                <input type="range" id="osc-slider-hoop-g" min="1.0" max="25.0" step="0.5" value="9.80" aria-label="ความเร่งโน้มถ่วง">
+              </div>
+
+              <!-- Damping gamma -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-hoop-gamma">ความหน่วง $\gamma$ (Damping):</label>
+                  <span id="osc-val-hoop-gamma" class="control-val-display">0.80</span>
+                </div>
+                <input type="range" id="osc-slider-hoop-gamma" min="0.0" max="3.0" step="0.1" value="0.8" aria-label="ความหน่วงของลูกปัด">
+              </div>
+
+              <!-- Initial Angle theta0 -->
+              <div class="control-group">
+                <div class="control-label-row">
+                  <label for="osc-slider-hoop-th0">มุมปล่อยเริ่มต้น $\theta_0$:</label>
+                  <span id="osc-val-hoop-th0" class="control-val-display">15.0°</span>
+                </div>
+                <input type="range" id="osc-slider-hoop-th0" min="-170" max="170" step="5" value="15" aria-label="มุมปล่อยเริ่มต้น">
+              </div>
+            </div>
           </div>
 
           <!-- Oscillation Telemetry HUD -->
@@ -1902,6 +2427,9 @@
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-oscillation -->
 
 <div id="sim-container-wave" class="sim-mode-container" style="display: none;">
@@ -2339,6 +2867,9 @@
           </div>
         </aside>
       </div>
+
+      <!-- Live Calculation & Numerical Substitution Inspector (Full Width Horizontal Bar) -->
+      <div class="sim-telemetry-calc-target sim-calc-fullwidth-container"></div>
     </div><!-- End sim-container-wave -->
 
 <div id="sim-container-thermo" class="sim-mode-container" style="display: none;">
@@ -2844,6 +3375,70 @@
                 <input type="range" id="slider-ac-c" min="1" max="50" step="1" value="10" style="width: 100%;">
               </div>
             </div>
+
+            <!-- Submode 7: Dielectric Kelvin Polarization Force -->
+            <div id="controls-dielectric-force" class="submode-controls-group" style="display: none;">
+              <!-- Preset Chips -->
+              <div style="margin-bottom: 0.85rem;">
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.35rem;">⚡ กรณีทดสอบโจทย์ฟิสิกส์ขั้นสูง:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                  <button type="button" class="preset-chip" id="btn-dielectric-preset-prob" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #38BDF8; background: rgba(56,189,248,0.15); color: #7DD3FC; cursor: pointer;">
+                    🎯 โจทย์ Tong / Jackson (V₀=3000V, κ=4, a=2mm, b=6mm)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-dielectric-preset-highv" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #F59E0B; background: rgba(245,158,11,0.15); color: #FDE68A; cursor: pointer;">
+                    ⚡ แรงดันสูง V₀=5000V
+                  </button>
+                </div>
+              </div>
+
+              <!-- Voltage Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                  <span>แรงดันไฟฟ้า ($V_0$)</span>
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="input-dielectric-v0" class="direct-number-input" min="500" max="6000" step="100" value="3000" style="width: 70px; padding: 2px 4px; font-size: 0.8rem; background: #1e293b; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; text-align: right;" aria-label="แรงดันไฟฟ้า">
+                    <span id="label-dielectric-v0" style="color: #38BDF8; font-weight: bold;">3000 V</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-dielectric-v0" min="500" max="6000" step="100" value="3000" style="width: 100%;">
+              </div>
+
+              <!-- Dielectric Constant Kappa Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                  <span>ค่าคงที่ไดอิเล็กทริก ($\kappa$)</span>
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="input-dielectric-kappa" class="direct-number-input" min="1.5" max="10.0" step="0.5" value="4.0" style="width: 60px; padding: 2px 4px; font-size: 0.8rem; background: #1e293b; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; text-align: right;" aria-label="ค่าคงที่ไดอิเล็กทริก">
+                    <span id="label-dielectric-kappa" style="color: #34D399; font-weight: bold;">4.0</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-dielectric-kappa" min="1.5" max="10.0" step="0.5" value="4.0" style="width: 100%;">
+              </div>
+
+              <!-- Inner Radius a Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                  <span>รัศมีแกนใน ($a$)</span>
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="input-dielectric-a" class="direct-number-input" min="1.0" max="4.0" step="0.5" value="2.0" style="width: 60px; padding: 2px 4px; font-size: 0.8rem; background: #1e293b; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; text-align: right;" aria-label="รัศมีแกนใน">
+                    <span id="label-dielectric-a" style="color: #F59E0B; font-weight: bold;">2.0 mm</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-dielectric-a" min="1.0" max="4.0" step="0.5" value="2.0" style="width: 100%;">
+              </div>
+
+              <!-- Outer Radius b Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                  <span>รัศมีแกนนอก ($b$)</span>
+                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="input-dielectric-b" class="direct-number-input" min="4.5" max="10.0" step="0.5" value="6.0" style="width: 60px; padding: 2px 4px; font-size: 0.8rem; background: #1e293b; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; text-align: right;" aria-label="รัศมีแกนนอก">
+                    <span id="label-dielectric-b" style="color: #CBD5E1; font-weight: bold;">6.0 mm</span>
+                  </div>
+                </div>
+                <input type="range" id="slider-dielectric-b" min="4.5" max="10.0" step="0.5" value="6.0" style="width: 100%;">
+              </div>
+            </div>
           </div>
 
           <!-- Real-Time Physical Telemetry Card -->
@@ -3018,6 +3613,43 @@
                 <input type="range" id="slider-shield-thickness" min="2" max="60" step="2" value="20" style="width: 100%;">
               </div>
             </div>
+
+            <!-- Submode 4: Compton Scattering -->
+            <div id="controls-compton-scattering" class="submode-controls-group" style="display: none;">
+              <!-- Presets -->
+              <div style="margin-bottom: 0.85rem;">
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.35rem;">🎯 กรณีทดสอบการกระเจิงคอมป์ตัน:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                  <button type="button" class="preset-chip" id="btn-compton-preset-prob" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #38BDF8; background: rgba(56,189,248,0.15); color: #7DD3FC; cursor: pointer;">
+                    🎯 โจทย์ IPhO (E₀=100 keV, θ=90°)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-compton-preset-back" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #EF4444; background: rgba(239,68,68,0.15); color: #FCA5A5; cursor: pointer;">
+                    💥 สะท้อนกลับหลัง (θ=180°)
+                  </button>
+                  <button type="button" class="preset-chip" id="btn-compton-preset-graze" style="padding: 0.3rem 0.55rem; font-size: 0.78rem; border-radius: 4px; border: 1px solid #10B981; background: rgba(16,185,129,0.15); color: #6EE7B7; cursor: pointer;">
+                    📐 ชนเฉียง (θ=45°)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Incident Energy E0 Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>พลังงานโฟตอนตกกระทบ ($E_0$)</span>
+                  <span id="label-compton-e0" style="color: #38BDF8; font-weight: bold;">100.0 keV</span>
+                </div>
+                <input type="range" id="slider-compton-e0" min="20" max="500" step="10" value="100" style="width: 100%;">
+              </div>
+
+              <!-- Scattering Angle Theta Slider -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>มุมกระเจิงของโฟตอน ($\theta$)</span>
+                  <span id="label-compton-theta" style="color: #A855F7; font-weight: bold;">90.0°</span>
+                </div>
+                <input type="range" id="slider-compton-theta" min="0" max="180" step="5" value="90" style="width: 100%;">
+              </div>
+            </div>
           </div>
 
           <!-- Real-Time Physical Telemetry Card -->
@@ -3067,6 +3699,9 @@
             <button class="submode-btn" data-submode="mohr_circle" id="btn-submode-civ-mohr">
               🔄 3. วงกลมของมอร์ & การแปลงความเค้น (Mohr's Stress Circle)
             </button>
+            <button class="submode-btn" data-submode="truss_analysis" id="btn-submode-civ-truss">
+              📐 4. โครงถักระนาบ (Plane Truss Analysis)
+            </button>
           </div>
 
           <div class="canvas-wrapper" style="position: relative; min-height: 520px;">
@@ -3093,7 +3728,7 @@
 
           <!-- Presets Action Buttons -->
           <div class="sim-controls-bar" style="margin-top: 0.75rem;">
-            <div class="sim-btn-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div id="presets-civil-beam" class="sim-btn-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button id="btn-civ-preset-center" class="btn btn-secondary" style="font-size: 0.82rem;">
                 🎯 แรงจุดกึ่งกลาง (Center P)
               </button>
@@ -3110,6 +3745,20 @@
                 ✂️ แรงเฉือนบริสุทธิ์ (Pure Shear)
               </button>
               <button id="btn-civ-reset" class="btn btn-secondary" style="font-size: 0.82rem;" aria-label="รีเซ็ตค่ามาตรฐาน">
+                🔄 รีเซ็ต (Reset)
+              </button>
+            </div>
+            <div id="presets-civil-truss" class="sim-btn-group" style="display: none; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="btn-civ-preset-truss-sym" class="btn btn-secondary" style="font-size: 0.82rem;">
+                📐 โครงถักสมมาตร L=4m, H=3m, P=40kN
+              </button>
+              <button id="btn-civ-preset-truss-tall" class="btn btn-secondary" style="font-size: 0.82rem;">
+                🗼 โครงหอคอย L=3m, H=5m, P=60kN
+              </button>
+              <button id="btn-civ-preset-truss-lateral" class="btn btn-secondary" style="font-size: 0.82rem;">
+                💨 แรงลมด้านข้าง Px=50kN, Py=0
+              </button>
+              <button id="btn-civ-reset-truss" class="btn btn-secondary" style="font-size: 0.82rem;" aria-label="รีเซ็ตค่ามาตรฐาน">
                 🔄 รีเซ็ต (Reset)
               </button>
             </div>
@@ -3207,6 +3856,45 @@
                 <input type="range" id="slider-civ-theta" min="-90" max="90" step="1" value="25" style="width: 100%;">
               </div>
             </div>
+
+            <!-- Truss Specific Controls -->
+            <div id="controls-civil-truss" class="submode-controls-group" style="display: none;">
+              <!-- Span L -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความยาวช่วงฐาน (Span L)</span>
+                  <span id="label-civ-truss-l" style="color: #38BDF8; font-weight: bold;">4.0 m</span>
+                </div>
+                <input type="range" id="slider-civ-truss-l" min="2.0" max="12.0" step="0.5" value="4.0" style="width: 100%;">
+              </div>
+
+              <!-- Height H -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>ความสูงโครงถัก (Height H)</span>
+                  <span id="label-civ-truss-h" style="color: #34D399; font-weight: bold;">3.0 m</span>
+                </div>
+                <input type="range" id="slider-civ-truss-h" min="1.0" max="8.0" step="0.5" value="3.0" style="width: 100%;">
+              </div>
+
+              <!-- Load Px -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>แรงแนวราบยอด B ($P_x$)</span>
+                  <span id="label-civ-truss-px" style="color: #EF4444; font-weight: bold;">40.0 kN</span>
+                </div>
+                <input type="range" id="slider-civ-truss-px" min="-100" max="100" step="5" value="40" style="width: 100%;">
+              </div>
+
+              <!-- Load Py -->
+              <div class="slider-control" style="margin-bottom: 0.75rem;">
+                <div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                  <span>แรงแนวดิ่งยอด B ($P_y$)</span>
+                  <span id="label-civ-truss-py" style="color: #F59E0B; font-weight: bold;">0.0 kN</span>
+                </div>
+                <input type="range" id="slider-civ-truss-py" min="-100" max="100" step="5" value="0" style="width: 100%;">
+              </div>
+            </div>
           </div>
 
           <!-- Real-Time Physical Telemetry Card -->
@@ -3261,10 +3949,47 @@
                 <div id="civ-telem-txyprime" class="telem-val" style="color: #F59E0B;">-8.5 MPa</div>
               </div>
             </div>
+
+            <div id="telem-civil-truss" class="telem-grid" style="display: none; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <div class="telem-box">
+                <div class="telem-label">แรงปฏิกิริยา $A_x$</div>
+                <div id="civ-telem-ax" class="telem-val" style="color: #38BDF8;">40.0 kN (Left)</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงปฏิกิริยา $A_y$</div>
+                <div id="civ-telem-ay" class="telem-val" style="color: #EF4444;">30.0 kN (Down)</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงปฏิกิริยา $C_y$</div>
+                <div id="civ-telem-cy" class="telem-val" style="color: #34D399;">30.0 kN (Up)</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงชิ้นส่วน $F_{AB}$</div>
+                <div id="civ-telem-fab" class="telem-val" style="color: #F59E0B;">36.1 kN (Tension)</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงชิ้นส่วน $F_{BC}$</div>
+                <div id="civ-telem-fbc" class="telem-val" style="color: #A855F7;">36.1 kN (Compression)</div>
+              </div>
+              <div class="telem-box">
+                <div class="telem-label">แรงชิ้นส่วน $F_{AC}$</div>
+                <div id="civ-telem-fac" class="telem-val" style="color: #10B981;">20.0 kN (Tension)</div>
+              </div>
+            </div>
           </div>
         </aside>
       </div>
     </div><!-- End sim-container-civil -->
+
+    <!-- Progressive Step Navigation Bar: Step 3 of 5 -->
+    <div class="tab-step-nav-bar" style="margin-top: 1.5rem;">
+      <button class="btn-prev-step" onclick="window.PhysicsApp ? window.PhysicsApp.switchView('view-formulas') : null;">ย้อนกลับ: 📐 2. สูตร &amp; การคำนวณ</button>
+      <div class="step-status-indicator">
+        <span class="step-dot"></span>
+        <span>ลำดับการเรียนรู้ ขั้นที่ 3 จาก 5</span>
+      </div>
+      <button class="btn-next-step" onclick="window.PhysicsApp ? window.PhysicsApp.switchView('view-phenomena') : null;">ถัดไป: 🌍 4. รูปภาพ &amp; ปรากฏการณ์ →</button>
+    </div>
   </section>
 
   <!-- VIEW 6: PRACTICE PROBLEM ENGINE -->
@@ -3303,10 +4028,29 @@
     </div>
   </section>
 
+  <!-- VIEW 5: CHAPTER SUMMARY & SYNTHESIS (Image 3 Tab 5) -->
+  <section id="view-summary" class="view-panel" role="tabpanel" aria-labelledby="tab-summary">
+    <div class="summary-container" id="summary-content-target">
+      <!-- Dynamically rendered via app.js -->
+    </div>
+  </section>
+
+  <!-- Slide-out Drawer Quick Toggle Tab (< on right edge as drawn in Image 3 & 4) -->
+  <button class="drawer-side-tab-toggle" id="drawer-side-tab-toggle" onclick="if(window.PhysicsApp&amp;&amp;window.PhysicsApp.openDrawer){window.PhysicsApp.openDrawer();}" aria-label="เปิดสารบัญบทเรียน (&lt;)" title="เปิดสารบัญบทเรียนและทฤษฎี (|||)">
+    <span>&lt;</span>
+  </button>
+
   <!-- VIEW: ANALYTICAL FORMALISMS EXPLANATION -->
   <section id="view-analytical" class="view-panel" role="region" aria-label="คำอธิบายหน้าการวิเคราะห์กลศาสตร์ขั้นสูง (Analytical Mechanics)">
     <div id="analytical-content-target">
       <!-- Dynamically rendered via app.js & analytical_formalisms_content.js -->
+    </div>
+  </section>
+
+  <!-- VIEW: WORKED CALCULATION EXAMPLES -->
+  <section id="view-examples" class="view-panel" role="region" aria-label="ตัวอย่างการคำนวณและเฉลยละเอียด (Worked Calculation Examples)">
+    <div id="examples-content-target">
+      <!-- Dynamically rendered via app.js -->
     </div>
   </section>
 
@@ -3370,51 +4114,7 @@
   </div>
 </div>
 
-<!-- Mobile Access Modal -->
-<div id="mobile-access-modal" class="mobile-modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="mobile-modal-title">
-  <div class="mobile-modal-card">
-    <div class="mobile-modal-header">
-      <div class="mobile-modal-title" id="mobile-modal-title">
-        <span>📱</span> เชื่อมต่อใช้งานบนสมาร์ทโฟนหรือแท็บเล็ต
-      </div>
-      <button id="btn-close-mobile-modal" class="mobile-modal-close" aria-label="ปิดหน้าต่าง">✕</button>
-    </div>
-    <div class="mobile-modal-body">
-      <p class="mobile-modal-desc">
-        ระบบเปิดให้บริการบนเครือข่าย Wi-Fi ท้องถิ่น (LAN) สามารถหยิบโทรศัพท์มือถือหรือแท็บเล็ตขึ้นมาเชื่อมต่อได้ทันที
-      </p>
-      
-      <div class="mobile-qr-section">
-        <div id="mobile-qr-container" class="mobile-qr-box">
-          <!-- Dynamically generated SVG QR code -->
-        </div>
-        <div class="mobile-ip-info">
-          <div class="mobile-ip-label">ที่อยู่เว็บไซต์บนเครือข่าย Wi-Fi (URL):</div>
-          <div class="mobile-url-box">
-            <input type="text" id="mobile-target-url" readonly value="http://172.18.6.51:8080/" class="mobile-url-input">
-            <button id="btn-copy-mobile-url" class="btn-copy-url">คัดลอก</button>
-          </div>
-          <div id="copy-feedback-msg" class="copy-feedback"></div>
-        </div>
-      </div>
 
-      <div class="mobile-steps-guide">
-        <div class="guide-step">
-          <span class="step-badge">1</span>
-          <span>เชื่อมต่อ Wi-Fi เดียวกันกับคอมพิวเตอร์นี้ (เช่น เครือข่าย <strong>@PCCPL-TP-WiFi 2</strong>)</span>
-        </div>
-        <div class="guide-step">
-          <span class="step-badge">2</span>
-          <span>เปิดกล้องมือถือสแกน <strong>QR Code</strong> ด้านบน หรือพิมพ์ URL ใน Safari / Chrome</span>
-        </div>
-        <div class="guide-step">
-          <span class="step-badge">3</span>
-          <span>ใช้งานได้สมบูรณ์แบบ รองรับระบบสัมผัส (Touch Drag) และการคำนวณ RK4 เต็มรูปแบบ</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Scripts: KaTeX -> Three.js -> Engine -> Simulators -> Typesetter -> Content -> App Controller -->
 <script src="vendor/katex/katex.min.js"></script>
@@ -3426,6 +4126,7 @@
 <script src="js/simulators/threejs_ballistics_simulator.js"></script>
 <script src="js/simulators/circular_motion_simulator.js"></script>
 <script src="js/math_renderer.js"></script>
+<script src="js/engines/telemetry_math_inspector.js"></script>
 <script src="js/data/projectile_content.js"></script>
 <script src="js/data/phenomena_content.js"></script>
 <script src="js/data/physics_theories_content.js"></script>
@@ -3445,6 +4146,7 @@
 <script src="js/data/civil_engineering_content.js"></script>
 <script src="js/data/practice_problems_content.js"></script>
 <script src="js/data/textbook_library_content.js"></script>
+<script src="js/bg_crystals.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -667,7 +667,7 @@
     this.lastFrameTime = now;
 
     // Simulation speed factor
-    const dtSim = (deltaMs / 1000.0);
+    const dtSim = (deltaMs / 1000.0) * (this.timeScale !== undefined ? this.timeScale : 1.0);
     this.simTime += dtSim;
 
     this._advanceToTime(this.simTime);
@@ -676,6 +676,10 @@
     if (this.isPlaying) {
       this.animationFrameId = requestAnimationFrame(this._animate);
     }
+  };
+
+  ThreejsBallisticsSimulator.prototype.setTimeScale = function (scale) {
+    this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
   };
 
   ThreejsBallisticsSimulator.prototype.render = function () {

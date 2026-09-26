@@ -52,7 +52,11 @@
         // Submode 3: Shielding
         radiationType: 'gamma',  // 'alpha' | 'beta' | 'gamma'
         shieldMaterial: 'lead',  // 'paper' | 'aluminum' | 'lead' | 'concrete'
-        shieldThickness: 20      // mm
+        shieldThickness: 20,     // mm
+
+        // Submode 4: Compton Scattering
+        comptonTheta: 90.0,      // Scattering angle in degrees (0 to 180)
+        comptonE0: 100.0         // Incident photon energy (keV)
       };
 
       // Submode 1 Benchmark Nuclides (A, Z, Symbol, Eb/A in MeV)
@@ -83,6 +87,10 @@
       this.radiationParticles = [];
       this.absorptionSparks = [];
       this.sourceEmissionTimer = 0;
+
+      // Submode 4: Compton Scattering
+      this.comptonTime = 0;
+      this.comptonPhotonProgress = 0;
 
       // Resolution and interaction
       this._setupCanvasResolution();
@@ -125,9 +133,29 @@
       const w = this.width || 800;
       const srcX = 25;
       const detX = w - 70;
-      const shieldW = Math.max(16, Math.min(75, this.params.shieldThickness * 2.0));
-      const shieldX = Math.round(srcX + 75 + (detX - srcX - 75 - shieldW) * 0.45);
+      const thickness = Math.max(0, this.params.shieldThickness || 0);
+      const shieldW = thickness <= 0 ? 0 : Math.max(16, Math.min(75, thickness * 2.0));
+      const visualW = shieldW > 0 ? shieldW : 16;
+      const shieldX = Math.round(srcX + 75 + (detX - srcX - 75 - visualW) * 0.45);
       return { srcX, detX, shieldX, shieldW };
+    }
+
+    getAttenuationCoeff() {
+      if (this.params.radiationType === 'alpha') return 999;
+      if (this.params.radiationType === 'beta') {
+        if (this.params.shieldMaterial === 'paper') return 8.0;
+        if (this.params.shieldMaterial === 'aluminum') return 2.5;
+        if (this.params.shieldMaterial === 'concrete') return 5.0;
+        if (this.params.shieldMaterial === 'lead') return 45.0;
+        return 2.5;
+      }
+      if (this.params.radiationType === 'gamma') {
+        if (this.params.shieldMaterial === 'paper') return 0.01;
+        if (this.params.shieldMaterial === 'aluminum') return 0.20;
+        if (this.params.shieldMaterial === 'concrete') return 0.14;
+        if (this.params.shieldMaterial === 'lead') return 0.77;
+      }
+      return 0.77;
     }
 
     // ==========================================
@@ -258,12 +286,15 @@
     // ==========================================
 
     setSubMode(subMode) {
-      if (['binding_energy', 'decay_stochastic', 'shielding_dosimetry'].includes(subMode)) {
+      if (['binding_energy', 'decay_stochastic', 'shielding_dosimetry', 'compton_scattering'].includes(subMode)) {
         this.subMode = subMode;
         if (subMode === 'decay_stochastic') {
           this.initAtoms();
         } else if (subMode === 'shielding_dosimetry') {
           this.initRadiationStream();
+        } else if (subMode === 'compton_scattering') {
+          this.comptonTime = 0;
+          this.comptonPhotonProgress = 0;
         }
         this.render();
         this.emitTelemetry();
@@ -330,13 +361,18 @@
         const dt = Math.min((timestamp - this.lastTimestamp) / 1000, 0.05);
         this.lastTimestamp = timestamp;
 
-        this.update(dt);
+        const effectiveDt = dt * (this.timeScale !== undefined ? this.timeScale : 1.0);
+        this.update(effectiveDt);
         this.render();
         this.emitTelemetry();
 
         this.animId = requestAnimationFrame(loop);
       };
       this.animId = requestAnimationFrame(loop);
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     destroy() {
@@ -383,32 +419,21 @@
 
         // Shared geometry ensures 100% collision alignment with visual barrier
         const { shieldX, shieldW, detX } = this.getShieldBounds();
+        const thickness = Math.max(0, this.params.shieldThickness || 0);
+        const xCm = thickness / 10;
+        const muVal = this.getAttenuationCoeff();
+        const transFrac = (thickness <= 0) ? 1.0 : (this.params.radiationType === 'alpha') ? 0 : Math.exp(-muVal * xCm);
 
         for (let i = this.radiationParticles.length - 1; i >= 0; i--) {
           const p = this.radiationParticles[i];
           p.x += p.vx * dt;
           p.y += p.vy * dt;
 
-          // Check interaction with shield barrier
-          if (p.x >= shieldX && p.x <= shieldX + shieldW) {
-            let absorbProb = 0;
-            if (this.params.radiationType === 'alpha') {
-              // Alpha particles have high stopping power (dE/dx); stopped on front surface of paper or any barrier
-              absorbProb = 0.96;
-            } else if (this.params.radiationType === 'beta') {
-              if (this.params.shieldMaterial === 'paper') absorbProb = 0.08;
-              else if (this.params.shieldMaterial === 'aluminum') absorbProb = 0.65;
-              else absorbProb = 0.95;
-            } else if (this.params.radiationType === 'gamma') {
-              // Attenuation by photoelectric, Compton, pair production
-              if (this.params.shieldMaterial === 'paper') absorbProb = 0.005;
-              else if (this.params.shieldMaterial === 'aluminum') absorbProb = 0.04;
-              else if (this.params.shieldMaterial === 'concrete') absorbProb = 0.16;
-              else if (this.params.shieldMaterial === 'lead') absorbProb = 0.42;
-            }
-
-            if (Math.random() < absorbProb) {
-              // Particle absorbed by shield! Stop particle and trigger visible flash on shield
+          // Check interaction with shield barrier once upon entry (Beer-Lambert exponential attenuation)
+          if (shieldW > 0 && !p.shieldChecked && p.x >= shieldX) {
+            p.shieldChecked = true;
+            if (Math.random() > transFrac) {
+              // Particle absorbed by shield! Trigger visible spark on shield face
               this.absorptionSparks = this.absorptionSparks || [];
               this.absorptionSparks.push({ x: p.x, y: p.y, timer: 0.35, color: p.color });
               this.radiationParticles.splice(i, 1);
@@ -435,6 +460,8 @@
             }
           }
         }
+      } else if (this.subMode === 'compton_scattering') {
+        this.updateComptonScattering(dt);
       }
     }
 
@@ -493,6 +520,8 @@
         this.renderDecayStochastic();
       } else if (this.subMode === 'shielding_dosimetry') {
         this.renderShieldingDosimetry();
+      } else if (this.subMode === 'compton_scattering') {
+        this.renderComptonScattering();
       }
     }
 
@@ -520,9 +549,12 @@
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = w < 760 ? '10px sans-serif' : '11.5px sans-serif';
-      const subTitleText = w < 760
-        ? '⁵⁶Fe (มวล/A ต่ำสุด) | ⁶²Ni (E_b/A สูงสุด ~8.795 MeV) | ซ้าย: ฟิวชัน | ขวา: ฟิชชัน'
-        : 'เสถียรสูงสุด: ⁶²Ni (E_b/A = 8.795 MeV สูงสุด) & ⁵⁶Fe (มวล/A ต่ำสุด) | ซ้าย: Fusion | ขวา: Fission';
+      let subTitleText = 'เสถียรสูงสุด: ⁶²Ni (E_b/A = 8.795 MeV สูงสุด) & ⁵⁶Fe (มวล/A ต่ำสุด) | ซ้าย: Fusion | ขวา: Fission';
+      if (w < 480) {
+        subTitleText = '⁵⁶Fe & ⁶²Ni เสถียรสูงสุด | ซ้าย: ฟิวชัน | ขวา: ฟิชชัน';
+      } else if (w < 760) {
+        subTitleText = '⁵⁶Fe (เสถียรสูงสุด) | ⁶²Ni (~8.8 MeV) | ซ้าย: ฟิวชัน | ขวา: ฟิชชัน';
+      }
       ctx.fillText(subTitleText, originX, 36);
 
       // Shaded Regions: Fusion (left of Fe-56) & Fission (right of Fe-56)
@@ -535,41 +567,48 @@
       ctx.fillRect(originX, originY - plotH, fusionW, plotH);
 
       // Fusion zone badge - placed neatly at top-left
-      const fusionBadgeW = Math.min(185, fusionW - 14);
-      if (fusionBadgeW > 50) {
+      const isNarrowMobile = w < 500;
+      const fusionBadgeW = isNarrowMobile ? Math.min(52, Math.max(32, fusionW - 28)) : Math.min(185, fusionW - 14);
+      if (fusionBadgeW >= 32) {
         ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-        ctx.fillRect(originX + 8, originY - plotH + 8, fusionBadgeW, 20);
+        ctx.fillRect(originX + 6, originY - plotH + 8, fusionBadgeW, 20);
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
         ctx.lineWidth = 1;
-        ctx.strokeRect(originX + 8, originY - plotH + 8, fusionBadgeW, 20);
+        ctx.strokeRect(originX + 6, originY - plotH + 8, fusionBadgeW, 20);
 
         ctx.fillStyle = '#34d399';
-        ctx.font = 'bold 10.5px sans-serif';
+        ctx.font = isNarrowMobile ? 'bold 9px sans-serif' : 'bold 10.5px sans-serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(fusionBadgeW < 120 ? '⚡ ฟิวชัน (A < 56)' : '⚡ เขตฟิวชัน (Fusion: A < 56)', originX + 13, originY - plotH + 18);
+        const badgeLabel = isNarrowMobile
+          ? (fusionBadgeW < 45 ? 'ฟิวชัน' : '⚡ฟิวชัน')
+          : (fusionBadgeW < 120 ? '⚡ ฟิวชัน (A < 56)' : '⚡ เขตฟิวชัน (Fusion: A < 56)');
+        ctx.fillText(badgeLabel, originX + (isNarrowMobile ? 8 : 13), originY - plotH + 18);
       }
 
       // Fission zone background
       ctx.fillStyle = 'rgba(239, 68, 68, 0.06)';
       ctx.fillRect(ironX, originY - plotH, fissionW, plotH);
 
-      // Fission zone badge - placed well inside fission quadrant to avoid colliding with Fe-56
-      const fissionBadgeX = ironX + Math.max(35, fissionW * 0.22);
-      const fissionBadgeW = Math.min(185, plotW + originX - fissionBadgeX - 10);
-      if (fissionBadgeW > 50) {
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-        ctx.fillRect(fissionBadgeX, originY - plotH + 8, fissionBadgeW, 20);
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(fissionBadgeX, originY - plotH + 8, fissionBadgeW, 20);
+      // Fission zone badge - placed in open gap between Sn-120 and Pb-208 to prevent any overlap
+      const fissionMidX = originX + (160 / 240) * plotW;
+      const fissionBadgeW = isNarrowMobile ? 70 : (w < 760 ? 110 : 160);
+      const fissionBadgeX = Math.min(originX + plotW - fissionBadgeW - 8, Math.max(originX + (135 / 240) * plotW, fissionMidX - fissionBadgeW / 2));
+      const fissionBadgeLabel = isNarrowMobile
+        ? '💥ฟิชชัน'
+        : (fissionBadgeW < 125 ? '💥 ฟิชชัน (A > 56)' : '💥 เขตฟิชชัน (Fission: A > 56)');
 
-        ctx.fillStyle = '#f87171';
-        ctx.font = 'bold 10.5px sans-serif';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(fissionBadgeW < 120 ? '💥 ฟิชชัน (A > 56)' : '💥 เขตฟิชชัน (Fission: A > 56)', fissionBadgeX + 6, originY - plotH + 18);
-      }
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.fillRect(fissionBadgeX, originY - plotH + 6, fissionBadgeW, 20);
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(fissionBadgeX, originY - plotH + 6, fissionBadgeW, 20);
+
+      ctx.fillStyle = '#f87171';
+      ctx.font = isNarrowMobile ? 'bold 9px sans-serif' : 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(fissionBadgeLabel, fissionBadgeX + fissionBadgeW / 2, originY - plotH + 16);
 
       // Peak Fe-56 stability marker (subtle dashed vertical guide line)
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
@@ -668,8 +707,8 @@
         let labelY = py - 13;
 
         if (n.sym === '⁵⁶Fe') {
-          labelX = px - 6;
-          labelY = py - 17;
+          labelX = px;
+          labelY = py - 14;
           ctx.fillStyle = isSel ? '#fbbf24' : '#ef4444';
         } else if (n.sym === '⁶²Ni') {
           labelX = px + 18;
@@ -691,6 +730,10 @@
           labelX = px - 12;
           labelY = py - 13;
           ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        } else if (n.sym === '¹²⁰Sn') {
+          labelX = px;
+          labelY = py + 14; // Below point to prevent collision with upper fission badge
+          ctx.fillStyle = isSel ? '#fbbf24' : '#38bdf8';
         } else if (n.sym === '²⁰⁸Pb') {
           labelX = px - 16;
           labelY = py - 14;
@@ -708,7 +751,7 @@
           labelY = py - 14;
           ctx.fillStyle = isSel ? '#fbbf24' : '#f43f5e';
         } else if (n.sym === '²³⁸U') {
-          labelX = px + 12;
+          labelX = px - 6;
           labelY = py + 14;
           ctx.fillStyle = isSel ? '#fbbf24' : '#fb923c';
         } else {
@@ -734,7 +777,8 @@
       const totalEb = (sel.ebPerA * sel.a).toFixed(1);
       const cardY = originY + 20;
       const isMobile = w < 600;
-      const cardH = isMobile ? 80 : 60;
+      const isNarrow = w < 420;
+      const cardH = isNarrow ? 90 : (isMobile ? 80 : 60);
 
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(originX, cardY, plotW, cardH);
@@ -747,19 +791,35 @@
       ctx.textBaseline = 'top';
 
       if (isMobile) {
-        ctx.font = 'bold 11px sans-serif';
+        ctx.font = isNarrow ? 'bold 10px sans-serif' : 'bold 11px sans-serif';
         if (sel.sym === '²⁰⁹Bi') {
-          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | ธาตุกัมมันตรังสีปฐมภูมิหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+          if (isNarrow) {
+            ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym})`, originX + 8, cardY + 7);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '9.5px sans-serif';
+            ctx.fillText(`กัมมันตรังสีปฐมภูมิหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 8, cardY + 24);
+          } else {
+            ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | กัมมันตรังสีปฐมภูมิหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+          }
         } else if (sel.sym === '²⁰⁸Pb') {
-          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | ธาตุเสถียรตัวสุดท้ายที่หนักที่สุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+          if (isNarrow) {
+            ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym})`, originX + 8, cardY + 7);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '9.5px sans-serif';
+            ctx.fillText(`ธาตุเสถียรตัวสุดท้ายหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 8, cardY + 24);
+          } else {
+            ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | ธาตุเสถียรตัวสุดท้ายหนักสุด (A=${sel.a}, Z=${sel.z})`, originX + 10, cardY + 8);
+          }
         } else {
-          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | A = ${sel.a}, Z = ${sel.z}, N = ${sel.a - sel.z}`, originX + 10, cardY + 8);
+          ctx.fillText(`📌 นิวไคลด์: ${sel.name} (${sel.sym}) | A=${sel.a}, Z=${sel.z}, N=${sel.a - sel.z}`, originX + (isNarrow ? 8 : 10), cardY + (isNarrow ? 7 : 8));
         }
 
         ctx.fillStyle = '#38bdf8';
-        ctx.font = '10px monospace';
-        ctx.fillText(`E_b/A = ${sel.ebPerA.toFixed(2)} MeV/nucleon | E_b = ${totalEb} MeV`, originX + 10, cardY + 32);
-        ctx.fillText(`มวลพร่อง Δm = ${deltaM} u`, originX + 10, cardY + 54);
+        ctx.font = isNarrow ? '9px monospace' : '10px monospace';
+        const y2 = (isNarrow && (sel.sym === '²⁰⁹Bi' || sel.sym === '²⁰⁸Pb')) ? cardY + 44 : cardY + (isNarrow ? 29 : 32);
+        const y3 = (isNarrow && (sel.sym === '²⁰⁹Bi' || sel.sym === '²⁰⁸Pb')) ? cardY + 65 : cardY + (isNarrow ? 51 : 54);
+        ctx.fillText(`E_b/A = ${sel.ebPerA.toFixed(2)} MeV/u | E_b = ${totalEb} MeV`, originX + (isNarrow ? 8 : 10), y2);
+        ctx.fillText(`มวลพร่อง Δm = ${deltaM} u`, originX + (isNarrow ? 8 : 10), y3);
       } else {
         ctx.font = 'bold 12.5px sans-serif';
         if (sel.sym === '²⁰⁹Bi') {
@@ -957,22 +1017,8 @@
       let shieldColor = '#475569';
       let matName = '';
       let hvlText = '';
-      let muVal = 0.77;
-      let wR = 1;
-
-      if (this.params.radiationType === 'alpha') {
-        wR = 20;
-        muVal = 999;
-      } else if (this.params.radiationType === 'beta') {
-        wR = 1;
-        muVal = 2.5;
-      } else if (this.params.radiationType === 'gamma') {
-        wR = 1;
-        if (this.params.shieldMaterial === 'paper') muVal = 0.01;
-        else if (this.params.shieldMaterial === 'aluminum') muVal = 0.20;
-        else if (this.params.shieldMaterial === 'concrete') muVal = 0.14;
-        else if (this.params.shieldMaterial === 'lead') muVal = 0.77;
-      }
+      const muVal = this.getAttenuationCoeff();
+      const wR = (this.params.radiationType === 'alpha') ? 20 : 1;
 
       if (this.params.shieldMaterial === 'paper') {
         shieldColor = '#f1f5f9';
@@ -994,20 +1040,27 @@
 
       const shieldH = isMobile ? 170 : 220;
       const shieldY = srcY - Math.round(shieldH * 0.5);
-      ctx.fillStyle = shieldColor;
-      ctx.fillRect(shieldX, shieldY, shieldW, shieldH);
-      ctx.strokeStyle = '#f8fafc';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(shieldX, shieldY, shieldW, shieldH);
+      if (shieldW > 0) {
+        ctx.fillStyle = shieldColor;
+        ctx.fillRect(shieldX, shieldY, shieldW, shieldH);
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(shieldX, shieldY, shieldW, shieldH);
 
-      // Shield Top Label & Bottom Specs
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${matName} (${this.params.shieldThickness} mm)`, shieldX + shieldW / 2, shieldY - 12);
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = '10px monospace';
-      ctx.fillText(`HVL ≈ ${hvlText} | μ ≈ ${muVal.toFixed(2)} cm⁻¹`, shieldX + shieldW / 2, shieldY + shieldH + 16);
+        // Shield Top Label & Bottom Specs
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${matName} (${this.params.shieldThickness} mm)`, shieldX + shieldW / 2, shieldY - 12);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`HVL ≈ ${hvlText} | μ ≈ ${muVal.toFixed(2)} cm⁻¹`, shieldX + shieldW / 2, shieldY + shieldH + 16);
+      } else {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ไม่มีฉากกั้น (No Shield: 0 mm)', shieldX, shieldY - 12);
+      }
 
       // Geiger-Müller Detector Target
       ctx.fillStyle = '#1e293b';
@@ -1052,8 +1105,9 @@
       }
 
       // Attenuation calculation
-      const xCm = this.params.shieldThickness / 10;
-      const transFrac = (this.params.radiationType === 'alpha') ? 0 : Math.exp(-muVal * xCm);
+      const thickness = Math.max(0, this.params.shieldThickness || 0);
+      const xCm = thickness / 10;
+      const transFrac = (thickness <= 0) ? 1.0 : (this.params.radiationType === 'alpha') ? 0 : Math.exp(-muVal * xCm);
       const doseRateGy = (transFrac * 10).toFixed(2);
       const doseRateSv = (transFrac * 10 * wR).toFixed(2);
 
@@ -1093,12 +1147,373 @@
       }
     }
 
+    // ----------------------------------------------------
+    // SUBMODE 4: COMPTON SCATTERING & RELATIVISTIC CONSERVATION
+    // ----------------------------------------------------
+    updateComptonScattering(dt) {
+      this.comptonTime += dt;
+      // Loop photon collision animation progress every 2.4 seconds
+      this.comptonPhotonProgress = (this.comptonPhotonProgress + dt * 0.8) % 2.0;
+    }
+
+    renderComptonScattering() {
+      const ctx = this.ctx;
+      const w = this.width || 800;
+      const h = this.height || 480;
+      const isMobile = w < 680;
+      const isNarrow = w < 420;
+
+      const E0 = Math.max(10, this.params.comptonE0 || 100.0); // keV
+      const thetaDeg = this.params.comptonTheta !== undefined ? this.params.comptonTheta : 90.0;
+      const thetaRad = (thetaDeg * Math.PI) / 180.0;
+      const mec2 = 511.0; // keV
+      const lambdaC = 2.42631; // pm
+
+      // Scattered photon energy E' = E0 / (1 + (E0/mec2)*(1 - cos(theta)))
+      const denom = 1.0 + (E0 / mec2) * (1.0 - Math.cos(thetaRad));
+      const E_prime = E0 / denom;
+
+      // Recoil electron kinetic energy Ke = E0 - E'
+      const Ke = E0 - E_prime;
+
+      // Recoil electron angle phi: tan(phi) = (E' * sin(theta)) / (E0 - E' * cos(theta))
+      const sinTh = Math.sin(thetaRad);
+      const cosTh = Math.cos(thetaRad);
+      const phiRad = Math.atan2(E_prime * sinTh, E0 - E_prime * cosTh);
+      const phiDeg = (phiRad * 180.0) / Math.PI;
+
+      // Wavelengths: hc = 1239.8419 keV * pm
+      const lambda0 = 1239.8419 / E0; // pm
+      const deltaLambda = lambdaC * (1.0 - Math.cos(thetaRad));
+      const lambda_prime = lambda0 + deltaLambda;
+
+      // Header Banner
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = isMobile ? 'bold 12px sans-serif' : 'bold 15px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(isMobile ? '🎯 การกระเจิงคอมป์ตัน (Compton)' : '🎯 การกระเจิงคอมป์ตัน (Compton Scattering & Relativistic Conservation)', 14, isMobile ? 18 : 24);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = isMobile ? '9px sans-serif' : '11px sans-serif';
+      ctx.fillText(isMobile ? 'อนุรักษ์พลังงาน & โมเมนตัมสัมพัทธภาพ 2 มิติ (Arthur H. Compton 1923)' : 'ทฤษฎีควอนตัม: โฟตอนชนอิเล็กตรอนอิสระ อนุรักษ์พลังงานสัมพัทธภาพและโมเมนตัม 2 มิติ (Arthur H. Compton 1923)', 14, isMobile ? 32 : 42);
+
+      // Geometry of Collision Apparatus
+      const bottomCardY = h - (isMobile ? 86 : 225);
+      const cx = isMobile ? w * 0.38 : w * 0.35;
+      const cy = isMobile ? 40 + (bottomCardY - 40) * 0.50 : h * 0.48;
+      const maxVertRay = isMobile ? Math.max(35, (cy - 48)) : 160;
+      const rayLen = isMobile ? Math.min(65, maxVertRay) : 160;
+
+      // Reference horizontal axis
+      ctx.save();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(15, cy);
+      ctx.lineTo(cx + rayLen * 1.15, cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 1. Angular Arcs
+      if (thetaDeg > 1) {
+        ctx.strokeStyle = '#a855f7';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        const arcR = isMobile ? 30 : 45;
+        ctx.arc(cx, cy, arcR, 0, -thetaRad, true);
+        ctx.stroke();
+
+        const midTh = -thetaRad * 0.5;
+        ctx.fillStyle = '#d8b4fe';
+        ctx.font = isMobile ? 'bold 9.5px Inter, sans-serif' : 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`θ = ${thetaDeg.toFixed(0)}°`, cx + (arcR + (isMobile ? 12 : 18)) * Math.cos(midTh), cy + (arcR + (isMobile ? 12 : 18)) * Math.sin(midTh));
+      }
+
+      if (phiDeg > 1) {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        const arcR2 = isMobile ? 26 : 38;
+        ctx.arc(cx, cy, arcR2, 0, phiRad, false);
+        ctx.stroke();
+
+        const midPhi = phiRad * 0.5;
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = isMobile ? 'bold 9.5px Inter, sans-serif' : 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`φ = ${phiDeg.toFixed(0)}°`, cx + (arcR2 + (isMobile ? 12 : 18)) * Math.cos(midPhi), cy + (arcR2 + (isMobile ? 12 : 18)) * Math.sin(midPhi));
+      }
+
+      // 2. Incident Photon Path & Animated Wave Packet
+      const prog = this.comptonPhotonProgress; // 0 to 2.0
+      const isPreCollision = prog < 1.0;
+
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(20, cy);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+
+      if (isPreCollision) {
+        const curPx = 20 + prog * (cx - 20);
+        this._drawPhotonWavePacket(ctx, curPx, cy, 0, '#818cf8', '#38bdf8', isMobile ? 4.5 : 6);
+      }
+
+      // 3. Post-Collision Particles (prog >= 1.0)
+      const postProg = prog - 1.0; // 0 to 1.0
+
+      const scX = cx + rayLen * Math.cos(thetaRad);
+      const scY = cy - rayLen * Math.sin(thetaRad);
+
+      ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(scX, scY);
+      ctx.stroke();
+
+      const elX = cx + rayLen * Math.cos(phiRad);
+      const elY = cy + rayLen * Math.sin(phiRad);
+
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(elX, elY);
+      ctx.stroke();
+
+      if (!isPreCollision) {
+        const curScX = cx + postProg * (scX - cx);
+        const curScY = cy + postProg * (scY - cy);
+        this._drawPhotonWavePacket(ctx, curScX, curScY, -thetaRad, '#fb7185', '#f59e0b', isMobile ? 6 : 8.5);
+
+        const curElX = cx + postProg * (elX - cx);
+        const curElY = cy + postProg * (elY - cy);
+
+        ctx.fillStyle = '#34d399';
+        ctx.shadowColor = '#34d399';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(curElX, curElY, isMobile ? 5.5 : 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#a7f3d0';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 8.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('e⁻', curElX, curElY + 3);
+      }
+
+      // 4. Central Target Electron (at cx, cy)
+      const targetOpacity = isPreCollision ? 1.0 : Math.max(0.15, 1.0 - postProg * 1.5);
+      ctx.save();
+      ctx.fillStyle = `rgba(56, 189, 248, ${targetOpacity})`;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = isPreCollision ? 10 : 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, isMobile ? 7 : 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.strokeStyle = `rgba(255, 255, 255, ${targetOpacity})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = `rgba(15, 23, 42, ${targetOpacity})`;
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('e⁻', cx, cy + 3);
+
+      if (isPreCollision) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = isMobile ? '8.5px Inter, sans-serif' : '10px Inter, sans-serif';
+        ctx.fillText('e⁻ นิ่ง', cx, cy + (isMobile ? 16 : 22));
+      } else if (postProg < 0.3) {
+        const flashR = postProg * 40;
+        ctx.strokeStyle = `rgba(254, 240, 138, ${1.0 - postProg / 0.3})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, flashR, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 5. Labels on Beams
+      if (isMobile) {
+        ctx.fillStyle = '#818cf8';
+        ctx.font = 'bold 9px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`E₀=${E0.toFixed(0)}keV`, Math.max(35, cx - 45), cy - 10);
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 9px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`E'=${E_prime.toFixed(1)}k`, Math.min(w - 65, scX + 4), scY);
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 9px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`e⁻ K=${Ke.toFixed(1)}k`, Math.min(w - 75, elX + 4), Math.min(bottomCardY - 8, elY + 4));
+      } else {
+        ctx.fillStyle = '#818cf8';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`โฟตอนตกกระทบ E₀ = ${E0.toFixed(1)} keV`, 110, cy - 14);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px monospace';
+        ctx.fillText(`λ₀ = ${lambda0.toFixed(2)} pm`, 110, cy + 16);
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`โฟตอนกระเจิง E' = ${E_prime.toFixed(1)} keV`, scX + 8, scY);
+        ctx.fillStyle = '#fda4af';
+        ctx.font = '10px monospace';
+        ctx.fillText(`λ' = ${lambda_prime.toFixed(2)} pm (Δλ = +${deltaLambda.toFixed(2)} pm)`, scX + 8, scY + 16);
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`อิเล็กตรอนสะท้อน K_e = ${Ke.toFixed(1)} keV`, elX + 8, elY + 6);
+        ctx.fillStyle = '#a7f3d0';
+        ctx.font = '10px monospace';
+        ctx.fillText(`มุมสะท้อน φ = ${phiDeg.toFixed(1)}°`, elX + 8, elY + 22);
+      }
+
+      // 6. HUD Theory & Calculation Card
+      ctx.save();
+      if (isMobile) {
+        const cardX = 8;
+        const cardY = bottomCardY;
+        const cardW = w - 16;
+        const cardH = 80;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'left';
+        ctx.fillText(`📐 Compton: E' = ${E_prime.toFixed(1)} keV (${((E_prime/E0)*100).toFixed(0)}%) | K_e = ${Ke.toFixed(1)} keV`, cardX + 8, cardY + 18);
+
+        ctx.font = '9.5px monospace';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`θ = ${thetaDeg.toFixed(0)}° ⟹ φ = ${phiDeg.toFixed(1)}° | Δλ = +${deltaLambda.toFixed(2)} pm`, cardX + 8, cardY + 38);
+
+        ctx.fillStyle = '#34D399';
+        ctx.fillText(`E₀ = E' + K_e = ${E0.toFixed(1)} keV (อนุรักษ์พลังงาน 100%)`, cardX + 8, cardY + 58);
+      } else {
+        const cardX = w - 305;
+        const cardY = 55;
+        const cardW = 290;
+        const cardH = 215;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'left';
+        ctx.fillText('📐 การคำนวณการเลื่อนคอมป์ตัน', cardX + 12, cardY + 20);
+
+        ctx.font = '10.5px Inter, monospace';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`พลังงานตกกระทบ E₀ = ${E0.toFixed(1)} keV`, cardX + 12, cardY + 40);
+        ctx.fillText(`พลังงานนิ่ง m_e c² = ${mec2.toFixed(1)} keV`, cardX + 12, cardY + 56);
+        ctx.fillText(`ความยาวคลื่นคอมป์ตัน λ_C = ${lambdaC.toFixed(4)} pm`, cardX + 12, cardY + 72);
+        ctx.fillText(`มุมกระเจิง θ = ${thetaDeg.toFixed(1)}° | cos θ = ${cosTh.toFixed(3)}`, cardX + 12, cardY + 88);
+
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+        ctx.fillRect(cardX + 8, cardY + 96, cardW - 16, 56);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.strokeRect(cardX + 8, cardY + 96, cardW - 16, 56);
+
+        ctx.fillStyle = '#38BDF8';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText(`E' = E₀ / [1 + (E₀/m_e c²)(1 - cos θ)]`, cardX + 12, cardY + 112);
+        ctx.fillStyle = '#F43F5E';
+        ctx.fillText(`โฟตอนกระเจิง E' = ${E_prime.toFixed(1)} keV (${((E_prime/E0)*100).toFixed(1)}%)`, cardX + 12, cardY + 128);
+        ctx.fillStyle = '#34D399';
+        ctx.fillText(`พลังงานจลน์อิเล็กตรอน K_e = ${Ke.toFixed(1)} keV`, cardX + 12, cardY + 144);
+
+        ctx.font = '10px Inter, monospace';
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillText(`อนุรักษ์พลังงาน: ${E0.toFixed(1)} = ${E_prime.toFixed(1)} + ${Ke.toFixed(1)} keV`, cardX + 12, cardY + 172);
+        ctx.fillText(`มุมสะท้อนกลับอิเล็กตรอน φ = ${phiDeg.toFixed(1)}°`, cardX + 12, cardY + 190);
+      }
+      ctx.restore();
+    }
+
+    _drawPhotonWavePacket(ctx, x, y, angle, col1, col2, wavLen) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      const packetLen = 32;
+      ctx.beginPath();
+      for (let s = -packetLen / 2; s <= packetLen / 2; s += 1.5) {
+        const env = Math.exp(- (s * s) / (2 * 7 * 7));
+        const wave = Math.sin((s / wavLen) * Math.PI * 2) * 6 * env;
+        if (s === -packetLen / 2) ctx.moveTo(s, wave);
+        else ctx.lineTo(s, wave);
+      }
+      ctx.strokeStyle = col1;
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = col2;
+      ctx.shadowBlur = 6;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
     // ==========================================
     // TELEMETRY BROADCAST
     // ==========================================
 
     emitTelemetry() {
       if (typeof this.options.onTelemetryUpdate !== 'function') return;
+
+      if (this.subMode === 'compton_scattering') {
+        const E0 = Math.max(10, this.params.comptonE0 || 100.0);
+        const thetaDeg = this.params.comptonTheta !== undefined ? this.params.comptonTheta : 90.0;
+        const thetaRad = (thetaDeg * Math.PI) / 180.0;
+        const denom = 1.0 + (E0 / 511.0) * (1.0 - Math.cos(thetaRad));
+        const E_prime = E0 / denom;
+        const Ke = E0 - E_prime;
+        const phiDeg = (Math.atan2(E_prime * Math.sin(thetaRad), E0 - E_prime * Math.cos(thetaRad)) * 180.0) / Math.PI;
+
+        const data = {
+          mode: this.subMode,
+          subMode: this.subMode,
+          ebPerA: E_prime.toFixed(1) + ' keV',
+          activityBq: Ke.toFixed(1) + ' keV',
+          halfLife: thetaDeg.toFixed(1) + '°',
+          radiationType: 'gamma',
+          comptonE0: E0.toFixed(1) + ' keV',
+          comptonTheta: thetaDeg.toFixed(1) + '°',
+          comptonEPrime: E_prime.toFixed(1) + ' keV',
+          comptonKe: Ke.toFixed(1) + ' keV',
+          comptonPhi: phiDeg.toFixed(1) + '°'
+        };
+        this.options.onTelemetryUpdate(data);
+        return;
+      }
 
       let ebPerA = '8.79 MeV';
       if (this.nuclides[this.params.selectedNuclideIndex]) {

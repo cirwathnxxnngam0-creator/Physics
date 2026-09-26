@@ -190,7 +190,24 @@
       }
     }
 
+    setEngineType(engineType) {
+      if (engineType === 'carnot' || engineType === 'otto') {
+        this.params.engineType = engineType;
+        this.engineTime = 0;
+        this.cycleProgress = 0;
+        this.initEngineParticles();
+        this.render();
+        this.emitTelemetry();
+        const selEngineType = document.getElementById('thermo-engine-type');
+        if (selEngineType) selEngineType.value = engineType;
+      }
+    }
+
     setParam(key, value) {
+      if (key === 'engineType') {
+        this.setEngineType(value);
+        return;
+      }
       if (this.params[key] !== undefined) {
         this.params[key] = value;
         if (key === 'kineticTemp' || key === 'gasMolarMass' || key === 'particleCount') {
@@ -248,13 +265,18 @@
         const dt = Math.min((timestamp - this.lastTimestamp) / 1000, 0.05);
         this.lastTimestamp = timestamp;
 
-        this.update(dt);
+        const effectiveDt = dt * (this.timeScale !== undefined ? this.timeScale : 1.0);
+        this.update(effectiveDt);
         this.render();
         this.emitTelemetry();
 
         this.animId = requestAnimationFrame(loop);
       };
       this.animId = requestAnimationFrame(loop);
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     destroy() {
@@ -299,6 +321,10 @@
       const boxX = 30;
       const boxY = 60;
       let totalImpulse = 0;
+      // Physical momentum transfer: dp = 2 * m * v_wall
+      // Molecular mass scaling factor: reference M0 = 0.028 kg/mol (N2)
+      // Ideal gas law P = N k_B T / V is invariant with gas molar mass M
+      const mRatio = (this.params.gasMolarMass || 0.028) / 0.028;
 
       for (const p of this.gasParticles) {
         p.x += p.vx * dt;
@@ -308,32 +334,38 @@
         if (p.x - p.r < boxX) {
           p.x = boxX + p.r;
           p.vx = -p.vx;
-          totalImpulse += 2 * Math.abs(p.vx);
+          totalImpulse += 2 * mRatio * Math.abs(p.vx);
         } else if (p.x + p.r > boxX + boxW) {
           p.x = boxX + boxW - p.r;
           p.vx = -p.vx;
-          totalImpulse += 2 * Math.abs(p.vx);
+          totalImpulse += 2 * mRatio * Math.abs(p.vx);
         }
 
         if (p.y - p.r < boxY) {
           p.y = boxY + p.r;
           p.vy = -p.vy;
-          totalImpulse += 2 * Math.abs(p.vy);
+          totalImpulse += 2 * mRatio * Math.abs(p.vy);
         } else if (p.y + p.r > boxY + boxH) {
           p.y = boxY + boxH - p.r;
           p.vy = -p.vy;
-          totalImpulse += 2 * Math.abs(p.vy);
+          totalImpulse += 2 * mRatio * Math.abs(p.vy);
         }
       }
 
       this.wallImpulseAcc += totalImpulse;
       this.lastImpulseTime += dt;
-      if (this.lastImpulseTime > 0.2) {
-        // Compute pressure P = F/A approx
-        const avgF = (this.wallImpulseAcc * 0.0001) / this.lastImpulseTime;
-        const T = this.params.kineticTemp;
-        const theoreticalP = (this.gasParticles.length * 1.38e-23 * T * 6.022e23 * 0.001) / 0.024;
-        this.measuredPressure = (theoreticalP * (0.95 + 0.1 * Math.random())).toFixed(1);
+      if (this.lastImpulseTime >= 0.25) {
+        // Real kinetic momentum transfer per second: F_wall = d p_wall / dt
+        const impulseRate = this.wallImpulseAcc / this.lastImpulseTime;
+        // Physical calibration factor: maps microscopic particle collisions to macroscopic pressure in kPa
+        // (At STP: 60 particles @ 300 K in 0.1088 m^2 chamber -> ~101.3 kPa)
+        const kConversion = 0.0168; // kPa per (pixel impulse / s)
+        const rawPressure = impulseRate * kConversion;
+        // Exponential moving average to emulate physical manometer response
+        const prevP = parseFloat(this.measuredPressure) || rawPressure;
+        const alphaEMA = 0.35;
+        const filteredP = alphaEMA * rawPressure + (1 - alphaEMA) * prevP;
+        this.measuredPressure = filteredP.toFixed(1);
         this.wallImpulseAcc = 0;
         this.lastImpulseTime = 0;
       }
@@ -348,23 +380,30 @@
         glass: { k: 0.8, alpha: 3.4e-7 }
       };
       const mat = materials[this.params.barMaterial] || materials.copper;
-      const alphaSim = mat.alpha * 8000; // Accelerated for visual interactivity
+      // Accelerated for visual interactivity while strictly preserving physical diffusivity ratios
+      const alphaSim = mat.alpha * 8000;
       const dx = 1.0 / (this.barNodes - 1);
-      const r = (alphaSim * dt) / (dx * dx);
+      const dx2 = dx * dx;
 
-      // Stability clamp
-      const safeR = Math.min(r, 0.45);
-      const nextT = new Float64Array(this.barT);
+      // Courant-Friedrichs-Lewy (CFL) stability criterion: r = alpha * subDt / dx^2 <= 0.45
+      // To ensure numerical stability AND timestep convergence across any dt without clamping alpha,
+      // dynamically partition dt into K stable sub-steps:
+      const maxSafeR = 0.40;
+      const rTotal = (alphaSim * dt) / dx2;
+      const subSteps = Math.max(1, Math.ceil(rTotal / maxSafeR));
+      const subDt = dt / subSteps;
+      const r = (alphaSim * subDt) / dx2;
 
-      for (let i = 1; i < this.barNodes - 1; i++) {
-        nextT[i] = this.barT[i] + safeR * (this.barT[i + 1] - 2 * this.barT[i] + this.barT[i - 1]);
+      for (let s = 0; s < subSteps; s++) {
+        const nextT = new Float64Array(this.barT);
+        for (let i = 1; i < this.barNodes - 1; i++) {
+          nextT[i] = this.barT[i] + r * (this.barT[i + 1] - 2 * this.barT[i] + this.barT[i - 1]);
+        }
+        // Keep boundaries fixed (Dirichlet boundary conditions)
+        nextT[0] = this.params.barTempHot;
+        nextT[this.barNodes - 1] = this.params.barTempCold;
+        this.barT = nextT;
       }
-
-      // Keep boundaries fixed
-      nextT[0] = this.params.barTempHot;
-      nextT[this.barNodes - 1] = this.params.barTempCold;
-
-      this.barT = nextT;
     }
 
     // ==========================================
@@ -727,16 +766,18 @@
         ctx.stroke();
       }
 
-      // Title & Pressure meter over box (separated to prevent any collision)
+      const isMobile = (this.width || 800) < 600;
+
+      // Title & Pressure meter over box (separated onto two distinct vertical lines to prevent mobile collision)
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 12.5px sans-serif';
+      ctx.font = isMobile ? 'bold 15px sans-serif' : 'bold 12.5px sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
-      ctx.fillText(`กล่องกักแก๊ส 2D (N = ${this.gasParticles.length} อนุภาค)`, boxX, boxY - 12);
+      ctx.fillText(`กล่องกักแก๊ส 2D (N = ${this.gasParticles.length} อนุภาค)`, boxX, boxY - 22);
       ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 12px monospace';
-      ctx.textAlign = 'right';
-      ctx.fillText(`ความดัน P_wall ≈ ${this.measuredPressure} kPa`, boxX + boxW, boxY - 12);
+      ctx.font = isMobile ? 'bold 14px monospace' : 'bold 12px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`ความดันวัดจริงจากการชนผนัง P_wall = ${this.measuredPressure} kPa`, boxX, boxY - 7);
 
       // ------------------------------------
       // RIGHT HALF: MAXWELL-BOLTZMANN HISTOGRAM
@@ -754,7 +795,7 @@
 
       // Graph Title
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 12px sans-serif';
+      ctx.font = isMobile ? 'bold 14px sans-serif' : 'bold 12px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText('สถิติการแจกแจงอัตราเร็ว Maxwell-Boltzmann', histX, histY - 12);
 
@@ -822,7 +863,7 @@
       ctx.restore();
 
       // Marker labels inside graph box
-      ctx.font = 'bold 9.5px monospace';
+      ctx.font = isMobile ? 'bold 11px monospace' : 'bold 9.5px monospace';
       ctx.textAlign = 'center';
       if (xVp >= histX && xVp <= histX + histW) {
         ctx.fillStyle = '#ef4444';
@@ -844,11 +885,11 @@
       ctx.strokeRect(boxX, 400, w - 60, 65);
 
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 12.5px sans-serif';
+      ctx.font = isMobile ? 'bold 14px sans-serif' : 'bold 12.5px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText(`📊 สถิติอัตราเร็วโมเลกุลแมกซ์เวลล์-โบลต์ซมันน์ (T = ${T} K, มวลโมลาร์ M = ${(this.params.gasMolarMass * 1000).toFixed(0)} g/mol)`, boxX + 15, 422);
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '11px monospace';
+      ctx.font = isMobile ? 'bold 12px monospace' : '11px monospace';
       ctx.fillText(`v_p: ${vp.toFixed(1)} m/s (ยอดสูงสุด) < v_avg: ${vAvg.toFixed(1)} m/s < v_rms: ${vRms.toFixed(1)} m/s | <K_trans> = (3/2)k_B T = ${((1.5 * 1.38e-23 * T) * 1e21).toFixed(2)} × 10⁻²¹ J`, boxX + 15, 444);
     }
 

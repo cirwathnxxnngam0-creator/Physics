@@ -409,13 +409,18 @@
       this.lastTimestamp = now;
 
       if (dt > 0.05) dt = 0.05;
-      this.state.simTime += dt;
+      const effectiveDt = dt * (this.timeScale !== undefined ? this.timeScale : 1.0);
+      this.state.simTime += effectiveDt;
 
       this._updatePhysics();
       this.render();
       this._emitTelemetry();
 
       this.animId = requestAnimationFrame(() => this._loop());
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     _updatePhysics() {

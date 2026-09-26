@@ -51,7 +51,13 @@
         sigmaX: 80.0,         // MPa
         sigmaY: 20.0,         // MPa
         tauXY: 40.0,          // MPa
-        rotThetaDeg: 25.0     // degrees
+        rotThetaDeg: 25.0,    // degrees
+
+        // Truss parameters (prob-civ-01: Pin A, Roller C, Joint B apex)
+        trussSpanL: 4.0,       // meters (L)
+        trussHeightH: 3.0,     // meters (h)
+        trussLoadPx: 40.0,     // kN (horizontal load at joint B, rightward)
+        trussLoadPy: 0.0       // kN (vertical load at joint B, downward)
       };
 
       // Hover / Inspect state
@@ -116,7 +122,7 @@
     }
 
     setSubMode(mode) {
-      if (['simply_supported', 'cantilever', 'mohr_circle'].includes(mode)) {
+      if (['simply_supported', 'cantilever', 'mohr_circle', 'truss_analysis'].includes(mode)) {
         this.subMode = mode;
         this.hoverState.active = false;
         this.render();
@@ -167,6 +173,11 @@
         this.params.sigmaY = 20.0;
         this.params.tauXY = 40.0;
         this.params.rotThetaDeg = 25.0;
+      } else if (this.subMode === 'truss_analysis') {
+        this.params.trussSpanL = 4.0;
+        this.params.trussHeightH = 3.0;
+        this.params.trussLoadPx = 40.0;
+        this.params.trussLoadPy = 0.0;
       }
       this.hoverState.active = false;
       this.render();
@@ -336,6 +347,38 @@
       };
     }
 
+    _calcTruss() {
+      const L = Math.max(1.0, this.params.trussSpanL || 4.0);
+      const h = Math.max(0.5, this.params.trussHeightH || 3.0);
+      const Px = this.params.trussLoadPx !== undefined ? this.params.trussLoadPx : 40.0;
+      const Py = this.params.trussLoadPy !== undefined ? this.params.trussLoadPy : 0.0;
+
+      // Reactions:
+      // Moment equilibrium about C (L, 0): -Ay * L - Px * h + Py * (L/2) = 0
+      const Ay = (-Px * h + Py * (L / 2)) / L;
+      const Cy = Py - Ay;
+      const Ax = -Px;
+
+      const halfL = L / 2;
+      const Lab = Math.sqrt(halfL * halfL + h * h);
+      const sinTheta = h / Lab;
+      const cosTheta = halfL / Lab;
+
+      // Joint A: Ay + Fab * sinTheta = 0 => Fab = -Ay / sinTheta (Tension > 0)
+      const Fab = -Ay / sinTheta;
+      // Ax + Fac + Fab * cosTheta = 0 => Fac = -Ax - Fab * cosTheta
+      const Fac = -Ax - Fab * cosTheta;
+      // Joint C: Cy + Fbc * sinTheta = 0 => Fbc = -Cy / sinTheta
+      const Fbc = -Cy / sinTheta;
+
+      return {
+        L, h, Px, Py,
+        Ax, Ay, Cy,
+        Fab, Fbc, Fac,
+        thetaDeg: (Math.atan2(h, halfL) * 180 / Math.PI)
+      };
+    }
+
     _emitTelemetry() {
       if (typeof this.options.onTelemetryUpdate !== 'function') return;
 
@@ -370,6 +413,17 @@
           sxPrime: data.sxPrime.toFixed(1) + ' MPa',
           txyPrime: data.txyPrime.toFixed(1) + ' MPa'
         });
+      } else if (this.subMode === 'truss_analysis') {
+        const data = this._calcTruss();
+        this.options.onTelemetryUpdate({
+          subMode: 'truss_analysis',
+          ay: `${Math.abs(data.Ay).toFixed(1)} kN (${data.Ay < 0 ? 'Down' : 'Up'})`,
+          cy: `${data.Cy.toFixed(1)} kN (Up)`,
+          ax: `${Math.abs(data.Ax).toFixed(1)} kN (Left)`,
+          fab: `${Math.abs(data.Fab).toFixed(1)} kN (${data.Fab >= 0 ? 'Tension' : 'Compression'})`,
+          fbc: `${Math.abs(data.Fbc).toFixed(1)} kN (${data.Fbc >= 0 ? 'Tension' : 'Compression'})`,
+          fac: `${Math.abs(data.Fac).toFixed(1)} kN (${data.Fac >= 0 ? 'Tension' : 'Compression'})`
+        });
       }
     }
 
@@ -389,6 +443,8 @@
         this._renderBeamAnalysis(ctx, w, h);
       } else if (this.subMode === 'mohr_circle') {
         this._renderMohrCircle(ctx, w, h);
+      } else if (this.subMode === 'truss_analysis') {
+        this._renderTrussAnalysis(ctx, w, h);
       }
     }
 
@@ -990,6 +1046,241 @@
       ctx.fillText("σ_y' = " + data.syPrime.toFixed(1) + ' MPa', elemCenterX, sumY + 16);
       ctx.fillText("τ_x'y' = " + data.txyPrime.toFixed(1) + ' MPa', elemCenterX, sumY + 32);
       ctx.fillText('τ_max = ' + data.tauMax.toFixed(1) + ' MPa | θ_p = ' + data.thetaP1Deg.toFixed(1) + '°', elemCenterX, sumY + 48);
+    }
+
+    _renderTrussAnalysis(ctx, w, h) {
+      const data = this._calcTruss();
+      const isMobile = w < 600;
+
+      // Header Banner
+      const padX = isMobile ? 10 : 16;
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = isMobile ? 'bold 11px sans-serif' : 'bold 15px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(isMobile ? '🏗️ วิเคราะห์โครงถัก 2D (Method of Joints)' : '🏗️ การวิเคราะห์โครงถักระนาบ 2D (Method of Joints & Equilibrium)', padX, isMobile ? 12 : 20);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = isMobile ? '9px sans-serif' : '11px sans-serif';
+      ctx.fillText(isMobile ? `L = ${data.L.toFixed(1)}m | h = ${data.h.toFixed(1)}m | θ = ${data.thetaDeg.toFixed(1)}°` : `ช่วงสแปน L = ${data.L.toFixed(1)} m | ความสูง h = ${data.h.toFixed(1)} m | มุมเอียง θ = ${data.thetaDeg.toFixed(1)}°`, padX, isMobile ? 28 : 40);
+
+      // Usable vertical layout space
+      const headerH = isMobile ? 40 : 54;
+      const cardH = isMobile ? 44 : 46;
+      const cardY = h - cardH - (isMobile ? 4 : 8);
+
+      // Dedicated vertical space reserved for reaction arrows & labels under baseline
+      const reactionSpaceBelow = isMobile ? 38 : 50;
+      const ay = cardY - reactionSpaceBelow;
+      const cy = ay;
+
+      // Space available for truss height
+      const availTrussH = Math.max(50, ay - headerH - (isMobile ? 18 : 28));
+      const availW = Math.max(120, w - (isMobile ? 70 : 130));
+
+      // Scale truss to comfortably fit within available dimensions
+      const scale = Math.min(availW / data.L, availTrussH / data.h);
+      const trussPixelW = data.L * scale;
+      const trussPixelH = data.h * scale;
+
+      const ax = (w - trussPixelW) / 2;
+      const cx = ax + trussPixelW;
+      const bx = ax + trussPixelW / 2;
+      const by = ay - trussPixelH;
+
+      // Ground hatching under supports
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(ax - 16, ay + 9); ctx.lineTo(ax + 16, ay + 9);
+      ctx.moveTo(cx - 16, cy + 9); ctx.lineTo(cx + 16, cy + 9);
+      ctx.stroke();
+
+      for (let i = -12; i <= 12; i += 6) {
+        ctx.beginPath();
+        ctx.moveTo(ax + i, ay + 9); ctx.lineTo(ax + i - 4, ay + 14);
+        ctx.moveTo(cx + i, cy + 9); ctx.lineTo(cx + i - 4, cy + 14);
+        ctx.stroke();
+      }
+
+      // Support fixtures: Pin at A (Triangle)
+      ctx.fillStyle = '#334155';
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay); ctx.lineTo(ax - 9, ay + 9); ctx.lineTo(ax + 9, ay + 9); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+
+      // Support fixtures: Roller at C (Triangle + circles)
+      ctx.beginPath();
+      ctx.moveTo(cx, cy); ctx.lineTo(cx - 9, cy + 6); ctx.lineTo(cx + 9, cy + 6); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx - 4.5, cy + 8, 1.5, 0, Math.PI * 2);
+      ctx.arc(cx + 4.5, cy + 8, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fill();
+
+      // Draw Members: AB, BC, AC with separated badge placements
+      const drawMember = (x1, y1, x2, y2, force, name, placement) => {
+        const isTension = force >= 0;
+        const color = isTension ? '#38bdf8' : '#ef4444'; // blue for tension, red for compression
+        ctx.strokeStyle = color;
+        ctx.lineWidth = isMobile ? 4 : 5.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // Inner core
+        ctx.strokeStyle = isTension ? '#bae6fd' : '#fca5a5';
+        ctx.lineWidth = isMobile ? 1.5 : 2;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // Calculate member midpoint
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+
+        const tagText = isMobile 
+          ? `${name}=${Math.abs(force).toFixed(1)}k(${isTension ? 'T' : 'C'})`
+          : `${name} = ${Math.abs(force).toFixed(1)} kN (${isTension ? 'ดึง (T)' : 'อัด (C)'})`;
+        ctx.font = isMobile ? 'bold 8px sans-serif' : 'bold 10px sans-serif';
+        const tw = ctx.measureText(tagText).width + (isMobile ? 6 : 10);
+        const th = isMobile ? 13 : 18;
+
+        let badgeX = midX;
+        let badgeY = midY;
+
+        if (placement === 'left_outer') {
+          // Member AB: shift outward to the left of the slanted member
+          const dx = x2 - x1, dy = y2 - y1;
+          const len = Math.hypot(dx, dy) || 1;
+          const nx = dy / len;  // negative -> points left
+          const ny = -dx / len; // negative -> points up
+          const offset = isMobile ? 18 : 22;
+          badgeX = midX + nx * offset - (isMobile ? 10 : 12);
+          badgeY = midY + ny * offset;
+        } else if (placement === 'right_outer') {
+          // Member BC: shift outward to the right of the slanted member
+          const dx = x2 - x1, dy = y2 - y1;
+          const len = Math.hypot(dx, dy) || 1;
+          const nx = dy / len;  // positive -> points right
+          const ny = -dx / len; // negative -> points up
+          const offset = isMobile ? 18 : 22;
+          badgeX = midX + nx * offset + (isMobile ? 10 : 12);
+          badgeY = midY + ny * offset;
+        } else if (placement === 'bottom_inner') {
+          // Member AC: horizontal bottom chord, place badge above member inside truss triangle
+          badgeX = midX;
+          badgeY = midY - (isMobile ? 9 : 13);
+        }
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+        ctx.fillRect(badgeX - tw / 2, badgeY - th / 2, tw, th);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(badgeX - tw / 2, badgeY - th / 2, tw, th);
+
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(tagText, badgeX, badgeY);
+      };
+
+      // Draw 3 Members with separated badge placements to eliminate overlap
+      drawMember(ax, ay, cx, cy, data.Fac, 'F_AC', 'bottom_inner');
+      drawMember(ax, ay, bx, by, data.Fab, 'F_AB', 'left_outer');
+      drawMember(bx, by, cx, cy, data.Fbc, 'F_BC', 'right_outer');
+
+      // Draw Joints (Pin hinges A, B, C)
+      const drawJoint = (x, y, label) => {
+        ctx.beginPath();
+        ctx.arc(x, y, isMobile ? 5 : 6.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fill();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = isMobile ? 'bold 9px sans-serif' : 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(label, x, y - (isMobile ? 5 : 8));
+      };
+
+      drawJoint(ax, ay, isMobile ? 'A' : 'A (Pin)');
+      drawJoint(bx, by, isMobile ? 'B' : 'B (Apex)');
+      drawJoint(cx, cy, isMobile ? 'C' : 'C (Roller)');
+
+      // Draw Applied Load at B (Px pointing right)
+      if (Math.abs(data.Px) > 0) {
+        const arrLen = isMobile ? 22 : 45;
+        this._drawArrow(ctx, bx + 6, by, bx + 6 + arrLen, by, '#f97316', 5);
+        ctx.fillStyle = '#f97316';
+        ctx.font = isMobile ? 'bold 8.5px sans-serif' : 'bold 11px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(isMobile ? `P=${data.Px.toFixed(0)}kN→` : `P = ${data.Px.toFixed(1)} kN →`, bx + 9 + arrLen, by);
+      }
+
+      // Draw Support Reactions with clean clearance above the bottom card:
+      // At A: Ay (downwards = 30 kN), Ax (leftwards = 40 kN)
+      if (data.Ay < 0) {
+        const arrH = isMobile ? 12 : 20;
+        this._drawArrow(ctx, ax, ay + 11, ax, ay + 11 + arrH, '#a855f7', 5);
+        ctx.fillStyle = '#c084fc';
+        ctx.font = isMobile ? 'bold 8px sans-serif' : 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(isMobile ? `Ay=${Math.abs(data.Ay).toFixed(0)}k↓` : `A_y = ${Math.abs(data.Ay).toFixed(1)} kN (ลง)`, ax, ay + 13 + arrH);
+      }
+      if (Math.abs(data.Ax) > 0) {
+        const arrW = isMobile ? 18 : 32;
+        this._drawArrow(ctx, ax - 7, ay, ax - 7 - arrW, ay, '#a855f7', 5);
+        ctx.fillStyle = '#c084fc';
+        ctx.font = isMobile ? 'bold 8px sans-serif' : 'bold 10px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(isMobile ? `Ax=${Math.abs(data.Ax).toFixed(0)}k←` : `A_x = ${Math.abs(data.Ax).toFixed(1)} kN (ซ้าย)`, ax - 9 - arrW, ay);
+      }
+
+      // At C: Cy (upwards = 30 kN)
+      const cyArrH = isMobile ? 12 : 20;
+      this._drawArrow(ctx, cx, cy + 11 + cyArrH, cx, cy + 11, '#10b981', 5);
+      ctx.fillStyle = '#34d399';
+      ctx.font = isMobile ? 'bold 8px sans-serif' : 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(isMobile ? `Cy=${data.Cy.toFixed(0)}k↑` : `C_y = ${data.Cy.toFixed(1)} kN (ขึ้น)`, cx, cy + 13 + cyArrH);
+
+      // Bottom Telemetry Summary Card
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+      ctx.fillRect(8, cardY, w - 16, cardH);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(8, cardY, w - 16, cardH);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = isMobile ? 'bold 8px monospace' : 'bold 10.5px monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      if (isMobile) {
+        ctx.fillText(`แรงปฏิกิริยา: Ay=${Math.abs(data.Ay).toFixed(0)}kN(ลง) | Cy=${data.Cy.toFixed(0)}kN(ขึ้น) | Ax=${Math.abs(data.Ax).toFixed(0)}kN`, 12, cardY + 13);
+        ctx.fillText(`แรงในก้าน: FAB=+${Math.abs(data.Fab).toFixed(1)}k(T) | FBC=-${Math.abs(data.Fbc).toFixed(1)}k(C) | FAC=+${data.Fac.toFixed(1)}k(T)`, 12, cardY + 31);
+      } else {
+        ctx.fillText(`สมดุลแรงภายนอก: ΣF_x=0 (A_x=-${Math.abs(data.Ax).toFixed(1)} kN) | ΣM_C=0 (A_y=-${Math.abs(data.Ay).toFixed(1)} kN ลง) | ΣF_y=0 (C_y=+${data.Cy.toFixed(1)} kN ขึ้น)`, 16, cardY + 15);
+        ctx.fillText(`วิธีรอยต่อ (Method of Joints): ชิ้นส่วน AB = +${Math.abs(data.Fab).toFixed(1)} kN (Tension) | BC = -${Math.abs(data.Fbc).toFixed(1)} kN (Compression) | AC = +${data.Fac.toFixed(1)} kN`, 16, cardY + 33);
+      }
     }
 
     _drawArrow(ctx, fromX, fromY, toX, toY, color = '#38BDF8', headLen = 6) {

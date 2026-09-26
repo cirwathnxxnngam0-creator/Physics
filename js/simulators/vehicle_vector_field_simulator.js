@@ -566,12 +566,17 @@
         if (!this.isPlaying) return;
         const dtSec = Math.min((now - this.lastTimestamp) / 1000.0, 0.05);
         this.lastTimestamp = now;
-        this.updatePhysics(dtSec);
+        const effectiveDt = dtSec * (this.timeScale !== undefined ? this.timeScale : 1.0);
+        this.updatePhysics(effectiveDt);
         this.render();
         this.broadcastTelemetry();
         this.animId = requestAnimationFrame(loop);
       };
       this.animId = requestAnimationFrame(loop);
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     pause() {

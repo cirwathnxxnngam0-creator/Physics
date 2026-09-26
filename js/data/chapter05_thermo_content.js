@@ -191,14 +191,15 @@
           text: "อุณหภูมิ (Temperature, T) คือสมบัติทางกายภาพระดับมหภาคที่เป็นตัวกำหนดทิศทางการไหลของพลังงานความร้อนระหว่างระบบสองระบบที่สัมผัสทางความร้อนกัน โดยระบบจะอยู่ใน 'สมดุลความร้อน' (Thermal Equilibrium) เมื่อไม่มีการถ่ายเทความร้อนสุทธิระหว่างกัน กฎข้อศูนย์แห่งอุณหพลศาสตร์ (Zeroth Law of Thermodynamics) ระบุว่า หากระบบ A อยู่ในสมดุลความร้อนกับระบบ B และระบบ B อยู่ในสมดุลความร้อนกับระบบ C แล้ว ระบบ A ย่อมอยู่ในสมดุลความร้อนกับระบบ C ด้วย ซึ่งเป็นรากฐานทางตรรกะของการสร้าง 'เทอร์โมมิเตอร์' ในการวัดระดับอุณหภูมิมาตรฐาน"
         },
         principle: {
-          text: "การถ่ายเทความร้อนเกิดขึ้นผ่าน 3 กลไกพื้นฐาน:\n1. การนำความร้อน (Conduction): การถ่ายทอดพลังงานจลน์ผ่านการสั่นของแลตทิซและอิเล็กตรอนอิสระในของแข็ง โดยไม่มีการเคลื่อนที่ตามระดับมหภาคของเนื้อสสาร สอดคล้องกับกฎของฟูริเยร์ (Fourier's Law): q = -k dT/dx\n2. การพาความร้อน (Convection): การถ่ายเทความร้อนโดยการเคลื่อนที่จริงของกลุ่มมวลของไหล (Fluid parcels) อันเนื่องมาจากความต่างของความหนาแน่น (Natural convection) หรือแรงขับภายนอก เช่น พัดลมหรือปั๊ม (Forced convection)\n3. การแผ่รังสีความร้อน (Thermal Radiation): การปลดปล่อยคลื่นแม่เหล็กไฟฟ้าจากวัตถุที่มีอุณหภูมิสูงกว่าศูนย์สัมบูรณ์ โดยไม่ต้องอาศัยตัวกลาง สอดคล้องกับกฎของสเตฟาน-โบลต์ซมันน์ (Stefan-Boltzmann Law): P_rad = e \\sigma A (T^4 - T_0^4)"
+          text: "การถ่ายเทความร้อนเกิดขึ้นผ่าน 3 กลไกพื้นฐาน:\n1. การนำความร้อน (Conduction): การถ่ายทอดพลังงานจลน์ผ่านการสั่นของแลตทิซและอิเล็กตรอนอิสระในของแข็ง โดยไม่มีการเคลื่อนที่ตามระดับมหภาคของเนื้อสสาร สอดคล้องกับกฎของฟูริเยร์ (Fourier's Law): ฟลักซ์ความร้อน $q_x = -k \\frac{dT}{dx}$ หรือรูปเวกเตอร์ทั่วไป $\\vec{q} = -k \\nabla T$\n2. การพาความร้อน (Convection): การถ่ายเทความร้อนโดยการเคลื่อนที่จริงของกลุ่มมวลของไหล (Fluid parcels) อันเนื่องมาจากความต่างของความหนาแน่น (Natural convection) หรือแรงขับภายนอก เช่น พัดลมหรือปั๊ม (Forced convection) สอดคล้องกับกฎการเย็นตัวของนิวตัน: $\\dot{Q} = h A (T_s - T_\\infty)$\n3. การแผ่รังสีความร้อน (Thermal Radiation): การปลดปล่อยคลื่นแม่เหล็กไฟฟ้าจากวัตถุที่มีอุณหภูมิสูงกว่าศูนย์สัมบูรณ์ โดยไม่ต้องอาศัยตัวกลาง สอดคล้องกับกฎของสเตฟาน-โบลต์ซมันน์ (Stefan-Boltzmann Law): $P_{\\text{rad}} = e \\sigma A (T^4 - T_0^4)$"
         },
         formulas: [
           {
             name: "กฎการนำความร้อนของฟูริเยร์ (Fourier's Law of Thermal Conduction)",
-            latex: "\\frac{dQ}{dt} = -k A \\frac{dT}{dx}",
+            latex: "\\frac{dQ}{dt} = -k A \\frac{dT}{dx} \\quad \\Longleftrightarrow \\quad \\vec{q} = -k\\nabla T",
             symbols: [
               { sym: "dQ/dt", desc: "อัตราการถ่ายเทความร้อนผ่านระนาบ", unit: "\\text{W} \\; (\\text{J/s})" },
+              { sym: "\\vec{q}", desc: "เวกเตอร์ฟลักซ์ความร้อนต่อหน่วยพื้นที่", unit: "\\text{W/m}^2" },
               { sym: "k", desc: "สภาพนำความร้อนของเนื้อวัสดุ", unit: "\\text{W/(m}\\cdot\\text{K)}" },
               { sym: "A", desc: "พื้นที่หน้าตัดตั้งฉากกับทิศทางการไหล", unit: "\\text{m}^2" },
               { sym: "dT/dx", desc: "เกรเดียนต์อุณหภูมิ (Temperature Gradient)", unit: "\\text{K/m}" }
@@ -207,7 +208,7 @@
               "พิจารณาแท่งวัสดุเนื้อเดียวความยาว L พื้นที่หน้าตัด A ที่ปลายทั้งสองข้างรักษาอุณหภูมิคงที่ T_H และ T_C (โดย T_H > T_C)",
               "จากการทดลองเชิงประจักษ์ อัตราการไหลของความร้อนแปรผันตรงกับพื้นที่หน้าตัด A และผลต่างอุณหภูมิ \\Delta T = T_H - T_C และแปรผกผันกับความยาว L: \\dot{Q} \\propto A \\frac{\\Delta T}{L}",
               "กำหนดค่าคงตัวการแปรผันเป็นสภาพนำความร้อน k และใส่เครื่องหมายลบเนื่องจากความร้อนไหลจากอุณหภูมิสูงไปสู่อุณหภูมิต่ำ (เกรเดียนต์เป็นลบ)",
-              "ในลิมิตความหนาบางมาก dx จะได้รูปอนุพันธ์ทั่วไป: \\dot{Q} = -k A \\frac{dT}{dx}",
+              "ในลิมิตความหนาบางมาก dx จะได้รูปอนุพันธ์ทั่วไป: \\dot{Q} = -k A \\frac{dT}{dx} หรือเขียนในรูปฟลักซ์เวกเตอร์ 3 มิติ: \\vec{q} = -k \\nabla T",
               "ในสภาวะคงตัว 1 มิติ (Steady State): \\dot{Q} = k A \\frac{T_H - T_C}{L} = \\frac{\\Delta T}{R_{\\text{th}}} โดยที่ R_{\\text{th}} = L/(kA) คือความต้านทานความร้อน (Thermal Resistance)"
             ]
           },
@@ -245,8 +246,78 @@
             "คำนวณอัตราการถ่ายเทความร้อนจากกฎของฟูริเยร์: \\dot{Q} = \\frac{\\Delta T}{R_{\\text{th}}} = \\frac{20}{3.333 \\times 10^{-3}} = 6,000 \\text{ W} = 6.0 \\text{ kW}",
             "สรุป: พลังงานความร้อนรั่วไหลผ่านกระจกด้วยอัตรา 6,000 จูลต่อวินาที (6.0 กิโลวัตต์) สะท้อนให้เห็นถึงความจำเป็นในการใช้กระจกฉนวนสุญญากาศสองชั้น (Double-glazed window) เพื่อลดค่า k และเพิ่ม R_th"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><rect x="170" y="20" width="60" height="120" fill="#38bdf8" fill-opacity="0.3" stroke="#38bdf8" stroke-width="2"/><text x="200" y="85" fill="#e2e8f0" font-size="12" text-anchor="middle">กระจก (k=0.8)</text><path d="M 60 80 L 160 80" stroke="#ef4444" stroke-width="4" marker-end="url(#arrow-red)"/><text x="100" y="70" fill="#ef4444" font-size="14" font-weight="bold">T_H = 20°C</text><text x="100" y="110" fill="#f87171" font-size="11">ความร้อนไหลเข้า</text><path d="M 240 80 L 340 80" stroke="#38bdf8" stroke-width="4"/><text x="290" y="70" fill="#38bdf8" font-size="14" font-weight="bold">T_C = 0°C</text><text x="290" y="110" fill="#93c5fd" font-size="11">ความร้อนไหลออก</text><text x="200" y="150" fill="#94a3b8" font-size="11" text-anchor="middle">L = 4 mm | Q_dot = 6.0 kW</text></svg>',
-          diagramCaption: "แผนภาพแสดงการนำความร้อน 1 มิติในสภาวะคงตัวผ่านแผ่นกระจกหน้าต่าง"
+          diagramSvg: `<svg viewBox="0 0 660 330" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพการนำความร้อน 1 มิติผ่านแผ่นกระจกหน้าต่าง">
+            <defs>
+              <linearGradient id="heat-slab-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#EF4444" stop-opacity="0.18"/>
+                <stop offset="50%" stop-color="#64748B" stop-opacity="0.12"/>
+                <stop offset="100%" stop-color="#0284C7" stop-opacity="0.18"/>
+              </linearGradient>
+              <linearGradient id="arrow-flux-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#EF4444"/>
+                <stop offset="100%" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Outer Canvas Frame -->
+            <rect width="660" height="330" rx="12" fill="#0B132B" stroke="#334155" stroke-width="1.2"/>
+
+            <!-- Top Header Specs Bar -->
+            <rect x="20" y="16" width="620" height="38" rx="8" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+            <text x="35" y="40" fill="#F8FAFC" font-size="13" font-weight="bold">การนำความร้อน 1 มิติในสภาวะคงตัว (1D Steady Conduction)</text>
+            <rect x="365" y="23" width="75" height="24" rx="4" fill="#0F172A" stroke="#38BDF8" stroke-width="1"/>
+            <text x="402" y="39" fill="#38BDF8" font-size="11" font-weight="bold" text-anchor="middle">L = 4.0 mm</text>
+            <rect x="448" y="23" width="75" height="24" rx="4" fill="#0F172A" stroke="#F59E0B" stroke-width="1"/>
+            <text x="485" y="39" fill="#F59E0B" font-size="11" font-weight="bold" text-anchor="middle">A = 1.5 m²</text>
+            <rect x="531" y="23" width="100" height="24" rx="4" fill="#0F172A" stroke="#10B981" stroke-width="1"/>
+            <text x="581" y="39" fill="#10B981" font-size="11" font-weight="bold" text-anchor="middle">k = 0.80 W/(m·K)</text>
+
+            <!-- Three Main Compartments -->
+            <!-- 1. Hot Zone (Left) -->
+            <rect x="20" y="66" width="160" height="175" rx="8" fill="#EF4444" fill-opacity="0.08" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="4,4"/>
+            <text x="100" y="92" fill="#F87171" font-size="12" font-weight="bold" text-anchor="middle">ภายในห้อง (Indoor Hot)</text>
+            <text x="100" y="132" fill="#EF4444" font-size="28" font-weight="900" text-anchor="middle">20°C</text>
+            <text x="100" y="156" fill="#FCA5A5" font-size="13" font-weight="bold" text-anchor="middle">T_H = 293.15 K</text>
+            <rect x="35" y="176" width="130" height="26" rx="4" fill="#1E293B" stroke="#EF4444" stroke-width="0.8"/>
+            <text x="100" y="193" fill="#CBD5E1" font-size="11" text-anchor="middle">อากาศปรับอากาศคงที่</text>
+
+            <!-- 2. Glass Slab (Center) -->
+            <rect x="195" y="66" width="270" height="175" rx="8" fill="url(#heat-slab-grad)" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="235" y="76" width="190" height="26" rx="6" fill="#0F172A" stroke="#38BDF8" stroke-width="1"/>
+            <text x="330" y="93" fill="#38BDF8" font-size="12" font-weight="bold" text-anchor="middle">แผ่นกระจก (Glass Window Slab)</text>
+
+            <!-- Linear Temperature Profile Line -->
+            <!-- Start point (225, 125) -> End point (435, 175) -->
+            <line x1="225" y1="125" x2="435" y2="175" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="225" cy="125" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5"/>
+            <text x="225" y="115" fill="#EF4444" font-size="11" font-weight="bold" text-anchor="middle">T₁ = 20°C</text>
+            <circle cx="435" cy="175" r="5" fill="#38BDF8" stroke="#FFFFFF" stroke-width="1.5"/>
+            <text x="435" y="196" fill="#38BDF8" font-size="11" font-weight="bold" text-anchor="middle">T₂ = 0°C</text>
+
+            <!-- Gradient slope badge (Positioned clearly above slope) -->
+            <rect x="250" y="132" width="160" height="24" rx="4" fill="#0F172A" stroke="#FDE047" stroke-width="1"/>
+            <text x="330" y="148" fill="#FDE047" font-size="11" font-weight="bold" text-anchor="middle">dT/dx = -5,000 K/m</text>
+
+            <!-- Thermal Resistance Badge (Positioned safely below) -->
+            <rect x="235" y="208" width="190" height="24" rx="4" fill="#0F172A" stroke="#94A3B8" stroke-width="0.8"/>
+            <text x="330" y="224" fill="#E2E8F0" font-size="10.5" font-weight="bold" text-anchor="middle">R_th = 3.33 × 10⁻³ K/W</text>
+
+            <!-- 3. Cold Zone (Right) -->
+            <rect x="480" y="66" width="160" height="175" rx="8" fill="#0284C7" fill-opacity="0.08" stroke="#0284C7" stroke-width="1.2" stroke-dasharray="4,4"/>
+            <text x="560" y="92" fill="#7DD3FC" font-size="12" font-weight="bold" text-anchor="middle">ภายนอกห้อง (Outdoor Cold)</text>
+            <text x="560" y="132" fill="#38BDF8" font-size="28" font-weight="900" text-anchor="middle">0°C</text>
+            <text x="560" y="156" fill="#BAE6FD" font-size="13" font-weight="bold" text-anchor="middle">T_C = 273.15 K</text>
+            <rect x="495" y="176" width="130" height="26" rx="4" fill="#1E293B" stroke="#0284C7" stroke-width="0.8"/>
+            <text x="560" y="193" fill="#CBD5E1" font-size="11" text-anchor="middle">บรรยากาศหนาวภายนอก</text>
+
+            <!-- Bottom Heat Flow Rate Strip -->
+            <rect x="20" y="254" width="620" height="60" rx="8" fill="#064E3B" fill-opacity="0.25" stroke="#10B981" stroke-width="1.2"/>
+            <line x1="45" y1="284" x2="160" y2="284" stroke="url(#arrow-flux-grad)" stroke-width="3.5" stroke-linecap="round"/>
+            <polygon points="166,284 156,279 156,289" fill="#10B981"/>
+            <text x="180" y="278" fill="#34D399" font-size="13.5" font-weight="900">อัตราการสูญเสียความร้อนสุทธิ (Heat Flux): Q_dot = ΔT / R_th = 6,000 W (6.0 kW)</text>
+            <text x="180" y="298" fill="#A7F3D0" font-size="11.5">พลังงานความร้อนไหลทะลุกระจก 6,000 จูลต่อวินาที อย่างต่อเนื่องในสภาวะคงตัว (Steady-State)</text>
+          </svg>`,
+          diagramCaption: "แผนภาพแสดงการนำความร้อน 1 มิติในสภาวะคงตัวผ่านแผ่นกระจกหน้าต่าง (Zero Text Overlap)"
         },
         observations: [
           "อุณหภูมิเป็นปริมาณสเกลาร์และเป็นตัวแปรแบบอินเทนซีฟ (Intensive Variable) ซึ่งไม่ขึ้นกับขนาดหรือมวลของระบบ",
@@ -332,7 +403,46 @@
             "ถอดรากที่สอง: v_{\\text{rms}} \\approx 516.95 \\text{ m/s} \\approx 517 \\text{ m/s}",
             "สรุป: โมเลกุลก๊าซไนโตรเจนในห้องวิ่งด้วยอัตราเร็วเฉลี่ยระดับ rms สูงถึงประมาณ 517 เมตรต่อวินาที (เร็วกว่าอัตราเร็วเสียงในอากาศซึ่งอยู่ที่ประมาณ 343 m/s)"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><rect x="50" y="20" width="300" height="120" fill="none" stroke="#38bdf8" stroke-width="2" rx="6"/><circle cx="100" cy="60" r="5" fill="#f59e0b"/><line x1="100" y1="60" x2="135" y2="45" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-red)"/><circle cx="220" cy="100" r="5" fill="#f59e0b"/><line x1="220" y1="100" x2="180" y2="120" stroke="#ef4444" stroke-width="2"/><circle cx="310" cy="70" r="5" fill="#f59e0b"/><line x1="310" y1="70" x2="340" y2="70" stroke="#ef4444" stroke-width="2"/><text x="345" y="65" fill="#38bdf8" font-size="10">ผนังภาชนะ (Area A)</text><text x="200" y="40" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">PV = N k_B T</text><text x="200" y="150" fill="#94a3b8" font-size="11" text-anchor="middle">v_rms(N2, 300K) = 517 m/s | &lt;K_trans&gt; = (3/2) k_B T</text></svg>',
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แบบจำลองทฤษฎีจลน์ของแก๊สและการชนระดับโมเลกุล">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Container Boundary -->
+            <rect x="35" y="25" width="280" height="150" fill="#1E293B" fill-opacity="0.4" stroke="#38BDF8" stroke-width="2" rx="6"/>
+            <!-- Right Wall (Impact surface) -->
+            <rect x="310" y="25" width="10" height="150" fill="#0284C7" stroke="#38BDF8" stroke-width="1.5"/>
+            <text x="302" y="18" fill="#38BDF8" font-size="10" text-anchor="end">ผนังรับแรงดัน A</text>
+
+            <!-- Molecules moving and colliding -->
+            <!-- Molecule 1: approaching wall -->
+            <circle cx="230" cy="65" r="6" fill="#F59E0B"/>
+            <line x1="230" y1="65" x2="290" y2="65" stroke="#EF4444" stroke-width="2"/>
+            <polygon points="290,65 282,61 282,69" fill="#EF4444"/>
+            <text x="230" y="52" fill="#FDE047" font-size="10">v_x &gt; 0</text>
+            
+            <!-- Collision pulse at wall -->
+            <circle cx="310" cy="110" r="6" fill="#EF4444"/>
+            <line x1="310" y1="110" x2="255" y2="130" stroke="#38BDF8" stroke-width="2" stroke-dasharray="3,3"/>
+            <polygon points="255,130 263,126 263,134" fill="#38BDF8"/>
+            <text x="235" y="148" fill="#93C5FD" font-size="10">-v_x (สะท้อนยืดหยุ่น)</text>
+            
+            <!-- Other random molecules -->
+            <circle cx="85" cy="55" r="5" fill="#38BDF8"/>
+            <line x1="85" y1="55" x2="115" y2="40" stroke="#38BDF8" stroke-width="1.5"/>
+            <circle cx="105" cy="130" r="5" fill="#10B981"/>
+            <line x1="105" y1="130" x2="75" y2="150" stroke="#10B981" stroke-width="1.5"/>
+            <circle cx="170" cy="85" r="5" fill="#F43F5E"/>
+            <line x1="170" y1="85" x2="190" y2="115" stroke="#F43F5E" stroke-width="1.5"/>
+
+            <!-- Mathematical derivation & telemetry box on right -->
+            <rect x="335" y="25" width="165" height="150" fill="#0B1120" rx="6" stroke="#334155" stroke-width="1"/>
+            <text x="417" y="48" fill="#FDE047" font-size="12" font-weight="bold" text-anchor="middle">ทฤษฎีจลน์แก๊ส (Kinetic)</text>
+            <text x="417" y="70" fill="#F8FAFC" font-size="11" text-anchor="middle">Δp_x = 2 m v_x</text>
+            <text x="417" y="92" fill="#38BDF8" font-size="11" text-anchor="middle">P = ⅓ (N/V) m ⟨v²⟩</text>
+            <text x="417" y="114" fill="#10B981" font-size="11" text-anchor="middle">⟨K_trans⟩ = 3/2 k_B T</text>
+            <text x="417" y="140" fill="#FCA5A5" font-size="11" font-weight="bold" text-anchor="middle">v_rms(N₂, 300K)</text>
+            <text x="417" y="160" fill="#EF4444" font-size="13" font-weight="bold" text-anchor="middle">≈ 517 m/s</text>
+
+            <text x="175" y="190" fill="#CBD5E1" font-size="11" text-anchor="middle">การดลรวมจากการชนนับล้านล้านครั้งต่อวินาทีสร้าง 'ความดันสมดุลระดับมหภาค'</text>
+          </svg>`,
           diagramCaption: "แบบจำลองทฤษฎีจลน์ของแก๊ส: การชนแบบยืดหยุ่นของอนุภาคจุดกับผนังสร้างแรงดันระดับมหภาค"
         },
         observations: [
@@ -412,7 +522,45 @@
             "\\Delta U = Q - W = 4,500 \\text{ J} - 3,000 \\text{ J} = 1,500 \\text{ J}",
             "สรุป: แก๊สทำงานกลออกไป 3,000 จูล และพลังงานภายในเพิ่มขึ้น 1,500 จูล (ซึ่งทำให้อุณหภูมิของแก๊สสูงขึ้นตามความสัมพันธ์ \\Delta U = n C_V \\Delta T)"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><line x1="60" y1="130" x2="360" y2="130" stroke="#94a3b8" stroke-width="1.5"/><line x1="60" y1="130" x2="60" y2="20" stroke="#94a3b8" stroke-width="1.5"/><text x="350" y="145" fill="#94a3b8" font-size="11">V</text><text x="45" y="30" fill="#94a3b8" font-size="11">P</text><rect x="110" y="60" width="180" height="70" fill="#3b82f6" fill-opacity="0.2"/><line x1="110" y1="60" x2="290" y2="60" stroke="#38bdf8" stroke-width="3"/><polygon points="205,57 215,60 205,63" fill="#38bdf8"/><circle cx="110" cy="60" r="4" fill="#f59e0b"/><circle cx="290" cy="60" r="4" fill="#ef4444"/><text x="105" y="50" fill="#f59e0b" font-size="11">1</text><text x="295" y="50" fill="#ef4444" font-size="11">2</text><text x="200" y="95" fill="#60a5fa" font-size="12" font-weight="bold" text-anchor="middle">งาน W = P·ΔV = 3,000 J</text><text x="200" y="150" fill="#cbd5e1" font-size="11" text-anchor="middle">กระบวนการความดันคงที่ (Isobaric) | ΔU = Q - W = 1,500 J</text></svg>',
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="กฎข้อที่หนึ่งแห่งอุณหพลศาสตร์และงานในกระบวนการความดันคงที่">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="70" y1="160" x2="330" y2="160" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="330,160 322,156 322,164" fill="#64748B"/>
+            <text x="335" y="164" fill="#94A3B8" font-size="11">V (m³)</text>
+            
+            <line x1="70" y1="160" x2="70" y2="25" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="70,25 66,33 74,33" fill="#64748B"/>
+            <text x="50" y="30" fill="#94A3B8" font-size="11">P (Pa)</text>
+
+            <!-- Isobaric Path & Shaded Work Area -->
+            <rect x="115" y="65" width="165" height="95" fill="#38BDF8" fill-opacity="0.18"/>
+            <line x1="115" y1="65" x2="280" y2="65" stroke="#38BDF8" stroke-width="3"/>
+            <polygon points="205,61 215,65 205,69" fill="#38BDF8"/>
+            
+            <!-- State Points -->
+            <circle cx="115" cy="65" r="5" fill="#F59E0B"/>
+            <text x="110" y="52" fill="#F59E0B" font-size="11" font-weight="bold">สภาวะ 1 (V₁=0.010)</text>
+            <line x1="115" y1="65" x2="115" y2="160" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3,3"/>
+            
+            <circle cx="280" cy="65" r="5" fill="#EF4444"/>
+            <text x="270" y="52" fill="#EF4444" font-size="11" font-weight="bold">สภาวะ 2 (V₂=0.025)</text>
+            <line x1="280" y1="65" x2="280" y2="160" stroke="#EF4444" stroke-width="1" stroke-dasharray="3,3"/>
+
+            <text x="195" y="115" fill="#38BDF8" font-size="13" font-weight="bold" text-anchor="middle">งานกล W = P·ΔV = 3,000 J</text>
+            <text x="195" y="135" fill="#94A3B8" font-size="10" text-anchor="middle">(พื้นที่แรเงาใต้เส้นกราฟบนแผนภาพ P-V)</text>
+
+            <!-- Energy Balance Sidebar (Right) -->
+            <rect x="350" y="25" width="150" height="150" fill="#0B1120" rx="6" stroke="#334155" stroke-width="1"/>
+            <text x="425" y="48" fill="#FDE047" font-size="12" font-weight="bold" text-anchor="middle">กฎข้อที่ 1: ΔU = Q - W</text>
+            <text x="425" y="75" fill="#EF4444" font-size="11" text-anchor="middle">ความร้อนเข้า: Q = +4,500 J</text>
+            <text x="425" y="100" fill="#38BDF8" font-size="11" text-anchor="middle">งานขยายตัว: W = +3,000 J</text>
+            <line x1="365" y1="115" x2="485" y2="115" stroke="#334155" stroke-width="1"/>
+            <text x="425" y="135" fill="#10B981" font-size="11" font-weight="bold" text-anchor="middle">พลังงานภายในเปลี่ยน:</text>
+            <text x="425" y="155" fill="#10B981" font-size="13" font-weight="bold" text-anchor="middle">ΔU = +1,500 J</text>
+
+            <text x="195" y="188" fill="#CBD5E1" font-size="11" text-anchor="middle">กระบวนการความดันคงที่ (Isobaric Process): P = 2.0 × 10⁵ Pa</text>
+          </svg>`,
           diagramCaption: "แผนภาพ P-V แสดงงานจากการขยายตัวความดันคงที่ (พื้นที่แรเงาใต้กราฟ)"
         },
         observations: [
@@ -438,9 +586,40 @@
           text: "กระบวนการทางอุณหพลศาสตร์ (Thermodynamic Process) คือการเปลี่ยนแปลงสภาวะของระบบจากสภาวะสมดุลเริ่มต้นไปยังสภาวะสมดุลสุดท้าย โดยในแก๊สอุดมคติมีกระบวนการอ้างอิงมาตรฐาน 4 แบบหลัก ได้แก่: (1) ปริมาตรคงที่ (Isochoric / Isovolumetric, dV = 0) (2) ความดันคงที่ (Isobaric, dP = 0) (3) อุณหภูมิคงที่ (Isothermal, dT = 0) และ (4) แอเดียแบติก (Adiabatic, dQ = 0)"
         },
         principle: {
-          text: "การวิเคราะห์คุณลักษณะและงานในแต่ละกระบวนการ:\n1. Isochoric (V = คงที่): dV = 0 \\implies W = 0, Q = \\Delta U = n C_V \\Delta T (พลังงานความร้อนทั้งหมดเปลี่ยนเป็นพลังงานภายใน)\n2. Isobaric (P = คงที่): W = P \\Delta V = n R \\Delta T, Q = n C_P \\Delta T, \\Delta U = n C_V \\Delta T (สังเกตความสัมพันธ์ไมเยอร์ C_P = C_V + R)\n3. Isothermal (T = คงที่): \\Delta U = 0 \\implies Q = W = n R T \\ln(V_f / V_i) (ความร้อนที่ไหลเข้าถูกเปลี่ยนเป็นงานกล 100% เพื่อรักษาอุณหภูมิ)\n4. Adiabatic (Q = 0): หุ้มฉนวนสมบูรณ์ \\Delta U = -W \\implies W = -n C_V \\Delta T = \\frac{P_i V_i - P_f V_f}{\\gamma - 1} โดยมีความสัมพันธ์เส้นโค้งควอซิสแตติกคือ P V^\\gamma = \\text{const}, T V^{\\gamma-1} = \\text{const}, T^\\gamma P^{1-\\gamma} = \\text{const}"
+          text: "การวิเคราะห์คุณลักษณะและงานใน 4 กระบวนการอุณหพลศาสตร์มาตรฐาน (4-Process Comparative Summary):\n\n| กระบวนการ (Process) | เงื่อนไขคงที่ | งานกล ($W = \\int P dV$) | กฎข้อที่ 1 ($\\Delta U = Q - W$) | ความชันบนกราฟ P-V ($dP/dV$) |\n| :--- | :--- | :--- | :--- | :--- |\n| **1. ปริมาตรคงที่ (Isochoric)** | $V = \\text{const} \\; (dV = 0)$ | $W = 0$ | $Q = \\Delta U = n C_V \\Delta T$ | $\\frac{dP}{dV} \\to \\pm\\infty$ (แนวดิ่ง) |\n| **2. ความดันคงที่ (Isobaric)** | $P = \\text{const} \\; (dP = 0)$ | $W = P \\Delta V = n R \\Delta T$ | $Q = n C_P \\Delta T, \\; \\Delta U = n C_V \\Delta T$ | $\\frac{dP}{dV} = 0$ (แนวนอน) |\n| **3. อุณหภูมิคงที่ (Isothermal)** | $T = \\text{const} \\; (dT = 0)$ | $W = n R T \\ln(V_f / V_i)$ | $\\Delta U = 0 \\implies Q = W$ | $\\frac{dP}{dV} = -\\frac{P}{V}$ (ไฮเพอร์โบลา) |\n| **4. แอเดียแบติก (Adiabatic)** | $Q = 0 \\; (\\delta Q = 0)$ | $W = \\frac{P_i V_i - P_f V_f}{\\gamma - 1} = -\\Delta U$ | $\\Delta U = -W = n C_V \\Delta T$ | $\\frac{dP}{dV} = -\\gamma \\frac{P}{V}$ (ชันกว่าไอโซเทอร์มอล $\\gamma$ เท่า) |\n\n*ข้อสังเกตหลักการออกแบบทางวิศวกรรม:* ความชันของเส้นกราฟแอเดียแบติกบนระนาบ P-V มีค่าชันกว่าเส้นไอโซเทอร์มอลเสมอเป็นตัวคูณ $\\gamma = C_P/C_V > 1$ ส่งผลให้ในกระบวนการอัด (Compression) การอัดแบบแอเดียแบติกต้องใช้กำลังงานกลมากกว่าการอัดแบบไอโซเทอร์มอล"
         },
         formulas: [
+          {
+            name: "งานและกฎข้อที่หนึ่งในกระบวนการปริมาตรคงที่ (Isochoric Process)",
+            latex: "W_{\\text{ch}} = 0 \\quad \\implies \\quad Q = \\Delta U = n C_V \\Delta T",
+            symbols: [
+              { sym: "W_{\\text{ch}}", desc: "งานกลในกระบวนการปริมาตรคงที่", unit: "\\text{J}" },
+              { sym: "Q", desc: "ความร้อนที่ระบบดูดกลืน", unit: "\\text{J}" },
+              { sym: "\\Delta U", desc: "พลังงานภายในที่เปลี่ยนไป", unit: "\\text{J}" },
+              { sym: "C_V", desc: "ความจุความร้อนโมลาร์ที่ปริมาตรคงที่", unit: "\\text{J/(mol}\\cdot\\text{K)}" }
+            ],
+            derivationSteps: [
+              "เนื่องจากปริมาตรของระบบถูกตรึงคงที่: dV = 0",
+              "งานกลจากการขยายตัว: W = \\int P dV = 0",
+              "จากกฎข้อที่หนึ่งของอุณหพลศาสตร์: \\Delta U = Q - W = Q - 0 = Q",
+              "เนื่องจากพลังงานภายในของแก๊สอุดมคติขึ้นกับอุณหภูมิเพียงอย่างเดียว: dU = n C_V dT \\implies Q = n C_V \\Delta T"
+            ]
+          },
+          {
+            name: "งานและกฎข้อที่หนึ่งในกระบวนการความดันคงที่ (Isobaric Process)",
+            latex: "W_{\\text{bar}} = P \\Delta V = n R \\Delta T, \\quad Q = n C_P \\Delta T",
+            symbols: [
+              { sym: "W_{\\text{bar}}", desc: "งานกลในกระบวนการความดันคงที่", unit: "\\text{J}" },
+              { sym: "P", desc: "ความดันคงที่ของระบบ", unit: "\\text{Pa}" },
+              { sym: "C_P", desc: "ความจุความร้อนโมลาร์ที่ความดันคงที่ (C_P = C_V + R)", unit: "\\text{J/(mol}\\cdot\\text{K)}" }
+            ],
+            derivationSteps: [
+              "เนื่องจากความดัน P มีค่าคงที่: W = \\int_{V_i}^{V_f} P dV = P \\int_{V_i}^{V_f} dV = P(V_f - V_i) = P \\Delta V",
+              "จากกฎแก๊สอุดมคติ P \\Delta V = n R \\Delta T ดังนั้น W = n R \\Delta T",
+              "จากกฎข้อที่หนึ่ง: Q = \\Delta U + W = n C_V \\Delta T + n R \\Delta T = n (C_V + R) \\Delta T",
+              "กำหนดนิยาม C_P \\equiv C_V + R (Mayer's relation) จะได้: Q = n C_P \\Delta T"
+            ]
+          },
           {
             name: "งานในกระบวนการอุณหภูมิคงที่ (Isothermal Work)",
             latex: "W_{\\text{iso}} = n R T \\ln\\left(\\frac{V_f}{V_i}\\right) = P_i V_i \\ln\\left(\\frac{V_f}{V_i}\\right)",
@@ -459,9 +638,10 @@
           },
           {
             name: "สมการกระบวนการแอเดียแบติก (Adiabatic Process Equation)",
-            latex: "P V^\\gamma = \\text{const} \\quad \\text{and} \\quad T V^{\\gamma-1} = \\text{const}",
+            latex: "P V^\\gamma = \\text{const}, \\quad T V^{\\gamma-1} = \\text{const}, \\quad W_{\\text{ad}} = \\frac{P_i V_i - P_f V_f}{\\gamma - 1}",
             symbols: [
               { sym: "\\gamma", desc: "อัตราส่วนความจุความร้อน C_P / C_V", unit: "\\text{dimensionless}" },
+              { sym: "W_{\\text{ad}}", desc: "งานกลในกระบวนการแอเดียแบติก", unit: "\\text{J}" },
               { sym: "P, V, T", desc: "ตัวแปรสภาวะความดัน ปริมาตร และอุณหภูมิ", unit: "\\text{Pa, m}^3\\text{, K}" }
             ],
             derivationSteps: [
@@ -471,7 +651,7 @@
               "จัดรูปโดยใช้ความสัมพันธ์ไมเยอร์ R = C_P - C_V: V dP = -\\left(1 + \\frac{C_P - C_V}{C_V}\\right) P dV = -\\frac{C_P}{C_V} P dV = -\\gamma P dV",
               "หารทั้งสองข้างด้วย P V เพื่อแยกตัวแปร: \\frac{dP}{P} + \\gamma \\frac{dV}{V} = 0",
               "อินทิเกรตทั้งสองข้าง: \\ln P + \\gamma \\ln V = \\text{const} \\implies \\ln(P V^\\gamma) = \\text{const} \\implies P V^\\gamma = \\text{const}",
-              "แทน P = nRT/V จะได้ความสัมพันธ์ระหว่างอุณหภูมิและปริมาตร: T V^{\\gamma-1} = \\text{const}"
+              "หางาน: W = -\\Delta U = -n C_V (T_f - T_i) = \\frac{n R (T_i - T_f)}{\\gamma - 1} = \\frac{P_i V_i - P_f V_f}{\\gamma - 1}"
             ]
           }
         ],
@@ -492,7 +672,67 @@
             "แปลงเป็นองศาเซลเซียส: T_2 \\approx 522.3 - 273.15 \\approx 249.2^\\circ\\text{C}",
             "สรุป: การอัดแบบแอเดียแบติกทำให้อุณหภูมิพุ่งสูงขึ้นอย่างมากจาก 27°C เป็น 249°C ซึ่งเป็นหลักการทางฟิสิกส์พื้นฐานของการจุดระเบิดในเครื่องยนต์ดีเซล"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><line x1="50" y1="140" x2="370" y2="140" stroke="#94a3b8" stroke-width="1.5"/><line x1="50" y1="140" x2="50" y2="20" stroke="#94a3b8" stroke-width="1.5"/><text x="360" y="155" fill="#94a3b8" font-size="11">V</text><text x="35" y="30" fill="#94a3b8" font-size="11">P</text><path d="M 90 30 Q 140 85 320 110" stroke="#38bdf8" stroke-width="2.5" fill="none"/><text x="280" y="100" fill="#38bdf8" font-size="11">Isothermal (PV=C)</text><path d="M 90 30 Q 130 115 320 135" stroke="#ef4444" stroke-width="2.5" fill="none"/><text x="240" y="130" fill="#ef4444" font-size="11">Adiabatic (PV^γ=C)</text><circle cx="90" cy="30" r="4" fill="#f59e0b"/><text x="95" y="25" fill="#f59e0b" font-size="11">State 1</text><text x="210" y="15" fill="#cbd5e1" font-size="12" font-weight="bold" text-anchor="middle">เปรียบเทียบความชัน: กราฟแอเดียแบติกชันกว่าไอโซเทอร์มอล γ เท่า</text></svg>',
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="เปรียบเทียบสี่กระบวนการพื้นฐานทางอุณหพลศาสตร์บนแผนภาพ P-V">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="55" y1="165" x2="310" y2="165" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="310,165 302,161 302,169" fill="#64748B"/>
+            <text x="315" y="169" fill="#94A3B8" font-size="11">V</text>
+            
+            <line x1="55" y1="165" x2="55" y2="25" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="55,25 51,33 59,33" fill="#64748B"/>
+            <text x="40" y="30" fill="#94A3B8" font-size="11">P</text>
+
+            <!-- Common Initial State (P_i, V_i) -->
+            <circle cx="100" cy="65" r="5" fill="#F8FAFC"/>
+            <text x="105" y="55" fill="#F8FAFC" font-size="11" font-weight="bold">สภาวะเริ่ม (P_i, V_i)</text>
+
+            <!-- 1. Isobaric (dP = 0, Horizontal right) -->
+            <line x1="100" y1="65" x2="270" y2="65" stroke="#10B981" stroke-width="2.8"/>
+            <polygon points="190,61 200,65 190,69" fill="#10B981"/>
+            <circle cx="270" cy="65" r="4" fill="#10B981"/>
+            <text x="275" y="60" fill="#10B981" font-size="10" font-weight="bold">1. Isobaric</text>
+
+            <!-- 2. Isothermal (dT = 0, Gentle curve) -->
+            <path d="M 100 65 Q 165 105 270 120" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+            <polygon points="185,99 193,105 183,109" fill="#38BDF8"/>
+            <circle cx="270" cy="120" r="4" fill="#38BDF8"/>
+            <text x="275" y="118" fill="#38BDF8" font-size="10" font-weight="bold">2. Isothermal</text>
+
+            <!-- 3. Adiabatic (dQ = 0, Steeper curve) -->
+            <path d="M 100 65 Q 145 125 240 152" fill="none" stroke="#EF4444" stroke-width="2.5"/>
+            <polygon points="166,125 173,132 163,135" fill="#EF4444"/>
+            <circle cx="240" cy="152" r="4" fill="#EF4444"/>
+            <text x="245" y="150" fill="#EF4444" font-size="10" font-weight="bold">3. Adiabatic</text>
+
+            <!-- 4. Isochoric (dV = 0, Vertical down) -->
+            <line x1="100" y1="65" x2="100" y2="155" stroke="#F59E0B" stroke-width="2.8"/>
+            <polygon points="96,110 100,120 104,110" fill="#F59E0B"/>
+            <circle cx="100" cy="155" r="4" fill="#F59E0B"/>
+            <text x="108" y="130" fill="#F59E0B" font-size="10" font-weight="bold">4. Isochoric</text>
+
+            <!-- Comparative Legend / Table Sidebar (Right) -->
+            <rect x="330" y="20" width="175" height="165" fill="#0B1120" rx="6" stroke="#334155" stroke-width="1"/>
+            <text x="417" y="38" fill="#FDE047" font-size="11" font-weight="bold" text-anchor="middle">ตารางเปรียบเทียบ 4 กระบวนการ</text>
+            
+            <!-- Isobaric info -->
+            <text x="340" y="58" fill="#10B981" font-size="10" font-weight="bold">● Isobaric (dP=0):</text>
+            <text x="348" y="70" fill="#CBD5E1" font-size="9.5">W = P·ΔV | ชัน = 0</text>
+
+            <!-- Isothermal info -->
+            <text x="340" y="88" fill="#38BDF8" font-size="10" font-weight="bold">● Isothermal (dT=0):</text>
+            <text x="348" y="100" fill="#CBD5E1" font-size="9.5">W = nRT ln(Vf/Vi) | ชัน = -P/V</text>
+
+            <!-- Adiabatic info -->
+            <text x="340" y="118" fill="#EF4444" font-size="10" font-weight="bold">● Adiabatic (dQ=0):</text>
+            <text x="348" y="130" fill="#CBD5E1" font-size="9.5">PV^γ = C | ชัน = -γ(P/V)</text>
+
+            <!-- Isochoric info -->
+            <text x="340" y="148" fill="#F59E0B" font-size="10" font-weight="bold">● Isochoric (dV=0):</text>
+            <text x="348" y="160" fill="#CBD5E1" font-size="9.5">W = 0, ΔU = Q | ชัน → ∞</text>
+
+            <text x="180" y="190" fill="#CBD5E1" font-size="10.5" text-anchor="middle">อัตราส่วนความชัน: |(dP/dV)_ad| = γ |(dP/dV)_iso| (กราฟแอเดียแบติกชันกว่า γ เท่า)</text>
+          </svg>`,
           diagramCaption: "เปรียบเทียบเส้นโค้งไอโซเทอร์มอลและแอเดียแบติกบนแผนภาพ P-V: ความชันแอเดียแบติกชันกว่าด้วยตัวคูณ γ"
         },
         observations: [
@@ -571,7 +811,47 @@
             "\\dot{Q}_H = \\frac{P_{\\text{out}}}{\\eta_{\\text{real}}} = \\frac{800 \\text{ MW}}{0.3827} \\approx 2,090 \\text{ MW} \\approx 2.09 \\text{ GW}",
             "สรุป: โรงไฟฟ้ามีขีดจำกัดประสิทธิภาพสูงสุดตามธรรมชาติ 63.8% ในทางปฏิบัติทำได้ 38.3% และต้องเผาไหม้เชื้อเพลิงเพื่อจ่ายความร้อน 2,090 เมกะวัตต์ โดยมีความร้อนสูญเสียคายทิ้งสู่สิ่งแวดล้อมถึง 1,290 เมกะวัตต์"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><rect x="130" y="10" width="140" height="35" fill="#ef4444" rx="4"/><text x="200" y="32" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Hot Reservoir (T_H)</text><circle cx="200" cy="80" r="25" fill="#334155" stroke="#38bdf8" stroke-width="2"/><text x="200" y="85" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle">ENGINE</text><rect x="130" y="115" width="140" height="35" fill="#3b82f6" rx="4"/><text x="200" y="137" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Cold Sink (T_C)</text><line x1="200" y1="45" x2="200" y2="55" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/><text x="215" y="52" fill="#f87171" font-size="10">Q_H</text><line x1="200" y1="105" x2="200" y2="115" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)"/><text x="215" y="112" fill="#93c5fd" font-size="10">Q_C</text><line x1="225" y1="80" x2="320" y2="80" stroke="#22c55e" stroke-width="3" marker-end="url(#arrow-green)"/><text x="270" y="72" fill="#4ade80" font-size="11" font-weight="bold">W_net</text><text x="70" y="85" fill="#fbbf24" font-size="11" text-anchor="middle">η = 1 - T_C/T_H</text></svg>',
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนผังการไหลของพลังงานในเครื่องยนต์ความร้อนและวัฏจักรคาร์โนต์">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            
+            <!-- Hot Reservoir (Top) -->
+            <rect x="70" y="20" width="220" height="38" fill="#EF4444" fill-opacity="0.25" stroke="#EF4444" stroke-width="2" rx="4"/>
+            <text x="180" y="44" fill="#FCA5A5" font-size="13" font-weight="bold" text-anchor="middle">แหล่งความร้อนสูง Hot Reservoir (T_H = 823 K)</text>
+            
+            <!-- Inflow Arrow Q_H -->
+            <line x1="180" y1="58" x2="180" y2="82" stroke="#EF4444" stroke-width="4"/>
+            <polygon points="180,82 174,74 186,74" fill="#EF4444"/>
+            <text x="200" y="74" fill="#EF4444" font-size="11" font-weight="bold">Q_H = 2,090 MW</text>
+
+            <!-- Engine Cycle Center -->
+            <circle cx="180" cy="108" r="26" fill="#1E293B" stroke="#38BDF8" stroke-width="2.5"/>
+            <text x="180" y="108" fill="#38BDF8" font-size="10" font-weight="bold" text-anchor="middle">ENGINE</text>
+            <text x="180" y="120" fill="#94A3B8" font-size="8.5" text-anchor="middle">ΔU = 0</text>
+
+            <!-- Work Output Arrow (Right) -->
+            <line x1="206" y1="108" x2="280" y2="108" stroke="#10B981" stroke-width="4"/>
+            <polygon points="280,108 272,102 272,114" fill="#10B981"/>
+            <text x="245" y="98" fill="#10B981" font-size="11" font-weight="bold">W_net = 800 MW</text>
+
+            <!-- Outflow Arrow Q_C -->
+            <line x1="180" y1="134" x2="180" y2="155" stroke="#38BDF8" stroke-width="4"/>
+            <polygon points="180,155 174,147 186,147" fill="#38BDF8"/>
+            <text x="200" y="148" fill="#38BDF8" font-size="11" font-weight="bold">Q_C = 1,290 MW</text>
+
+            <!-- Cold Sink (Bottom) -->
+            <rect x="70" y="155" width="220" height="35" fill="#0284C7" fill-opacity="0.25" stroke="#38BDF8" stroke-width="2" rx="4"/>
+            <text x="180" y="177" fill="#BAE6FD" font-size="13" font-weight="bold" text-anchor="middle">แหล่งความร้อนต่ำ Cold Sink (T_C = 298 K)</text>
+
+            <!-- Efficiency & Carnot Calculations Box (Right) -->
+            <rect x="315" y="20" width="185" height="165" fill="#0B1120" rx="6" stroke="#334155" stroke-width="1"/>
+            <text x="407" y="42" fill="#FDE047" font-size="12" font-weight="bold" text-anchor="middle">ประสิทธิภาพคาร์โนต์ (Carnot)</text>
+            <text x="407" y="68" fill="#F8FAFC" font-size="12" text-anchor="middle">η_Carnot = 1 - (T_C / T_H)</text>
+            <text x="407" y="92" fill="#10B981" font-size="14" font-weight="bold" text-anchor="middle">= 63.8% (ขีดจำกัดทฤษฎี)</text>
+            <line x1="335" y1="108" x2="480" y2="108" stroke="#334155" stroke-width="1"/>
+            <text x="407" y="128" fill="#CBD5E1" font-size="11" text-anchor="middle">โรงไฟฟ้าจริง (η_real = 60% Carnot):</text>
+            <text x="407" y="150" fill="#38BDF8" font-size="13" font-weight="bold" text-anchor="middle">η_real = 38.3%</text>
+            <text x="407" y="172" fill="#94A3B8" font-size="10" text-anchor="middle">สูญเสียทิ้งสู่สิ่งแวดล้อม 1,290 MW</text>
+          </svg>`,
           diagramCaption: "แผนผังการไหลของพลังงานในเครื่องยนต์ความร้อน: ความร้อน Q_H จากแหล่งอุณหภูมิสูงถูกเปลี่ยนเป็นงานกล W และคายความร้อนเหลือทิ้ง Q_C"
         },
         observations: [
@@ -653,7 +933,53 @@
             "คำนวณเอนโทรปีรวมของเอกภพ: \\Delta S_{\\text{universe}} = \\Delta S_{\\text{ice}} + \\Delta S_{\\text{room}} = +611.38 - 569.67 = +41.71 \\text{ J/K}",
             "สรุป: \\Delta S_{\\text{universe}} > 0 ยืนยันว่ากระบวนการหลอมเหลวนี้เกิดขึ้นได้เองตามธรรมชาติและเป็นกระบวนการที่ไม่ผันกลับได้ตามกฎข้อที่สอง"
           ],
-          diagramSvg: '<svg viewBox="0 0 400 160" class="w-full h-40 bg-slate-900 rounded"><line x1="50" y1="140" x2="370" y2="140" stroke="#94a3b8" stroke-width="1.5"/><line x1="50" y1="140" x2="50" y2="20" stroke="#94a3b8" stroke-width="1.5"/><text x="360" y="155" fill="#94a3b8" font-size="11">v (m/s)</text><text x="35" y="30" fill="#94a3b8" font-size="11">f(v)</text><path d="M 50 140 C 90 140 100 40 140 40 C 180 40 220 130 350 140" stroke="#38bdf8" stroke-width="2.5" fill="#38bdf8" fill-opacity="0.15"/><line x1="130" y1="140" x2="130" y2="42" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4"/><line x1="150" y1="140" x2="150" y2="46" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4"/><line x1="170" y1="140" x2="170" y2="55" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4"/><text x="115" y="35" fill="#ef4444" font-size="10">v_p</text><text x="150" y="35" fill="#f59e0b" font-size="10">v_avg</text><text x="180" y="35" fill="#22c55e" font-size="10">v_rms</text><text x="240" y="50" fill="#e2e8f0" font-size="12" font-weight="bold">Maxwell-Boltzmann</text><text x="240" y="70" fill="#94a3b8" font-size="10">v_p &lt; v_avg &lt; v_rms</text><text x="210" y="155" fill="#60a5fa" font-size="11" text-anchor="middle">dS = dQ_rev/T | ΔS_univ ≥ 0</text></svg>',
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="การแจกแจงอัตราเร็วของแมกซ์เวลล์-โบลต์ซมันน์และนิยามเอนโทรปี">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="60" y1="160" x2="330" y2="160" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="330,160 322,156 322,164" fill="#64748B"/>
+            <text x="335" y="164" fill="#94A3B8" font-size="11">v (m/s)</text>
+            
+            <line x1="60" y1="160" x2="60" y2="25" stroke="#64748B" stroke-width="1.8"/>
+            <polygon points="60,25 56,33 64,33" fill="#64748B"/>
+            <text x="42" y="30" fill="#94A3B8" font-size="11">f(v)</text>
+
+            <!-- Maxwell-Boltzmann PDF Curve -->
+            <path d="M 60 160 C 95 160 115 45 155 45 C 195 45 240 145 320 158" fill="#38BDF8" fill-opacity="0.15" stroke="#38BDF8" stroke-width="2.5"/>
+
+            <!-- Critical Speed Vertical Markers -->
+            <!-- v_p (Most Probable) -->
+            <line x1="145" y1="160" x2="145" y2="47" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <circle cx="145" cy="47" r="3" fill="#EF4444"/>
+            <text x="145" y="38" fill="#EF4444" font-size="10" font-weight="bold" text-anchor="middle">v_p</text>
+
+            <!-- v_avg (Mean) -->
+            <line x1="168" y1="160" x2="168" y2="55" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <circle cx="168" cy="55" r="3" fill="#F59E0B"/>
+            <text x="168" y="44" fill="#F59E0B" font-size="10" font-weight="bold" text-anchor="middle">⟨v⟩</text>
+
+            <!-- v_rms (Root-Mean-Square) -->
+            <line x1="190" y1="160" x2="190" y2="70" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <circle cx="190" cy="70" r="3" fill="#10B981"/>
+            <text x="195" y="60" fill="#10B981" font-size="10" font-weight="bold" text-anchor="middle">v_rms</text>
+
+            <!-- Speed Order Ratio Annotation -->
+            <text x="195" y="115" fill="#F8FAFC" font-size="11" font-weight="bold">v_p &lt; ⟨v⟩ &lt; v_rms</text>
+            <text x="195" y="132" fill="#94A3B8" font-size="10">อัตราส่วน: 1.000 : 1.128 : 1.225</text>
+
+            <!-- Entropy & Second Law Box (Right) -->
+            <rect x="345" y="20" width="155" height="165" fill="#0B1120" rx="6" stroke="#334155" stroke-width="1"/>
+            <text x="422" y="42" fill="#FDE047" font-size="12" font-weight="bold" text-anchor="middle">เอนโทรปีและกฎข้อที่ 2</text>
+            
+            <text x="422" y="68" fill="#38BDF8" font-size="11" text-anchor="middle">dS = δQ_rev / T</text>
+            <text x="422" y="90" fill="#BAE6FD" font-size="10" text-anchor="middle">ΔS_univ ≥ 0 (ลูกศรเวลา)</text>
+            <line x1="360" y1="105" x2="485" y2="105" stroke="#334155" stroke-width="1"/>
+            <text x="422" y="125" fill="#10B981" font-size="11" text-anchor="middle">สถิติโบลต์ซมันน์:</text>
+            <text x="422" y="145" fill="#10B981" font-size="13" font-weight="bold" text-anchor="middle">S = k_B ln Ω</text>
+            <text x="422" y="170" fill="#94A3B8" font-size="9.5" text-anchor="middle">ΔS_ice + ΔS_room = +41.7 J/K</text>
+
+            <text x="190" y="190" fill="#CBD5E1" font-size="11" text-anchor="middle">การแจกแจงความน่าจะเป็นของอัตราเร็วระดับโมเลกุล: f(v) ∝ v² exp(-mv² / 2k_B T)</text>
+          </svg>`,
           diagramCaption: "เส้นโค้งการแจกแจงอัตราเร็วแมกซ์เวลล์-โบลต์ซมันน์ แสดงตำแหน่งสัมพัทธ์ของ v_p, v_avg และ v_rms"
         },
         observations: [

@@ -39,6 +39,18 @@
         numeral: "ภาคที่ 2",
         titleTh: "พลศาสตร์และวิศวกรรมแรงสู่ศูนย์กลาง (Centripetal Dynamics & Engineering Applications)",
         description: "การวิเคราะห์แรงลัพธ์แนวรัศมีตามกฎข้อ 2 ของนิวตัน ทางโค้งยกมุมเอียง วงกลมแนวดิ่ง และวงโคจรแรงโน้มถ่วง"
+      },
+      {
+        id: "div-ch02-rotational",
+        numeral: "ภาคที่ 3",
+        titleTh: "พลศาสตร์การหมุนและวัตถุแข็งเกร็ง (Rotational Dynamics & Rigid Bodies)",
+        description: "ทอร์ก โมเมนต์ความเฉื่อย ทฤษฎีบทแกนขนาน พลังงานจลน์การหมุน และการอนุรักษ์โมเมนตัมเชิงมุม"
+      },
+      {
+        id: "div-ch02-pulleys",
+        numeral: "ภาคที่ 4",
+        titleTh: "กลศาสตร์รอกและการได้เปรียบเชิงกล (Pulley Mechanics & Mechanical Advantage)",
+        description: "การวิเคราะห์แรงตึงเชือก รอกเดี่ยวตายตัว รอกเดี่ยวเคลื่อนที่ รอกพวง การได้เปรียบเชิงกล และประสิทธิภาพเชิงกล"
       }
     ],
 
@@ -126,6 +138,55 @@
         unit: "\\text{m/s}",
         domain: "dynamics",
         desc: "อัตราเร็วขั้นต่ำสุดที่จุดสูงสุดของวงกลมแนวดิ่งที่ทำให้เชือกยังตึงหรือวัตถุไม่ตกจากราง v_crit = √(gr)"
+      },
+      {
+        symbol: "\\tau",
+        name: "ทอร์กหรือโมเมนต์ของแรง (Torque)",
+        unit: "\\text{N}\\cdot\\text{m}",
+        domain: "rotational",
+        desc: "ผลคูณเชิงเวกเตอร์ของเวกเตอร์ตำแหน่งและแรง τ = r × F = Iα ทำให้วัตถุเกิดความเร่งเชิงมุม"
+      },
+      {
+        symbol: "I",
+        name: "โมเมนต์ความเฉื่อย (Moment of Inertia)",
+        unit: "\\text{kg}\\cdot\\text{m}^2",
+        domain: "rotational",
+        desc: "ปริมาณที่ต้านการเปลี่ยนแปลงสภาพการหมุน I = ∫ r² dm หรือ I = Σ m_i r_i²"
+      },
+      {
+        symbol: "L",
+        name: "โมเมนตัมเชิงมุม (Angular Momentum)",
+        unit: "\\text{kg}\\cdot\\text{m}^2/\\text{s} = \\text{J}\\cdot\\text{s}",
+        domain: "rotational",
+        desc: "ผลคูณของโมเมนต์ความเฉื่อยกับความเร็วเชิงมุม L = Iω = r × p อนุรักษ์เมื่อทอร์กภายนอกสุทธิเป็นศูนย์"
+      },
+      {
+        symbol: "K_{\\text{rot}}",
+        name: "พลังงานจลน์การหมุน (Rotational Kinetic Energy)",
+        unit: "\\text{J}",
+        domain: "rotational",
+        desc: "พลังงานจลน์สะสมในวัตถุที่กำลังหมุน K_rot = (1/2) I ω²"
+      },
+      {
+        symbol: "\\text{MA}",
+        name: "การได้เปรียบเชิงกล (Mechanical Advantage)",
+        unit: "—",
+        domain: "pulleys",
+        desc: "อัตราส่วนระหว่างแรงต้าน (น้ำหนักวัตถุ) ต่อแรงพยายาม MA = F_out / F_in"
+      },
+      {
+        symbol: "\\text{VR}",
+        name: "อัตราส่วนความเร็ว (Velocity Ratio / IMA)",
+        unit: "—",
+        domain: "pulleys",
+        desc: "อัตราส่วนระหว่างระยะทางที่แรงพยายามเคลื่อนที่ต่อระยะทางที่วัตถุเคลื่อนที่ VR = d_in / d_out"
+      },
+      {
+        symbol: "\\eta",
+        name: "ประสิทธิภาพเชิงกลของเครื่องกล (Mechanical Efficiency)",
+        unit: "\\%",
+        domain: "pulleys",
+        desc: "อัตราส่วนงานที่ได้ต่องานที่ให้ η = (MA / VR) × 100% หรือ (W_out / W_in) × 100%"
       }
     ],
 
@@ -686,6 +747,532 @@
             verificationStatus: "verified_direct_content",
             evidencePin: "Morin (2008) Chapter 3 pp. 75–78: Motion in a vertical circle, critical apex velocity v = √(gr) and tension difference ΔT = 6mg.",
             note: "การอนุมานสมการวงกลมแนวดิ่งและเงื่อนไขวิกฤต"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 6: Torque, Rotational Equilibrium & Newton's Second Law for Rotation
+      // ----------------------------------------------------------------------
+      {
+        id: "ch02-th06",
+        chapterId: "ch02",
+        divisionId: "div-ch02-rotational",
+        divisionTitle: "ภาคที่ 3: พลศาสตร์การหมุนและวัตถุแข็งเกร็ง",
+        numberTh: "ทฤษฎีที่ 6",
+        type: "ทฤษฎีพลศาสตร์ (Rotational Dynamics Theory)",
+        titleTh: "ทอร์ก สมดุลการหมุน และกฎการเคลื่อนที่ของการหมุน",
+        titleEn: "Torque, Rotational Equilibrium & Newton's Second Law for Rotation",
+        summary: "นิยามทอร์กในฐานะผลคูณเชิงเวกเตอร์ แขนของแรง กฎข้อที่สองของนิวตันสำหรับการหมุนรอบแกนตรึง และเงื่อนไขสมดุลสัมบูรณ์ของวัตถุแข็งเกร็ง",
+        definition: {
+          text: "ทอร์ก (Torque, $\\vec{\\tau}$) หรือโมเมนต์ของแรง (Moment of Force) คือ ปริมาณเวกเตอร์ที่วัดประสิทธิผลของแรงในการทำให้วัตถุแข็งเกร็งเกิดการหมุนรอบแกนหมุนหรือจุดหมุนอ้างอิง นิยามจากผลคูณเชิงเวกเตอร์ (Cross Product) ระหว่างเวกเตอร์บอกตำแหน่ง $\\vec{r}$ จากจุดหมุนไปยังจุดที่แรงกระทำ กับเวกเตอร์แรง $\\vec{F}$:\n$$\\vec{\\tau} = \\vec{r} \\times \\vec{F}$$\nขนาดของทอร์กคือ $\\tau = r F \\sin\\theta = F r_\\perp$ โดย $r_\\perp = r\\sin\\theta$ เรียกว่า 'แขนของแรง' (Lever Arm หรือ Moment Arm) ซึ่งคือระยะทางตั้งฉากสั้นที่สุดจากจุดหมุนไปยังแนวแรง\n\nวัตถุแข็งเกร็งจะอยู่ใน 'สมดุลสัมบูรณ์' (Complete Mechanical Equilibrium) ก็ต่อเมื่อเป็นไปตาม 2 เงื่อนไขพร้อมกัน:\n1. สมดุลการเลื่อนที่ (Translational Equilibrium): $\\Sigma \\vec{F} = 0$\n2. สมดุลการหมุน (Rotational Equilibrium): $\\Sigma \\vec{\\tau} = 0$"
+        },
+        principle: {
+          text: "การเชื่อมโยงสู่กฎการเคลื่อนที่ของการหมุน (Newton's Second Law for Rotation):\nสำหรับอนุภาคเดี่ยวมวล $m$ ที่หมุนเป็นวงกลมรัศมี $r$ ด้วยแรงแนวสัมผัส $F_t = m a_t = m(r\\alpha)$ เมื่อคูณด้วยรัศมี $r$ ทั้งสองข้าง:\n$$\\tau = r F_t = r(m r \\alpha) = (m r^2) \\alpha = I \\alpha$$\nสำหรับวัตถุแข็งเกร็งใดๆ ที่ประกอบด้วยมวลย่อยจำนวนมากหมุนรอบแกนตรึง ทุกจุดในเนื้อวัตถุจะมีความเร่งเชิงมุม $\\alpha$ ร่วมกัน ผลรวมของทอร์กภายนอกสุทธิจึงเท่ากับผลคูณระหว่างโมเมนต์ความเฉื่อย $I$ กับความเร่งเชิงมุม $\\vec{\\alpha}$:\n$$\\Sigma \\vec{\\tau}_{\\text{ext}} = I \\vec{\\alpha} = \\frac{d\\vec{L}}{dt}$$\nทิศทางของเวกเตอร์ทอร์กกำหนดโดยกฎมือขวา (Right-Hand Rule) พุ่งตามแนวแกนหมุน"
+        },
+        formulas: [
+          {
+            name: "นิยามทอร์กเชิงเวกเตอร์และขนาดตามแขนของแรง",
+            latex: "\\vec{\\tau} = \\vec{r} \\times \\vec{F}, \\quad \\tau = r F \\sin\\theta = F r_\\perp",
+            symbols: [
+              { sym: "\\vec{\\tau}", desc: "เวกเตอร์ทอร์กหรือโมเมนต์ของแรง", unit: "\\text{N}\\cdot\\text{m}" },
+              { sym: "\\vec{r}", desc: "เวกเตอร์ตำแหน่งจากจุดหมุนไปยังจุดกระทำของแรง", unit: "\\text{m}" },
+              { sym: "\\vec{F}", desc: "เวกเตอร์แรงที่กระทำต่อวัตถุ", unit: "\\text{N}" },
+              { sym: "\\theta", desc: "มุมระหว่างเวกเตอร์ r และเวกเตอร์ F", unit: "\\text{rad หรือ } ^\\circ" },
+              { sym: "r_\\perp", desc: "แขนของแรง (ระยะตั้งฉากจากจุดหมุนไปยังแนวแรง)", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. พิจารณาแรง F กระทำที่ตำแหน่ง r เทียบกับจุดหมุน",
+              "2. แตกแรง F ออกเป็นสององค์ประกอบตั้งฉาก: แนวรัศมี F_r = F cos θ (ผ่านจุดหมุน) และแนวตั้งฉาก F_t = F sin θ",
+              "3. แรงแนวรัศมี F_r พุ่งผ่านจุดหมุนโดยตรง ไม่ทำให้เกิดการหมุน (ทอร์กเป็นศูนย์)",
+              "4. มีเพียงแรงแนวสัมผัส F_t เท่านั้นที่ก่อให้เกิดการหมุน: τ = r F_t = r (F sin θ)",
+              "5. จัดรูปใหม่เป็น τ = F (r sin θ) = F r_perp ซึ่ง r_perp คือแขนของแรง"
+            ]
+          },
+          {
+            name: "กฎข้อที่สองของนิวตันสำหรับการหมุนรอบแกนตรึง",
+            latex: "\\Sigma \\vec{\\tau}_{\\text{ext}} = I \\vec{\\alpha} = I \\frac{d^2\\theta}{dt^2}",
+            symbols: [
+              { sym: "\\Sigma \\tau", desc: "ผลรวมทอร์กภายนอกสุทธิรอบแกนหมุน", unit: "\\text{N}\\cdot\\text{m}" },
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยของวัตถุรอบแกนหมุน", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "\\vec{\\alpha}", desc: "เวกเตอร์ความเร่งเชิงมุม", unit: "\\text{rad/s}^2" }
+            ],
+            derivationSteps: [
+              "1. พิจารณาส่วนย่อยมวล dm_i ที่ตำแหน่ง r_i หมุนรอบแกนด้วยความเร่งแนวสัมผัส a_{t,i} = r_i α",
+              "2. แรงสัมผัสย่อย dF_{t,i} = dm_i a_{t,i} = dm_i r_i α",
+              "3. ทอร์กย่อย dτ_i = r_i dF_{t,i} = (dm_i r_i^2) α",
+              "4. รวมทอร์กทุกส่วนย่อยในวัตถุ: Σ τ = (Σ m_i r_i^2) α",
+              "5. นิยาม I = Σ m_i r_i^2 จะได้สมการหลัก: Σ τ = I α"
+            ]
+          }
+        ],
+        application: {
+          text: "การออกแบบด้ามจับประแจและคานผ่อนแรง, ระบบส่งกำลังเพลาและเฟืองเกียร์ในรถยนต์, สมดุลของปั้นจั่นและสะพานแขวน, การทำงานของบานพับประตูและหน้าต่าง",
+          validWhen: "วัตถุเป็นวัตถุแข็งเกร็ง (Rigid Body) ที่ระยะห่างระหว่างจุดย่อยไม่เปลี่ยนแปลง และแกนหมุนตรึงแน่นหรือผ่านจุดศูนย์กลางมวลในแนวแกนสมมาตร",
+          invalidWhen: "วัตถุอ่อนยวบเสียรูปได้ขณะหมุน หรือระบบพิกัดที่แกนหมุนเอียงส่ายไปมาโดยไม่มีการคำนวณเทนเซอร์ความเฉื่อยแบบ 3 มิติเต็มรูปแบบ"
+        },
+        example: {
+          problem: "ช่างเครื่องใช้ประแจยาว $L = 0.30\\text{ m}$ ขันน็อตล้อรถ โดยออกแรง $F = 80\\text{ N}$ ที่ปลายประแจทำมุม $\\theta = 60^\\circ$ เทียบกับแกนของด้ามประแจ ถ้าโมเมนต์ความเฉื่อยของชุดล้อและเพลาเท่ากับ $I = 2.4\\text{ kg}\\cdot\\text{m}^2$ และไม่มีแรงต้านการหมุน จงหา: (ก) ขนาดของทอร์กที่กระทำต่อน็อต และ (ข) ความเร่งเชิงมุม $\\alpha$ ของชุดล้อ",
+          steps: [
+            "ขั้นตอนที่ 1: วิเคราะห์ข้อมูลที่โจทย์กำหนด: $r = L = 0.30\\text{ m}$, $F = 80\\text{ N}$, $\\theta = 60^\\circ$, $I = 2.4\\text{ kg}\\cdot\\text{m}^2$",
+            "ขั้นตอนที่ 2: คำนวณแขนของแรง: $r_\\perp = r\\sin\\theta = (0.30)\\sin(60^\\circ) = (0.30)(0.8660) \\approx 0.2598\\text{ m}$",
+            "ขั้นตอนที่ 3: คำนวณขนาดของทอร์ก: $\\tau = r F \\sin\\theta = (0.30\\text{ m})(80\\text{ N})\\sin(60^\\circ) = 24.0 \\times 0.8660 \\approx 20.78\\text{ N}\\cdot\\text{m}$",
+            "ขั้นตอนที่ 4: คำนวณความเร่งเชิงมุมจากกฎข้อที่สองของการหมุน: $\\alpha = \\frac{\\tau}{I} = \\frac{20.78}{2.4} \\approx 8.66\\text{ rad/s}^2$",
+            "สรุป: ทอร์กที่กระทำมีขนาด $20.8\\text{ N}\\cdot\\text{m}$ และสร้างความเร่งเชิงมุมให้ชุดล้อเท่ากับ $8.66\\text{ rad/s}^2$"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพทอร์กและแขนของแรง">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Pivot Nut -->
+            <polygon points="100,100 115,74 145,74 160,100 145,126 115,126" fill="#475569" stroke="#94A3B8" stroke-width="2"/>
+            <circle cx="130" cy="100" r="10" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+            <text x="130" y="104" fill="#38BDF8" font-size="9" text-anchor="middle">จุดหมุน</text>
+            <!-- Wrench Handle -->
+            <rect x="145" y="93" width="220" height="14" rx="3" fill="#334155" stroke="#64748B" stroke-width="1.5"/>
+            <circle cx="365" cy="100" r="12" fill="#475569" stroke="#94A3B8" stroke-width="1.5"/>
+            <!-- Length r -->
+            <line x1="130" y1="135" x2="365" y2="135" stroke="#94A3B8" stroke-width="1.5" marker-start="url(#arr-cyan)" marker-end="url(#arr-cyan)"/>
+            <text x="247" y="152" fill="#94A3B8" font-size="11" text-anchor="middle">ระยะ r = 0.30 m</text>
+            <!-- Applied Force F -->
+            <line x1="365" y1="100" x2="435" y2="30" stroke="#EF4444" stroke-width="2.5" marker-end="url(#arr-red)"/>
+            <text x="445" y="32" fill="#EF4444" font-size="12" font-weight="bold">F = 80 N</text>
+            <!-- Angle Arc -->
+            <path d="M 405 100 A 40 40 0 0 0 395 70" fill="none" stroke="#F59E0B" stroke-width="1.5"/>
+            <line x1="365" y1="100" x2="425" y2="100" stroke="#64748B" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="415" y="85" fill="#F59E0B" font-size="11">θ = 60°</text>
+            <!-- Lever Arm r_perp -->
+            <line x1="130" y1="100" x2="200" y2="35" stroke="#10B981" stroke-width="2" stroke-dasharray="4,3"/>
+            <text x="140" y="55" fill="#10B981" font-size="11" font-weight="bold">r_⊥ = r sin θ</text>
+            <!-- Torque arrow -->
+            <path d="M 105 60 A 35 35 0 0 1 155 60" fill="none" stroke="#38BDF8" stroke-width="2" marker-end="url(#arr-cyan)"/>
+            <text x="130" y="45" fill="#38BDF8" font-size="11" font-weight="bold" text-anchor="middle">τ = r × F (ทวนเข็มนาฬิกา)</text>
+          </svg>`,
+          diagramCaption: "การวิเคราะห์ทอร์ก: มีเพียงองค์ประกอบแรงที่ตั้งฉากกับก้านประแจ F sin θ เท่านั้นที่ทำให้เกิดทอร์กหมุนน็อต"
+        },
+        observations: [
+          "ทอร์กขึ้นกับจุดหมุนที่เลือก: ในระบบที่ไม่สมดุล ค่าทอร์กสุทธิจะเปลี่ยนไปหากเปลี่ยนจุดอ้างอิง แต่ในระบบที่สมดุลการเลื่อนที่ (ΣF = 0) ค่าทอร์กสุทธิจะมีค่าเท่ากันทุกจุดหมุนอ้างอิง",
+          "แรงคู่ควบ (Couple): แรงสองแรงที่มีขนาดเท่ากันแต่ทิศตรงกันข้ามและแนวแรงขนานกัน จะสร้างทอร์กคู่ควบ τ = F d (โดย d คือระยะห่างระหว่างแนวแรง) ซึ่งไม่ขึ้นกับจุดหมุนเลย"
+        ],
+        citation: "Morin, D. (2008). Introduction to Classical Mechanics, Chapter 8: Angular Momentum Part I, Cambridge University Press.",
+        citations: [
+          {
+            title: "Introduction to Classical Mechanics: With Problems and Solutions",
+            authors: "David Morin",
+            source: "Cambridge University Press, Chapter 8, pp. 289–310",
+            year: "2008",
+            url: "https://www.cambridge.org/highereducation/books/introduction-to-classical-mechanics/3004C94CBAAC2649B90967A99D417834",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Morin (2008) Chapter 8 pp. 289–310: Torque definition, cross product, and rigid body rotational second law.",
+            note: "รากฐานกลศาสตร์การหมุนและทอร์ก"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 7: Moment of Inertia, Parallel Axis Theorem & Rotational Kinetic Energy
+      // ----------------------------------------------------------------------
+      {
+        id: "ch02-th07",
+        chapterId: "ch02",
+        divisionId: "div-ch02-rotational",
+        divisionTitle: "ภาคที่ 3: พลศาสตร์การหมุนและวัตถุแข็งเกร็ง",
+        numberTh: "ทฤษฎีที่ 7",
+        type: "ทฤษฎีรากฐาน (Fundamental Inertia Theory)",
+        titleTh: "โมเมนต์ความเฉื่อย ทฤษฎีบทแกนขนาน และพลังงานจลน์การหมุน",
+        titleEn: "Moment of Inertia, Parallel Axis Theorem & Rotational Kinetic Energy",
+        summary: "การคำนวณโมเมนต์ความเฉื่อยแบบไม่ต่อเนื่องและอินทิกรัล ทฤษฎีบทแกนขนานของสไตเนอร์ พลังงานจลน์การหมุน และการกลิ้งโดยไม่ไถล",
+        definition: {
+          text: "โมเมนต์ความเฉื่อย (Moment of Inertia, $I$) คือ ปริมาณสเกลาร์ที่บอกถึงความเฉื่อยในการหมุน (Rotational Inertia) หรือความสามารถในการต้านทานการเปลี่ยนแปลงสภาพการหมุนรอบแกนหนึ่งๆ ของวัตถุ โดยขึ้นอยู่กับมวลของวัตถุและ 'ลักษณะการกระจายตัวของมวลรอบแกนหมุน':\n1. ระบบมวลจุดไม่ต่อเนื่อง: $I = \\sum_{i} m_i r_i^2$\n2. วัตถุเนื้อแน่นต่อเนื่อง: $I = \\int r^2 dm = \\int \\rho(\\vec{r}) r_\\perp^2 dV$\n\nทฤษฎีบทแกนขนาน (Parallel Axis Theorem หรือ Steiner's Theorem) ระบุว่า หากทราบโมเมนต์ความเฉื่อยรอบแกนที่ผ่านจุดศูนย์กลางมวล ($I_{\\text{cm}}$) แล้ว โมเมนต์ความเฉื่อยรอบแกนหมุนใดๆ ที่ขนานกับแกนเดิมและอยู่ห่างเป็นระยะ $d$ จะมีค่าเท่ากับ:\n$$I = I_{\\text{cm}} + M d^2$$"
+        },
+        principle: {
+          text: "พลังงานจลน์การหมุนและการกลิ้งโดยไม่ไถล (Rolling Without Slipping):\nเมื่อวัตถุหมุนรอบแกนตรึงด้วยความเร็วเชิงมุม $\\omega$ อนุภาคแต่ละจุดมีความเร็ว $v_i = \\omega r_i$ พลังงานจลน์รวมคือ:\n$$K_{\\text{rot}} = \\sum \\frac{1}{2} m_i v_i^2 = \\frac{1}{2}\\left(\\sum m_i r_i^2\\right)\\omega^2 = \\frac{1}{2} I \\omega^2$$\nหากวัตถุหมุนพร้อมกับเลื่อนตำแหน่งไปด้วย (เช่น ล้อรถยนต์ หรือลูกบอลกลิ้งบนพื้น) พลังงานจลน์รวมสามารถแยกออกเป็น 2 ส่วนตามทฤษฎีบทของโคนิก (Koenig's Theorem):\n$$K_{\\text{tot}} = K_{\\text{trans}} + K_{\\text{rot}} = \\frac{1}{2}M v_{\\text{cm}}^2 + \\frac{1}{2}I_{\\text{cm}}\\omega^2$$\nในเงื่อนไขการกลิ้งโดยไม่ไถล (Rolling without slipping): $v_{\\text{cm}} = \\omega R$ ส่งผลให้พลังงานจลน์รวมสามารถจัดรูปเป็น $K_{\\text{tot}} = \\frac{1}{2} M v_{\\text{cm}}^2\\left(1 + \\frac{I_{\\text{cm}}}{M R^2}\\right)$ ซึ่งตัวแปรไร้มิติ $c = \\frac{I_{\\text{cm}}}{M R^2}$ กำหนดอัตราส่วนการแบ่งสรรพลังงานระหว่างการเลื่อนที่กับการหมุน"
+        },
+        formulas: [
+          {
+            name: "นิยามโมเมนต์ความเฉื่อยและการอินทิเกรตมวลต่อเนื่อง",
+            latex: "I = \\sum_{i=1}^N m_i r_i^2 \\quad \\iff \\quad I = \\int r^2 dm",
+            symbols: [
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยรอบแกนหมุนที่กำหนด", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "m_i, dm", desc: "มวลของอนุภาคย่อยหรือชิ้นส่วนมวลเชิงอนุพันธ์", unit: "\\text{kg}" },
+              { sym: "r_i, r", desc: "ระยะห่างตั้งฉากจากแกนหมุนไปยังชิ้นมวล", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. แท่งวัตถุสม่ำเสมอความยาว L มวล M หมุนรอบแกนตั้งฉากผ่านปลาย: dm = (M/L) dx",
+              "2. I_end = ∫_0^L x^2 dm = (M/L) ∫_0^L x^2 dx = (M/L) [x^3/3]_0^L = (1/3) M L^2",
+              "3. ทรงกระบอกตันรัศมี R มวล M: แบ่งเป็นเปลือกทรงกระบอกบาง dm = 2π r L ρ dr",
+              "4. I_cyl = ∫_0^R r^2 (2π r L ρ dr) = 2π ρ L [r^4/4]_0^R = (1/2) M R^2",
+              "5. ทรงกลมตันรัศมี R มวล M: I_sphere = (2/5) M R^2"
+            ]
+          },
+          {
+            name: "ทฤษฎีบทแกนขนานของสไตเนอร์ (Parallel Axis Theorem)",
+            latex: "I = I_{\\text{cm}} + M d^2",
+            symbols: [
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยรอบแกนหมุนเป้าหมาย", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "I_{\\text{cm}}", desc: "โมเมนต์ความเฉื่อยรอบแกนขนานที่ผ่านจุดศูนย์กลางมวล", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "M", desc: "มวลรวมทั้งหมดของวัตถุ", unit: "\\text{kg}" },
+              { sym: "d", desc: "ระยะห่างตั้งฉากระหว่างแกนหมุนทั้งสอง", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. ตั้งพิกัดโดยให้จุด CM อยู่ที่จุดกำเนิด (0,0,0) ดังนั้น r_i = r'_i + d",
+              "2. I = Σ m_i (r'_i + d)^2 = Σ m_i (r'^2_i + 2 r'_i · d + d^2)",
+              "3. แยกพจน์: I = Σ m_i r'^2_i + 2 d · (Σ m_i r'_i) + d^2 Σ m_i",
+              "4. พจน์แรกคือ I_cm, พจน์สุดท้ายคือ M d^2",
+              "5. เนื่องจาก CM อยู่ที่จุดกำเนิด Σ m_i r'_i = 0 พจน์กลางจึงหายไป: I = I_cm + M d^2"
+            ]
+          },
+          {
+            name: "พลังงานจลน์รวมของการกลิ้งโดยไม่ไถล",
+            latex: "K_{\\text{tot}} = \\frac{1}{2} M v_{\\text{cm}}^2 + \\frac{1}{2} I_{\\text{cm}} \\omega^2 = \\frac{1}{2} M v_{\\text{cm}}^2\\left(1 + \\frac{I_{\\text{cm}}}{M R^2}\\right)",
+            symbols: [
+              { sym: "K_{\\text{tot}}", desc: "พลังงานจลน์รวมทั้งหมด", unit: "\\text{J}" },
+              { sym: "v_{\\text{cm}}", desc: "ความเร็วเชิงเส้นของจุดศูนย์กลางมวล", unit: "\\text{m/s}" },
+              { sym: "\\omega", desc: "ความเร็วเชิงมุมของการหมุน", unit: "\\text{rad/s}" }
+            ],
+            derivationSteps: [
+              "1. พลังงานจลน์ของการเคลื่อนที่เลื่อนตำแหน่ง CM: K_trans = (1/2) M v_cm^2",
+              "2. พลังงานจลน์ของการหมุนรอบ CM: K_rot = (1/2) I_cm ω^2",
+              "3. เงื่อนไขการกลิ้งโดยไม่ไถล: v_cm = ω R => ω = v_cm / R",
+              "4. แทนค่า ω: K_rot = (1/2) I_cm (v_cm / R)^2 = (1/2) (I_cm / R^2) v_cm^2",
+              "5. รวมพลังงาน: K_tot = (1/2) M v_cm^2 [1 + I_cm / (M R^2)]"
+            ]
+          }
+        ],
+        application: {
+          text: "การออกแบบล้อตุนกำลัง (Flywheel) เพื่อกักเก็บพลังงานกลในระบบไฮบริด, การวิเคราะห์ความเร็วของวัตถุกลิ้งลงพื้นเอียง (ลูกบอล ทรงกระบอก ห่วง), การทรงตัวของล้อรถจักรยานยนต์และเพลาข้อเหวี่ยง",
+          validWhen: "การกลิ้งเกิดขึ้นบนพื้นผิวโดยไม่มีการลื่นไถลสัมพัทธ์ ณ จุดสัมผัส ($v_{\\text{contact}} = 0$) และวัสดุไม่เกิดการเสียรูปแบบไม่ยืดหยุ่น",
+          invalidWhen: "การลื่นไถล (Slipping or Skidding) เช่น ขณะเบรกกะทันหันบนพื้นเปียก ซึ่งต้องคิดแรงเสียดทานจลน์และงานความร้อนสูญเสีย"
+        },
+        example: {
+          problem: "ปล่อยวัตถุทรงเรขาคณิต 3 ชนิดที่มีมวล $M$ และรัศมี $R$ เท่ากัน ได้แก่: (1) ทรงกลมตัน ($I = \\frac{2}{5}MR^2$) (2) ทรงกระบอกตัน ($I = \\frac{1}{2}MR^2$) และ (3) ห่วงกลมบาง ($I = MR^2$) ให้กลิ้งโดยไม่ไถลลงมาจากยอดพื้นเอียงสูง $h = 2.0\\text{ m}$ จากสภาพนิ่ง จงหา: (ก) ความเร็วเชิงเส้น $v_{\\text{cm}}$ ที่ปลายพื้นเอียงของแต่ละวัตถุ และ (ข) วัตถุใดถึงปลายพื้นเอียงก่อนกัน",
+          steps: [
+            "ขั้นตอนที่ 1: ใช้กฎการอนุรักษ์พลังงานกล: $M g h = K_{\\text{tot}} = \\frac{1}{2} M v_{\\text{cm}}^2\\left(1 + \\frac{I_{\\text{cm}}}{M R^2}\\right)$",
+            "ขั้นตอนที่ 2: จัดรูปหาความเร็วปลาย: $v_{\\text{cm}} = \\sqrt{\\frac{2gh}{1 + c}}$ โดย $c = \\frac{I_{\\text{cm}}}{M R^2}$",
+            "ขั้นตอนที่ 3: คำนวณทรงกลมตัน ($c = 2/5 = 0.40$):\n$v = \\sqrt{\\frac{2(9.81)(2.0)}{1 + 0.40}} = \\sqrt{\\frac{39.24}{1.40}} = \\sqrt{28.03} \\approx 5.29\\text{ m/s}$",
+            "ขั้นตอนที่ 4: คำนวณทรงกระบอกตัน ($c = 1/2 = 0.50$):\n$v = \\sqrt{\\frac{2(9.81)(2.0)}{1 + 0.50}} = \\sqrt{\\frac{39.24}{1.50}} = \\sqrt{26.16} \\approx 5.11\\text{ m/s}$",
+            "ขั้นตอนที่ 5: คำนวณห่วงกลมบาง ($c = 1.0$):\n$v = \\sqrt{\\frac{2(9.81)(2.0)}{1 + 1.0}} = \\sqrt{\\frac{39.24}{2.00}} = \\sqrt{19.62} \\approx 4.43\\text{ m/s}$",
+            "สรุป: ทรงกลมตันวิ่งเร็วที่สุด ($5.29\\text{ m/s}$) และถึงปลายทางก่อนใคร ตามด้วยทรงกระบอกตัน ($5.11\\text{ m/s}$) และห่วงกลมบางถึงช้าที่สุด ($4.43\\text{ m/s}$) เนื่องจากทรงกลมตันมีสัดส่วนความเฉื่อยการหมุนต่ำที่สุด จึงแบ่งพลังงานศักย์ไปใช้ในการหมุนน้อยที่สุด เหลือให้พลังงานจลน์เลื่อนที่มากที่สุด"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="การกลิ้งลงพื้นเอียงเปรียบเทียบโมเมนต์ความเฉื่อย">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Incline Plane -->
+            <polygon points="40,170 420,170 40,50" fill="#1E293B" stroke="#475569" stroke-width="2"/>
+            <text x="50" y="110" fill="#94A3B8" font-size="11">h = 2.0 m</text>
+            <line x1="30" y1="50" x2="30" y2="170" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <!-- Sphere (Fastest) -->
+            <g transform="translate(140, 82)">
+              <circle cx="0" cy="0" r="18" fill="#3B82F6" stroke="#60A5FA" stroke-width="2"/>
+              <circle cx="0" cy="0" r="4" fill="#F8FAFC"/>
+              <text x="24" y="-8" fill="#60A5FA" font-size="10" font-weight="bold">1. ทรงกลมตัน (c = 0.4)</text>
+              <text x="24" y="6" fill="#10B981" font-size="9">v = 5.29 m/s (เร็วสุด!)</text>
+            </g>
+            <!-- Cylinder (Mid) -->
+            <g transform="translate(230, 110)">
+              <circle cx="0" cy="0" r="18" fill="#F59E0B" stroke="#FBBF24" stroke-width="2"/>
+              <circle cx="0" cy="0" r="7" fill="#1E293B" stroke="#FBBF24" stroke-width="1.5"/>
+              <text x="24" y="-8" fill="#FBBF24" font-size="10" font-weight="bold">2. ทรงกระบอกตัน (c = 0.5)</text>
+              <text x="24" y="6" fill="#F59E0B" font-size="9">v = 5.11 m/s</text>
+            </g>
+            <!-- Hoop (Slowest) -->
+            <g transform="translate(320, 138)">
+              <circle cx="0" cy="0" r="18" fill="none" stroke="#EF4444" stroke-width="4"/>
+              <text x="24" y="-8" fill="#EF4444" font-size="10" font-weight="bold">3. ห่วงกลมบาง (c = 1.0)</text>
+              <text x="24" y="6" fill="#F87171" font-size="9">v = 4.43 m/s (ช้าสุด)</text>
+            </g>
+          </svg>`,
+          diagramCaption: "การกลิ้งลงพื้นเอียง: วัตถุที่มีค่าอัตราส่วนโมเมนต์ความเฉื่อย c = I/(MR²) น้อยที่สุด จะถึงเส้นชัยก่อนเสมอโดยไม่ขึ้นกับมวลและรัศมี"
+        },
+        observations: [
+          "ความเป็นอิสระจากมวลและรัศมี: อัตราเร่งเชิงเส้น $a = \\frac{g\\sin\\theta}{1 + c}$ และความเร็วปลาย $v = \\sqrt{\\frac{2gh}{1+c}}$ ไม่ขึ้นกับมวล $M$ หรือรัศมี $R$ ของวัตถุเลย แต่ขึ้นอยู่กับ 'รูปทรงเรขาคณิต' ผ่านตัวแปร $c$ เท่านั้น",
+          "บทบาทของแรงเสียดทานสถิต: ในการกลิ้งโดยไม่ไถล แรงเสียดทานสถิต $f_s$ ทำหน้าที่สร้างทอร์กหมุนวัตถุ แต่ 'ไม่ทำงานสุทธิ' (Zero Work) เพราะจุดสัมผัสหยุดนิ่งชั่วขณะ จึงไม่มีการสูญเสียพลังงานกลเป็นความร้อน"
+        ],
+        citation: "Halliday, D., Resnick, R., & Walker, J. (2018). Fundamentals of Physics (11th Ed.), Chapter 11: Rolling, Torque, and Angular Momentum. Wiley.",
+        citations: [
+          {
+            title: "Fundamentals of Physics",
+            authors: "Halliday, D., Resnick, R., & Walker, J.",
+            source: "Wiley, 11th Edition, Chapter 11: Rolling and Angular Momentum, pp. 295–320",
+            year: "2018",
+            url: "https://www.wiley.com/en-us/Fundamentals+of+Physics%2C+11th+Edition-p-9781119460138",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Halliday & Resnick (2018) Ch 11 pp. 295–320: Derivation of kinetic energy of rolling without slipping and parallel-axis theorem.",
+            note: "ตำราฟิสิกส์มาตรฐานระดับมหาวิทยาลัย"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 8: Angular Momentum & Conservation Law
+      // ----------------------------------------------------------------------
+      {
+        id: "ch02-th08",
+        chapterId: "ch02",
+        divisionId: "div-ch02-rotational",
+        divisionTitle: "ภาคที่ 3: พลศาสตร์การหมุนและวัตถุแข็งเกร็ง",
+        numberTh: "ทฤษฎีที่ 8",
+        type: "กฎการอนุรักษ์ (Conservation Law)",
+        titleTh: "โมเมนตัมเชิงมุมและกฎการอนุรักษ์โมเมนตัมเชิงมุม",
+        titleEn: "Angular Momentum & Law of Conservation of Angular Momentum",
+        summary: "นิยามโมเมนตัมเชิงมุมของอนุภาคและวัตถุแข็งเกร็ง ความสัมพันธ์กับทอร์กสุทธิ กฎการอนุรักษ์โมเมนตัมเชิงมุม กฎข้อที่สองของเคปเลอร์ และการควงของไจโรสโคป",
+        definition: {
+          text: "โมเมนตัมเชิงมุม (Angular Momentum, $\\vec{L}$) คือ ปริมาณเวกเตอร์ที่วัดปริมาณการหมุนของวัตถุเทียบกับจุดอ้างอิง:\n1. สำหรับอนุภาคเดี่ยวมวล $m$ มีความเร็ว $\\vec{v}$ และเวกเตอร์ตำแหน่ง $\\vec{r}$: $\\vec{L} = \\vec{r} \\times \\vec{p} = m(\\vec{r} \\times \\vec{v})$\n2. สำหรับวัตถุแข็งเกร็งหมุนรอบแกนสมมาตรตรึง: $\\vec{L} = I \\vec{\\omega}$\n\nกฎการอนุรักษ์โมเมนตัมเชิงมุม (Conservation of Angular Momentum) แถลงว่า: 'หากทอร์กภายนอกสุทธิที่กระทำต่อระบบรอบแกนหมุนหนึ่งๆ เป็นศูนย์ ($\\Sigma\\vec{\\tau}_{\\text{ext}} = 0$) แล้ว เวกเตอร์โมเมนตัมเชิงมุมรวมของระบบรอบแกนนั้นย่อมคงตัวตลอดกาล':\n$$\\frac{d\\vec{L}}{dt} = \\Sigma\\vec{\\tau}_{\\text{ext}} = 0 \\implies \\vec{L}_{\\text{initial}} = \\vec{L}_{\\text{final}} \\implies I_1 \\omega_1 = I_2 \\omega_2$$"
+        },
+        principle: {
+          text: "ผลลัพธ์สำคัญจากกฎการอนุรักษ์โมเมนตัมเชิงมุม:\n1. การเปลี่ยนแปลงรูปร่างของวัตถุ: หากวัตถุดึงมวลเข้าใกล้แกนหมุน โมเมนต์ความเฉื่อย $I$ จะลดลง ส่งผลให้อัตราเร็วเชิงมุม $\\omega$ เพิ่มขึ้นโดยอัตโนมัติ เช่น นักสเก็ตลีลาหุบแขนเข้าหาลำตัว หรือดาวฤกษ์ที่ยุบตัวเป็นดาวนิวตรอน (Pulsar)\n2. กฎข้อที่สองของเคปเลอร์ (Kepler's Second Law): แรงโน้มถ่วงเป็นแรงสู่ศูนย์กลาง (Central Force) ซึ่งแนวแรงพุ่งผ่านจุดศูนย์กลางมวลดวงอาทิตย์เสมอ ทำให้ทอร์ก $\\vec{\\tau} = \\vec{r} \\times \\vec{F}_g = 0$ ดังนั้นโมเมนตัมเชิงมุมของดาวเคราะห์จึงอนุรักษ์ ส่งผลให้อัตราเร็วการกวาดพื้นที่คงที่:\n$$\\frac{dA}{dt} = \\frac{1}{2} r^2 \\frac{d\\theta}{dt} = \\frac{L}{2m} = \\text{คงที่}$$\n3. เสถียรภาพของไจโรสโคปและการควง (Gyroscopic Precession): เมื่อวัตถุที่หมุนรอบตัวเองด้วยโมเมนตัมเชิงมุมขนาดใหญ่ถูกทอร์กภายนอกกระทำ เวกเตอร์ $\\vec{L}$ จะเปลี่ยนทิศทางตามสมการ $\\Delta\\vec{L} = \\vec{\\tau}\\Delta t$ ทำให้แกนหมุนเคลื่อนที่ส่ายเป็นวงกลมด้วยอัตราเร็วเชิงมุมการควง $\\Omega_p = \\frac{\\tau}{L} = \\frac{M g d}{I \\omega}$"
+        },
+        formulas: [
+          {
+            name: "นิยามโมเมนตัมเชิงมุมและความสัมพันธ์กับทอร์กสุทธิ",
+            latex: "\\vec{L} = \\vec{r} \\times \\vec{p} = I \\vec{\\omega}, \\quad \\Sigma\\vec{\\tau}_{\\text{ext}} = \\frac{d\\vec{L}}{dt}",
+            symbols: [
+              { sym: "\\vec{L}", desc: "เวกเตอร์โมเมนตัมเชิงมุม", unit: "\\text{kg}\\cdot\\text{m}^2/\\text{s} = \\text{J}\\cdot\\text{s}" },
+              { sym: "\\vec{p}", desc: "เวกเตอร์โมเมนตัมเชิงเส้น (m v)", unit: "\\text{kg}\\cdot\\text{m/s}" },
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยรอบแกนหมุน", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "\\vec{\\omega}", desc: "เวกเตอร์ความเร็วเชิงมุม", unit: "\\text{rad/s}" }
+            ],
+            derivationSteps: [
+              "1. หาอนุพันธ์ของ L = r × p เทียบกับเวลา: dL/dt = (dr/dt × p) + (r × dp/dt)",
+              "2. เนื่องจาก dr/dt = v และ p = m v ผลคูณ v × (m v) = 0 เพราะเวกเตอร์ขนานกัน",
+              "3. จากกฎข้อ 2 ของนิวตัน dp/dt = F_ext",
+              "4. แทนค่ากลับ: dL/dt = r × F_ext = τ_ext",
+              "5. สำหรับวัตถุแข็งเกร็ง I คงที่: dL/dt = I (dω/dt) = I α = τ_ext"
+            ]
+          },
+          {
+            name: "กฎการอนุรักษ์โมเมนตัมเชิงมุม",
+            latex: "I_1 \\omega_1 = I_2 \\omega_2 \\quad (\\text{เมื่อ } \\Sigma\\tau_{\\text{ext}} = 0)",
+            symbols: [
+              { sym: "I_1, I_2", desc: "โมเมนต์ความเฉื่อยสภาวะเริ่มต้นและสุดท้าย", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "\\omega_1, \\omega_2", desc: "ความเร็วเชิงมุมเริ่มต้นและสุดท้าย", unit: "\\text{rad/s}" }
+            ],
+            derivationSteps: [
+              "1. เมื่อทอร์กภายนอกสุทธิ Στ_ext = 0",
+              "2. dL/dt = 0 => เวกเตอร์ L เป็นค่าคงตัว",
+              "3. L_initial = L_final",
+              "4. I_1 ω_1 = I_2 ω_2",
+              "5. สังเกตพลังงานจลน์การหมุน K_rot = L^2 / (2 I): เมื่อ I ลดลง K_rot จะเพิ่มขึ้นเพราะนักกีฬาทำงานกลดึงแขนเข้ามา"
+            ]
+          }
+        ],
+        application: {
+          text: "การควบคุมท่าทางการหมุนตัวของนักยิมนาสติกและนักกระโดดน้ำ, การหมุนรอบตัวเองของดาวนิวตรอน (Pulsars), ล้อควบคุมปฏิกิริยา (Reaction Wheels) บนกล้องโทรทรรศน์อวกาศฮับเบิลเพื่อปรับทิศทางโดยไม่ต้องใช้เชื้อเพลิงจรวด, ไจโรสโคปในระบบนำทางอากาศยาน",
+          validWhen: "ทอร์กภายนอกสุทธิรอบแกนหมุนที่พิจารณามีค่าเป็นศูนย์ หรือช่วงเวลาชน/ระเบิดสั้นมากจนการดลของทอร์กภายนอกเข้าใกล้ศูนย์",
+          invalidWhen: "มีแรงต้านภายนอกที่มีแขนของแรงกระทำต่อเนื่อง เช่น แรงเสียดทานลูกปืนที่แกนหมุน หรือลมพัดต้านการหมุน"
+        },
+        example: {
+          problem: "นักสเก็ตน้ำแข็งยืนกางแขนหมุนรอบตัวเองบนลานน้ำแข็งลื่น ด้วยอัตราเร็วเชิงมุมเริ่มต้น $\\omega_1 = 2.0\\text{ rad/s}$ โดยมีโมเมนต์ความเฉื่อยขณะกางแขน $I_1 = 3.6\\text{ kg}\\cdot\\text{m}^2$ เมื่อเธอหุบแขนแนบลำตัว โมเมนต์ความเฉื่อยลดลงเหลือ $I_2 = 1.2\\text{ kg}\\cdot\\text{m}^2$ จงหา: (ก) ความเร็วเชิงมุมใหม่ $\\omega_2$ และ (ข) พลังงานจลน์การหมุนที่เปลี่ยนแปลงไป $\\Delta K_{\\text{rot}}$",
+          steps: [
+            "ขั้นตอนที่ 1: เนื่องจากพื้นน้ำแข็งลื่น ทอร์กภายนอกสุทธิในแนวดิ่ง $\\Sigma\\tau_z = 0$ ใช้กฎการอนุรักษ์โมเมนตัมเชิงมุม: $I_1 \\omega_1 = I_2 \\omega_2$",
+            "ขั้นตอนที่ 2: คำนวณความเร็วเชิงมุมใหม่: $\\omega_2 = \\frac{I_1}{I_2}\\omega_1 = \\left(\\frac{3.6}{1.2}\\right)(2.0) = 3 \\times 2.0 = 6.0\\text{ rad/s}$",
+            "ขั้นตอนที่ 3: คำนวณพลังงานจลน์เริ่มต้น: $K_1 = \\frac{1}{2} I_1 \\omega_1^2 = \\frac{1}{2}(3.6)(2.0)^2 = \\frac{1}{2}(3.6)(4) = 7.2\\text{ J}$",
+            "ขั้นตอนที่ 4: คำนวณพลังงานจลน์สุดท้าย: $K_2 = \\frac{1}{2} I_2 \\omega_2^2 = \\frac{1}{2}(1.2)(6.0)^2 = \\frac{1}{2}(1.2)(36) = 21.6\\text{ J}$",
+            "ขั้นตอนที่ 5: ผลต่างพลังงานจลน์: $\\Delta K = K_2 - K_1 = 21.6 - 7.2 = +14.4\\text{ J}$",
+            "สรุป: ความเร็วเชิงมุมพุ่งสูงขึ้น 3 เท่าเป็น $6.0\\text{ rad/s}$ และพลังงานจลน์เพิ่มขึ้น $14.4\\text{ J}$ โดยพลังงานส่วนเกินนี้มาจากงานกลที่กล้ามเนื้อแขนของนักสเก็ตออกแรงดึงแขนเข้ามาต้านแรงหนีศูนย์กลาง"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="การอนุรักษ์โมเมนตัมเชิงมุมของนักสเก็ต">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- State 1: Arms Extended -->
+            <g transform="translate(130, 20)">
+              <text x="0" y="20" fill="#94A3B8" font-size="12" font-weight="bold" text-anchor="middle">สภาวะเริ่มต้น: กางแขน</text>
+              <line x1="0" y1="35" x2="0" y2="160" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+              <!-- Body -->
+              <circle cx="0" cy="55" r="10" fill="#F59E0B"/>
+              <rect x="-8" y="65" width="16" height="50" rx="4" fill="#3B82F6"/>
+              <!-- Extended Arms -->
+              <line x1="-55" y1="80" x2="55" y2="80" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="-55" cy="80" r="5" fill="#EF4444"/>
+              <circle cx="55" cy="80" r="5" fill="#EF4444"/>
+              <!-- Rotation Arrow -->
+              <path d="M -30 140 A 30 15 0 1 0 30 140" fill="none" stroke="#38BDF8" stroke-width="2" marker-end="url(#arr-cyan)"/>
+              <text x="0" y="170" fill="#38BDF8" font-size="10" text-anchor="middle">I₁ = 3.6 kg·m², ω₁ = 2.0 rad/s</text>
+            </g>
+            <!-- Arrow Transition -->
+            <line x1="230" y1="100" x2="290" y2="100" stroke="#10B981" stroke-width="3" marker-end="url(#arr-green)"/>
+            <text x="260" y="85" fill="#10B981" font-size="10" font-weight="bold" text-anchor="middle">หุบแขน</text>
+            <!-- State 2: Arms In -->
+            <g transform="translate(390, 20)">
+              <text x="0" y="20" fill="#10B981" font-size="12" font-weight="bold" text-anchor="middle">สภาวะสุดท้าย: หุบแขน</text>
+              <line x1="0" y1="35" x2="0" y2="160" stroke="#475569" stroke-width="1" stroke-dasharray="3,3"/>
+              <!-- Body -->
+              <circle cx="0" cy="55" r="10" fill="#F59E0B"/>
+              <rect x="-8" y="65" width="16" height="50" rx="4" fill="#3B82F6"/>
+              <!-- Tucked Arms -->
+              <line x1="-15" y1="80" x2="15" y2="80" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="-15" cy="80" r="4" fill="#EF4444"/>
+              <circle cx="15" cy="80" r="4" fill="#EF4444"/>
+              <!-- Fast Rotation Arrow -->
+              <path d="M -20 140 A 20 10 0 1 0 20 140" fill="none" stroke="#F59E0B" stroke-width="3" marker-end="url(#arr-yellow)"/>
+              <text x="0" y="170" fill="#F59E0B" font-size="10" text-anchor="middle">I₂ = 1.2 kg·m², ω₂ = 6.0 rad/s (3 เท่า!)</text>
+            </g>
+          </svg>`,
+          diagramCaption: "การอนุรักษ์โมเมนตัมเชิงมุม: เมื่อหุบแขน ระยะ r ลดลง ทำให้ I ลดลงเหลือ 1/3 ส่งผลให้ความเร็วรอบการหมุน ω พุ่งสูงขึ้น 3 เท่าทันที"
+        },
+        observations: [
+          "เวกเตอร์โมเมนตัมเชิงมุมต้องอนุรักษ์ทั้งขนาดและทิศทาง: หากระบบเดิมไม่มีการหมุน (L = 0) การที่ส่วนหนึ่งหมุนตามเข็มนาฬิกา อีกส่วนหนึ่งจะต้องหมุนทวนเข็มนาฬิกาเพื่อหักล้างกันเสมอ เช่น หางเสือของเฮลิคอปเตอร์ที่ต้องมีใบพัดท้ายเพื่อต้านทอร์กปฏิกิริยาของตัวลำ",
+          "ดาวนิวตรอนและการหมุนยิ่งยวด: ดาวฤกษ์ที่มีรัศมีระดับล้านกิโลเมตรเมื่อยุบตัวเหลือรัศมีเพียง 10-20 กิโลเมตร จะหมุนรอบตัวเองเร็วขึ้นนับแสนเท่า จนหมุนได้หลายร้อยรอบต่อวินาที กลายเป็นสัญญาณพัลซาร์"
+        ],
+        citation: "Morin, D. (2008). Introduction to Classical Mechanics, Chapter 9: Angular Momentum Part II, Cambridge University Press.",
+        citations: [
+          {
+            title: "Introduction to Classical Mechanics: With Problems and Solutions",
+            authors: "David Morin",
+            source: "Cambridge University Press, Chapter 9, pp. 340–375",
+            year: "2008",
+            url: "https://www.cambridge.org/highereducation/books/introduction-to-classical-mechanics/3004C94CBAAC2649B90967A99D417834",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Morin (2008) Chapter 9 pp. 340–375: Conservation of angular momentum, gyroscopic motion, and central force areal velocity.",
+            note: "การอนุมานการอนุรักษ์โมเมนตัมเชิงมุมและไจโรสโคป"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 9: Pulley Mechanics, Mechanical Advantage & Efficiency
+      // ----------------------------------------------------------------------
+      {
+        id: "ch02-th09",
+        chapterId: "ch02",
+        divisionId: "div-ch02-pulleys",
+        divisionTitle: "ภาคที่ 4: กลศาสตร์รอกและการได้เปรียบเชิงกล",
+        numberTh: "ทฤษฎีที่ 9",
+        type: "กลศาสตร์เครื่องกลและการประยุกต์ (Pulley Mechanics & Engineering)",
+        titleTh: "กลศาสตร์ของรอก การได้เปรียบเชิงกล และประสิทธิภาพ",
+        titleEn: "Pulley Mechanics, Mechanical Advantage & Efficiency",
+        summary: "การวิเคราะห์แรงตึงเชือก รอกเดี่ยวตายตัว รอกเดี่ยวเคลื่อนที่ รอกพวง การได้เปรียบเชิงกลจริงและอุดมคติ ประสิทธิภาพเชิงกล และเครื่องกลแอทวูดพร้อมโมเมนต์ความเฉื่อย",
+        definition: {
+          text: "รอก (Pulley) คือ เครื่องกลผ่อนแรงอย่างง่ายที่ประกอบด้วยล้อที่มีร่องรอบขอบสำหรับพาดเชือกหรือสลิง ใช้สำหรับเปลี่ยนทิศทางของแรงหรือผ่อนแรงในการยกของหนัก:\n1. รอกเดี่ยวตายตัว (Fixed Pulley): แกนรอกถูกตรึงแน่น ไม่ผ่อนแรง ($\\text{MA} = 1$) แต่ช่วยเปลี่ยนทิศทางของแรงให้ออกแรงดึงลงสะดวกตามแรงโน้มถ่วง\n2. รอกเดี่ยวเคลื่อนที่ (Movable Pulley): แกนรอกเคลื่อนที่ไปพร้อมกับวัตถุ ช่วยผ่อนแรงลงครึ่งหนึ่ง ($\\text{MA} = 2$) โดยต้องดึงเชือกเป็นระยะทางเป็น 2 เท่าของระยะที่วัตถุลอยขึ้น\n3. รอกพวง (Block and Tackle / Compound Pulley): การผสมผสานระหว่างรอกตายตัวและรอกเคลื่อนที่หลายตัว การได้เปรียบเชิงกลอุดมคติจะเท่ากับจำนวนเส้นเชือกที่ช่วยพยุงวัตถุ ($n$)\n\nพารามิเตอร์เชิงวิศวกรรมหลัก:\n• การได้เปรียบเชิงกลจริง (Actual Mechanical Advantage, $\\text{AMA}$): อัตราส่วนระหว่างแรงต้าน (น้ำหนักวัตถุ $F_{\\text{load}}$) ต่อแรงพยายามที่ออกจริง ($F_{\\text{effort}}$): $\\text{AMA} = \\frac{F_{\\text{load}}}{F_{\\text{effort}}}$\n• อัตราส่วนความเร็วหรือการได้เปรียบเชิงกลอุดมคติ (Ideal Mechanical Advantage, $\\text{IMA} = \\text{VR}$): อัตราส่วนระยะทาง: $\\text{VR} = \\frac{d_{\\text{effort}}}{d_{\\text{load}}} = n$\n• ประสิทธิภาพเชิงกล (Mechanical Efficiency, $\\eta$): $\\eta = \\frac{\\text{AMA}}{\\text{VR}} \\times 100\\% = \\frac{W_{\\text{out}}}{W_{\\text{in}}} \\times 100\\%$"
+        },
+        principle: {
+          text: "การวิเคราะห์แรงตึงเชือกและกฎการอนุรักษ์งาน:\nในระบบรอกอุดมคติ (เชือกเบา รอกไม่มีมวลและปราศจากแรงเสียดทาน): งานที่ให้กับระบบย่อมเท่ากับงานที่ระบบกระทำต่อวัตถุ (ไม่มีการสูญเสียพลังงาน):\n$$W_{\\text{in}} = F_{\\text{effort}} \\cdot d_{\\text{effort}} = W_{\\text{out}} = F_{\\text{load}} \\cdot d_{\\text{load}}$$\nทำให้ได้ความสัมพันธ์แบบผกผันระหว่างแรงกับระยะทาง: 'หากผ่อนแรงลง $n$ เท่า จะต้องดึงเชือกเป็นระยะทางเพิ่มขึ้น $n$ เท่าเสมอ' (ไม่มีเครื่องกลใดสร้างพลังงานขึ้นมาเองได้)\n\nพลศาสตร์ของเครื่องกลแอทวูด (Atwood Machine with Massive Pulley):\nเมื่อคำนึงถึงมวลและโมเมนต์ความเฉื่อยของรอก $I = \\frac{1}{2} M_p R^2$ แรงตึงเชือกสองข้างจะไม่เท่ากัน ($T_1 \\neq T_2$) ทอร์กสุทธิจากผลต่างแรงตึงเชือกจะเร่งการหมุนของรอก:\n$$(T_1 - T_2) R = I \\alpha = I \\left(\\frac{a}{R}\\right) \\implies T_1 - T_2 = \\frac{I}{R^2} a$$\nเมื่อรวมเข้ากับกฎข้อ 2 ของนิวตันสำหรับมวลทั้งสอง จะได้ความเร่งเชิงเส้นของระบบแอทวูด:\n$$a = \\frac{(m_1 - m_2)g}{m_1 + m_2 + \\frac{I}{R^2}}$$"
+        },
+        formulas: [
+          {
+            name: "การได้เปรียบเชิงกล อัตราส่วนความเร็ว และประสิทธิภาพเชิงกล",
+            latex: "\\text{AMA} = \\frac{F_{\\text{load}}}{F_{\\text{effort}}}, \\quad \\text{VR} = \\frac{d_{\\text{effort}}}{d_{\\text{load}}} = n, \\quad \\eta = \\frac{\\text{AMA}}{\\text{VR}} \\times 100\\%",
+            symbols: [
+              { sym: "\\text{AMA}", desc: "การได้เปรียบเชิงกลจริง (วัดจากการทดลอง)", unit: "—" },
+              { sym: "\\text{VR} \\; (\\text{IMA})", desc: "อัตราส่วนความเร็วหรือการได้เปรียบเชิงกลอุดมคติ", unit: "—" },
+              { sym: "n", desc: "จำนวนเส้นเชือกที่ช่วยรองรับน้ำหนักวัตถุโดยตรง", unit: "—" },
+              { sym: "\\eta", desc: "ประสิทธิภาพเชิงกลของระบบเครื่องกล", unit: "\\%" }
+            ],
+            derivationSteps: [
+              "1. งานที่ให้กับระบบ: W_in = F_effort · d_effort",
+              "2. งานที่มีประโยชน์ที่ได้: W_out = F_load · d_load",
+              "3. นิยามประสิทธิภาพ: η = W_out / W_in = (F_load · d_load) / (F_effort · d_effort)",
+              "4. จัดรูป: η = (F_load / F_effort) / (d_effort / d_load) = AMA / VR",
+              "5. ในระบบอุดมคติปราศจากแรงเสียดทาน: η = 100% => AMA = VR = n"
+            ]
+          },
+          {
+            name: "สมการความเร่งเครื่องกลแอทวูดพร้อมโมเมนต์ความเฉื่อยของรอก",
+            latex: "a = \\frac{(m_1 - m_2)g}{m_1 + m_2 + \\frac{I}{R^2}}",
+            symbols: [
+              { sym: "a", desc: "ความเร่งเชิงเส้นของมวลและเชือก", unit: "\\text{m/s}^2" },
+              { sym: "m_1, m_2", desc: "มวลของวัตถุทั้งสองข้าง (กำหนด m_1 > m_2)", unit: "\\text{kg}" },
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยของรอกรอบแกนหมุน", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "R", desc: "รัศมีของร่องรอก", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. สมการการเคลื่อนที่ของมวล m_1 (เคลื่อนที่ลง): m_1 g - T_1 = m_1 a",
+              "2. สมการการเคลื่อนที่ของมวล m_2 (เคลื่อนที่ขึ้น): T_2 - m_2 g = m_2 a",
+              "3. สมการการหมุนของรอก: (T_1 - T_2) R = I α = I (a / R) => T_1 - T_2 = (I / R^2) a",
+              "4. บวกสมการข้อ 1 และข้อ 2: (m_1 - m_2)g - (T_1 - T_2) = (m_1 + m_2) a",
+              "5. แทนค่า (T_1 - T_2): (m_1 - m_2)g - (I / R^2) a = (m_1 + m_2) a",
+              "6. ย้ายข้างจัดรูป: a = [(m_1 - m_2)g] / [m_1 + m_2 + I / R^2]"
+            ]
+          }
+        ],
+        application: {
+          text: "เครนก่อสร้างขนาดใหญ่ (Tower Crane) ที่ใช้รอกพวงยกคานคอนกรีตนับสิบตัน, ลิฟต์โดยสารในอาคารสูงพร้อมชุดน้ำหนักถ่วง (Counterweight), รอกทดแรงในระบบชักใบเรือใบแข่ง (Sailing Rigging), รอกกู้ภัยในงานดับเพลิงและที่สูง",
+          validWhen: "เชือกไม่ยืดหยุ่น (Inextensible string) และเชือกไม่ลื่นไถลไปบนร่องรอก ($a = \\alpha R$)",
+          invalidWhen: "เชือกหย่อนหรือเกิดการสะบัดกระตุกอย่างรุนแรง (Snatch Loading) ซึ่งทำให้แรงดลชั่วขณะสูงเกินขีดจำกัดปลอดภัยหลายเท่า"
+        },
+        example: {
+          problem: "ระบบรอกพวง (Block and Tackle) มีเส้นเชือกรองรับน้ำหนัก $n = 4$ เส้น ใช้ยกวัตถุมวล $M = 200\\text{ kg}$ ขึ้นสูง $h = 3.0\\text{ m}$ หากระบบมีประสิทธิภาพเชิงกล $\\eta = 80\\%$ จงหา: (ก) แรงพยายาม $F_{\\text{effort}}$ ที่ต้องใช้ออกแรงดึงเชือกจริง (ข) ความยาวเชือกที่ต้องสาวออกไป $d_{\\text{effort}}$ และ (ค) งานที่สูญเสียไปกับแรงเสียดทาน $W_{\\text{loss}}$",
+          steps: [
+            "ขั้นตอนที่ 1: คำนวณน้ำหนักวัตถุ: $F_{\\text{load}} = M g = (200\\text{ kg})(9.81\\text{ m/s}^2) = 1,962\\text{ N}$",
+            "ขั้นตอนที่ 2: ระบุอัตราส่วนความเร็วของรอก 4 เส้น: $\\text{VR} = n = 4$",
+            "ขั้นตอนที่ 3: คำนวณระยะทางที่ต้องดึงเชือก: $d_{\\text{effort}} = \\text{VR} \\times h = 4 \\times 3.0\\text{ m} = 12.0\\text{ m}$",
+            "ขั้นตอนที่ 4: หาการได้เปรียบเชิงกลจริงจากประสิทธิภาพ:\n$\\text{AMA} = \\eta \\times \\text{VR} = (0.80)(4) = 3.20$",
+            "ขั้นตอนที่ 5: คำนวณแรงพยายามที่ต้องออกจริง:\n$F_{\\text{effort}} = \\frac{F_{\\text{load}}}{\\text{AMA}} = \\frac{1,962\\text{ N}}{3.20} \\approx 613.1\\text{ N}$ (หากเป็นรอกอุดมคติจะใช้เพียง $1,962 / 4 = 490.5\\text{ N}$)",
+            "ขั้นตอนที่ 6: คำนวณงานที่ให้แก่งานที่ได้:\n$W_{\\text{in}} = F_{\\text{effort}} \\cdot d_{\\text{effort}} = (613.1)(12.0) \\approx 7,357.2\\text{ J}$\n$W_{\\text{out}} = F_{\\text{load}} \\cdot h = (1,962)(3.0) = 5,886.0\\text{ J}$",
+            "ขั้นตอนที่ 7: คำนวณงานที่สูญเสีย: $W_{\\text{loss}} = W_{\\text{in}} - W_{\\text{out}} = 7,357.2 - 5,886.0 = 1,471.2\\text{ J}$",
+            "สรุป: ต้องออกแรงดึงจริง $613.1\\text{ N}$ สาวเชือกยาว $12.0\\text{ m}$ และมีพลังงานสูญเสียไปกับความเสียดทาน $1,471.2\\text{ J}$"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพรอกเดี่ยวตายตัว รอกเคลื่อนที่ และรอกพวง">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- 1. Fixed Pulley (MA = 1) -->
+            <g transform="translate(60, 20)">
+              <text x="35" y="16" fill="#94A3B8" font-size="10" font-weight="bold" text-anchor="middle">1. รอกเดี่ยวตายตัว (MA=1)</text>
+              <line x1="0" y1="25" x2="70" y2="25" stroke="#64748B" stroke-width="4"/>
+              <line x1="35" y1="25" x2="35" y2="45" stroke="#94A3B8" stroke-width="2"/>
+              <circle cx="35" cy="55" r="14" fill="#334155" stroke="#38BDF8" stroke-width="2"/>
+              <!-- Rope -->
+              <line x1="21" y1="55" x2="21" y2="120" stroke="#F59E0B" stroke-width="2"/>
+              <line x1="49" y1="55" x2="49" y2="100" stroke="#F59E0B" stroke-width="2"/>
+              <line x1="49" y1="100" x2="49" y2="135" stroke="#EF4444" stroke-width="2" marker-end="url(#arr-red)"/>
+              <text x="65" y="130" fill="#EF4444" font-size="9">F = W</text>
+              <!-- Load -->
+              <rect x="11" y="120" width="20" height="20" rx="2" fill="#0284C7"/>
+              <text x="21" y="134" fill="#FFFFFF" font-size="8" text-anchor="middle">W</text>
+            </g>
+            <!-- 2. Movable Pulley (MA = 2) -->
+            <g transform="translate(200, 20)">
+              <text x="45" y="16" fill="#38BDF8" font-size="10" font-weight="bold" text-anchor="middle">2. รอกเดี่ยวเคลื่อนที่ (MA=2)</text>
+              <line x1="10" y1="25" x2="80" y2="25" stroke="#64748B" stroke-width="4"/>
+              <!-- Fixed end -->
+              <circle cx="25" cy="25" r="3" fill="#94A3B8"/>
+              <!-- Rope -->
+              <line x1="25" y1="25" x2="25" y2="90" stroke="#F59E0B" stroke-width="2"/>
+              <!-- Movable Pulley -->
+              <circle cx="39" cy="90" r="14" fill="#334155" stroke="#38BDF8" stroke-width="2"/>
+              <line x1="53" y1="90" x2="53" y2="40" stroke="#10B981" stroke-width="2" marker-end="url(#arr-green)"/>
+              <text x="70" y="45" fill="#10B981" font-size="9">F = W/2</text>
+              <!-- Load -->
+              <line x1="39" y1="104" x2="39" y2="120" stroke="#94A3B8" stroke-width="2"/>
+              <rect x="29" y="120" width="20" height="20" rx="2" fill="#0284C7"/>
+              <text x="39" y="134" fill="#FFFFFF" font-size="8" text-anchor="middle">W</text>
+            </g>
+            <!-- 3. Block and Tackle (MA = 4) -->
+            <g transform="translate(360, 20)">
+              <text x="50" y="16" fill="#F59E0B" font-size="10" font-weight="bold" text-anchor="middle">3. รอกพวง (Block & Tackle, n=4)</text>
+              <line x1="10" y1="25" x2="90" y2="25" stroke="#64748B" stroke-width="4"/>
+              <!-- Upper fixed pulleys -->
+              <circle cx="40" cy="45" r="12" fill="#334155" stroke="#F59E0B" stroke-width="2"/>
+              <circle cx="60" cy="45" r="12" fill="#334155" stroke="#F59E0B" stroke-width="2"/>
+              <!-- Lower movable pulleys -->
+              <circle cx="40" cy="110" r="12" fill="#334155" stroke="#38BDF8" stroke-width="2"/>
+              <circle cx="60" cy="110" r="12" fill="#334155" stroke="#38BDF8" stroke-width="2"/>
+              <!-- 4 Strands -->
+              <line x1="30" y1="45" x2="30" y2="110" stroke="#F59E0B" stroke-width="1.5"/>
+              <line x1="48" y1="45" x2="48" y2="110" stroke="#F59E0B" stroke-width="1.5"/>
+              <line x1="52" y1="45" x2="52" y2="110" stroke="#F59E0B" stroke-width="1.5"/>
+              <line x1="70" y1="45" x2="70" y2="110" stroke="#F59E0B" stroke-width="1.5"/>
+              <text x="50" y="80" fill="#FDE047" font-size="10" font-weight="bold" text-anchor="middle">4 เส้นพยุง</text>
+              <!-- Effort Pull -->
+              <line x1="72" y1="45" x2="88" y2="140" stroke="#10B981" stroke-width="2" marker-end="url(#arr-green)"/>
+              <text x="96" y="145" fill="#10B981" font-size="9" font-weight="bold">F = W/4</text>
+              <!-- Load -->
+              <rect x="35" y="135" width="30" height="20" rx="2" fill="#EA580C"/>
+              <text x="50" y="149" fill="#FFFFFF" font-size="9" text-anchor="middle">Load W</text>
+            </g>
+          </svg>`,
+          diagramCaption: "เปรียบเทียบระบบรอก 3 ชนิด: รอกเดี่ยวตายตัวเปลี่ยนทิศทาง (MA=1), รอกเดี่ยวเคลื่อนที่ผ่อนแรง 2 เท่า (MA=2), และรอกพวง 4 เส้นเชือกผ่อนแรง 4 เท่า (MA=4)"
+        },
+        observations: [
+          "ทฤษฎีทองคำของกลศาสตร์ (The Golden Rule of Mechanics): ไม่ว่าเครื่องกลจะซับซ้อนเพียงใด สิ่งที่ได้เปรียบในเรื่องแรง ย่อมต้องเสียเปรียบในเรื่องระยะทางเสมอ ($F \\propto 1/d$) งานที่ได้ไม่สามารถเกินงานที่ป้อนเข้า",
+          "ทำไมประสิทธิภาพจริงจึงไม่ถึง 100%: ในการใช้งานจริง มีแรงเสียดทานระหว่างแกนเพลากับลูกปืนรอก (Bearing friction), แรงต้านการงอตัวของลวดสลิง (Bending stiffness of wire rope) และน้ำหนักตัวเรือนรอกเคลื่อนที่เอง ทำให้ประสิทธิภาพรอกก่อสร้างทั่วไปอยู่ที่ประมาณ 75% – 90%"
+        ],
+        citation: "Serway, R. A., & Jewett, J. W. (2018). Physics for Scientists and Engineers (10th Ed.), Chapter 12: Static Equilibrium and Elasticity. Cengage Learning.",
+        citations: [
+          {
+            title: "Physics for Scientists and Engineers with Modern Physics",
+            authors: "Serway, R. A., & Jewett, J. W.",
+            source: "Cengage Learning, 10th Edition, Chapter 5 & 12: Newton's Laws and Static Machines",
+            year: "2018",
+            url: "https://www.cengage.com/c/physics-for-scientists-and-engineers-10e-serway/",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Serway & Jewett (2018) Chapter 5 & 12: Machine efficiency, mechanical advantage, velocity ratio, and Atwood machine dynamics.",
+            note: "การวิเคราะห์เครื่องกลผ่อนแรงและรอก"
           }
         ]
       }

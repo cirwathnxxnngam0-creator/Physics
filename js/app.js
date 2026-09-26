@@ -30,7 +30,33 @@
   let civilSimulatorInstance = null;       // Track 3: Civil Engineering Statics & Mechanics
   let activeSimMode = 'projectile';        // 'projectile' | 'vehicle' | 'collision' | 'threejs' | 'circular'
 
-  
+  // Performance & Lazy Rendering State
+  const viewNeedsUpdate = {
+    'view-theory': true,
+    'view-formulas': true,
+    'view-phenomena': true,
+    'view-summary': true,
+    'view-examples': true
+  };
+
+  /**
+   * Centralized Simulator Lifecycle Guard
+   * Pauses all background requestAnimationFrame loops across all 11 simulators
+   */
+  function pauseAllSimulators() {
+    if (simulatorInstance && typeof simulatorInstance.pause === 'function') simulatorInstance.pause();
+    if (vehicleSimulatorInstance && typeof vehicleSimulatorInstance.pause === 'function') vehicleSimulatorInstance.pause();
+    if (collisionSimulatorInstance && typeof collisionSimulatorInstance.pause === 'function') collisionSimulatorInstance.pause();
+    if (threejsSimulatorInstance && typeof threejsSimulatorInstance.pause === 'function') threejsSimulatorInstance.pause();
+    if (circularSimulatorInstance && typeof circularSimulatorInstance.pause === 'function') circularSimulatorInstance.pause();
+    if (oscillationSimulatorInstance && typeof oscillationSimulatorInstance.pause === 'function') oscillationSimulatorInstance.pause();
+    if (waveSimulatorInstance && typeof waveSimulatorInstance.pause === 'function') waveSimulatorInstance.pause();
+    if (thermoSimulatorInstance && typeof thermoSimulatorInstance.pause === 'function') thermoSimulatorInstance.pause();
+    if (emSimulatorInstance && typeof emSimulatorInstance.pause === 'function') emSimulatorInstance.pause();
+    if (nuclearSimulatorInstance && typeof nuclearSimulatorInstance.pause === 'function') nuclearSimulatorInstance.pause();
+    if (civilSimulatorInstance && typeof civilSimulatorInstance.pause === 'function') civilSimulatorInstance.pause();
+  }
+
   // ======================================================================
   // PRACTICE PROBLEM ENGINE & LEARNING PORTAL CONTROLLERS
   // ======================================================================
@@ -185,20 +211,37 @@
             <button class="btn-toggle-solution" data-prob-id="${prob.id}">
               ${state.showSolution ? '▲ ซ่อนวิธีทำละเอียด' : '▼ แสดงเฉลยวิธีทำละเอียด'}
             </button>
-            ${prob.simLink ? `
-              <button class="btn-jump-sim-practice" data-chapter="${prob.simLink.chapter}" data-sim-mode="${prob.simLink.mode}">
+            ${prob.simLink && prob.simLink.available !== false ? `
+              <button class="btn-jump-sim-practice" data-chapter="${prob.simLink.chapter}" data-sim-mode="${prob.simLink.mode}" data-submode="${prob.simLink.submode || ''}" data-engine-type="${prob.simLink.engineType || ''}">
                 🎯 เปิดแบบจำลองเพื่อทดสอบสถานการณ์นี้ →
               </button>
-            ` : ''}
+            ` : `
+              <span class="badge-sim-unavailable" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: 6px; background: rgba(148, 163, 184, 0.08); color: #94a3b8; border: 1px dashed rgba(148, 163, 184, 0.28);">
+                ⏳ ${prob.simLink?.label || 'แบบจำลองเฉพาะเรื่องนี้อยู่ระหว่างการพัฒนา'}
+              </span>
+            `}
           </div>
 
           <div class="practice-solution-box" id="sol-box-${prob.id}" style="display: ${state.showSolution ? 'block' : 'none'};">
             <div class="solution-box-title">
               💡 เฉลยละเอียดและขั้นตอนวิธีคิด (Step-by-step Solution):
             </div>
-            <div class="solution-prose">
-              ${prob.explanation.replace(/\\n/g, '<br>')}
-            </div>
+            ${prob.alternativeExplanation ? `
+              <div class="practice-method-tabs">
+                <button class="method-tab-btn active" data-prob-id="${prob.id}" data-method="1">📘 วิธีที่ 1: วิธีมาตรฐานตามตำรา (Standard)</button>
+                <button class="method-tab-btn" data-prob-id="${prob.id}" data-method="2">⚡ วิธีที่ 2: วิธีทางเลือกใหม่ (Novel Alternative)</button>
+              </div>
+              <div class="method-content method-content-1 active" id="method-1-${prob.id}">
+                ${prob.explanation.replace(/\\n/g, '<br>')}
+              </div>
+              <div class="method-content method-content-2" id="method-2-${prob.id}" style="display: none;">
+                ${prob.alternativeExplanation.replace(/\\n/g, '<br>')}
+              </div>
+            ` : `
+              <div class="solution-prose">
+                ${prob.explanation.replace(/\\n/g, '<br>')}
+              </div>
+            `}
           </div>
         </div>
       `;
@@ -221,14 +264,46 @@
       });
     });
 
+    // Attach dual-methodology tab switch handlers
+    container.querySelectorAll('.method-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const probId = btn.dataset.probId;
+        const method = btn.dataset.method;
+        const parentCard = document.getElementById(`prob-card-${probId}`);
+        if (!parentCard) return;
+        parentCard.querySelectorAll('.method-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const m1 = parentCard.querySelector(`#method-1-${probId}`);
+        const m2 = parentCard.querySelector(`#method-2-${probId}`);
+        if (m1 && m2) {
+          if (method === '1') {
+            m1.style.display = 'block';
+            m2.style.display = 'none';
+          } else {
+            m1.style.display = 'none';
+            m2.style.display = 'block';
+          }
+          if (window.MathRenderer) window.MathRenderer.typeset(parentCard);
+        }
+      });
+    });
+
     // Attach simulator jump handlers
     container.querySelectorAll('.btn-jump-sim-practice').forEach(btn => {
       btn.addEventListener('click', () => {
         const chapter = btn.dataset.chapter;
         const mode = btn.dataset.simMode;
+        const submode = btn.dataset.submode || null;
+        const engineType = btn.dataset.engineType;
         openChapter(chapter);
         switchView('view-simulator');
-        switchSimMode(mode);
+        switchSimMode(mode, submode);
+        if (engineType && typeof window.thermoSimulatorInstance?.setEngineType === 'function') {
+          window.thermoSimulatorInstance.setEngineType(engineType);
+        }
+        const selEngineType = document.getElementById('thermo-engine-type');
+        if (selEngineType && engineType) {
+          selEngineType.value = engineType;
+        }
       });
     });
 
@@ -302,12 +377,17 @@
     initCivilSimulator();
     setupSimulatorModeSwitcher();
     setupUniversalNumericInputs();
+    setupUniversalSpeedControls();
     setupPracticeEngine();
     renderSimulatorEduContext(activeSimMode);
     setupKeyboardShortcuts();
     setupMobileAccessModal();
     setupTextbookLibraryModal();
     setupBackgroundExecution();
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.init === 'function') {
+      window.TelemetryMathInspector.init();
+    }
 
     // Global window resize handler for active simulator canvas
     let resizeTimer = null;
@@ -354,7 +434,7 @@
     });
 
     // Determine initial view based on URL hash or default to Landing Page
-    const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-analytical', 'view-practice', 'view-textbooks'];
+    const validViews = ['view-landing', 'view-chapter-select', 'view-theory', 'view-formulas', 'view-simulator', 'view-phenomena', 'view-summary', 'view-analytical', 'view-practice', 'view-textbooks', 'view-examples'];
     const initialHash = window.location.hash.replace(/^#/, '');
     const startView = validViews.includes(initialHash) ? initialHash : 'view-landing';
     switchView(startView, true);
@@ -366,13 +446,21 @@
     window.launchSimulatorForTheory = launchSimulatorForTheory;
     window.launchSimulatorPreset = launchSimulatorPreset;
 
-    // Render all initial math formulas
+    // Scoped math rendering for initial view only (eliminates full-DOM lockup)
     if (window.MathRenderer) {
-      window.MathRenderer.typeset(document.body);
+      const activePanel = document.getElementById(startView);
+      if (activePanel) window.MathRenderer.typeset(activePanel);
     }
+
+    // Visibility Guard: pause physics engines if user minimizes or switches tabs
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        pauseAllSimulators();
+      }
+    });
   }
 
-  // View Navigation (Tab & Page Switching)
+  // View Navigation (Tab & Page Switching & Master Tracks)
   function setupViewNavigation() {
     const tabs = document.querySelectorAll('.view-tab');
     tabs.forEach(tab => {
@@ -381,10 +469,107 @@
         switchView(targetViewId);
       });
     });
+
+    // Master Curriculum Track Switching (Image 1 & 2: ทฤษฎี, เนื้อหาภาควิชาชีพ, คลังโจทย์)
+    const btnMasterTheory = document.getElementById('btn-master-theory');
+    const btnMasterVocational = document.getElementById('btn-master-vocational');
+    const btnMasterPractice = document.getElementById('btn-master-practice');
+    const theoryCatalog = document.getElementById('bosa-theory-catalog');
+    const vocationalCatalog = document.getElementById('bosa-vocational-catalog');
+    const extendedCurriculum = document.getElementById('bosa-extended-curriculum');
+
+    function setActiveMasterTrack(btnActive) {
+      [btnMasterTheory, btnMasterVocational, btnMasterPractice].forEach(btn => {
+        if (!btn) return;
+        const isActive = (btn === btnActive);
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    }
+
+    if (btnMasterTheory) {
+      btnMasterTheory.addEventListener('click', () => {
+        setActiveMasterTrack(btnMasterTheory);
+        if (theoryCatalog) theoryCatalog.style.display = 'block';
+        if (vocationalCatalog) vocationalCatalog.style.display = 'none';
+        if (extendedCurriculum) extendedCurriculum.style.display = 'block';
+        switchView('view-chapter-select', true);
+        document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
+      });
+    }
+
+    if (btnMasterVocational) {
+      btnMasterVocational.addEventListener('click', () => {
+        setActiveMasterTrack(btnMasterVocational);
+        if (theoryCatalog) theoryCatalog.style.display = 'none';
+        if (vocationalCatalog) vocationalCatalog.style.display = 'block';
+        if (extendedCurriculum) extendedCurriculum.style.display = 'none';
+        switchView('view-chapter-select', true);
+        document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
+      });
+    }
+
+    if (btnMasterPractice) {
+      btnMasterPractice.addEventListener('click', () => {
+        setActiveMasterTrack(btnMasterPractice);
+        switchView('view-practice', true);
+        document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+        window.scrollTo(0, 0);
+      });
+    }
+
+    // Wire all 24 Subject cards + Vocational cards for 1-click navigation
+    document.querySelectorAll('.bosa-topic-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const ch = card.dataset.chapter;
+        const targetView = card.dataset.view || 'view-theory';
+        if (ch === 'view-analytical') {
+          switchView('view-analytical');
+        } else if (ch) {
+          openChapter(ch);
+          switchView(targetView);
+        }
+      });
+    });
+
+    // Wire Plasma Fusion callout button
+    const btnPlasmaSim = document.querySelector('.btn-plasma-sim-jump');
+    if (btnPlasmaSim) {
+      btnPlasmaSim.addEventListener('click', () => {
+        openChapter('ch06');
+        switchView('view-simulator');
+        switchSimMode('em', 'lorentz_cyclotron');
+      });
+    }
+
+    // Wire Quick Drawer Toggle Tab (< on right edge as drawn in Image 3 & 4)
+    const btnDrawerSideTab = document.getElementById('drawer-side-tab-toggle');
+    if (btnDrawerSideTab) {
+      btnDrawerSideTab.addEventListener('click', () => {
+        if (window.PhysicsApp && window.PhysicsApp.openDrawer) {
+          const drawer = document.getElementById('drawer-navigation-catalog');
+          if (drawer && drawer.classList.contains('open')) {
+            window.PhysicsApp.closeDrawer();
+          } else {
+            window.PhysicsApp.openDrawer();
+          }
+        }
+      });
+    }
   }
 
   function switchView(viewId, force = false) {
     if (!force && currentView === viewId) return;
+
+    // Reset scroll to top smoothly when switching between views
+    document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    window.scrollTo(0, 0);
 
     // Track previous lesson view before switching to analytical or chapter selection
     if (currentView && currentView !== 'view-analytical' && currentView !== 'view-chapter-select' && currentView !== 'view-landing') {
@@ -395,14 +580,9 @@
       renderPracticeProblems();
     }
 
-    // Lifecycle guard: pause all simulators only if background execution is NOT enabled
-    const allowBackground = document.getElementById('sim-background-run')?.checked ?? true;
-    if (currentView === 'view-simulator' && !allowBackground) {
-      if (simulatorInstance) simulatorInstance.pause();
-      if (vehicleSimulatorInstance) vehicleSimulatorInstance.pause();
-      if (collisionSimulatorInstance) collisionSimulatorInstance.pause();
-      if (threejsSimulatorInstance) threejsSimulatorInstance.pause();
-      if (circularSimulatorInstance) circularSimulatorInstance.pause();
+    // Strict Simulator Lifecycle: pause all background loops when leaving simulator view
+    if (viewId !== 'view-simulator') {
+      pauseAllSimulators();
     }
 
     // Update active tab buttons
@@ -421,6 +601,8 @@
     // Control visibility of header elements & tier bar based on view
     const backBtn = document.getElementById('btn-back-to-chapters');
     const chapterWrapper = document.getElementById('header-chapter-wrapper');
+    const lessonBreadcrumb = document.getElementById('header-lesson-breadcrumb');
+    const chapterSubnav = document.getElementById('chapter-subnav-bar');
     const mainViewNav = document.getElementById('main-view-nav');
     const tierBar = document.getElementById('app-tier-bar');
 
@@ -431,17 +613,39 @@
 
     if (backBtn) backBtn.style.display = isLesson ? 'inline-flex' : 'none';
     if (chapterWrapper) chapterWrapper.style.display = isLesson ? 'inline-flex' : 'none';
+    if (lessonBreadcrumb) lessonBreadcrumb.style.display = isLesson ? 'flex' : 'none';
     if (mainViewNav) mainViewNav.style.display = isLesson ? 'flex' : 'none';
+    if (chapterSubnav) chapterSubnav.style.display = isLesson ? 'block' : 'none';
     if (tierBar) tierBar.style.display = (isLesson && viewId !== 'view-simulator' && !isAnalytical && viewId !== 'view-textbooks') ? 'block' : 'none';
 
     currentView = viewId;
 
+    // High-Performance Lazy Rendering: only render the active tab on-demand
     if (viewId === 'view-theory') {
-      renderTheoryContent(currentChapter);
+      if (force || viewNeedsUpdate['view-theory']) {
+        renderTheoryContent(currentChapter);
+        viewNeedsUpdate['view-theory'] = false;
+      }
     } else if (viewId === 'view-formulas') {
-      renderFormulasContent(currentChapter);
+      if (force || viewNeedsUpdate['view-formulas']) {
+        renderFormulasContent(currentChapter);
+        viewNeedsUpdate['view-formulas'] = false;
+      }
     } else if (viewId === 'view-phenomena') {
-      renderPhenomenaContent(currentChapter);
+      if (force || viewNeedsUpdate['view-phenomena']) {
+        renderPhenomenaContent(currentChapter);
+        viewNeedsUpdate['view-phenomena'] = false;
+      }
+    } else if (viewId === 'view-summary') {
+      if (force || viewNeedsUpdate['view-summary']) {
+        renderSummaryContent(currentChapter);
+        viewNeedsUpdate['view-summary'] = false;
+      }
+    } else if (viewId === 'view-examples') {
+      if (force || viewNeedsUpdate['view-examples']) {
+        renderExamplesContent(currentChapter);
+        viewNeedsUpdate['view-examples'] = false;
+      }
     } else if (viewId === 'view-textbooks') {
       if (window.TextbookLibrary && typeof window.TextbookLibrary.renderTextbookLibrary === 'function') {
         window.TextbookLibrary.renderTextbookLibrary();
@@ -488,12 +692,6 @@
         civilSimulatorInstance.render();
       }
     }
-
-    // Retypeset math if new content is visible
-    if (window.MathRenderer) {
-      const activePanel = document.getElementById(viewId);
-      if (activePanel) window.MathRenderer.typeset(activePanel);
-    }
   }
 
   // Navigation Drawer Management
@@ -528,6 +726,15 @@
       if (isOpen) closeDrawer();
       else openDrawer();
     });
+
+    const sideTabToggle = document.getElementById('drawer-side-tab-toggle');
+    if (sideTabToggle) {
+      sideTabToggle.addEventListener('click', () => {
+        const isOpen = drawer.classList.contains('open');
+        if (isOpen) closeDrawer();
+        else openDrawer();
+      });
+    }
 
     if (btnClose) btnClose.addEventListener('click', closeDrawer);
     backdrop.addEventListener('click', closeDrawer);
@@ -629,7 +836,7 @@
             📚 คลังตำราและ PDF ฉบับเต็ม (Textbook Library & PDF Viewer)
           </a>
           <a href="#view-analytical" class="drawer-theory-link" onclick="window.PhysicsApp.switchView('view-analytical'); window.PhysicsApp.closeDrawer();">
-            🏛️ การวิเคราะห์กลศาสตร์ / คำอธิบายขั้นสูง (Analytical Mechanics)
+            📐 คณิตศาสตร์สำหรับฟิสิกส์ 15 มิติ & กลศาสตร์วิเคราะห์ (Mathematics for Physics)
           </a>
           <div style="font-size: 0.78rem; color: var(--text-muted); padding: 0.4rem 0.6rem;">
             วิศวกรรมโยธา, ไฟฟ้า, เครื่องกล, ข้อสอบ สอวน., ก.ว. [ดูที่หน้าเลือกบท]
@@ -685,6 +892,120 @@
       });
     }
 
+    // 1-B. Hero Secondary Actions (Math, Textbooks, Practice)
+    const btnHeroMath = document.getElementById('btn-hero-math-suite');
+    if (btnHeroMath) {
+      btnHeroMath.addEventListener('click', () => {
+        lastLessonView = 'view-landing';
+        switchView('view-analytical');
+      });
+    }
+    const btnHeroTextbooks = document.getElementById('btn-hero-textbooks');
+    if (btnHeroTextbooks) {
+      btnHeroTextbooks.addEventListener('click', () => {
+        lastLessonView = 'view-landing';
+        switchView('view-textbooks');
+      });
+    }
+    const btnHeroPractice = document.getElementById('btn-hero-practice');
+    if (btnHeroPractice) {
+      btnHeroPractice.addEventListener('click', () => {
+        lastLessonView = 'view-landing';
+        currentPracticeTrack = 'fund';
+        document.querySelectorAll('.practice-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.track === 'fund'));
+        switchView('view-practice');
+        renderPracticeProblems();
+      });
+    }
+
+    // 1-C. Landing Portal Track 1: Fundamental Physics Actions
+    const btnPortFundTheory = document.getElementById('btn-portal-fund-theory');
+    if (btnPortFundTheory) {
+      btnPortFundTheory.addEventListener('click', () => {
+        openChapter('ch01');
+        switchView('view-theory');
+      });
+    }
+    const btnPortFundSim = document.getElementById('btn-portal-fund-sim');
+    if (btnPortFundSim) {
+      btnPortFundSim.addEventListener('click', () => {
+        openChapter('ch01');
+        switchView('view-simulator');
+        switchSimMode('projectile');
+      });
+    }
+    const btnPortFundPractice = document.getElementById('btn-portal-fund-practice');
+    if (btnPortFundPractice) {
+      btnPortFundPractice.addEventListener('click', () => {
+        currentPracticeTrack = 'fund';
+        document.querySelectorAll('.practice-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.track === 'fund'));
+        switchView('view-practice');
+        renderPracticeProblems();
+      });
+    }
+
+    // 1-D. Landing Portal Track 2: Mathematics for Physics & Analytical Mechanics
+    const btnPortAdvTheory = document.getElementById('btn-portal-adv-theory');
+    if (btnPortAdvTheory) {
+      btnPortAdvTheory.addEventListener('click', () => {
+        lastLessonView = 'view-landing';
+        switchView('view-analytical');
+      });
+    }
+    const btnPortAdvSim = document.getElementById('btn-portal-adv-sim');
+    if (btnPortAdvSim) {
+      btnPortAdvSim.addEventListener('click', () => {
+        openChapter('ch01');
+        switchView('view-simulator');
+        switchSimMode('projectile');
+      });
+    }
+    const btnPortAdvPractice = document.getElementById('btn-portal-adv-practice');
+    if (btnPortAdvPractice) {
+      btnPortAdvPractice.addEventListener('click', () => {
+        currentPracticeTrack = 'adv';
+        document.querySelectorAll('.practice-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.track === 'adv'));
+        switchView('view-practice');
+        renderPracticeProblems();
+      });
+    }
+
+    // 1-E. Landing Portal Track 3: Civil Engineering Actions
+    const btnPortCivTheory = document.getElementById('btn-portal-civ-theory');
+    if (btnPortCivTheory) {
+      btnPortCivTheory.addEventListener('click', () => {
+        openChapter('civil_eng');
+        switchView('view-theory');
+      });
+    }
+    const btnPortCivSim = document.getElementById('btn-portal-civ-sim');
+    if (btnPortCivSim) {
+      btnPortCivSim.addEventListener('click', () => {
+        openChapter('civil_eng');
+        switchView('view-simulator');
+        switchSimMode('civil', 'simply_supported');
+      });
+    }
+    const btnPortCivPractice = document.getElementById('btn-portal-civ-practice');
+    if (btnPortCivPractice) {
+      btnPortCivPractice.addEventListener('click', () => {
+        openChapter('civil_eng');
+        currentPracticeTrack = 'civil';
+        document.querySelectorAll('.practice-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.track === 'civil'));
+        switchView('view-practice');
+        renderPracticeProblems();
+      });
+    }
+
+    // 1-F. Landing Portal Track 4: Textbook Library
+    const btnPortTb = document.getElementById('btn-portal-textbooks-open');
+    if (btnPortTb) {
+      btnPortTb.addEventListener('click', () => {
+        lastLessonView = 'view-landing';
+        switchView('view-textbooks');
+      });
+    }
+
     // 2. Quick Ch1 from Hero
     const btnQuickCh1 = document.getElementById('btn-landing-quick-ch1');
     if (btnQuickCh1) {
@@ -736,7 +1057,26 @@
       });
     });
 
-    // 4-C. Direct Card Clicks for Civil Engineering
+    // 4-C. Direct Card Clicks for 24 Pure Physics Subjects & Vocational Modules
+    document.querySelectorAll('.bosa-topic-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('button')) return;
+        const chap = card.dataset.chapter;
+        const view = card.dataset.view || 'view-theory';
+        if (chap === 'view-analytical') {
+          lastLessonView = 'view-chapter-select';
+          switchView('view-analytical');
+        } else if (chap === 'civil_eng') {
+          openChapter('civil_eng');
+          switchView(view);
+        } else if (chap) {
+          openChapter(chap);
+          switchView(view);
+        }
+      });
+    });
+
+    // 4-D. Direct Card Clicks for Civil Engineering Portal
     document.querySelectorAll('.card-civil-portal').forEach(card => {
       card.addEventListener('click', (e) => {
         if (e.target.closest('button')) return;
@@ -885,12 +1225,15 @@
     activeDivisionFilter = 'all';
     activeFormulaDivisionFilter = 'all';
 
-    renderDrawerCatalog(currentChapter);
-    renderTheoryContent(currentChapter);
-    renderFormulasContent(currentChapter);
-    renderPhenomenaContent(currentChapter);
+    // Mark tabs as needing lazy re-render for the new chapter
+    viewNeedsUpdate['view-theory'] = true;
+    viewNeedsUpdate['view-formulas'] = true;
+    viewNeedsUpdate['view-phenomena'] = true;
+    viewNeedsUpdate['view-summary'] = true;
+    viewNeedsUpdate['view-examples'] = true;
 
-    switchView('view-theory');
+    renderDrawerCatalog(currentChapter);
+    switchView('view-theory', true);
   }
 
   // Tier Switcher
@@ -1026,6 +1369,7 @@
       `;
     });
 
+    html += renderTabStepNavBar(1, null, { view: 'view-formulas', label: 'ขั้นต่อไป: 📐 2. สูตร & การคำนวณ →' });
     html += `</div>`;
 
     container.innerHTML = html;
@@ -1129,190 +1473,214 @@
   }
 
   /**
-   * Render a Single Theory Card adhering strictly to the 6-point pedagogical structure
+   * Render a Single Theory Card adhering strictly to Image 4 Wireframe & 6-point pedagogical structure
+   * Side-by-Side Split: Left column: เนื้อหา (Content) | Right column: รูป (Top) + สูตร (Bottom)
    */
   function renderSingleTheoryCard(t) {
     return `
-      <article class="theory-card" id="theory-${t.id}">
+      <article class="theory-card bosa-split-card" id="theory-${t.id}">
         <header class="theory-card-header">
           <div class="theory-tag-row">
-            <span class="tag-number">${t.numberTh || ''}</span>
+            <span class="tag-number">${t.numberTh || 'ทฤษฎีที่ ' + t.id}</span>
             <span class="tag-type">${t.type || 'ทฤษฎีรากฐาน'}</span>
             <span class="card-badge">${(t.divisionTitle || '').split(':')[0] || 'ทฤษฎี'}</span>
           </div>
-          <h4 class="theory-card-title-th">${t.titleTh || ''}</h4>
+          <h4 class="theory-card-title-th">ทฤษฎีที่ ${t.id} : ${t.titleTh || ''}</h4>
           <div class="theory-card-title-en">${t.titleEn || ''}</div>
           <p class="theory-card-summary">${t.summary || ''}</p>
         </header>
 
         <div class="theory-card-body">
-          <!-- (1) นิยามและความหมาย (Definition & Meaning) -->
-          <div class="theory-section section-def">
-            <div class="section-label">
-              <span class="section-num">1</span>
-              <span>นิยามและความหมาย (Definition & Meaning)</span>
-            </div>
-            <div class="theory-prose">
-              ${formatTextProse(t.definition ? (t.definition.text || t.definition) : (t.overviewTh || t.summary || ''))}
-            </div>
-          </div>
-
-          <!-- (2) หลักการและคำอธิบาย (Principle & Conceptual Foundation) -->
-          <div class="theory-section section-principle">
-            <div class="section-label">
-              <span class="section-num">2</span>
-              <span>หลักการและคำอธิบาย (Principle & Conceptual Foundation)</span>
-            </div>
-            <div class="theory-prose">
-              ${formatTextProse(t.principle ? (t.principle.text || t.principle) : (Array.isArray(t.pedagogicalPoints) ? t.pedagogicalPoints.join('\n\n') : ''))}
-            </div>
-          </div>
-
-          <!-- (3) สูตร สัญลักษณ์ หน่วย และการอนุมาน (Formulas, Symbols & Derivations) -->
-          <div class="theory-section section-formula">
-            <div class="section-label">
-              <span class="section-num">3</span>
-              <span>สูตร สัญลักษณ์ หน่วย และการอนุมานตามระดับ (Formulas, Symbols & Derivations)</span>
-            </div>
-            
-            ${(t.formulas || []).map((f, fIdx) => {
-              const symList = f.symbols || f.variables || [];
-              return `
-              <div class="formula-subcard">
-                <div class="formula-subcard-title">${f.name || f.desc || 'สูตรคำนวณและสมการหลัก'}</div>
-                <div class="math-container display-math" style="margin: 0.75rem 0;">
-                  $$${f.latex}$$
+          <!-- Side-by-Side Split Grid (Image 4 Wireframe Proportions) -->
+          <div class="theory-card-split-grid">
+            <!-- LEFT COLUMN: เนื้อหา (Content) -->
+            <div class="theory-col-content">
+              <!-- (1) นิยามและความหมาย (Definition & Meaning) -->
+              <div class="theory-section section-def">
+                <div class="section-label">
+                  <span class="section-num">1</span>
+                  <span>นิยามและความหมาย (Definition &amp; Meaning)</span>
                 </div>
+                <div class="theory-prose">
+                  ${formatTextProse(t.definition ? (t.definition.text || t.definition) : (t.overviewTh || t.summary || ''))}
+                </div>
+              </div>
 
-                ${symList.length > 0 ? `
-                  <div class="symbols-table-wrapper">
-                    <table class="symbols-table">
-                      <thead>
-                        <tr>
-                          <th>สัญลักษณ์</th>
-                          <th>ชื่อตัวแปร</th>
-                          <th>หน่วย SI</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${symList.map(s => {
-                          const rawSym = (s.sym || s.latex || '').replace(/^\$+|\$+$/g, '').trim();
-                          const rawUnit = (s.unit || s.unitLatex || '').replace(/^\$+|\$+$/g, '').trim();
-                          return `
-                          <tr>
-                            <td><strong>$${rawSym}$</strong></td>
-                            <td>${s.desc || s.name || ''}</td>
-                            <td>$${rawUnit}$</td>
-                          </tr>
-                          `;
-                        }).join('')}
-                      </tbody>
-                    </table>
+              <!-- (2) หลักการและคำอธิบาย (Principle & Conceptual Foundation) -->
+              <div class="theory-section section-principle">
+                <div class="section-label">
+                  <span class="section-num">2</span>
+                  <span>หลักการและคำอธิบาย (Principle &amp; Conceptual Foundation)</span>
+                </div>
+                <div class="theory-prose">
+                  ${formatTextProse(t.principle ? (t.principle.text || t.principle) : (Array.isArray(t.pedagogicalPoints) ? t.pedagogicalPoints.join('\n\n') : ''))}
+                </div>
+              </div>
+
+              <!-- (3) การใช้งานและเงื่อนไข (Applications, Scope & Validity Boundaries) -->
+              <div class="theory-section section-app">
+                <div class="section-label">
+                  <span class="section-num">3</span>
+                  <span>การใช้งานและเงื่อนไข (Applications, Scope &amp; Validity Boundaries)</span>
+                </div>
+                <div class="theory-prose">
+                  ${formatTextProse(t.application ? (t.application.text || t.application) : '')}
+                </div>
+                <div class="app-bounds-grid">
+                  <div class="app-bound-box valid">
+                    <div class="app-bound-title">
+                      <span>✓ ขอบเขตที่ใช้ได้ (Valid Scope)</span>
+                    </div>
+                    <p>${t.application ? (t.application.validWhen || 'การประมาณรังสีใกล้แกน (Paraxial rays)') : 'การประมาณมาตรฐาน'}</p>
                   </div>
-                ` : ''}
-              </div>
-              `;
-            }).join('')}
-
-            <div class="theory-formula-nav-row" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-              <span style="font-size: 0.85rem; color: var(--text-secondary);">
-                💡 ดูการพิสูจน์อนุมานทีละขั้นตอนอย่างละเอียดในแท็บสูตรและการอนุมาน
-              </span>
-              <button class="btn-action-primary btn-jump-to-formula" data-theory-id="${t.id}" aria-label="ดูสูตรและการอนุมานของทฤษฎีที่ ${t.id}">
-                📐 ดูสูตรและการอนุมาน
-              </button>
-            </div>
-          </div>
-
-          <!-- (4) การใช้งานและเงื่อนไข (Applications, Scope & Validity Boundaries) -->
-          <div class="theory-section section-app">
-            <div class="section-label">
-              <span class="section-num">4</span>
-              <span>การใช้งานและเงื่อนไข (Applications, Scope & Validity Boundaries)</span>
-            </div>
-            <div class="theory-prose">
-              ${formatTextProse(t.application ? (t.application.text || t.application) : '')}
-            </div>
-
-            <div class="app-bounds-grid">
-              <div class="app-bound-box valid">
-                <div class="app-bound-title">
-                  <span>✓ ขอบเขตที่ใช้ได้ (Valid Scope)</span>
+                  <div class="app-bound-box invalid">
+                    <div class="app-bound-title">
+                      <span>✗ เมื่อใดที่ใช้ไม่ได้ / ข้อควรระวัง (Invalid Bounds)</span>
+                    </div>
+                    <p>${t.application ? (t.application.invalidWhen || 'เมื่อมุมตกกระทบกว้างเกินขอบเขต') : 'เมื่ออยู่นอกเงื่อนไข'}</p>
+                  </div>
                 </div>
-                <p>${t.application ? (t.application.validWhen || 'การประมาณรังสีใกล้แกน (Paraxial rays)') : 'การประมาณมาตรฐาน'}</p>
               </div>
-              <div class="app-bound-box invalid">
-                <div class="app-bound-title">
-                  <span>✗ เมื่อใดที่ใช้ไม่ได้ / ข้อควรระวัง (Invalid Bounds)</span>
-                </div>
-                <p>${t.application ? (t.application.invalidWhen || 'เมื่อมุมตกกระทบกว้างเกินขอบเขต') : 'เมื่ออยู่นอกเงื่อนไข'}</p>
-              </div>
-            </div>
-          </div>
 
-          <!-- (5) ตัวอย่างการคำนวณพร้อมภาพ/แบบจำลอง (Worked Example & Simulator) -->
-          <div class="theory-section section-example">
-            <div class="section-label">
-              <span class="section-num">5</span>
-              <span>ตัวอย่างการคำนวณพร้อมภาพ/แบบจำลอง (Worked Example & Interactive Simulator)</span>
-            </div>
-            <div class="example-box">
-              ${t.example && t.example.diagramSvg ? `
-                <div class="theory-diagram-wrapper" style="margin: 0.75rem 0; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.75rem; display: flex; flex-direction: column; align-items: center; overflow-x: auto;">
-                  ${t.example.diagramSvg}
-                  ${t.example.diagramCaption ? `<div class="diagram-caption" style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: center; max-width: 90%;">${t.example.diagramCaption}</div>` : ''}
+              <!-- (4) ข้อสังเกตและประเด็นที่มักเข้าใจผิดเฉพาะเรื่อง -->
+              ${t.observations && t.observations.length > 0 ? `
+                <div class="observation-card">
+                  <div class="observation-header">
+                    <span>💡 ข้อสังเกตและประเด็นที่มักเข้าใจผิดเฉพาะเรื่อง (Key Observations)</span>
+                  </div>
+                  <ul class="observation-list">
+                    ${t.observations.map(obs => `<li>${obs}</li>`).join('')}
+                  </ul>
                 </div>
               ` : ''}
-              <div class="example-prob">
-                <strong>โจทย์ตัวอย่าง:</strong> ${t.example ? (t.example.problem || '') : ''}
-              </div>
-              <div class="step-container" style="margin: 0.75rem 0;">
-                ${t.example && Array.isArray(t.example.steps) ? t.example.steps.map((st, sIdx) => `
-                  <div class="step-card" style="padding: 0.6rem 0.85rem;">
-                    <p style="font-size: 0.9rem; margin: 0;">${st}</p>
+
+              <!-- Bridging to Analytical Mechanics (Explanatory Callout Card) -->
+              ${t.id === 15 ? `
+                <div class="analytical-callout-card">
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                      <div style="font-weight: 800; font-size: 0.95rem; color: #7C3AED; margin-bottom: 0.25rem;">
+                        🏛️ คำอธิบายหน้าเพิ่มเติม: การวิเคราะห์กลศาสตร์ (Lagrangian &amp; Hamiltonian Mechanics)
+                      </div>
+                      <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        กระบวนทัศน์กลศาสตร์วิเคราะห์ขั้นสูง กฎการกระทำน้อยที่สุด การแปลงเลอฌ็องดร์ วงเล็บปัวซง และระนาบเฟสสเปซเชิงพลศาสตร์
+                      </div>
+                    </div>
+                    <button class="btn-open-analytical-inline" data-theory-id="15" aria-label="เปิดคำอธิบายหน้าการวิเคราะห์กลศาสตร์">
+                      🏛️ ปุ่มอธิบายหน้า: การวิเคราะห์กลศาสตร์ &rarr;
+                    </button>
                   </div>
-                `).join('') : ''}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- RIGHT COLUMN: รูป (Top) + สูตร (Bottom) -->
+            <div class="theory-col-media-formula">
+              <!-- RIGHT TOP: รูป (Diagram / Visual Illustration) -->
+              <div class="theory-diagram-box">
+                <div class="theory-box-heading">
+                  <span>🖼️ รูปประกอบ &amp; แผนภาพเวกเตอร์ (Diagram)</span>
+                </div>
+                ${t.example && t.example.diagramSvg ? `
+                  <div class="theory-diagram-wrapper">
+                    ${t.example.diagramSvg}
+                    ${t.example.diagramCaption ? `<div class="diagram-caption">${t.example.diagramCaption}</div>` : ''}
+                  </div>
+                ` : `
+                  <div class="theory-diagram-wrapper">
+                    <svg viewBox="0 0 520 180" width="100%" height="180" style="background: #0B1329; border-radius: 6px;">
+                      <defs>
+                        <marker id="arrow-th-${t.id}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                          <path d="M 0 0 L 10 5 L 0 10 z" fill="#38BDF8"/>
+                        </marker>
+                      </defs>
+                      <line x1="50" y1="140" x2="470" y2="140" stroke="#334155" stroke-width="2"/>
+                      <line x1="50" y1="140" x2="50" y2="30" stroke="#334155" stroke-width="2"/>
+                      <path d="M 50 140 Q 240 20 440 140" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="6,4"/>
+                      <line x1="50" y1="140" x2="150" y2="60" stroke="#38BDF8" stroke-width="2.5" marker-end="url(#arrow-th-${t.id})"/>
+                      <circle cx="240" cy="50" r="6" fill="#F59E0B"/>
+                      <text x="160" y="55" fill="#38BDF8" font-size="12" font-family="sans-serif">v₀ เวกเตอร์ความเร็วต้น</text>
+                      <text x="255" y="45" fill="#F59E0B" font-size="12" font-family="sans-serif">จุดสูงสุด (Apex)</text>
+                      <text x="230" y="165" fill="#94A3B8" font-size="11" font-family="sans-serif">แผนภาพเวกเตอร์ทฤษฎีที่ ${t.id} (${t.titleTh || ''})</text>
+                    </svg>
+                  </div>
+                `}
               </div>
-              <button class="sim-deep-link-btn" data-theory-id="${t.id}" aria-label="นำพารามิเตอร์ของทฤษฎีนี้ไปจำลองจริงในแบบจำลอง">
-                🎯 ทดลองในแบบจำลอง (Launch in Simulator) &rarr;
-              </button>
+
+              <!-- RIGHT BOTTOM: สูตร (Formulas, Variables & Worked Example) -->
+              <div class="theory-formula-box">
+                <div class="theory-box-heading">
+                  <span>📐 สูตร สัญลักษณ์ และการอนุมาน (Formula &amp; Derivations)</span>
+                </div>
+                ${(t.formulas || []).map((f) => {
+                  const symList = f.symbols || f.variables || [];
+                  return `
+                    <div class="formula-subcard">
+                      <div class="formula-subcard-title">${f.name || f.desc || 'สูตรคำนวณและสมการหลัก'}</div>
+                      <div class="math-container display-math" style="margin: 0.5rem 0;">
+                        $$${f.latex}$$
+                      </div>
+                      ${symList.length > 0 ? `
+                        <div class="symbols-table-wrapper">
+                          <table class="symbols-table">
+                            <thead>
+                              <tr>
+                                <th>สัญลักษณ์</th>
+                                <th>ชื่อตัวแปร</th>
+                                <th>หน่วย SI</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${symList.map(s => {
+                                const rawSym = (s.sym || s.latex || '').replace(/^\$+|\$+$/g, '').trim();
+                                const rawUnit = (s.unit || s.unitLatex || '').replace(/^\$+|\$+$/g, '').trim();
+                                return `
+                                  <tr>
+                                    <td><strong>$${rawSym}$</strong></td>
+                                    <td>${s.desc || s.name || ''}</td>
+                                    <td>$${rawUnit}$</td>
+                                  </tr>
+                                `;
+                              }).join('')}
+                            </tbody>
+                          </table>
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join('')}
+
+                <!-- Worked Example -->
+                ${t.example ? `
+                  <div class="example-box" style="margin-top: 0.75rem;">
+                    <div class="example-prob">
+                      <strong>ตัวอย่างการคำนวณ:</strong> ${t.example.problem || ''}
+                    </div>
+                    <div class="step-container" style="margin: 0.5rem 0;">
+                      ${Array.isArray(t.example.steps) ? t.example.steps.map(st => `
+                        <div class="step-card" style="padding: 0.5rem 0.75rem;">
+                          <p style="font-size: 0.88rem; margin: 0;">${st}</p>
+                        </div>
+                      `).join('') : ''}
+                    </div>
+                  </div>
+                ` : ''}
+
+                <div class="theory-formula-nav-row" style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                  <button class="btn-action-primary btn-jump-to-formula" data-theory-id="${t.id}" aria-label="ดูสูตรและการอนุมานของทฤษฎีที่ ${t.id}">
+                    📐 ดูสูตรและการอนุมาน
+                  </button>
+                  <button class="sim-deep-link-btn" data-theory-id="${t.id}" aria-label="นำพารามิเตอร์ของทฤษฎีนี้ไปจำลองจริงในแบบจำลอง">
+                    🎯 ทดลองในแบบจำลอง &rarr;
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- (6) ข้อสังเกตและประเด็นที่มักเข้าใจผิดเฉพาะเรื่อง (Key Observations & Physical Nuances) -->
-          ${t.observations && t.observations.length > 0 ? `
-            <div class="observation-card">
-              <div class="observation-header">
-                <span>💡 ข้อสังเกตและประเด็นที่มักเข้าใจผิดเฉพาะเรื่อง (Key Physical Observations)</span>
-              </div>
-              <ul class="observation-list">
-                ${t.observations.map(obs => `<li>${obs}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
-
-          <!-- Bridging to Analytical Mechanics (Explanatory Callout Card) -->
-          ${t.id === 15 ? `
-            <div class="analytical-callout-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-                <div>
-                  <div style="font-weight: 800; font-size: 0.95rem; color: #7C3AED; margin-bottom: 0.25rem;">
-                    🏛️ คำอธิบายหน้าเพิ่มเติม: การวิเคราะห์กลศาสตร์ (Lagrangian & Hamiltonian Mechanics)
-                  </div>
-                  <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                    กระบวนทัศน์กลศาสตร์วิเคราะห์ขั้นสูง กฎการกระทำน้อยที่สุด การแปลงเลอฌ็องดร์ วงเล็บปัวซง และระนาบเฟสสเปซเชิงพลศาสตร์
-                  </div>
-                </div>
-                <button class="btn-open-analytical-inline" data-theory-id="15" aria-label="เปิดคำอธิบายหน้าการวิเคราะห์กลศาสตร์">
-                  🏛️ ปุ่มอธิบายหน้า: การวิเคราะห์กลศาสตร์ &rarr;
-                </button>
-              </div>
-            </div>
-          ` : ''}
-
           <!-- Academic Source References -->
-          <footer style="font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-            <span>📖 อ้างอิงตำราวิชาการ: <strong>${t.citation || 'David Morin (2008), David Tong (2004), Baker & Haynes (2020)'}</strong></span>
+          <footer style="font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-light); padding-top: 0.75rem; margin-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <span>📖 อ้างอิงตำราวิชาการ: <strong>${t.citation || 'David Morin (2008), David Tong (2004), Baker &amp; Haynes (2020)'}</strong></span>
             <a href="#tab-formulas" class="view-tab-link" style="color: var(--accent-orange-text); text-decoration: none; font-weight: 600;" onclick="window.PhysicsApp.switchView('view-formulas');">
               เปิดตารางสูตรทั้งหมด ↗
             </a>
@@ -1320,6 +1688,557 @@
         </div>
       </article>
     `;
+  }
+
+  /**
+   * Render Chapter Summary & Synthesis View (Tab 5)
+   * High-Level University Standard Synthesis Matrix:
+   * 1. Executive Conceptual Mindmap
+   * 2. Rigorous Master Formula Matrix with SI Units & Governing Conditions
+   * 3. Real-World Empirical Benchmarks & Physical Reference Anchors
+   * 4. Conservation Laws, Symmetries & Noether Principles
+   * 5. Common Exam Traps, Fallacies & Root Causes
+   * 6. State-of-the-Art Engineering Systems & Industrial Case Studies
+   */
+  let activeSummarySectionFilter = 'all';
+
+  function renderSummaryContent(chapterId = currentChapter) {
+    const target = document.getElementById('summary-content-target');
+    if (!target) return;
+
+    const summaryData = {
+      ch01: {
+        num: '01',
+        titleTh: 'บทที่ 01: การเคลื่อนที่สองมิติและโปรเจกไทล์ (2D Kinematics & Projectiles)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: วิถีสุญญากาศของกาลิเลโอ vs อากาศจริงกำลังสอง พลศาสตร์นิวตัน และการอนุรักษ์โมเมนตัม',
+        mindmap: [
+          { branch: 'จลนศาสตร์ 1D/2D (Kinematics)', items: ['เวกเตอร์ตำแหน่ง $\\vec{r}(t)$, ความเร็ว $\\vec{v} = d\\vec{r}/dt$, ความเร่ง $\\vec{a} = d\\vec{v}/dt$', 'สมการการเคลื่อนที่ความเร่งคงที่ (SUVAT ในระบบ 2 แกนอิสระ)', 'หลักการซ้อนทับการเคลื่อนที่อิสระ (Superposition Principle: $x \\perp y$)'] },
+          { branch: 'โปรเจกไทล์สุญญากาศ (Ideal Ballistics)', items: ['แนวราบความเร็วคงตัว $v_x = v_0\\cos\\theta$', 'แนวดิ่งความเร่งคงที่ $a_y = -g$', 'สมการวิถีพาราโบลา $y(x) = x\\tan\\theta - \\frac{g x^2}{2v_0^2\\cos^2\\theta}$', 'ระยะตกไกลสุดบนพื้นระดับ $R_{\\max}$ เกิดที่ $\\theta = 45^\\circ$'] },
+          { branch: 'แรงต้านอากาศจริง (Quadratic Drag)', items: ['แรงต้านพลศาสตร์ของไหล $\\vec{F}_d = -\\frac{1}{2}\\rho C_D A |\\vec{v}|\\vec{v} = -c v \\vec{v}$', 'อัตราเร็วปลายสุดท้าย $v_t = \\sqrt{2mg / (\\rho C_D A)}$', 'วิถีวิถีโค้งอสมมาตร (Asymmetric Ballistic Trajectory, ขาลงชันกว่าขาขึ้น)', 'ตัวแก้เชิงตัวเลข 4th-Order Runge-Kutta (RK4)'] },
+          { branch: 'งาน-พลังงาน & โมเมนตัม (Energy & Momentum)', items: ['ทฤษฎีบทงาน-พลังงานจลน์ $W_{\\text{net}} = \\Delta E_k$', 'กฎการอนุรักษ์พลังงานกล $\\Delta E_{\\text{mech}} = W_{\\text{nc}}$ (งานแรงต้านอากาศทำให้สูญเสีย $E$)', 'การดลและโมเมนตัม $\\vec{J} = \\int \\vec{F}\\,dt = \\Delta\\vec{p}$', 'การชนใน 2 มิติและการอนุรักษ์โมเมนตัม $\\sum \\vec{p}_i = \\sum \\vec{p}_f$'] }
+        ],
+        formulas: [
+          { name: 'ระยะตกไกลในสุญญากาศ', latex: 'R = \\frac{v_0^2 \\sin 2\\theta}{g}', units: 'm', condition: 'ยิงและตกที่ระดับความสูงเดียวกัน ไร้แรงต้านอากาศ', desc: 'ระยะทางในแนวราบสูงสุดเมื่อมุมยิง $\\theta = 45^\\circ$' },
+          { name: 'ความสูงสูงสุดในสุญญากาศ', latex: 'H = \\frac{v_0^2 \\sin^2\\theta}{2g}', units: 'm', condition: 'จุดสูงสุดของวิถี ($v_y = 0$)', desc: 'พลังงานจลน์แนวดิ่งแปลงเป็นพลังงานศักย์โน้มถ่วงทั้งหมด' },
+          { name: 'เวลาบินรวมในสุญญากาศ', latex: 'T_{\\text{flight}} = \\frac{2 v_0 \\sin\\theta}{g}', units: 's', condition: 'ระดับพื้นยิงเท่ากับพื้นตก ($y_f = y_0$)', desc: 'เวลาขาขึ้นเท่ากับเวลาขาลง ($t_{\\text{up}} = t_{\\text{down}} = T/2$)' },
+          { name: 'สมการวิถีพาราโบลา $y(x)$', latex: 'y = y_0 + x\\tan\\theta - \\frac{g x^2}{2v_0^2\\cos^2\\theta}', units: 'm', condition: 'ขจัดตัวแปรเวลา $t$ ออกจากสมการพิกัด', desc: 'ความสัมพันธ์เชิงเรขาคณิตระหว่างพิกัด $y$ และ $x$' },
+          { name: 'แรงต้านอากาศของไหลกำลังสอง', latex: '\\vec{F}_d = -\\frac{1}{2}\\rho C_D A v \\vec{v}', units: 'N', condition: 'การไหลแบบปั่นป่วน ($Re > 10^3$)', desc: '$\\rho$: ความหนาแน่นอากาศ, $C_D$: สัมประสิทธิ์แรงต้าน, $A$: พื้นที่หน้าตัด' },
+          { name: 'อัตราเร็วปลายสุดท้าย (Terminal Speed)', latex: 'v_t = \\sqrt{\\frac{2mg}{\\rho C_D A}} = \\sqrt{\\frac{mg}{c}}', units: 'm/s', condition: 'แรงต้านอากาศสมดุลกับน้ำหนัก ($F_d = mg, a = 0$)', desc: 'อัตราเร็วสูงสุดที่วัตถุตกอิสระในของไหลสามารถทำได้' },
+          { name: 'ทฤษฎีบทงาน-พลังงานจลน์', latex: 'W_{\\text{net}} = \\int \\vec{F}_{\\text{net}} \\cdot d\\vec{r} = \\frac{1}{2}m v_f^2 - \\frac{1}{2}m v_i^2', units: 'J', condition: 'ใช้ได้กับแรงทุกชนิด (อนุรักษ์และไม่อนุรักษ์)', desc: 'งานของแรงลัพธ์เท่ากับการเปลี่ยนแปลงพลังงานจลน์ของระบบ' }
+        ],
+        benchmarks: [
+          { name: 'ความเร่งโน้มถ่วงมาตรฐานโลก', value: 'g_0 = 9.80665 m/s²', ref: 'ระดับน้ำทะเล ละติจูด 45° (เกณฑ์คำนวณมาตรฐาน SI)' },
+          { name: 'ความหนาแน่นของอากาศที่ระดับน้ำทะเล', value: 'ρ_air ≈ 1.225 kg/m³', ref: 'สภาวะบรรยากาศมาตรฐาน ISA (15°C, 101.325 kPa)' },
+          { name: 'อัตราเร็วปลายของนักกระโดดร่ม (Skydiver)', value: 'v_t ≈ 54 m/s (194 km/h)', ref: 'กางแขนขาขนานพื้น (Belly-to-earth, A ≈ 0.7 m²); ท่าพุ่งดิ่ง (Head-down) สูงถึง 90 m/s' },
+          { name: 'สัมประสิทธิ์แรงต้านอากาศทรงกลม', value: 'C_D ≈ 0.47 (ผิวเรียบ)', ref: 'ลูกกอล์ฟที่มีรอยบุ๋ม (Dimples) ลดเหลือ C_D ≈ 0.25 จากการเหนี่ยวนำ Turbulent Boundary Layer' },
+          { name: 'มุมยิงระยะไกลสุดในอากาศจริง', value: 'θ_opt ≈ 35° - 39°', ref: 'ต่ำกว่า 45° ในสุญญากาศเสมอ เนื่องจากต้องลดเวลาที่กระสุนสัมผัสแรงต้านอากาศ' }
+        ],
+        laws: [
+          'หลักการซ้อนทับเชิงจลนศาสตร์ (Kinematic Superposition): การเคลื่อนที่ในแนวแกนราบ ($x$) และแนวดิ่ง ($y$) เป็นอิสระต่อกันโดยสมบูรณ์ในสุญญากาศ',
+          'กฎข้อที่หนึ่งของนิวตัน (Law of Inertia): วัตถุรักษาสภาพนิ่งหรือความเร็วคงตัวเมื่อแรงลัพธ์ภายนอกเป็นศูนย์ $\\sum \\vec{F} = 0$',
+          'กฎข้อที่สองของนิวตัน (Fundamental Equation of Dynamics): $\\sum \\vec{F} = \\frac{d\\vec{p}}{dt} = m\\vec{a}$ (สำหรับระบบมวลคงตัว)',
+          'กฎการอนุรักษ์โมเมนตัมเชิงเส้น (Linear Momentum Conservation): โมเมนตัมรวมของระบบปิดคงที่เสมอ $\\sum \\vec{p}_i = \\sum \\vec{p}_f$ สอดคล้องกับสมมาตรการเลื่อนตำแหน่งตามทฤษฎีบทเนอเธอร์'
+        ],
+        traps: [
+          'มุมยิง $45^\\circ$ เป็นจริงเฉพาะในสุญญากาศ: หากมีแรงต้านอากาศ มุมยิงไกลสุดจะลดลงเหลือราว $35^\\circ - 40^\\circ$',
+          'เวลาขาขึ้น vs เวลาขาลงในอากาศจริง: ในสุญญากาศ $t_{\\text{up}} = t_{\\text{down}}$ แต่ในอากาศจริง $t_{\\text{up}} < t_{\\text{down}}$ เสมอ เพราะขาขึ้นแรงโน้มถ่วงและแรงต้านอากาศร่วมกันชะลอวัตถุ ($a_y = -(g + F_d/m)$) แต่ขาลงแรงต้านหักล้างกับแรงโน้มถ่วง ($a_y = -(g - F_d/m)$)',
+          'ที่จุดสูงสุด อัตราเร็วไม่เป็นศูนย์: ที่ยอดวิถี $v_y = 0$ แต่อัตราเร็วแนวราบ $v_x = v_0\\cos\\theta \\neq 0$ ดังนั้น $v_{\\text{top}} = v_x$',
+          'งานของแรงตั้งฉากและแรงสู่ศูนย์กลางเป็นศูนย์เสมอ: $W = \\int \\vec{F} \\cdot d\\vec{r} = 0$ เพราะทิศทางแรงตั้งฉากกับการกระจัดตลอดเวลา'
+        ],
+        applications: [
+          'วิศวกรรมการบินและขีปนาวุธ (Ballistics & Aerospace): การคำนวณวิถีกระสุนปืนใหญ่และจรวดส่งดาวเทียมด้วยระเบียบวิธีเชิงตัวเลข RK4 ผสานแรงคอริออลิส',
+          'การออกแบบรูปทรงอากาศพลศาสตร์ (Aerodynamics): การปรับปรุงตัวถังรถยนต์ความเร็วสูงให้ได้ค่าสัมประสิทธิ์แรงต้าน $C_D < 0.24$ เพื่อประหยัดพลังงาน',
+          'ฟิสิกส์การกีฬาความแม่นยำ (Sports Dynamics): การวิเคราะห์วิถีลูกฟุตบอล บาสเกตบอล และลูกกอล์ฟ พร้อมอิทธิพลแมกนัส (Magnus Effect) จากการหมุนปั่น'
+        ]
+      },
+      ch02: {
+        num: '02',
+        titleTh: 'บทที่ 02: การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง (Circular Motion & Centripetal Dynamics)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: ความเร่งสู่ศูนย์กลาง ทางโค้งยกมุมเอียง วงกลมแนวดิ่ง และกลศาสตร์วงโคจรของเคปเลอร์',
+        mindmap: [
+          { branch: 'จลนศาสตร์การหมุน', items: ['การกระจัดเชิงมุม $\\theta$, อัตราเร็วเชิงมุม $\\omega = d\\theta/dt$, ความเร่งเชิงมุม $\\alpha = d\\omega/dt$', 'ความสัมพันธ์เชิงเส้น: $s = r\\theta, v = r\\omega, a_t = r\\alpha$'] },
+          { branch: 'ความเร่ง & แรงสู่ศูนย์กลาง', items: ['ความเร่งสู่ศูนย์กลาง $a_c = \\frac{v^2}{r} = \\omega^2 r = \\frac{4\\pi^2 r}{T^2}$ (พุ่งสู่ศูนย์กลางเสมอ)', 'แรงสู่ศูนย์กลาง $F_c = m a_c$ (ไม่ใช่แรงชนิดใหม่ แต่เป็นหน้าที่ของแรงจริง)'] },
+          { branch: 'ทางโค้งและยานยนต์', items: ['ทางโค้งราบ: ยึดเกาะด้วยแรงเสียดทานสถิต $f_s \\le \\mu_s mg \\implies v_{\\max} = \\sqrt{\\mu_s g r}$', 'ทางโค้งยกมุมเอียง (Superelevation): $\\tan\\theta = \\frac{v^2}{rg}$ ปลอดภัยแม้ไร้แรงเสียดทาน'] },
+          { branch: 'วงกลมแนวดิ่ง & วงโคจร', items: ['เงื่อนไขครบลูปแนวดิ่ง: จุดสูงสุด $v_{\\text{top}} \\ge \\sqrt{gr}$, จุดต่ำสุด $v_{\\text{bottom}} \\ge \\sqrt{5gr}$', 'กฎโน้มถ่วงสากล $F_G = G\\frac{Mm}{r^2}$, อัตราเร็วโคจร $v = \\sqrt{\\frac{GM}{r}}$, กฎเคปเลอร์ $T^2 \\propto r^3$'] }
+        ],
+        formulas: [
+          { name: 'ความเร่งสู่ศูนย์กลาง', latex: 'a_c = \\frac{v^2}{r} = \\omega^2 r = \\frac{4\\pi^2 r}{T^2}', units: 'm/s²', condition: 'การเคลื่อนที่เป็นแนวโค้งรัศมี $r$', desc: 'เกิดจากการเปลี่ยนทิศทางของเวกเตอร์ความเร็ว แม้อัตราเร็วสเกลาร์จะคงตัว' },
+          { name: 'มุมยกของทางโค้งเอียง', latex: '\\tan\\theta = \\frac{v^2}{rg}', units: 'rad หรือ deg', condition: 'พื้นเอียงไร้แรงเสียดทาน (Design Speed)', desc: 'แรงปฏิกิริยาแนวตั้งฉาก $N\\sin\\theta$ ทำหน้าที่เป็นแรงสู่ศูนย์กลางทั้งหมด' },
+          { name: 'อัตราเร็วต่ำสุดครบลูปแนวดิ่ง', latex: 'v_{\\text{top}} = \\sqrt{gr}, \\quad v_{\\text{bottom}} = \\sqrt{5gr}', units: 'm/s', condition: 'เชือกตึงหรือรางสัมผัสที่จุดยอด ($T \\ge 0$)', desc: 'เกณฑ์อนุรักษ์พลังงานกลในวงกลมแนวดิ่งภายใต้แรงโน้มถ่วง' },
+          { name: 'อัตราเร็วโคจรของดาวเทียม', latex: 'v_{\\text{orbit}} = \\sqrt{\\frac{GM}{r}}', units: 'm/s', condition: 'วงโคจรวงกลมรอบดาวเคราะห์มวล $M$', desc: 'แรงดึงดูดระหว่างมวลทำหน้าที่เป็นแรงสู่ศูนย์กลาง $F_G = F_c$' },
+          { name: 'กฎข้อที่สามของเคปเลอร์', latex: '\\frac{T^2}{r^3} = \\frac{4\\pi^2}{GM} = \\text{const}', units: 's²/m³', condition: 'วัตถุโคจรภายใต้แรงโน้มถ่วงศูนย์กลาง', desc: 'คาบการโคจรกำลังสองแปรผันตรงกับรัศมีเฉลี่ยยกกำลังสาม' }
+        ],
+        benchmarks: [
+          { name: 'อัตราเร็วโคจรผิวโลก (First Cosmic Speed)', value: 'v₁ ≈ 7.91 km/s (28,476 km/h)', ref: 'วงโคจรต่ำรอบโลก (LEO) ที่ r = R_Earth ≈ 6,371 km' },
+          { name: 'อัตราเร็วหลุดพ้นจากโลก (Escape Velocity)', value: 'v_e = √2 · v₁ ≈ 11.19 km/s', ref: 'อัตราเร็วขั้นต่ำในการหลุดพ้นจากหลุมความโน้มถ่วงโลกสู่อวกาศ' },
+          { name: 'รัศมีวงโคจรค้างฟ้า (Geostationary Orbit)', value: 'r_geo = 42,164 km (h ≈ 35,786 km)', ref: 'คาบโคจรเท่ากับคาบการหมุนรอบตัวเองของโลกพอดี (T = 23h 56m 04s)' },
+          { name: 'ความเร่งในเครื่องหมุนเหวี่ยงแยกสาร (Centrifuge)', value: 'a_c ≈ 3,000g - 1,000,000g', ref: 'เครื่องหมุนเหวี่ยงความเร็วสูงในห้องปฏิบัติการและกระบวนการสกัดไอโซโทป' },
+          { name: 'ขีดจำกัดความเร่งทนทานของร่างกายมนุษย์', value: '+G_z ≈ 5g - 9g', ref: 'นักบินขับไล่พร้อมชุด G-suit; เกิน 9g เลือดไม่สามารถขึ้นไปเลี้ยงสมอง (Blackout)' }
+        ],
+        laws: [
+          'แรงสู่ศูนย์กลางไม่ใช่แรงชนิดใหม่: แต่เป็นผลรวมของแรงจริงทางกายภาพในแนวรัศมี $\\sum F_r = m a_c$',
+          'งานของแรงสู่ศูนย์กลางเท่ากับศูนย์เสมอ ($W_c = 0$): เพราะ $\\vec{F}_c \\perp d\\vec{r}$ ตลอดเวลา จึงไม่เปลี่ยนแปลงพลังงานจลน์ของวัตถุ',
+          'การอนุรักษ์โมเมนตัมเชิงมุมในสนามแรงสู่ศูนย์กลาง: เนื่องจากทอร์กภายนอก $\\vec{\\tau} = \\vec{r} \\times \\vec{F} = 0$ ส่งผลให้ $\\vec{L} = \\text{คงที่}$'
+        ],
+        traps: [
+          'แรงหนีศูนย์กลาง (Centrifugal Force) เป็นแรงเทียม (Fictitious Force): ห้ามใส่ใน Free Body Diagram เมื่อวิเคราะห์ในกรอบอ้างอิงเฉื่อย (Inertial Frame)',
+          'วัตถุที่เคลื่อนที่เป็นวงกลมด้วยอัตราเร็วคงตัว "ยังคงมีความเร่งเสมอ" เพราะทิศทางของเวกเตอร์ความเร็วเปลี่ยนตลอดเวลา',
+          'แรงตึงเชือกในวงกลมแนวดิ่งไม่คงที่: $T_{\\text{bottom}} = T_{\\text{top}} + 6mg$ เสมอเมื่อคิดการอนุรักษ์พลังงานกล'
+        ],
+        applications: [
+          'วิศวกรรมทางหลวงและรางรถไฟความเร็วสูง: การคำนวณโค้งเปลี่ยนผ่าน (Clothoid Transition Curves) และมุมยกผิวทาง',
+          'การจำลองแรงโน้มถ่วงเทียมในสถานีอวกาศ: หมุนโครงสร้างรูปวงแหวนด้วยความเร็วรอบ $\\omega = \\sqrt{g/r}$',
+          'เครื่องดักจับอนุภาคไซโคลน (Cyclone Separator) ในโรงงานอุตสาหกรรมเพื่อแยกฝุ่นละอองออกจากอากาศ'
+        ]
+      },
+      ch03: {
+        num: '03',
+        titleTh: 'บทที่ 03: การแกว่งกวัดและฮาร์มอนิกอย่างง่าย (Oscillations, SHM & Resonance)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: สมการอนุพันธ์ฮาร์มอนิก การสั่นหน่วง 3 ระดับ และการสั่นพ้องเรโซแนนซ์',
+        mindmap: [
+          { branch: 'ฮาร์มอนิกเชิงเดี่ยว (SHM)', items: ['สมการอนุพันธ์ $\\ddot{x} + \\omega_0^2 x = 0$', 'ผลเฉลย $x(t) = A\\cos(\\omega_0 t + \\phi)$', 'ความเร็ว $v(t) = -\\omega_0 A\\sin(\\omega_0 t + \\phi)$', 'ความเร่ง $a(t) = -\\omega_0^2 x(t)$'] },
+          { branch: 'ระบบกายภาพ SHM', items: ['มวลติดสปริง $\\omega_0 = \\sqrt{k/m}$', 'ลูกตุ้มอย่างง่าย $\\omega_0 = \\sqrt{g/L}$', 'ลูกตุ้มกายภาพ $\\omega_0 = \\sqrt{mgd/I}$', 'ลูกตุ้มบิด $\\omega_0 = \\sqrt{\\kappa/I}$'] },
+          { branch: 'พลังงานใน SHM', items: ['พลังงานรวม $E = \\frac{1}{2}kA^2 = \\frac{1}{2}m v_{\\max}^2 = \\text{คงที่}$', 'การเปลี่ยนรูประหว่าง $E_k \\leftrightarrow E_p$', 'ค่าเฉลี่ยตามเวลา $\\langle E_k \\rangle = \\langle E_p \\rangle = \\frac{1}{4}kA^2$'] },
+          { branch: 'การสั่นหน่วง & เรโซแนนซ์', items: ['$\\ddot{x} + 2\\gamma\\dot{x} + \\omega_0^2 x = 0$', 'Underdamped ($\\gamma < \\omega_0$), Critically Damped ($\\gamma = \\omega_0$), Overdamped ($\\gamma > \\omega_0$)', 'เรโซแนนซ์แอมพลิจูดพุ่งสูงเมื่อ $\\omega \\approx \\omega_0$', 'ค่าประกอบคุณภาพ $Q = \\omega_0 / (2\\gamma)$'] }
+        ],
+        formulas: [
+          { name: 'ความถี่เชิงมุมธรรมชาติ SHM', latex: '\\omega_0 = \\sqrt{\\frac{k}{m}} \\; (\\text{สปริง}), \\quad \\omega_0 = \\sqrt{\\frac{g}{L}} \\; (\\text{ลูกตุ้ม})', units: 'rad/s', condition: 'แอมพลิจูดเล็ก (ลูกตุ้ม $\\theta < 10^\\circ$)', desc: 'กำหนดคาบการสั่น $T = 2\\pi/\\omega_0$ โดยไม่ขึ้นกับแอมพลิจูด (Isochronism)' },
+          { name: 'พลังงานรวมในระบบ SHM', latex: 'E_{\\text{tot}} = \\frac{1}{2} k A^2 = \\frac{1}{2} m v_{\\max}^2', units: 'J', condition: 'ระบบอนุรักษ์ไร้แรงต้าน', desc: 'พลังงานกลรวมแปรผันตามแอมพลิจูดยกกำลังสอง ($E \\propto A^2$)' },
+          { name: 'การสั่นหน่วง (Underdamped)', latex: 'x(t) = A e^{-\\gamma t}\\cos(\\omega_d t + \\phi), \\quad \\omega_d = \\sqrt{\\omega_0^2 - \\gamma^2}', units: 'm', condition: '$\\gamma < \\omega_0$ (แรงต้านหน่วงน้อย)', desc: 'แอมพลิจูดลดลงแบบเอกซ์โพเนนเชียลตามเวลาด้วยอัตรา $\\gamma = b/(2m)$' },
+          { name: 'แอมพลิจูดการสั่นถูกเร้า', latex: 'A(\\omega) = \\frac{F_0/m}{\\sqrt{(\\omega_0^2 - \\omega^2)^2 + (2\\gamma\\omega)^2}}', units: 'm', condition: 'แรงขับภายนอก $F(t) = F_0\\cos\\omega t$', desc: 'แอมพลิจูดพุ่งสูงสุด ณ ความถี่เรโซแนนซ์ $\\omega_r = \\sqrt{\\omega_0^2 - 2\\gamma^2}$' },
+          { name: 'ค่าประกอบคุณภาพ (Quality Factor Q)', latex: 'Q = \\frac{\\omega_0}{2\\gamma} = 2\\pi \\frac{E_{\\text{stored}}}{E_{\\text{loss/cycle}}}', units: 'ไร้หน่วย', condition: 'ระบบกวัดแกว่งเรโซแนนซ์', desc: 'ดัชนีชี้วัดความคมชัดของพีคเรโซแนนซ์และการสูญเสียพลังงานใน 1 รอบ' }
+        ],
+        benchmarks: [
+          { name: 'ความถี่ผลึกควอตซ์สร้างสัญญาณนาฬิกา', value: 'f = 32,768 Hz = 2¹⁵ Hz', ref: 'มาตรฐานวงจรหารความถี่ไบนารีในนาฬิกาข้อมือและไมโครคอนโทรลเลอร์' },
+          { name: 'ลูกตุ้มหน่วงอาคารต้านแผ่นดินไหวไทเป 101', value: 'Mass = 660 ตัน, T ≈ 7.0 s', ref: 'ลูกตุ้มยักษ์เส้นผ่านศูนย์กลาง 5.5 m แขวนระหว่างชั้น 87-92 ดูดซับแรงลมไต้ฝุ่น' },
+          { name: 'ค่า Q-Factor ของระบบต่างๆ', value: 'โช้ครถยนต์ Q ≈ 0.7; ผลึกควอตซ์ Q ≈ 10⁵; คาวิตียิ่งยวด Q ≈ 10¹⁰', ref: 'สะท้อนอัตราการสูญเสียพลังงานต่อรอบการสั่น' },
+          { name: 'ความถี่การเดินข้ามสะพานมิลเลนเนียมลอนดอน', value: 'f_walk ≈ 0.8 Hz - 1.0 Hz', ref: 'ตรงกับความถี่ธรรมชาติในแนวราบของสะพาน นำไปสู่การแกว่งรุนแรงจนต้องปิดซ่อม' }
+        ],
+        laws: [
+          'กฎของฮุก (Hooke\'s Law): $F = -kx$ เป็นเงื่อนไขที่จำเป็นและเพียงพอสำหรับการเกิด SHM แอมพลิจูดเล็ก',
+          'ทฤษฎีบทการแบ่งเท่าของพลังงาน (Equipartition of Energy): ค่าเฉลี่ยตามเวลาของพลังงานจลน์เท่ากับพลังงานศักย์ $\\langle E_k \\rangle = \\langle E_p \\rangle = \\frac{1}{4}kA^2$',
+          'หลักการสั่นพ้อง (Resonance Principle): การถ่ายทอดพลังงานเข้าสู่ระบบมีประสิทธิภาพสูงสุดเมื่อความถี่กระตุ้นตรงกับความถี่ธรรมชาติ'
+        ],
+        traps: [
+          'ลูกตุ้มนาฬิกาอย่างง่ายเป็น SHM เฉพาะเมื่อมุมแกว่ง $\\theta < 10^\\circ$ เท่านั้น หากมุมกว้าง คาบจะยาวขึ้นตามอนุกรมเลอฌ็องดร์',
+          'ที่จุดสมดุล $x=0$: ความเร็วสูงสุด $v_{\\max} = \\omega A$ แต่ความเร่งเป็นศูนย์ ($a = 0$)',
+          'ที่จุดปลาย $x = \\pm A$: ความเร็วเป็นศูนย์ ($v = 0$) แต่ความเร่งสูงสุด ($|a_{\\max}| = \\omega^2 A$)',
+          'การสั่นหน่วงวิกฤต (Critical Damping) ไม่ใช่การแกว่งเร็ว แต่เป็นสภาวะที่ระบบคืนตัวสู่จุดสมดุลเร็วที่สุดโดยไม่เกิดการแกว่งเลย'
+        ],
+        applications: [
+          'ระบบกันสะเทือนยานยนต์ (Automotive Shock Absorbers): ปรับจูนค่า $\\gamma$ สู่ระดับ Critical Damping เพื่อเสถียรภาพและความนุ่มนวล',
+          'เครื่องตรวจคลื่นแผ่นดินไหว (Seismograph): ใช้หลักการเฉื่อยของลูกตุ้มตรวจจับการเคลื่อนที่สัมพัทธ์ของเปลือกโลก',
+          'วงจรกรองสัญญาณเรโซแนนซ์ LC และ RLC ในระบบรับ-ส่งวิทยุไร้สาย'
+        ]
+      },
+      ch04: {
+        num: '04',
+        titleTh: 'บทที่ 04: คลื่นกล เสียง และทัศนศาสตร์ (Waves, Acoustics & Optics)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: สมการคลื่น 1D คลื่นนิ่ง บีตส์ ดอปเปลอร์ กฎสเนลล์ และทัศนศาสตร์เรขาคณิต',
+        mindmap: [
+          { branch: 'สมการคลื่น & กำลังงาน', items: ['สมการคลื่น $\\frac{\\partial^2 y}{\\partial x^2} = \\frac{1}{v^2}\\frac{\\partial^2 y}{\\partial t^2}$', 'ฟังก์ชันคลื่นรูปไซน์ $y(x,t) = A\\sin(kx \\mp \\omega t)$', 'อัตราเร็วคลื่นในเชือก $v = \\sqrt{T/\\mu}$, ในก๊าซ $v = \\sqrt{\\gamma RT/M}$'] },
+          { branch: 'การแทรกสอด & คลื่นนิ่ง', items: ['หลักการซ้อนทับ (Superposition)', 'คลื่นนิ่งในเชือกและท่อลม (บัพ Node และ ปฏิบัพ Antinode)', 'ปรากฏการณ์บีตส์ $f_b = |f_1 - f_2|$'] },
+          { branch: 'สวนศาสตร์ & ดอปเปลอร์', items: ['ระดับความเข้มเสียง $\\beta = 10\\log_{10}(I/I_0)$ dB', 'ปรากฏการณ์ดอปเปลอร์ $f\' = f\\frac{v \\pm v_o}{v \\mp v_s}$', 'คลื่นกระแทกช็อกเวฟ $\\sin\\theta_M = 1/M$'] },
+          { branch: 'ทัศนศาสตร์เรขาคณิต', items: ['กฎสเนลล์ $n_1\\sin\\theta_1 = n_2\\sin\\theta_2$', 'การสะท้อนกลับหมดและมุมวิกฤต $\\sin\\theta_c = n_2/n_1$', 'สมการเลนส์บาง $\\frac{1}{f} = \\frac{1}{s} + \\frac{1}{s\'}$'] }
+        ],
+        formulas: [
+          { name: 'สมการคลื่นฮาร์มอนิกเดินทาง', latex: 'y(x,t) = A\\sin(kx \\mp \\omega t + \\phi)', units: 'm', condition: '$k = 2\\pi/\\lambda, \\omega = 2\\pi f$', desc: 'เครื่องหมายลบแสดงคลื่นเคลื่อนที่ไปทาง $+x$ เครื่องหมายบวกไปทาง $-x$' },
+          { name: 'อัตราเร็วเสียงในก๊าซอุดมคติ', latex: 'v = \\sqrt{\\frac{\\gamma R T}{M}} = \\sqrt{\\frac{\\gamma P}{\\rho}}', units: 'm/s', condition: 'ก๊าซอุดมคติในกระบวนการแอเดียแบติก', desc: 'อัตราเร็วแปรผันตามรากที่สองของอุณหภูมิสัมบูรณ์ ($v \\propto \\sqrt{T}$)' },
+          { name: 'ระดับความเข้มเสียง (Decibels)', latex: '\\beta = 10 \\log_{10}\\left(\\frac{I}{I_0}\\right), \\quad I_0 = 10^{-12}\\text{ W/m}^2', units: 'dB', condition: '$I_0$: ขีดเริ่มได้ยินของมนุษย์ที่ 1 kHz', desc: 'สเกลลอการิทึม ฐาน 10 สอดคล้องกับพฤติกรรมการรับรู้ของหูมนุษย์' },
+          { name: 'ปรากฏการณ์ดอปเปลอร์ของเสียง', latex: 'f\' = f \\left( \\frac{v \\pm v_O}{v \\mp v_S} \\right)', units: 'Hz', condition: 'ผู้ฟัง ($O$) และแหล่งกำเนิด ($S$) เคลื่อนที่ตามแนวเชื่อมต่อ', desc: 'เครื่องหมายบน: เคลื่อนที่เข้าหากัน (ความถี่สูงขึ้น); เครื่องหมายล่าง: แยกออกจากกัน' },
+          { name: 'กฎสเนลล์และการสะท้อนกลับหมด', latex: 'n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2, \\quad \\sin\\theta_c = \\frac{n_2}{n_1} \\; (n_1 > n_2)', units: 'rad หรือ deg', condition: 'รังสีตกกระทบผ่านรอยต่อตัวกลางสองชนิด', desc: 'สะท้อนกลับหมดเมื่อมุมตกกระทบโตกว่ามุมวิกฤต $\\theta_1 > \\theta_c$' }
+        ],
+        benchmarks: [
+          { name: 'อัตราเร็วเสียงในตัวกลางต่างๆ (20°C)', value: 'อากาศ: 343 m/s; น้ำทะเล: 1,530 m/s; รางเหล็ก: 5,960 m/s', ref: 'อัตราเร็วเพิ่มขึ้นตามค่ามอดุลัสความยืดหยุ่นของตัวกลาง' },
+          { name: 'ขีดเริ่มได้ยินและขีดอันตรายต่อหู', value: 'ได้ยินเริ่มแรก: 0 dB (10⁻¹² W/m²); ปวดแก้วหู: 120 dB (1 W/m²)', ref: 'เครื่องบินเจ็ตทะยานขึ้นที่ระยะ 30 m ให้ระดับเสียงสูงถึง 140 dB' },
+          { name: 'เส้นใยนำแสงสื่อสาร (Fiber Optics)', value: 'n_core ≈ 1.48, n_cladding ≈ 1.46, θ_c ≈ 80.6°', ref: 'ส่งผ่านแสงอินฟราเรด λ = 1550 nm ข้ามทวีปด้วยการสะท้อนกลับหมด 100%' },
+          { name: 'ความถี่อัลตราซาวด์ทางการแพทย์', value: 'f = 2 MHz - 15 MHz (λ ≈ 0.1 - 0.7 mm ในเนื้อเยื่อ)', ref: 'ความยาวคลื่นสั้นช่วยให้ภาพตัดขวางมีรายละเอียดเชิงพื้นที่สูง (Spatial Resolution)' }
+        ],
+        laws: [
+          'หลักการของฮอยเกนส์ (Huygens\' Principle): ทุกจุดบนหน้าคลื่นทำหน้าที่เป็นแหล่งกำเนิดคลื่นทุติยภูมิใหม่ที่แผ่ออกไปด้วยอัตราเร็วเท่ากัน',
+          'หลักการของแฟร์มาต์ (Fermat\'s Principle): แสงเดินทางระหว่างสองจุดผ่านเส้นทางที่ใช้เวลาน้อยที่สุด นำไปสู่กฎการสะท้อนและการหักเห',
+          'การซ้อนทับเชิงเส้น (Superposition Principle): แอมพลิจูดรวมของคลื่นที่ซ้อนทับกันเท่ากับผลรวมทางพีชคณิตของการกระจัดแต่ละคลื่น'
+        ],
+        traps: [
+          'อัตราเร็วคลื่นขึ้นอยู่กับสมบัติของตัวกลางเท่านั้น (ความตึง ความหนาแน่น ความดัน อุณหภูมิ) ไม่ขึ้นกับความถี่หรือแอมพลิจูด',
+          'ระดับเสียงเพิ่มขึ้น 3 dB หมายถึงความเข้มเสียงเพิ่มขึ้นเป็น 2 เท่า ($2I$), แต่ระดับเสียงเพิ่มขึ้น 10 dB หมายถึงความเข้มเพิ่มขึ้นเป็น 10 เท่า ($10I$)',
+          'อนุภาคของตัวกลางไม่ได้เดินทางไปข้างหน้าพร้อมคลื่น แต่สั่นกวัดแกว่งรอบตำแหน่งสมดุลเดิม'
+        ],
+        applications: [
+          'ระบบตัดเสียงรบกวนแบบแอกทีฟ (Active Noise Cancellation - ANC): สร้างคลื่นเสียงเฟสตรงข้าม ($180^\\circ$) เพื่อหักล้างเสียงรบกวน',
+          'การสำรวจธรณีฟิสิกส์ด้วยคลื่นไหวสะเทือน (Seismic Reflection Survey) เพื่อค้นหาแหล่งกักเก็บปิโตรเลียม',
+          'กล้องโทรทรรศน์อวกาศเจมส์เว็บบ์ (JWST) และเครื่องมือทัศนศาสตร์เลเซอร์ขั้นสูง'
+        ]
+      },
+      ch05: {
+        num: '05',
+        titleTh: 'บทที่ 05: อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส (Thermodynamics & Kinetic Theory)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: ทฤษฎีจลน์โมเลกุล กฎข้อ 1 และ 2 ของเทอร์โมไดนามิกส์ เครื่องยนต์คาร์โนต์ และเอนโทรปี',
+        mindmap: [
+          { branch: 'ทฤษฎีจลน์ของแก๊ส', items: ['กฎแก๊สอุดมคติ $PV = nRT = Nk_BT$', 'ความดันจากโมเมนตัมโมเลกุล $P = \\frac{1}{3}\\rho v_{\\text{rms}}^2$', 'พลังงานจลน์เฉลี่ย $\\langle K \\rangle = \\frac{3}{2}k_BT$', 'การแจกแจงความเร็วแมกซ์เวลล์-โบลต์ซมันน์'] },
+          { branch: 'กฎข้อที่ 1 เทอร์โมไดนามิกส์', items: ['$\\Delta U = Q - W$ (การอนุรักษ์พลังงานในระบบความร้อน)', 'พลังงานภายใน $U = \\frac{f}{2}nRT$', 'งานการขยายตัวเชิงกล $W = \\int P\\,dV$'] },
+          { branch: '4 กระบวนการพื้นฐาน', items: ['Isobaric ($P=\\text{คงที่}, W=P\\Delta V$)', 'Isochoric ($V=\\text{คงที่}, W=0$)', 'Isothermal ($T=\\text{คงที่}, \\Delta U=0, W=nRT\\ln(V_f/V_i)$)', 'Adiabatic ($Q=0, PV^\\gamma=\\text{คงที่}, W=-\\Delta U$)'] },
+          { branch: 'กฎข้อที่ 2 & เอนโทรปี', items: ['นิยามเอนโทรปี $dS = dQ_{\\text{rev}}/T$', 'กฎการเพิ่มขึ้นของเอนโทรปี $\\Delta S_{\\text{universe}} \\ge 0$', 'ประสิทธิภาพเครื่องยนต์คาร์โนต์ $\\eta_{\\text{Carnot}} = 1 - T_C/T_H$'] }
+        ],
+        formulas: [
+          { name: 'กฎแก๊สอุดมคติและอัตราเร็ว RMS', latex: 'PV = N k_B T, \\quad v_{\\text{rms}} = \\sqrt{\\frac{3 k_B T}{m}} = \\sqrt{\\frac{3 R T}{M}}', units: 'm/s', condition: 'แก๊สอุดมคติ อนุภาคเป็นจุด ไร้แรงดึงดูดระหว่างโมเลกุล', desc: 'เชื่อมโยงอุณหภูมิมหภาคเข้ากับพลังงานจลน์ของโมเลกุลระดับจุลภาค' },
+          { name: 'กฎข้อที่หนึ่งของอุณหพลศาสตร์', latex: '\\Delta U = Q - W, \\quad W = \\int_{V_i}^{V_f} P \\, dV', units: 'J', condition: 'ระบบปิด (Closed System)', desc: '$\\Delta U$: พลังงานภายในเปลี่ยน, $Q$: ความร้อนเข้าสู่ระบบ, $W$: งานที่ระบบกระทำต่อภายนอก' },
+          { name: 'กระบวนการแอเดียแบติก (Adiabatic)', latex: 'P V^\\gamma = \\text{const}, \\quad T V^{\\gamma-1} = \\text{const}, \\quad \\gamma = \\frac{C_p}{C_v}', units: 'Pa, m³, K', condition: 'ฉนวนสมบูรณ์หรือกระบวนการเกิดขึ้นเร็วมาก ($Q = 0$)', desc: '$\\gamma$: อัตราส่วนความจุความร้อนจำเพาะ ($5/3$ สำหรับก๊าซอะตอมเดี่ยว, $7/5$ สำหรับอะตอมคู่)' },
+          { name: 'ประสิทธิภาพเครื่องยนต์คาร์โนต์', latex: '\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H} = \\frac{W_{\\text{net}}}{Q_H}', units: 'ไร้หน่วย (0 ถึง 1)', condition: 'วัฏจักรผันกลับได้สมบูรณ์ระหว่างสองแหล่งอุณหภูมิ', desc: 'ประสิทธิภาพทางทฤษฎีสูงสุดที่เป็นไปได้ตามกฎข้อที่ 2 ของเทอร์โมไดนามิกส์' },
+          { name: 'การนำความร้อน 1 มิติ (Fourier\'s Law)', latex: '\\dot{Q} = -k A \\frac{dT}{dx} = \\frac{\\Delta T}{R_{\\text{th}}}, \\quad R_{\\text{th}} = \\frac{L}{kA}', units: 'W', condition: 'สภาวะคงตัว 1 มิติ (Steady-State 1D Conduction)', desc: 'อัตราการสูญเสียความร้อนผ่านผนังหรือแผ่นกระจกหนา $L$ พื้นที่ $A$' }
+        ],
+        benchmarks: [
+          { name: 'ศูนย์สัมบูรณ์ (Absolute Zero)', value: '0 K = -273.15°C', ref: 'พลังงานจลน์ต่ำสุดระดับควอนตัม (Zero-Point Energy); กฎข้อที่ 3 ของเทอร์โมไดนามิกส์' },
+          { name: 'ความจุความร้อนจำเพาะของน้ำเหลว', value: 'c = 4,184 J/(kg·K)', ref: 'สูงที่สุดในบรรดาของเหลวธรรมชาติ ช่วยควบคุมและรักษาอุณหภูมิชีวมณฑลของโลก' },
+          { name: 'อัตราเร็ว RMS ของโมเลกุลไนโตรเจน (N₂ at 300 K)', value: 'v_rms ≈ 517 m/s (1,861 km/h)', ref: 'เร็วกว่ากระสุนปืนพก โมเลกุลชนกันเฉลี่ย 5 พันล้านครั้งต่อวินาที' },
+          { name: 'ความร้อนแฝงจำเพาะของการกลายเป็นไอของน้ำ', value: 'L_v ≈ 2.26 × 10⁶ J/kg', ref: 'พลังงานมหาศาลที่ต้องใช้ในการระเหยน้ำ จึงทำให้เหงื่อเป็นกลไกระบายความร้อนทรงพลัง' },
+          { name: 'ประสิทธิภาพโรงไฟฟ้าพลังความร้อนจริง', value: 'η_real ≈ 38% - 42% (Carnot Limit ≈ 65%)', ref: 'สูญเสียจากความเสียดทาน การพาความร้อน และการถ่ายเทเอนโทรปีที่ไม่ผันกลับได้' }
+        ],
+        laws: [
+          'กฎข้อที่หนึ่งของเทอร์โมไดนามิกส์ (First Law): การอนุรักษ์พลังงาน พลังงานไม่สูญหายแต่เปลี่ยนรูประหว่างความร้อน งาน และพลังงานภายใน',
+          'กฎข้อที่สองของเทอร์โมไดนามิกส์ (Second Law): เอนโทรปีของเอกภพไม่เคยลดลง $\\Delta S_{\\text{univ}} \\ge 0$; ความร้อนไม่ไหลจากเย็นไปร้อนเองตามธรรมชาติ',
+          'ทฤษฎีบทคาร์โนต์ (Carnot\'s Theorem): ไม่มีเครื่องยนต์ความร้อนใดระหว่างสองแหล่งอุณหภูมิที่มีประสิทธิภาพสูงกว่าเครื่องยนต์คาร์โนต์'
+        ],
+        traps: [
+          'อุณหภูมิในสูตรเทอร์โมไดนามิกส์ทุกสูตรต้องใช้หน่วยเคลวิน ($K$) เสมอ ห้ามใช้เซลเซียสเด็ดขาด',
+          'งาน $W = \\int P\\,dV$ เป็นฟังก์ชันเส้นทาง (Path Function) ไม่ใช่ฟังก์ชันสภาวะ (State Function)',
+          'กระบวนการแอเดียแบติก ($Q=0$) อุณหภูมิไม่ได้คงที่: เมื่อก๊าซขยายตัวแบบแอเดียแบติก อุณหภูมิจะลดลงฮวบ ($T_f < T_i$) เพราะระบบดึงพลังงานภายในมาทำงาน'
+        ],
+        applications: [
+          'โรงไฟฟ้าพลังงานความร้อนและนิวเคลียร์: การออกแบบวัฏจักรแรงคิน (Rankine Cycle) ไอน้ำยิ่งยวด',
+          'ระบบปรับอากาศและตู้เย็น: วัฏจักรอัดไอ (Vapor Compression Cycle) เพื่อสูบความร้อนย้อนทิศทางธรรมชาติ',
+          'เครื่องยนต์สันดาปภายในและกังหันก๊าซไอพ่นเครื่องบิน (Brayton Cycle)'
+        ]
+      },
+      ch06: {
+        num: '06',
+        titleTh: 'บทที่ 06: ไฟฟ้า แม่เหล็ก และทรานเชียนต์ (Electricity, Magnetism & Transients)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: สนามไฟฟ้า ตัวเก็บประจุ วงจร RC ทรานเชียนต์ แรงลอเรนซ์ และสมการแมกซ์เวลล์',
+        mindmap: [
+          { branch: 'ไฟฟ้าสถิต & ศักย์ไฟฟ้า', items: ['กฎคูลอมบ์ $\\vec{F} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q_1 q_2}{r^2}\\hat{r}$', 'สนามไฟฟ้าและเกรเดียนต์ศักย์ $\\vec{E} = -\\nabla V$', 'กฎของเกาส์ $\\oint \\vec{E} \\cdot d\\vec{A} = Q_{\\text{encl}}/\\varepsilon_0$'] },
+          { branch: 'ตัวเก็บประจุ & ไดอิเล็กทริก', items: ['ความจุ $C = \\kappa \\varepsilon_0 A / d$', 'พลังงานสะสม $U_E = \\frac{1}{2}CV^2$', 'ความหนาแน่นพลังงานสนามไฟฟ้า $u_E = \\frac{1}{2}\\varepsilon_0 E^2$', 'แรงดูดแผ่นไดอิเล็กทริก'] },
+          { branch: 'วงจรไฟฟ้า & RC ทรานเชียนต์', items: ['กฎของโอห์ม $V = IR$, กฎเคอร์ชอฟฟ์ (KCL & KVL)', 'การอัดประจุ $V_C(t) = V_0(1 - e^{-t/RC})$', 'การคายประจุ $V_C(t) = V_0 e^{-t/RC}$', 'ค่าคงตัวเวลา $\\tau = RC$'] },
+          { branch: 'แม่เหล็ก & แรงลอเรนซ์', items: ['แรงลอเรนซ์ $\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})$', 'สนามแม่เหล็กไม่ทำงานต่อประจุ ($W_B = 0$)', 'รัศมีไซโคลตรอน $r = \\frac{mv_{\\perp}}{qB}$', 'กฎฟาราเดย์และกฎเลนซ์ $\\mathcal{E} = -\\frac{d\\Phi_B}{dt}$'] }
+        ],
+        formulas: [
+          { name: 'กฎคูลอมบ์และสนามไฟฟ้าสถิต', latex: '\\vec{F} = \\frac{1}{4\\pi\\varepsilon_0}\\frac{q_1 q_2}{r^2}\\hat{r}, \\quad \\vec{E} = -\\nabla V', units: 'N, V/m', condition: 'ประจุไฟฟ้าอยู่นิ่งในสุญญากาศ', desc: 'แรงดึงดูด/ผลักระหว่างประจุ และสนามไฟฟ้าในฐานะเกรเดียนต์ของศักย์สเกลาร์' },
+          { name: 'ความจุและพลังงานตัวเก็บประจุ', latex: 'C = \\frac{\\kappa \\varepsilon_0 A}{d}, \\quad U_E = \\frac{1}{2} C V^2 = \\frac{Q^2}{2C}', units: 'F, J', condition: 'ตัวเก็บประจุแผ่นขนานที่มีสารไดอิเล็กทริก $\\kappa$', desc: 'พลังงานถูกเก็บสะสมไว้ในรูปความเครียดของสนามไฟฟ้าระหว่างแผ่น' },
+          { name: 'การอัดประจุในวงจร RC ทรานเชียนต์', latex: 'V_C(t) = V_0 \\left(1 - e^{-t/RC}\\right), \\quad I(t) = \\frac{V_0}{R} e^{-t/RC}', units: 'V, A', condition: 'สับสวิตช์เริ่มอัดประจุที่เวลา $t = 0$', desc: 'แรงดันตกคร่อมตัวเก็บประจุเพิ่มขึ้นอย่างต่อเนื่องตามค่าคงตัวเวลา $\\tau = RC$' },
+          { name: 'แรงลอเรนซ์และรัศมีไซโคลตรอน', latex: '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}), \\quad r = \\frac{m v_{\\perp}}{q B}', units: 'N, m', condition: 'อนุภาคมีประจุเคลื่อนที่ในสนามไฟฟ้าและแม่เหล็ก', desc: 'แรงแม่เหล็กตั้งฉากกับเวกเตอร์ความเร็วเสมอ บังคับให้อนุภาคโค้งเป็นวงกลม' },
+          { name: 'กฎการเหนี่ยวนำแม่เหล็กไฟฟ้าฟาราเดย์', latex: '\\mathcal{E} = -\\frac{d\\Phi_B}{dt} = -\\frac{d}{dt} \\int \\vec{B} \\cdot d\\vec{A}', units: 'V', condition: 'ฟลักซ์แม่เหล็กผ่านระนาบขดลวดเปลี่ยนแปลงตามเวลา', desc: 'เครื่องหมายลบตามกฎของเลนซ์ (Lenz\'s Law) เพื่อรักษาการอนุรักษ์พลังงาน' }
+        ],
+        benchmarks: [
+          { name: 'สนามไฟฟ้าข้ามเยื่อหุ้มเซลล์ชีวภาพ', value: 'E ≈ 1.4 × 10⁷ V/m (140 kV/cm)', ref: 'ศักย์พักเซลล์ประสาท ΔV ≈ 70 mV ข้ามเยื่อไขมันหนาเพียง d ≈ 5 nm!' },
+          { name: 'ความเข้มสนามไฟฟ้าที่อากาศเกิดการเบรกดาวน์', value: 'E_breakdown ≈ 30 kV/cm (3 × 10⁶ V/m)', ref: 'อากาศแตกตัวเป็นพลาสมานำไฟฟ้า เกิดประกายไฟหรือฟ้าผ่าเมื่อสนามเกินค่านี้' },
+          { name: 'สนามแม่เหล็กของโลกที่ผิวโลก', value: 'B_Earth ≈ 25 - 65 μT (0.25 - 0.65 Gauss)', ref: 'ปกป้องสิ่งมีชีวิตบนโลกจากลมสุริยะและรังสีคอสมิกพลังงานสูง' },
+          { name: 'สนามแม่เหล็กในเครื่องสแกน MRI ทางการแพทย์', value: 'B = 1.5 - 3.0 Tesla (~60,000 เท่าของสนามแม่เหล็กโลก)', ref: 'ขดลวดตัวนำยิ่งยวด NbTi หล่อเย็นด้วยฮีเลียมเหลวที่ 4.2 K' },
+          { name: 'ความต้านทานคลื่นในสุญญากาศ (Vacuum Impedance)', value: 'Z₀ = √(μ₀/ε₀) ≈ 376.73 Ω', ref: 'อัตราส่วนระหว่างแอมพลิจูดสนามไฟฟ้าต่อสนามแม่เหล็กของคลื่นแม่เหล็กไฟฟ้า' }
+        ],
+        laws: [
+          'สนามแม่เหล็กสถิตไม่ทำงานต่ออนุภาคมีประจุ: เนื่องจาก $\\vec{F}_B \\perp \\vec{v}$ ตลอดเวลา ทำให้พลังงานจลน์และอัตราเร็วคงตัว เปลี่ยนเฉพาะทิศทางการเคลื่อนที่',
+          'กฎของเลนซ์ (Lenz\'s Law): กระแสเหนี่ยวนำมีทิศทางสร้างฟลักซ์แม่เหล็กต่อต้านการเปลี่ยนแปลงของฟลักซ์เดิม เพื่อรักษาการอนุรักษ์พลังงาน',
+          'ความต่อเนื่องของสภาวะในวงจร RC: แรงดันตกคร่อมตัวเก็บประจุไม่สามารถเปลี่ยนแปลงแบบก้าวกระโดดได้ ($V_C(0^+) = V_C(0^-)$)'
+        ],
+        traps: [
+          'แรงลอเรนซ์ในสนามแม่เหล็ก: ประจุบวกและประจุลบจะเลี้ยวเบนไปในทิศตรงข้ามกันตามกฎมือขวา',
+          'สนามไฟฟ้าเหนี่ยวนำที่เกิดจากการเปลี่ยนแปลงสนามแม่เหล็ก $\\partial \\vec{B}/\\partial t$ "ไม่ใช่สนามอนุรักษ์" จึงไม่มีฟังก์ชันศักย์สเกลาร์',
+          'ตัวเก็บประจุเมื่อต่อแหล่งจ่ายไฟ ($V=\\text{const}$) พลังงานคือ $U = \\frac{1}{2}CV^2$; แต่เมื่อตัดวงจร ($Q=\\text{const}$) พลังงานคือ $U = \\frac{Q^2}{2C}$'
+        ],
+        applications: [
+          'เครื่องเร่งอนุภาคไซโคลตรอนและซินโครตรอน: บังคับอนุภาคพลังงานสูงด้วยสนามแม่เหล็กและเร่งด้วยสนามไฟฟ้าความถี่สูง',
+          'เครื่องสร้างภาพด้วยสนามแม่เหล็กไฟฟ้า (MRI) และการตรวจวินิจฉัยทางการแพทย์',
+          'ระบบส่งจ่ายไฟฟ้าแรงสูง หม้อแปลงไฟฟ้า และวงจรกรองสัญญาณ RC/RLC ในระบบโทรคมนาคม'
+        ]
+      },
+      ch07: {
+        num: '07',
+        titleTh: 'บทที่ 07: ฟิสิกส์นิวเคลียร์ อนุภาค และควอนตัม (Nuclear, Particle & Modern Physics)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิชา: มวลพร่อง พลังงานยึดเหนี่ยว การสลายกัมมันตรังสี โฟโตอิเล็กทริก และแบบจำลองมาตรฐาน',
+        mindmap: [
+          { branch: 'ฟิสิกส์นิวเคลียร์', items: ['โครงสร้างนิวเคลียส $(Z, N, A)$', 'มวลพร่อง $\\Delta m$ และพลังงานยึดเหนี่ยว $E_b = \\Delta mc^2$', 'กราฟพลังงานยึดเหนี่ยวต่อนิวคลีออน (Peak ที่ Iron-56)'] },
+          { branch: 'การสลายกัมมันตรังสี', items: ['กฎการสลาย $N(t) = N_0 e^{-\\lambda t}$, ครึ่งชีวิต $T_{1/2} = \\frac{\\ln 2}{\\lambda}$', 'การสลาย $\\alpha, \\beta^-, \\beta^+, \\gamma$'] },
+          { branch: 'ปฏิกิริยานิวเคลียร์', items: ['นิวเคลียร์ฟิชชัน (Fission, U-235)', 'นิวเคลียร์ฟิวชัน (Fusion, D-T)', 'มวลวิกฤต (Critical Mass) และเตาปฏิกรณ์โทคาแมค'] },
+          { branch: 'กำเนิดควอนตัม & ทวิภาวะ', items: ['สมมติฐานพลังก์ $E = hf$', 'โฟโตอิเล็กทริก $hf = \\Phi + K_{\\max}$', 'การกระเจิงคอมปตัน $\\Delta\\lambda = \\lambda_C(1-\\cos\\theta)$', 'คลื่นสสารเดอบรอยล์ $\\lambda = h/p$'] }
+        ],
+        formulas: [
+          { name: 'มวลพร่องและพลังงานยึดเหนี่ยว', latex: '\\Delta m = Z m_p + (A - Z) m_n - M, \\quad E_b = \\Delta m c^2', units: 'u, MeV', condition: '1 u = 931.5 MeV/c²', desc: 'มวลที่หายไปเมื่อนิวคลีออนรวมกันกลายเป็นพลังงานยึดเหนี่ยวนิวเคลียส' },
+          { name: 'กฎการสลายกัมมันตรังสีและครึ่งชีวิต', latex: 'N(t) = N_0 e^{-\\lambda t}, \\quad T_{1/2} = \\frac{\\ln 2}{\\lambda} \\approx \\frac{0.693}{\\lambda}', units: 'นิวเคลียส, s', condition: 'กระบวนการสุ่มทางสถิติของนิวเคลียสไม่เสถียร', desc: 'จำนวนนิวเคลียสที่เหลืออยู่ลดลงแบบเอกซ์โพเนนเชียลตามเวลา' },
+          { name: 'สมการโฟโตอิเล็กทริกของไอน์สไตน์', latex: 'K_{\\max} = e V_s = h f - \\Phi = h(f - f_0)', units: 'eV หรือ J', condition: 'โฟตอน 1 ตัวทำอันตรกิริยากับอิเล็กตรอน 1 ตัว', desc: 'พลังงานจลน์สูงสุดขึ้นกับความถี่แสงตกกระทบและฟังก์ชันงานของโลหะ' },
+          { name: 'ความยาวคลื่นสสารของเดอบรอยล์', latex: '\\lambda = \\frac{h}{p} = \\frac{h}{mv} = \\frac{h}{\\sqrt{2m E_k}}', units: 'm', condition: 'ทวิภาวะคลื่น-อนุภาคของสสาร', desc: 'อนุภาคทุกชนิดที่มีโมเมนตัมประพฤติตนเป็นคลื่นควอนตัม' },
+          { name: 'การกระเจิงคอมปตัน (Compton Scattering)', latex: '\\Delta\\lambda = \\lambda\' - \\lambda = \\lambda_C(1 - \\cos\\theta), \\quad \\lambda_C = \\frac{h}{m_e c} \\approx 2.426\\text{ pm}', units: 'm', condition: 'การชนแบบยืดหยุ่นระหว่างโฟตอนกับอิเล็กตรอนอิสระ', desc: 'ความยาวคลื่นโฟตอนเพิ่มขึ้นหลังการกระเจิง พิสูจน์ว่าโฟตอนมีโมเมนตัม' }
+        ],
+        benchmarks: [
+          { name: 'อะเมริเซียม-241 ในเครื่องตรวจจับควันตามบ้าน', value: 'Activity ≈ 0.9 μCi = 33.3 kBq, T₁/₂ = 432.2 ปี', ref: 'แผ่อนุภาคแอลฟา 5.49 MeV ทำให้อากาศแตกตัวเป็นไอออน เมื่อมีควันกระแสจะตกและส่งสัญญาณเตือน' },
+          { name: 'ความหนาแน่นพลังงานนิวเคลียร์ฟิชชัน U-235', value: '1 kg U-235 ≈ 8 × 10¹³ J (เท่ากับถ่านหิน 2,700 ตัน!)', ref: 'อัตราส่วนความหนาแน่นพลังงานต่อน้ำหนักสูงกว่าเชื้อเพลิงฟอสซิลเกือบ 3 ล้านเท่า' },
+          { name: 'การประลัยคู่อิเล็กตรอน-โพซิตรอนในเครื่อง PET Scan', value: 'E = m_e c² = 511 keV (ปล่อยรังสีแกมมา 2 ลำพุ่งตรงข้ามกัน 180°)', ref: 'ใช้ไอโซโทปโพซิตรอน F-18 ตรวจจับเซลล์มะเร็งด้วยความแม่นยำสูง' },
+          { name: 'พลังงานยึดเหนี่ยวต่อนิวคลีออนสูงสุด', value: 'Peak at ⁵⁶Fe / ⁶²Ni ≈ 8.79 MeV/nucleon', ref: 'นิวเคลียสเบากว่าเหล็กฟิวชันปล่อยพลังงาน แต่นิวเคลียสหนักกว่าเหล็กฟิชชันปล่อยพลังงาน' }
+        ],
+        laws: [
+          'กฎการอนุรักษ์ในปฏิกิริยานิวเคลียร์: อนุรักษ์เลขมวลรวม $A$, อนุรักษ์ประจุรวม $Z$, อนุรักษ์โมเมนตัม และอนุรักษ์มวล-พลังงานรวม',
+          'หลักความไม่แน่นอนของไฮเซนเบิร์ก: $\\Delta x \\Delta p_x \\ge \\frac{\\hbar}{2}$ และ $\\Delta E \\Delta t \\ge \\frac{\\hbar}{2}$',
+          'ทวิภาวะคลื่น-อนุภาค (Wave-Particle Duality): แสงและสสารแสดงคุณสมบัติเป็นคลื่นในการแพร่กระจาย และเป็นอนุภาคในการเกิดอันตรกิริยา'
+        ],
+        traps: [
+          'ในโฟโตอิเล็กทริก: ความเข้มแสง (Intensity) ส่งผลเฉพาะ "จำนวนโฟโตอิเล็กตรอน" (กระแส) แต่ไม่เพิ่ม "พลังงานจลน์สูงสุด" $K_{\\max}$',
+          'อัตราการสลายกัมมันตรังสี $\\lambda$ เป็นสมบัติทางสถิติระดับนิวเคลียส ไม่สามารถเร่งหรือชะลอด้วยความร้อน ความดัน หรือปฏิกิริยาเคมี',
+          'การสลายบีตาลบ ($\\beta^-$) จะปลดปล่อยอิเล็กตรอนคู่กับ "อิเล็กตรอนแอนตินิวทริโน" ($\\bar{\\nu}_e$) เสมอเพื่อรักษาการอนุรักษ์สปินและพลังงาน'
+        ],
+        applications: [
+          'โรงไฟฟ้านิวเคลียร์ฟิชชันและการวิจัยเตาปฏิกรณ์ฟิวชัน ITER / Tokamak เพื่อพลังงานสะอาดไร้คาร์บอน',
+          'เวชศาสตร์นิวเคลียร์: การรักษาโรคมะเร็งด้วยรังสีโปรตอน และการตรวจวินิจฉัยความผิดปกติของอวัยวะด้วยไอโซโทป',
+          'การหาอายุของซากโบราณคดีด้วยคาร์บอน-14 (Radiocarbon Dating: $T_{1/2} = 5,730\\text{ ปี}$)'
+        ]
+      },
+      civil_eng: {
+        num: 'CE',
+        titleTh: 'วิศวกรรมโยธา: สถิตยศาสตร์ กลศาสตร์วัสดุ และโครงถัก (Civil Engineering)',
+        subtitle: 'สรุปสังเคราะห์แก่นวิศวกรรม: สมดุลวัตถุเกร็ง โครงถัก 2D แผนภาพ SFD & BMD วงกลมของมอร์ และการโก่งเดาะออยเลอร์',
+        mindmap: [
+          { branch: 'สถิตยศาสตร์วิศวกรรม', items: ['สมดุลวัตถุเกร็ง $\\sum \\vec{F} = 0, \\sum \\vec{M} = 0$', 'แผนภาพวัตถุอิสระ (FBD)', 'จุดรองรับ: หมุด Pin, ลูกกลิ้ง Roller, ยึดแน่น Fixed'] },
+          { branch: 'การวิเคราะห์โครงถัก (Truss)', items: ['สมมติฐานจุดต่อหมุดไร้แรงเสียดทาน รับเฉพาะแรงแนวแกน', 'แรงดึง (Tension: +) vs แรงอัด (Compression: -)', 'Method of Joints และ Method of Sections', 'ชิ้นส่วนแรงศูนย์ (Zero-Force Members)'] },
+          { branch: 'กลศาสตร์วัสดุ (Mechanics of Materials)', items: ['ความเค้น $\\sigma = P/A$, ความเครียด $\\varepsilon = \\Delta L/L$, กฎฮุก $\\sigma = E\\varepsilon$', 'อัตราส่วนปัวซง $\\nu = -\\varepsilon_{\\text{lat}}/\\varepsilon_{\\text{long}}$', 'วงกลมของมอร์ (Mohr\'s Circle) และความเค้นหลัก $\\sigma_1, \\sigma_2$'] },
+          { branch: 'คาน & การโก่งเดาะ (Beams & Columns)', items: ['ความสัมพันธ์อนุพันธ์ $\\frac{dV}{dx} = -w(x), \\frac{dM}{dx} = V(x)$', 'แผนภาพ SFD และ BMD', 'ความเค้นดัด $\\sigma = -My/I$, ความเค้นเฉือน $\\tau = VQ/(Ib)$', 'แรงโก่งเดาะออยเลอร์ $P_{\\text{cr}} = \\frac{\\pi^2 EI}{(KL)^2}$'] }
+        ],
+        formulas: [
+          { name: 'สมการสมดุลสถิต 2 มิติ', latex: '\\sum F_x = 0, \\quad \\sum F_y = 0, \\quad \\sum M_O = 0', units: 'N, N·m', condition: 'วัตถุเกร็งในระนาบอยู่นิ่งสมบูรณ์', desc: 'ระบบสมการ 3 ตัวแปรสำหรับหาแรงปฏิกิริยาที่จุดรองรับ' },
+          { name: 'ความเค้นหลักและวงกลมมอร์', latex: '\\sigma_{1,2} = \\frac{\\sigma_x + \\sigma_y}{2} \\pm \\sqrt{\\left(\\frac{\\sigma_x - \\sigma_y}{2}\\right)^2 + \\tau_{xy}^2}', units: 'Pa (MPa)', condition: 'สถานะความเค้นในระนาบ 2 มิติ (Plane Stress)', desc: 'ความเค้นตั้งฉากสูงสุดและต่ำสุดที่ระนาบซึ่งความเค้นเฉือนเป็นศูนย์' },
+          { name: 'ความเค้นดัดงอในคาน (Flexure Formula)', latex: '\\sigma = -\\frac{M y}{I}, \\quad \\sigma_{\\max} = \\frac{M}{S}, \\quad S = \\frac{I}{c}', units: 'Pa (MPa)', condition: 'คานยืดหยุ่นเชิงเส้นตามกฎของฮุก เกิดการดัดแท้', desc: 'ความเค้นดัดแปรผันตามระยะห่างจากแกนสะเทิน (Neutral Axis)' },
+          { name: 'ความเค้นเฉือนตามขวางในคาน', latex: '\\tau = \\frac{V Q}{I b}, \\quad Q = \\int y\\,dA', units: 'Pa (MPa)', condition: 'คานรับแรงเฉือน $V$', desc: 'ความเค้นเฉือนสูงสุดที่แนวแกนสะเทิน และเป็นศูนย์ที่ผิวนอกสุดของคาน' },
+          { name: 'แรงโก่งเดาะวิกฤตของเสาออยเลอร์', latex: 'P_{\\text{cr}} = \\frac{\\pi^2 E I}{(K L)^2}', units: 'N (kN)', condition: 'เสายาวเรียวรับแรงอัดตามแนวแกน ($L/r > 100$)', desc: 'น้ำหนักบรรทุกสูงสุดก่อนเสาสูญเสียเสถียรภาพและโก่งเดาะฉับพลัน' }
+        ],
+        benchmarks: [
+          { name: 'มอดุลัสความยืดหยุ่นของเหล็กโครงสร้าง (Steel)', value: 'E_steel ≈ 200 GPa (200,000 MPa)', ref: 'เหล็กรูปพรรณ มอก. / ASTM A36 กำลังคราก f_y ≈ 250 MPa' },
+          { name: 'มอดุลัสความยืดหยุ่นของคอนกรีต (Concrete)', value: 'E_c ≈ 20 - 30 GPa', ref: 'คอนกรีตรับแรงอัดได้ดี f\'c ≈ 24 - 40 MPa แต่รับแรงดึงได้เพียง ~10% จึงต้องเสริมเหล็ก' },
+          { name: 'อัตราส่วนปัวซงของวัสดุวิศวกรรม', value: 'เหล็ก ν ≈ 0.30; คอนกรีต ν ≈ 0.15 - 0.20; ไม้ก๊อก ν ≈ 0.0', ref: 'สัดส่วนการหดตัวตามแนวขวางเมื่อถูกยืดตามแนวยาว' },
+          { name: 'ตัวประกอบความยาวประสิทธิผลของเสา (K-factor)', value: 'หมุด-หมุด: K = 1.0; แน่น-อิสระ: K = 2.0; แน่น-แน่น: K = 0.5', ref: 'จุดยึดแน่นทั้งสองข้างทำให้เสารับแรงอัดได้มากกว่าเสาปลายหมุดถึง 4 เท่า!' }
+        ],
+        laws: [
+          'สมดุลสถิตสมบูรณ์: โครงสร้างไม่เคลื่อนที่เชิงเส้นและไม่หมุนเมื่อแรงลัพธ์และโมเมนต์ลัพธ์รอบทุกจุดเป็นศูนย์',
+          'ความสัมพันธ์ระหว่างแรงเฉือนและโมเมนต์ดัด: ตำแหน่งที่แรงเฉือนผ่านศูนย์ ($V(x) = 0$) คือตำแหน่งที่เกิดโมเมนต์ดัดสูงสุด ($M_{\\max}$) เสมอ',
+          'หลักการของแซงต์-เวอนองต์ (Saint-Venant\'s Principle): ความเค้นที่ระยะห่างจากจุดกระทำของแรงจะกระจายตัวสม่ำเสมอตามสมการวิศวกรรมพื้นฐาน'
+        ],
+        traps: [
+          'ชิ้นส่วนรับแรงอัด (Compression Members) มักพังทลายจากการโก่งเดาะ (Euler Buckling) ที่ระดับแรงต่ำกว่ากำลังครากของวัสดุอย่างมาก',
+          'มุมบนวงกลมของมอร์เท่ากับ $2\\theta$ (สองเท่าของมุมการหมุนระนาบจริง $\\theta$ ในโครงสร้าง)',
+          'แบบแผนเครื่องหมาย (Sign Convention): แรงเฉือนดันซ้ายขึ้นขวาลงเป็นบวก โมเมนต์ดัดทำให้คานแอ่นหงาย (Sagging) เป็นบวก'
+        ],
+        applications: [
+          'การออกแบบสะพานโครงถักเหล็ก (Warren, Pratt, Howe Truss Bridges)',
+          'การออกแบบโครงสร้างอาคารต้านแรงลมและแผ่นดินไหวตามมาตรฐานสภาวิศวกร (ก.ว.) และ วสท.',
+          'การคำนวณคานสะพานทางยกระดับคอนกรีตอัดแรง (Prestressed Concrete Girders)'
+        ]
+      }
+    };
+
+    const cur = summaryData[chapterId] || summaryData['ch01'];
+
+    target.innerHTML = `
+      <div class="summary-page-container">
+        <!-- Top Banner -->
+        <div class="summary-hero-banner">
+          <div class="summary-badge">📋 บทสรุปมโนทัศน์ &amp; เมทริกซ์แก่นวิชา (University Synthesis Matrix)</div>
+          <h2 class="summary-hero-title">${cur.titleTh}</h2>
+          <p class="summary-hero-subtitle">${cur.subtitle}</p>
+        </div>
+
+        <!-- Interactive Category Switcher Toolbar -->
+        <div class="summary-filter-toolbar" role="toolbar" aria-label="กรองมุมมองการสรุปบทเรียน">
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'all' ? 'active' : ''}" data-sfilter="all">
+            🏛️ สรุปครบทุกมิติ (All)
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'mindmap' ? 'active' : ''}" data-sfilter="mindmap">
+            🗺️ ผังมโนทัศน์
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'formulas' ? 'active' : ''}" data-sfilter="formulas">
+            📐 เมทริกซ์สูตร &amp; หน่วย SI
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'benchmarks' ? 'active' : ''}" data-sfilter="benchmarks">
+            🌍 ตัวเลขอ้างอิงโลกจริง
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'laws' ? 'active' : ''}" data-sfilter="laws">
+            ⚖️ กฎการอนุรักษ์
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'traps' ? 'active' : ''}" data-sfilter="traps">
+            ⚠️ จุดตายข้อสอบ
+          </button>
+          <button class="summary-filter-btn ${activeSummarySectionFilter === 'apps' ? 'active' : ''}" data-sfilter="apps">
+            🏗️ วิศวกรรมศาสตร์
+          </button>
+        </div>
+
+        <!-- Master Synthesis Cards Grid -->
+        <div class="summary-grid">
+          <!-- CARD 1: CONCEPT MINDMAP -->
+          <div class="summary-card mindmap-card summary-mindmap-card" data-section="mindmap" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'mindmap' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">🗺️</span>
+              <div>
+                <h3 class="summary-card-title">1. ผังมโนทัศน์และแกนหลักวิชา (Executive Conceptual Mindmap)</h3>
+                <div class="summary-card-sub">การจัดหมวดหมู่ความสัมพันธ์และโครงสร้างองค์ความรู้เชิงระบบ</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="mindmap-tree">
+                ${cur.mindmap.map((b, bIdx) => `
+                  <div class="mindmap-branch">
+                    <div class="branch-title">📌 แกนที่ ${bIdx + 1}: <strong>${b.branch}</strong></div>
+                    <ul class="branch-list">
+                      ${b.items.map(it => `<li>${it}</li>`).join('')}
+                    </ul>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: MASTER FORMULAS MATRIX WITH SI UNITS -->
+          <div class="summary-card formulas-card summary-matrix-card" data-section="formulas" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'formulas' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">📐</span>
+              <div>
+                <h3 class="summary-card-title">2. เมทริกซ์สูตรหลัก ตัวแปร และหน่วย SI (Master Formula &amp; SI Unit Matrix)</h3>
+                <div class="summary-card-sub">สมการกำกับหลัก นิยามความหมาย เงื่อนไขการใช้งาน และหน่วยมาตรฐานสากล</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="summary-table-wrap">
+                <table class="summary-formula-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 22%;">ชื่อสมการ / หลักการ</th>
+                      <th style="width: 32%;">รูปสูตรคณิตศาสตร์ (KaTeX)</th>
+                      <th style="width: 14%;">หน่วย SI</th>
+                      <th style="width: 32%;">คำอธิบายเชิงกายภาพ &amp; เงื่อนไข</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${cur.formulas.map(f => `
+                      <tr>
+                        <td><strong>${f.name}</strong></td>
+                        <td class="table-math-cell">$$${f.latex}$$</td>
+                        <td><span class="si-unit-badge">${f.units}</span></td>
+                        <td class="table-desc-cell">
+                          <div>${f.desc}</div>
+                          <div style="font-size: 0.78rem; color: #38BDF8; margin-top: 0.25rem;">⚡ เงื่อนไข: ${f.condition}</div>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: REAL-WORLD EMPIRICAL BENCHMARKS -->
+          <div class="summary-card benchmarks-card summary-benchmarks-card" data-section="benchmarks" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'benchmarks' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">🌍</span>
+              <div>
+                <h3 class="summary-card-title">3. ตัวเลขอ้างอิงและหมุดหมายในโลกจริง (Real-World Empirical Benchmarks)</h3>
+                <div class="summary-card-sub">เชื่อมโยงคณิตศาสตร์สู่ขนาดอันดับ (Orders of Magnitude) ในธรรมชาติและเทคโนโลยี</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="benchmarks-grid">
+                ${cur.benchmarks.map(bm => `
+                  <div class="benchmark-item">
+                    <div class="benchmark-val">${bm.value}</div>
+                    <div class="benchmark-name">${bm.name}</div>
+                    <div class="benchmark-ref">${bm.ref}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: CONSERVATION LAWS & SYMMETRIES -->
+          <div class="summary-card laws-card summary-conservation-card" data-section="laws" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'laws' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">⚖️</span>
+              <div>
+                <h3 class="summary-card-title">4. กฎการอนุรักษ์และความสมมาตร (Conservation Laws &amp; Symmetries)</h3>
+                <div class="summary-card-sub">สัจพจน์รากฐานที่ไม่แปรเปลี่ยนตามกาลเวลาตามทฤษฎีบทของเนอเธอร์</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <ul class="summary-check-list">
+                ${cur.laws.map(l => `
+                  <li class="check-item">
+                    <span class="check-icon">✓</span>
+                    <span>${l}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <!-- CARD 5: COMMON PITFALLS & EXAM TRAPS -->
+          <div class="summary-card traps-card summary-traps-card" data-section="traps" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'traps' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">⚠️</span>
+              <div>
+                <h3 class="summary-card-title">5. กับดักและข้อผิดพลาดยอดฮิต (Common Pitfalls &amp; High-Yield Exam Traps)</h3>
+                <div class="summary-card-sub">จุดที่มักเข้าใจผิดบ่อยในการสอบคัดเลือกโอลิมปิกและวิศวกรรมศาสตร์</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="traps-grid">
+                ${cur.traps.map(tr => `
+                  <div class="trap-box">
+                    <div class="trap-badge">⚠️ จุดควรระวัง</div>
+                    <p class="trap-text">${tr}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 6: REAL-WORLD ENGINEERING SYNTHESIS -->
+          <div class="summary-card apps-card summary-realworld-card" data-section="apps" style="${activeSummarySectionFilter !== 'all' && activeSummarySectionFilter !== 'apps' ? 'display:none;' : ''}">
+            <div class="summary-card-header">
+              <span class="summary-card-icon">🏗️</span>
+              <div>
+                <h3 class="summary-card-title">6. การประยุกต์ใช้งานในระบบวิศวกรรมจริง (State-of-the-Art Engineering Systems)</h3>
+                <div class="summary-card-sub">กรณีศึกษาการต่อยอดทฤษฎีสู่อุตสาหกรรมอวกาศ ยานยนต์ และการแพทย์</div>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="apps-grid">
+                ${cur.applications.map(app => `
+                  <div class="app-card-item">
+                    <div class="app-icon">🚀</div>
+                    <div class="app-desc">${app}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${renderTabStepNavBar(5, { view: 'view-phenomena', label: '← ย้อนกลับ: 🌍 4. รูปภาพ & ปรากฏการณ์' }, { view: 'view-practice', label: '🚀 สู่คลังข้อสอบและทำโจทย์คำนวณ →' })}
+      </div>
+    `;
+
+    // Bind Summary Section Filter Buttons
+    target.querySelectorAll('.summary-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeSummarySectionFilter = btn.dataset.sfilter;
+        target.querySelectorAll('.summary-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+        target.querySelectorAll('.summary-card').forEach(card => {
+          const sec = card.dataset.section;
+          if (activeSummarySectionFilter === 'all' || sec === activeSummarySectionFilter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Typeset KaTeX inside summary container
+    if (window.MathRenderer) {
+      window.MathRenderer.typeset(target);
+    }
   }
 
   /**
@@ -1599,10 +2518,15 @@
                     </div>
 
                     ${f.derivationSteps && f.derivationSteps.length > 0 ? `
-                      <div class="formula-derivation-compact">
-                        <div class="formula-derivation-title">ขั้นตอนการอนุมาน (Derivation Steps):</div>
-                        ${f.derivationSteps.map(step => `<p style="margin: 0.2rem 0;">${step}</p>`).join('')}
-                      </div>
+                      <details class="formula-derivation-collapsible" style="margin-top: 0.5rem; border: 1px solid var(--border-light); border-radius: 6px; background: rgba(15, 23, 42, 0.4); overflow: hidden;">
+                        <summary style="cursor: pointer; padding: 0.45rem 0.75rem; font-size: 0.82rem; font-weight: 700; color: #38bdf8; outline: none; user-select: none;">
+                          🔍 ดูขั้นตอนการอนุมานละเอียด (Step-by-step Derivation) ▼
+                        </summary>
+                        <div class="formula-derivation-compact" style="padding: 0.6rem 0.85rem; border-top: 1px dashed var(--border-light); font-size: 0.85rem; background: rgba(30, 41, 59, 0.5);">
+                          <div class="formula-derivation-title" style="font-weight: 700; color: var(--accent-orange); margin-bottom: 0.35rem;">ขั้นตอนการพิสูจน์อนุมานทีละขั้น:</div>
+                          ${f.derivationSteps.map(step => `<p style="margin: 0.25rem 0; line-height: 1.55;">${step}</p>`).join('')}
+                        </div>
+                      </details>
                     ` : ''}
                   </div>
                 `).join('')}
@@ -1746,6 +2670,8 @@
       `;
     }
 
+    html += renderTabStepNavBar(2, { view: 'view-theory', label: '← ย้อนกลับ: 📖 1. ทฤษฎี' }, { view: 'view-simulator', label: 'ขั้นต่อไป: 🎯 3. แบบจำลอง →' });
+
     container.innerHTML = html;
 
     // Attach Formula Division Filter Tabs
@@ -1830,6 +2756,193 @@
       });
     });
 
+    if (window.MathRenderer) {
+      window.MathRenderer.typeset(container);
+    }
+  }
+
+  // ========================================================================
+  // VIEW 6: Dedicated Worked Calculation Examples Renderer (ตัวอย่างการคำนวณ)
+  // ========================================================================
+  let activeExampleDivisionFilter = 'all';
+
+  function renderExamplesContent(chapterId = currentChapter) {
+    const container = document.getElementById('examples-content-target');
+    if (!container) return;
+    container.innerHTML = '';
+
+    let data = window.PhysicsTheoriesContent;
+    let chapTitle = 'บทที่ 01: การเคลื่อนที่สองมิติและโปรเจกไทล์';
+
+    if (chapterId === 'ch02') {
+      data = window.Chapter02Content;
+      chapTitle = 'บทที่ 02: การเคลื่อนที่แบบวงกลมและแรงสู่ศูนย์กลาง';
+    } else if (chapterId === 'ch03') {
+      data = window.Chapter03Content;
+      chapTitle = 'บทที่ 03: การแกว่งกวัดและฮาร์มอนิกอย่างง่าย';
+    } else if (chapterId === 'ch04') {
+      data = window.Chapter04Content;
+      chapTitle = 'บทที่ 04: คลื่นกลและเสียง';
+    } else if (chapterId === 'ch05') {
+      data = window.Chapter05Content;
+      chapTitle = 'บทที่ 05: อุณหพลศาสตร์และทฤษฎีจลน์ของแก๊ส';
+    } else if (chapterId === 'ch06') {
+      data = window.Chapter06Content;
+      chapTitle = 'บทที่ 06: ไฟฟ้าและแม่เหล็ก';
+    } else if (chapterId === 'ch07') {
+      data = window.Chapter07Content;
+      chapTitle = 'บทที่ 07: ฟิสิกส์นิวเคลียร์และอนุภาค';
+    } else if (chapterId === 'civil_eng') {
+      data = window.CivilEngineeringContent;
+      chapTitle = 'สาขาวิศวกรรมโยธา: สถิตยศาสตร์ & กำลังวัสดุ';
+    }
+
+    if (!data || !data.theories) return;
+
+    // Filter theories that have worked examples
+    const theoriesWithExamples = data.theories.filter(t => t.example && (t.example.problem || (t.example.steps && t.example.steps.length > 0)));
+
+    let html = `
+      <div class="content-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+          <span class="card-badge" style="background: linear-gradient(135deg, #059669, #047857); color: #FFF; font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+            🧮 คลังตัวอย่างการคำนวณมาตรฐาน (Worked Examples Laboratory)
+          </span>
+          <span class="card-badge" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-light);">
+            ${theoriesWithExamples.length} ตัวอย่างโจทย์ละเอียด
+          </span>
+        </div>
+        <h2 class="content-title">ตัวอย่างการคำนวณและเฉลยละเอียด: ${chapTitle}</h2>
+        <p class="content-subtitle">
+          ฝึกฝนกระบวนการคิดวิเคราะห์ฟิสิกส์ทีละขั้นตอน (Step-by-Step Derivation) การแทนค่าตัวเลขในหน่วย SI และเชื่อมโยงเข้าสู่แบบจำลองเสมือนจริงเพื่อตรวจสอบผลลัพธ์
+        </p>
+      </div>
+
+      <!-- Division Filter Tabs -->
+      <div class="example-filter-bar" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <span style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">กรองตามภาควิชา:</span>
+          <div class="division-filter-tabs" role="group" aria-label="กรองตัวอย่างตามภาควิชา">
+            <button class="division-filter-btn ${activeExampleDivisionFilter === 'all' ? 'active' : ''}" data-example-div="all">
+              ทั้งหมด (${theoriesWithExamples.length})
+            </button>
+            ${(data.divisions || []).map(div => `
+              <button class="division-filter-btn ${activeExampleDivisionFilter === div.id ? 'active' : ''}" data-example-div="${div.id}">
+                ${div.numeral || 'ภาค'}: ${div.titleTh.split('(')[0].trim()}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Examples List -->
+      <div class="examples-grid" style="display: flex; flex-direction: column; gap: 1.75rem;">
+    `;
+
+    // Render each example card
+    theoriesWithExamples.forEach((t, idx) => {
+      const isVisible = (activeExampleDivisionFilter === 'all' || t.divisionId === activeExampleDivisionFilter);
+      const ex = t.example;
+
+      html += `
+        <article class="theory-card example-card" id="example-card-${t.id}" data-div="${t.divisionId}" style="display: ${isVisible ? 'block' : 'none'}; border-left: 4px solid #10b981;">
+          <header class="theory-card-header" style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light);">
+            <div class="theory-tag-row">
+              <span class="tag-number" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                ตัวอย่างที่ ${idx + 1}
+              </span>
+              <span class="tag-type">${t.numberTh}: ${t.titleTh}</span>
+              <span class="card-badge">${(t.divisionTitle || '').split(':')[0] || 'ภาควิชา'}</span>
+            </div>
+            <h3 class="theory-card-title-th" style="font-size: 1.15rem; margin-top: 0.5rem; color: #f8fafc;">
+              ${t.titleTh} &mdash; ${t.titleEn || ''}
+            </h3>
+          </header>
+
+          <div class="theory-card-body" style="padding-top: 1rem;">
+            <!-- Problem Statement -->
+            <div class="example-prob-box" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 1.15rem 1.25rem; margin-bottom: 1.25rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 700; color: #38bdf8; font-size: 0.95rem;">
+                <span>📋 โจทย์และสถานการณ์ปัญหา:</span>
+              </div>
+              <p style="font-size: 1rem; line-height: 1.7; color: #f1f5f9; margin: 0;">
+                ${ex.problem || ''}
+              </p>
+            </div>
+
+            <!-- Schematic Diagram if present -->
+            ${ex.diagramSvg ? `
+              <div class="theory-diagram-wrapper" style="margin: 1rem 0; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem; display: flex; flex-direction: column; align-items: center; overflow-x: auto;">
+                ${ex.diagramSvg}
+                ${ex.diagramCaption ? `<div class="diagram-caption" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: center; max-width: 90%;">${ex.diagramCaption}</div>` : ''}
+              </div>
+            ` : ''}
+
+            <!-- Step-by-Step Derivation Steps -->
+            <div class="step-container" style="margin-top: 1rem;">
+              <div style="font-weight: 700; font-size: 0.92rem; color: #f59e0b; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📐 ขั้นตอนการคำนวณและแสดงวิธีทำทีละขั้น (Step-by-Step Mathematical Solution):</span>
+              </div>
+              ${Array.isArray(ex.steps) ? ex.steps.map((st) => `
+                <div class="step-card" style="border-left: 3px solid #10b981; margin-bottom: 0.65rem; padding: 0.85rem 1.15rem; background: rgba(15, 23, 42, 0.45); border-radius: 6px;">
+                  <div style="font-size: 0.94rem; line-height: 1.7; color: #e2e8f0;">
+                    ${formatTextProse(st)}
+                  </div>
+                </div>
+              `).join('') : ''}
+            </div>
+
+            <!-- Action footer: Jump to Theory & Launch Simulator -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border-light);">
+              <button class="btn-action-outline" onclick="window.PhysicsApp.switchView('view-theory'); setTimeout(() => { const el = document.getElementById('theory-${t.id}'); if(el) el.scrollIntoView({behavior: 'smooth'}); }, 100);" style="padding: 0.5rem 1rem; font-size: 0.88rem; border-radius: 6px; border: 1px solid var(--border-light); color: var(--text-secondary); background: transparent; cursor: pointer;">
+                📖 อ่านทฤษฎีบทนี้เต็ม ↗
+              </button>
+              <button class="sim-deep-link-btn" data-theory-id="${t.id}" data-chapter="${chapterId}" style="padding: 0.5rem 1.15rem; font-size: 0.88rem; border-radius: 6px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border: 1px solid #3b82f6; color: #ffffff; cursor: pointer; font-weight: 700;">
+                🎯 นำพารามิเตอร์ไปจำลองจริงใน Simulator &rarr;
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    html += `
+      </div>
+    `;
+
+    container.innerHTML = html;
+
+    // Attach Division Filter Buttons
+    const filterBtns = container.querySelectorAll('.division-filter-btn[data-example-div]');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const divId = btn.dataset.exampleDiv;
+        activeExampleDivisionFilter = divId;
+
+        filterBtns.forEach(b => b.classList.toggle('active', b.dataset.exampleDiv === divId));
+
+        const cards = container.querySelectorAll('.example-card');
+        cards.forEach(card => {
+          if (divId === 'all' || card.dataset.div === divId) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Attach Simulator Preset deep link buttons
+    container.querySelectorAll('.sim-deep-link-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const chap = btn.dataset.chapter || currentChapter;
+        const rawTheoryId = btn.dataset.theoryId;
+        launchSimulatorForTheory(chap, rawTheoryId);
+      });
+    });
+
+    // Typeset KaTeX
     if (window.MathRenderer) {
       window.MathRenderer.typeset(container);
     }
@@ -2269,6 +3382,8 @@
       </div>
     `;
 
+    html += renderTabStepNavBar(4, { view: 'view-simulator', label: '← ย้อนกลับ: 🎯 3. แบบจำลอง' }, { view: 'view-summary', label: 'ขั้นต่อไป: 📋 5. สรุปบทเรียน →' });
+
     container.innerHTML = html;
 
     // Attach Event Listeners
@@ -2460,13 +3575,36 @@
           </button>
         </div>
         <div class="analytical-badge-group">
-          <span class="badge-analytical-tag">🏛️ คำอธิบายหน้า: การวิเคราะห์กลศาสตร์ขั้นสูง</span>
+          <span class="badge-analytical-tag">📐 คณิตศาสตร์สำหรับฟิสิกส์ &amp; กลศาสตร์วิเคราะห์ (${afData.topics.length} Master Topics)</span>
         </div>
       </div>
 
       <div class="content-header">
         <h2 class="content-title">${afData.meta.titleTh}</h2>
         <p class="content-subtitle">${afData.meta.subtitleTh} &mdash; ${afData.meta.description}</p>
+      </div>
+
+      <!-- Topic Category Filter Tabs -->
+      <div class="math-filter-bar" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-right: 0.25rem;">หมวดหมู่:</span>
+        <button class="math-filter-btn active" data-filter="all" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--accent-blue); color: #fff; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+          📌 ทั้งหมด (${afData.topics.length} หัวข้อ)
+        </button>
+        <button class="math-filter-btn" data-filter="vector" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--bg-card); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+          📐 เวกเตอร์แคลคูลัส &amp; ทฤษฎีบทปริพันธ์
+        </button>
+        <button class="math-filter-btn" data-filter="analytical" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--bg-card); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+          🏛️ กลศาสตร์วิเคราะห์ &amp; กรุปของลี
+        </button>
+        <button class="math-filter-btn" data-filter="pde" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--bg-card); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+          🌊 สมการอนุพันธ์ย่อย &amp; ฟังก์ชันกรีน
+        </button>
+        <button class="math-filter-btn" data-filter="tensor" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--bg-card); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+          📊 เทนเซอร์ &amp; รูปแบบเชิงอนุพันธ์
+        </button>
+        <button class="math-filter-btn" data-filter="quantum_math" style="padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-dark); background: var(--bg-card); color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; cursor: pointer;">
+          🔮 การวิเคราะห์เชิงซ้อน &amp; ปริพันธ์ตามวิถี
+        </button>
       </div>
 
       <!-- Formalisms Comparative Matrix -->
@@ -2498,10 +3636,16 @@
         </div>
       </div>
 
-      <!-- 9 Deep Analytical Formalisms & Mathematical Physics Topics -->
+      <!-- 15 Deep Analytical Formalisms & Mathematical Physics Topics -->
       <div class="analytical-topics-container">
-        ${afData.topics.map(topic => `
-          <article class="analytical-topic-card" id="topic-${topic.id}">
+        ${afData.topics.map(topic => {
+          const category = topic.category || (
+            ['AF-06', 'AF-09', 'AF-10', 'AF-11'].includes(topic.id) ? 'vector' :
+            ['AF-07', 'AF-12', 'AF-13'].includes(topic.id) ? 'pde' :
+            ['AF-14', 'AF-15'].includes(topic.id) ? 'tensor' : 'analytical'
+          );
+          return `
+          <article class="analytical-topic-card" id="topic-${topic.id}" data-category="${category}">
             <div class="topic-header-bar">
               <div class="topic-title-group">
                 <span class="topic-num-badge">${topic.numeral}</span>
@@ -2543,7 +3687,8 @@
               </div>
             </div>
           </article>
-        `).join('')}
+        `;
+        }).join('')}
       </div>
 
       <!-- Phase Space Interactive Visualizer -->
@@ -2587,6 +3732,29 @@
         switchView('view-chapter-select');
       });
     }
+
+    // Category Filtering for 15 Topics
+    container.querySelectorAll('.math-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.math-filter-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.background = 'var(--bg-card)';
+          b.style.color = 'var(--text-secondary)';
+        });
+        btn.classList.add('active');
+        btn.style.background = 'var(--accent-blue)';
+        btn.style.color = '#fff';
+
+        const filter = btn.dataset.filter;
+        container.querySelectorAll('.analytical-topic-card').forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
 
     initPhaseSpaceCanvas();
 
@@ -3285,19 +4453,7 @@
 
   function switchSimMode(mode, submode = null) {
     if (activeSimMode !== mode) {
-      // Pause current active simulator
-      if (activeSimMode === 'projectile' && simulatorInstance) simulatorInstance.pause();
-      if (activeSimMode === 'vehicle' && vehicleSimulatorInstance) vehicleSimulatorInstance.pause();
-      if (activeSimMode === 'collision' && collisionSimulatorInstance) collisionSimulatorInstance.pause();
-      if (activeSimMode === 'threejs' && threejsSimulatorInstance) threejsSimulatorInstance.pause();
-      if (activeSimMode === 'circular' && circularSimulatorInstance) circularSimulatorInstance.pause();
-      if (activeSimMode === 'oscillation' && oscillationSimulatorInstance) oscillationSimulatorInstance.pause();
-      if (activeSimMode === 'wave' && waveSimulatorInstance) waveSimulatorInstance.pause();
-      if (activeSimMode === 'thermo' && thermoSimulatorInstance) thermoSimulatorInstance.pause();
-      if (activeSimMode === 'em' && emSimulatorInstance) emSimulatorInstance.pause();
-      if (activeSimMode === 'nuclear' && nuclearSimulatorInstance) nuclearSimulatorInstance.pause();
-      if (activeSimMode === 'civil' && civilSimulatorInstance) civilSimulatorInstance.pause();
-
+      pauseAllSimulators();
       activeSimMode = mode;
     }
 
@@ -3309,6 +4465,7 @@
       else if (mode === 'em') submode = 'field_charges';
       else if (mode === 'nuclear') submode = 'binding_energy';
       else if (mode === 'civil') submode = 'simply_supported';
+      else if (mode === 'projectile') submode = 'trajectory';
     }
 
     // Map simulator mode to chapter and show corresponding pills
@@ -3337,10 +4494,20 @@
       }
       activeDivisionFilter = 'all';
       activeFormulaDivisionFilter = 'all';
+      viewNeedsUpdate['view-theory'] = true;
+      viewNeedsUpdate['view-formulas'] = true;
+      viewNeedsUpdate['view-phenomena'] = true;
       renderDrawerCatalog(currentChapter);
-      renderTheoryContent(currentChapter);
-      renderFormulasContent(currentChapter);
-      renderPhenomenaContent(currentChapter);
+      if (currentView === 'view-theory') {
+        renderTheoryContent(currentChapter);
+        viewNeedsUpdate['view-theory'] = false;
+      } else if (currentView === 'view-formulas') {
+        renderFormulasContent(currentChapter);
+        viewNeedsUpdate['view-formulas'] = false;
+      } else if (currentView === 'view-phenomena') {
+        renderPhenomenaContent(currentChapter);
+        viewNeedsUpdate['view-phenomena'] = false;
+      }
     }
 
     const allChaps = ['ch01', 'ch02', 'ch03', 'ch04', 'ch05', 'ch06', 'ch07', 'civil_eng'];
@@ -3370,6 +4537,37 @@
         else if (typeof inst.setSubmode === 'function') inst.setSubmode(s);
       };
 
+      if (mode === 'projectile') {
+        callSub(simulatorInstance, submode);
+        const grpTraj = document.getElementById('controls-projectile-trajectory');
+        const grpRocket = document.getElementById('controls-projectile-rocket');
+        const telemTraj = document.getElementById('telem-projectile-trajectory');
+        const telemRocket = document.getElementById('telem-projectile-rocket');
+        const isRocket = (submode === 'rocket_equation');
+        if (grpTraj) grpTraj.style.display = isRocket ? 'none' : 'block';
+        if (grpRocket) grpRocket.style.display = isRocket ? 'block' : 'none';
+        if (telemTraj) telemTraj.style.display = isRocket ? 'none' : 'grid';
+        if (telemRocket) telemRocket.style.display = isRocket ? 'grid' : 'none';
+        const insetBox = document.getElementById('canvas-inset-box');
+        if (insetBox) insetBox.style.display = isRocket ? 'none' : 'block';
+        const dotsBar = document.querySelector('#sim-container-projectile .canvas-footer-dock');
+        if (dotsBar) dotsBar.style.display = isRocket ? 'none' : 'flex';
+        const legend = document.querySelector('#sim-container-projectile .canvas-legend');
+        if (legend) legend.style.display = isRocket ? 'none' : 'block';
+        if (isRocket && typeof syncRocketUIInputs === 'function') {
+          syncRocketUIInputs();
+        }
+        if (simulatorInstance) {
+          simulatorInstance.render();
+          if (typeof simulatorInstance._dispatchTelemetry === 'function') {
+            if (isRocket) {
+              simulatorInstance._dispatchTelemetry(simulatorInstance.state, null);
+            } else {
+              simulatorInstance._dispatchTelemetry(simulatorInstance.currentLiveState, simulatorInstance.cachedSimulation);
+            }
+          }
+        }
+      }
       if (mode === 'circular') {
         callSub(circularSimulatorInstance, submode);
         const bankGroup = document.getElementById('circ-group-bank');
@@ -3391,6 +4589,12 @@
         const wGroup = document.getElementById('group-osc-omega');
         const f0Group = document.getElementById('group-osc-f0');
         const dpGroup = document.getElementById('group-osc-double-pendulum');
+        const massGroup = document.getElementById('group-osc-shared-mass');
+        const hoopGroup = document.getElementById('group-osc-rotating-hoop');
+
+        const isHoop = (submode === 'rotating_hoop');
+        if (massGroup) massGroup.style.display = isHoop ? 'none' : 'block';
+        if (hoopGroup) hoopGroup.style.display = isHoop ? 'block' : 'none';
 
         if (submode === 'spring') {
           if (kGroup) kGroup.style.display = 'block';
@@ -3428,6 +4632,21 @@
           if (wGroup) wGroup.style.display = 'none';
           if (f0Group) f0Group.style.display = 'none';
           if (dpGroup) dpGroup.style.display = 'block';
+        } else if (submode === 'rotating_hoop') {
+          if (kGroup) kGroup.style.display = 'none';
+          if (ampGroup) ampGroup.style.display = 'none';
+          if (lenGroup) lenGroup.style.display = 'none';
+          if (angGroup) angGroup.style.display = 'none';
+          if (dampGroup) dampGroup.style.display = 'none';
+          if (wGroup) wGroup.style.display = 'none';
+          if (f0Group) f0Group.style.display = 'none';
+          if (dpGroup) dpGroup.style.display = 'none';
+        }
+        if (oscillationSimulatorInstance) {
+          oscillationSimulatorInstance.render();
+          if (typeof oscillationSimulatorInstance._emitTelemetry === 'function') {
+            oscillationSimulatorInstance._emitTelemetry();
+          }
         }
       }
       if (mode === 'vehicle') {
@@ -3499,7 +4718,8 @@
           'rc_circuit': 'controls-rc-circuit',
           'faraday_induction': 'controls-faraday',
           'biot_savart': 'controls-biot-savart',
-          'ac_rlc_resonance': 'controls-ac-rlc'
+          'ac_rlc_resonance': 'controls-ac-rlc',
+          'dielectric_force': 'controls-dielectric-force'
         };
         Object.keys(groups).forEach(sm => {
           const el = document.getElementById(groups[sm]);
@@ -3512,21 +4732,45 @@
         const grpBinding = document.getElementById('controls-binding-energy');
         const grpDecay = document.getElementById('controls-decay-stochastic');
         const grpShield = document.getElementById('controls-shielding');
+        const grpCompton = document.getElementById('controls-compton-scattering');
         if (grpBinding) grpBinding.style.display = (submode === 'binding_energy') ? 'block' : 'none';
         if (grpDecay) grpDecay.style.display = (submode === 'decay_stochastic') ? 'block' : 'none';
         if (grpShield) grpShield.style.display = (submode === 'shielding_dosimetry') ? 'block' : 'none';
+        if (grpCompton) grpCompton.style.display = (submode === 'compton_scattering') ? 'block' : 'none';
+        if (nuclearSimulatorInstance) nuclearSimulatorInstance.emitTelemetry();
       }
       if (mode === 'civil') {
         callSub(civilSimulatorInstance, submode);
         const grpBeam = document.getElementById('controls-civil-beam');
         const grpMohr = document.getElementById('controls-civil-mohr');
+        const grpTruss = document.getElementById('controls-civil-truss');
         const telemBeam = document.getElementById('telem-civil-beam');
         const telemMohr = document.getElementById('telem-civil-mohr');
+        const telemTruss = document.getElementById('telem-civil-truss');
+        const presetsBeam = document.getElementById('presets-civil-beam');
+        const presetsTruss = document.getElementById('presets-civil-truss');
+
         const isMohr = (submode === 'mohr_circle');
-        if (grpBeam) grpBeam.style.display = isMohr ? 'none' : 'block';
+        const isTruss = (submode === 'truss_analysis');
+        const isBeam = (!isMohr && !isTruss);
+
+        if (grpBeam) grpBeam.style.display = isBeam ? 'block' : 'none';
         if (grpMohr) grpMohr.style.display = isMohr ? 'block' : 'none';
-        if (telemBeam) telemBeam.style.display = isMohr ? 'none' : 'grid';
+        if (grpTruss) grpTruss.style.display = isTruss ? 'block' : 'none';
+
+        if (telemBeam) telemBeam.style.display = isBeam ? 'grid' : 'none';
         if (telemMohr) telemMohr.style.display = isMohr ? 'grid' : 'none';
+        if (telemTruss) telemTruss.style.display = isTruss ? 'grid' : 'none';
+
+        if (presetsBeam) presetsBeam.style.display = isTruss ? 'none' : 'flex';
+        if (presetsTruss) presetsTruss.style.display = isTruss ? 'flex' : 'none';
+
+        if (civilSimulatorInstance) {
+          civilSimulatorInstance.render();
+          if (typeof civilSimulatorInstance._emitTelemetry === 'function') {
+            civilSimulatorInstance._emitTelemetry();
+          }
+        }
       }
 
       // Sync internal submode button
@@ -3598,6 +4842,24 @@
       civilSimulatorInstance.resize();
       civilSimulatorInstance.render();
     }
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.attachTelemetryClickListeners === 'function') {
+      window.TelemetryMathInspector.attachTelemetryClickListeners();
+      const defaultVars = {
+        projectile: 'telem-vac-range',
+        vehicle: 'telem-veh-vrel',
+        collision: 'telem-col-p1',
+        circular: 'circ-telem-ac',
+        oscillation: 'osc-telem-omega0',
+        wave: 'wave-telem-speed'
+      };
+      if (defaultVars[mode]) {
+        window.TelemetryMathInspector.selectVariable(defaultVars[mode]);
+      }
+    }
+
+    setupUniversalSpeedControls();
+    setUniversalSimulationSpeed(window.currentGlobalSimSpeed || 1.0);
   }
 
   // Interactive Simulator Bridge (Mode 1: Projectile)
@@ -3618,6 +4880,7 @@
     });
 
     window.simulatorInstance = simulatorInstance;
+    window.projectileSimulatorInstance = simulatorInstance;
     simulatorInstance.onTelemetry = updateTelemetryUI;
     simulatorInstance.onStatusChange = updatePlaybackUI;
 
@@ -3634,7 +4897,12 @@
     if (btnPlay) btnPlay.addEventListener('click', () => simulatorInstance.play());
     if (btnPause) btnPause.addEventListener('click', () => simulatorInstance.pause());
     if (btnStep) btnStep.addEventListener('click', () => simulatorInstance.stepForward(0.05));
-    if (btnReset) btnReset.addEventListener('click', () => simulatorInstance.reset());
+    if (btnReset) btnReset.addEventListener('click', () => {
+      simulatorInstance.reset();
+      if (simulatorInstance.subMode === 'rocket_equation') {
+        syncRocketUIInputs();
+      }
+    });
 
     bindSlider('slider-v0', 'val-v0', 'v0', ' m/s', parseFloat);
     bindSlider('slider-theta', 'val-theta', 'thetaDeg', '°', parseFloat);
@@ -3642,6 +4910,134 @@
     bindSlider('slider-c', 'val-c', 'c', ' kg/m', parseFloat);
     bindSlider('slider-g', 'val-g', 'g', ' m/s²', parseFloat);
     bindSlider('slider-y0', 'val-y0', 'y0', ' m', parseFloat);
+
+    // Rocket Equation Sliders
+    const bindRocketSlider = (sliderId, labelId, paramKey, unit, parser, fmt) => {
+      const slider = document.getElementById(sliderId);
+      const label = document.getElementById(labelId);
+      const numInput = document.getElementById(sliderId.replace('slider-', 'input-'));
+      if (!slider || !label) return;
+
+      const update = (val) => {
+        label.textContent = fmt ? fmt(val) : (val + unit);
+        if (numInput && numInput !== document.activeElement) numInput.value = val;
+        if (slider && slider !== document.activeElement) slider.value = val;
+        if (simulatorInstance) {
+          if (typeof simulatorInstance.setRocketParams === 'function') {
+            simulatorInstance.setRocketParams({ [paramKey]: val });
+          } else {
+            if (!simulatorInstance.rocketParams) simulatorInstance.rocketParams = {};
+            simulatorInstance.rocketParams[paramKey] = val;
+            if (typeof simulatorInstance._updateRocketState === 'function') {
+              simulatorInstance._updateRocketState();
+            }
+            simulatorInstance.render();
+          }
+        }
+      };
+
+      slider.addEventListener('input', (e) => update(parser(e.target.value)));
+      if (numInput) {
+        numInput.addEventListener('input', (e) => {
+          const val = parser(e.target.value);
+          if (!isNaN(val)) update(val);
+        });
+        numInput.addEventListener('change', (e) => {
+          const val = parser(e.target.value);
+          if (!isNaN(val)) update(val);
+        });
+      }
+    };
+
+    bindRocketSlider('slider-rocket-m0', 'val-rocket-m0', 'm0', ' kg', parseFloat, v => Math.round(v).toLocaleString() + ' kg');
+    bindRocketSlider('slider-rocket-mf', 'val-rocket-mf', 'mf', ' kg', parseFloat, v => Math.round(v).toLocaleString() + ' kg');
+    bindRocketSlider('slider-rocket-uex', 'val-rocket-uex', 'uex', ' m/s', parseFloat, v => Math.round(v).toLocaleString() + ' m/s');
+    bindRocketSlider('slider-rocket-time', 'val-rocket-time', 'burnTime', ' s', parseFloat, v => Math.round(v) + ' s');
+
+    function syncRocketUIInputs() {
+      if (!simulatorInstance || !simulatorInstance.rocketParams) return;
+      const p = simulatorInstance.rocketParams;
+      const m0 = (p.m0 !== undefined) ? p.m0 : (p.initialMassM0 || 12000);
+      const mf = (p.mf !== undefined) ? p.mf : (p.dryMassMf || 1200);
+      const uex = (p.uex !== undefined) ? p.uex : (p.exhaustSpeedUex || 3000);
+      const time = p.burnTime || 54;
+
+      const setVal = (id, val, fmt) => {
+        const slider = document.getElementById(id);
+        const numInput = document.getElementById(id.replace('slider-', 'input-'));
+        const label = document.getElementById(id.replace('slider-', 'val-'));
+        if (slider && slider !== document.activeElement) slider.value = val;
+        if (numInput && numInput !== document.activeElement) numInput.value = val;
+        if (label && fmt) label.textContent = fmt(val);
+      };
+
+      setVal('slider-rocket-m0', m0, v => Math.round(v).toLocaleString() + ' kg');
+      setVal('slider-rocket-mf', mf, v => Math.round(v).toLocaleString() + ' kg');
+      setVal('slider-rocket-uex', uex, v => Math.round(v).toLocaleString() + ' m/s');
+      setVal('slider-rocket-time', time, v => Math.round(v) + ' s');
+    }
+
+    // Wire Preset Color Dots (Image 3: Black, Pink, Green, Blue)
+    const presetDots = document.querySelectorAll('#canvas-preset-dots-bar .preset-dot');
+    presetDots.forEach((dot, dIdx) => {
+      dot.addEventListener('click', () => {
+        presetDots.forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+        const p = dot.dataset.preset;
+        if (!simulatorInstance) return;
+        if (p === 'standard') {
+          simulatorInstance.updateParams({ v0: 100, thetaDeg: 30, c: 0.05 });
+        } else if (p === 'high-angle') {
+          simulatorInstance.updateParams({ v0: 100, thetaDeg: 65, c: 0.05 });
+        } else if (p === 'heavy-drag') {
+          simulatorInstance.updateParams({ v0: 100, thetaDeg: 45, c: 0.25 });
+        } else if (p === 'high-speed') {
+          simulatorInstance.updateParams({ v0: 150, thetaDeg: 45, c: 0.05 });
+        }
+        syncSlidersFromSimulator(simulatorInstance.params);
+        simulatorInstance.render();
+
+        const stepInd = document.getElementById('step-nav-indicator');
+        if (stepInd) stepInd.textContent = `ขั้นตอน ${dIdx + 1} / ${presetDots.length}`;
+      });
+    });
+
+    // Wire Step Buttons (< | >)
+    let currentStepIdx = 0;
+    const btnStepPrev = document.getElementById('btn-step-prev');
+    const btnStepNext = document.getElementById('btn-step-next');
+    const stepInd = document.getElementById('step-nav-indicator');
+
+    if (btnStepPrev) {
+      btnStepPrev.addEventListener('click', () => {
+        if (currentStepIdx > 0) {
+          currentStepIdx--;
+          const dot = presetDots[currentStepIdx];
+          if (dot) dot.click();
+        }
+      });
+    }
+    if (btnStepNext) {
+      btnStepNext.addEventListener('click', () => {
+        if (currentStepIdx < presetDots.length - 1) {
+          currentStepIdx++;
+          const dot = presetDots[currentStepIdx];
+          if (dot) dot.click();
+        }
+      });
+    }
+
+    // Wire Conditions Toggle (Image 3 Box 3)
+    const btnConditionsToggle = document.getElementById('btn-conditions-toggle');
+    const conditionsExp = document.getElementById('conditions-expanded-content');
+    if (btnConditionsToggle && conditionsExp) {
+      btnConditionsToggle.addEventListener('click', () => {
+        const isExp = conditionsExp.style.display !== 'none';
+        conditionsExp.style.display = isExp ? 'none' : 'block';
+        btnConditionsToggle.setAttribute('aria-expanded', isExp ? 'false' : 'true');
+        btnConditionsToggle.textContent = isExp ? '⊕ ดูเพิ่มเติม' : '⊖ ย่อข้อมูล';
+      });
+    }
 
     const toggles = [
       { id: 'chk-vel', key: 'velocity' },
@@ -3665,32 +5061,76 @@
   function bindSlider(sliderId, labelId, paramKey, unit, parser) {
     const slider = document.getElementById(sliderId);
     const label = document.getElementById(labelId);
+    const numInput = document.getElementById(sliderId.replace('slider-', 'input-'));
     if (!slider || !label) return;
 
     slider.addEventListener('input', (e) => {
       const val = parser(e.target.value);
       label.textContent = val + unit;
+      if (numInput) numInput.value = val;
       if (simulatorInstance) {
         simulatorInstance.updateParams({ [paramKey]: val });
+        if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+          window.TelemetryMathInspector.updateLiveTelemetry('projectile', simulatorInstance.state || {}, simulatorInstance.params || {});
+        }
       }
     });
+
+    if (numInput) {
+      numInput.addEventListener('input', (e) => {
+        const val = parser(e.target.value);
+        if (!isNaN(val)) {
+          slider.value = val;
+          label.textContent = val + unit;
+          if (simulatorInstance) {
+            simulatorInstance.updateParams({ [paramKey]: val });
+            if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+              window.TelemetryMathInspector.updateLiveTelemetry('projectile', simulatorInstance.state || {}, simulatorInstance.params || {});
+            }
+          }
+        }
+      });
+    }
   }
 
   function updateTelemetryUI(state, simData) {
     if (!state) return;
 
-    setText('telem-x', state.x.toFixed(2) + ' m');
-    setText('telem-y', state.y.toFixed(2) + ' m');
-    setText('telem-v', state.speed.toFixed(2) + ' m/s');
-    setText('telem-t', state.t.toFixed(3) + ' s');
-    setText('telem-ek', state.ek.toFixed(1) + ' J');
-    setText('telem-etotal', state.etotal.toFixed(1) + ' J');
-
-    if (simData && simData.landing) {
-      setText('telem-range', simData.landing.x.toFixed(2) + ' m');
-      if (simData.vacuum) {
-        setText('telem-vac-range', simData.vacuum.range.toFixed(2) + ' m');
+    if (simulatorInstance && simulatorInstance.subMode === 'rocket_equation') {
+      const s = simulatorInstance.state || state;
+      if (s) {
+        setText('telem-rocket-m', Math.round(s.mass || 0).toLocaleString() + ' kg');
+        setText('telem-rocket-v', ((s.v || 0) / 1000).toFixed(2) + ' km/s');
+        setText('telem-rocket-deltav', ((s.deltaV || 0) / 1000).toFixed(2) + ' km/s');
+        setText('telem-rocket-t', (s.t || 0).toFixed(1) + ' s');
+        setText('telem-rocket-fuel', Math.round(s.fuel || 0).toLocaleString() + ' kg');
+        const m0 = (simulatorInstance.rocketParams && (simulatorInstance.rocketParams.initialMassM0 || simulatorInstance.rocketParams.m0)) || 12000;
+        const mf = (simulatorInstance.rocketParams && (simulatorInstance.rocketParams.dryMassMf || simulatorInstance.rocketParams.mf)) || 1200;
+        const rm = m0 / mf;
+        setText('telem-rocket-rm', rm.toFixed(1));
       }
+      return;
+    }
+
+    if (state.speed !== undefined) {
+      setText('telem-x', state.x.toFixed(2) + ' m');
+      setText('telem-y', state.y.toFixed(2) + ' m');
+      setText('telem-v', state.speed.toFixed(2) + ' m/s');
+      setText('telem-t', state.t.toFixed(3) + ' s');
+      setText('telem-ek', state.ek.toFixed(1) + ' J');
+      setText('telem-etotal', state.etotal.toFixed(1) + ' J');
+
+      if (simData && simData.landing) {
+        setText('telem-range', simData.landing.x.toFixed(2) + ' m');
+        if (simData.vacuum) {
+          setText('telem-vac-range', simData.vacuum.range.toFixed(2) + ' m');
+        }
+      }
+    }
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      const params = simulatorInstance ? (simulatorInstance.params || {}) : {};
+      window.TelemetryMathInspector.updateLiveTelemetry('projectile', state, params);
     }
   }
 
@@ -3719,8 +5159,10 @@
   function setValue(inputId, valId, value, unit) {
     const input = document.getElementById(inputId);
     const label = document.getElementById(valId);
+    const numInput = document.getElementById(inputId.replace('slider-', 'input-'));
     if (input) input.value = value;
     if (label) label.textContent = value + unit;
+    if (numInput) numInput.value = value;
   }
 
   // ======================================================================
@@ -3935,6 +5377,15 @@
     setText('telem-veh-drag', telem.dragForce.toFixed(1) + ' N');
     setText('telem-veh-heading', telem.headingDeg.toFixed(1) + '°');
     setText('telem-veh-alat', telem.lateralAcc.toFixed(2) + ' m/s²');
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      window.TelemetryMathInspector.updateLiveTelemetry('vehicle', telem, {
+        vCar: telem.vCar,
+        vWind: telem.vWind,
+        vRel: telem.vRel,
+        windAngleDeg: telem.windAngleDeg
+      });
+    }
   }
 
   // ======================================================================
@@ -4038,6 +5489,13 @@
         statusEl.textContent = 'ก่อนชน (Pre-impact)';
         statusEl.style.color = 'var(--text-primary)';
       }
+    }
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      window.TelemetryMathInspector.updateLiveTelemetry('collision', telem, {
+        m1: collisionSimulatorInstance ? collisionSimulatorInstance.params.m1 : 3.0,
+        m2: collisionSimulatorInstance ? collisionSimulatorInstance.params.m2 : 5.0
+      });
     }
   }
 
@@ -4424,6 +5882,14 @@
     setText('circ-telem-gforce', telem.gForce.toFixed(2) + ' G');
     setText('circ-telem-period', telem.period.toFixed(2) + ' s');
     setText('circ-telem-freq', telem.frequency.toFixed(3) + ' Hz');
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      window.TelemetryMathInspector.updateLiveTelemetry('circular', telem, {
+        v: circularSimulatorInstance ? circularSimulatorInstance.params.speed : 20.0,
+        r: circularSimulatorInstance ? circularSimulatorInstance.params.radius : 50.0,
+        m: circularSimulatorInstance ? circularSimulatorInstance.params.mass : 1000.0
+      });
+    }
   }
 
   function launchCircularSimulatorPreset(theoryId) {
@@ -4580,7 +6046,22 @@
             if (wGroup) wGroup.style.display = 'none';
             if (f0Group) f0Group.style.display = 'none';
             if (dpGroup) dpGroup.style.display = 'block';
+          } else if (sm === 'rotating_hoop') {
+            if (kGroup) kGroup.style.display = 'none';
+            if (ampGroup) ampGroup.style.display = 'none';
+            if (lenGroup) lenGroup.style.display = 'none';
+            if (angGroup) angGroup.style.display = 'none';
+            if (dampGroup) dampGroup.style.display = 'none';
+            if (wGroup) wGroup.style.display = 'none';
+            if (f0Group) f0Group.style.display = 'none';
+            if (dpGroup) dpGroup.style.display = 'none';
           }
+
+          const massGroup = document.getElementById('group-osc-shared-mass');
+          const hoopGroup = document.getElementById('group-osc-rotating-hoop');
+          const isHoop = (sm === 'rotating_hoop');
+          if (massGroup) massGroup.style.display = isHoop ? 'none' : 'block';
+          if (hoopGroup) hoopGroup.style.display = isHoop ? 'block' : 'none';
         });
       });
     }
@@ -4666,6 +6147,26 @@
       if (oscillationSimulatorInstance) oscillationSimulatorInstance.setParam('dpM2', val);
     });
 
+    // Rotating Hoop Sliders
+    bindOscSlider('osc-slider-hoop-r', 'osc-val-hoop-r', ' m', 2, (val) => {
+      if (oscillationSimulatorInstance) oscillationSimulatorInstance.setParam('hoopRadiusR', val);
+    });
+    bindOscSlider('osc-slider-hoop-omega', 'osc-val-hoop-omega', ' rad/s', 2, (val) => {
+      if (oscillationSimulatorInstance) oscillationSimulatorInstance.setParam('hoopOmega', val);
+    });
+    bindOscSlider('osc-slider-hoop-g', 'osc-val-hoop-g', ' m/s²', 2, (val) => {
+      if (oscillationSimulatorInstance) oscillationSimulatorInstance.setParam('hoopGravity', val);
+    });
+    bindOscSlider('osc-slider-hoop-gamma', 'osc-val-hoop-gamma', '', 2, (val) => {
+      if (oscillationSimulatorInstance) oscillationSimulatorInstance.setParam('hoopDamping', val);
+    });
+    bindOscSlider('osc-slider-hoop-th0', 'osc-val-hoop-th0', '°', 1, (val) => {
+      if (oscillationSimulatorInstance) {
+        oscillationSimulatorInstance.setParam('hoopTheta0Deg', val);
+        oscillationSimulatorInstance.setParam('hoopTheta0', val * Math.PI / 180);
+      }
+    });
+
     // Double Pendulum Preset Chips
     const dpChips = document.querySelectorAll('#group-osc-double-pendulum .btn-preset-chip');
     dpChips.forEach(chip => {
@@ -4719,6 +6220,14 @@
     setText('osc-telem-energy', telem.totalEnergy.toFixed(2) + ' J');
     setText('osc-telem-q', isFinite(telem.qualityFactor) ? `Q = ${telem.qualityFactor.toFixed(1)}` : 'Q = ∞');
     setText('osc-telem-regime', telem.regime);
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      window.TelemetryMathInspector.updateLiveTelemetry('oscillation', telem, {
+        k: oscillationSimulatorInstance ? oscillationSimulatorInstance.params.springK : 25.0,
+        m: oscillationSimulatorInstance ? oscillationSimulatorInstance.params.mass : 1.0,
+        omega0: telem.omega0
+      });
+    }
   }
 
   function launchOscillationSimulatorPreset(theoryId) {
@@ -5325,6 +6834,14 @@
       setText('wave-telem-omega', telem.omega.toFixed(2) + ' rad/s');
       setText('wave-telem-power', telem.powerAvg.toFixed(2) + ' W');
       setText('wave-telem-beat', telem.beatFreq.toFixed(2) + ' Hz');
+    }
+
+    if (window.TelemetryMathInspector && typeof window.TelemetryMathInspector.updateLiveTelemetry === 'function') {
+      window.TelemetryMathInspector.updateLiveTelemetry('wave', telem, {
+        v: telem.waveSpeed,
+        lambda: telem.wavelength,
+        f: telem.frequency
+      });
     }
   }
 
@@ -5975,6 +7492,80 @@
         }, 30);
       });
     }
+
+    // Submode 7: Dielectric Force Controls
+    const sliderDielecV0 = document.getElementById('slider-dielectric-v0');
+    const labelDielecV0 = document.getElementById('label-dielectric-v0');
+    if (sliderDielecV0 && labelDielecV0) {
+      sliderDielecV0.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelDielecV0.textContent = val.toFixed(0) + ' V';
+        if (emSimulatorInstance) emSimulatorInstance.setParam('dielectricV0', val);
+      });
+    }
+
+    const sliderDielecKappa = document.getElementById('slider-dielectric-kappa');
+    const labelDielecKappa = document.getElementById('label-dielectric-kappa');
+    if (sliderDielecKappa && labelDielecKappa) {
+      sliderDielecKappa.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelDielecKappa.textContent = val.toFixed(1);
+        if (emSimulatorInstance) emSimulatorInstance.setParam('dielectricKappa', val);
+      });
+    }
+
+    const sliderDielecA = document.getElementById('slider-dielectric-a');
+    const labelDielecA = document.getElementById('label-dielectric-a');
+    if (sliderDielecA && labelDielecA) {
+      sliderDielecA.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelDielecA.textContent = val.toFixed(1) + ' mm';
+        if (emSimulatorInstance) emSimulatorInstance.setParam('dielectricA', val);
+      });
+    }
+
+    const sliderDielecB = document.getElementById('slider-dielectric-b');
+    const labelDielecB = document.getElementById('label-dielectric-b');
+    if (sliderDielecB && labelDielecB) {
+      sliderDielecB.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelDielecB.textContent = val.toFixed(1) + ' mm';
+        if (emSimulatorInstance) emSimulatorInstance.setParam('dielectricB', val);
+      });
+    }
+
+    const btnDielecProb = document.getElementById('btn-dielectric-preset-prob');
+    if (btnDielecProb) {
+      btnDielecProb.addEventListener('click', () => {
+        if (!emSimulatorInstance) return;
+        emSimulatorInstance.setParam('dielectricV0', 3000);
+        emSimulatorInstance.setParam('dielectricKappa', 4.0);
+        emSimulatorInstance.setParam('dielectricA', 2.0);
+        emSimulatorInstance.setParam('dielectricB', 6.0);
+        if (sliderDielecV0) sliderDielecV0.value = 3000;
+        if (labelDielecV0) labelDielecV0.textContent = '3000 V';
+        if (sliderDielecKappa) sliderDielecKappa.value = 4.0;
+        if (labelDielecKappa) labelDielecKappa.textContent = '4.0';
+        if (sliderDielecA) sliderDielecA.value = 2.0;
+        if (labelDielecA) labelDielecA.textContent = '2.0 mm';
+        if (sliderDielecB) sliderDielecB.value = 6.0;
+        if (labelDielecB) labelDielecB.textContent = '6.0 mm';
+        emSimulatorInstance.reset();
+        if (window.syncAllNumericInputs) window.syncAllNumericInputs();
+      });
+    }
+
+    const btnDielecHighV = document.getElementById('btn-dielectric-preset-highv');
+    if (btnDielecHighV) {
+      btnDielecHighV.addEventListener('click', () => {
+        if (!emSimulatorInstance) return;
+        emSimulatorInstance.setParam('dielectricV0', 5000);
+        if (sliderDielecV0) sliderDielecV0.value = 5000;
+        if (labelDielecV0) labelDielecV0.textContent = '5000 V';
+        emSimulatorInstance.reset();
+        if (window.syncAllNumericInputs) window.syncAllNumericInputs();
+      });
+    }
   }
 
   function updateEMTelemetryUI(telem) {
@@ -6024,7 +7615,7 @@
       setBoth(2, 'อิมพีแดนซ์ \\(Z\\)', telem.acZ || '40.0 Ω');
       setBoth(3, 'กระแสประสิทธิผล \\(I_{\\text{rms}}\\)', telem.acIrms || '3.00 A');
       setBoth(4, 'มุมต่างเฟส \\(\\phi\\)', telem.acPhi || '0.0°');
-    } else {
+    } else if (sub === 'field_charges') {
       const q1 = (emSimulatorInstance && emSimulatorInstance.params.chargeQ1 !== undefined) ? emSimulatorInstance.params.chargeQ1 : (telem.chargeQ1 !== undefined ? telem.chargeQ1 : 5.0);
       const q2 = (emSimulatorInstance && emSimulatorInstance.params.chargeQ2 !== undefined) ? emSimulatorInstance.params.chargeQ2 : (telem.chargeQ2 !== undefined ? telem.chargeQ2 : -5.0);
       const cfg = (emSimulatorInstance && emSimulatorInstance.params.chargeConfig) ? emSimulatorInstance.params.chargeConfig : (telem.chargeConfig || 'dipole');
@@ -6040,6 +7631,11 @@
       setBoth(2, 'ประจุไฟฟ้า \\(q_2\\)', q2Text);
       setBoth(3, 'อนุภาคทดสอบปล่อย', (emSimulatorInstance ? emSimulatorInstance.testParticles.length : 0) + ' ตัว');
       setBoth(4, 'โครงแบบประจุ', cfgNames[cfg] || cfg);
+    } else if (sub === 'dielectric_force') {
+      setBoth(1, 'แรงดึงดูดไฟฟ้า \\(F_e\\)', telem.dielectricFe || '6.84 × 10⁻⁴ N');
+      setBoth(2, 'ระดับสมดุล \\(h_{\\text{eq}}\\)', telem.dielectricHeq || '0.771 mm');
+      setBoth(3, 'แรงดันไฟฟ้า \\(V_0\\)', telem.dielectricV0 || '3000 V');
+      setBoth(4, 'ไดอิเล็กทริก \\(\\kappa\\)', telem.dielectricKappa || '4.0');
     }
 
     setText('em-telem-tau', telem.tau || '2.00 s');
@@ -6263,6 +7859,48 @@
         if (nuclearSimulatorInstance) nuclearSimulatorInstance.setParam('shieldThickness', val);
       });
     }
+
+    // Submode 4: Compton Scattering Controls
+    const sliderComptonE0 = document.getElementById('slider-compton-e0');
+    const labelComptonE0 = document.getElementById('label-compton-e0');
+    if (sliderComptonE0 && labelComptonE0) {
+      sliderComptonE0.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelComptonE0.textContent = val.toFixed(1) + ' keV';
+        if (nuclearSimulatorInstance) nuclearSimulatorInstance.setParam('comptonE0', val);
+      });
+    }
+
+    const sliderComptonTheta = document.getElementById('slider-compton-theta');
+    const labelComptonTheta = document.getElementById('label-compton-theta');
+    if (sliderComptonTheta && labelComptonTheta) {
+      sliderComptonTheta.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        labelComptonTheta.textContent = val.toFixed(1) + '°';
+        if (nuclearSimulatorInstance) nuclearSimulatorInstance.setParam('comptonTheta', val);
+      });
+    }
+
+    const setComptonParams = (e0, th) => {
+      if (!nuclearSimulatorInstance) return;
+      nuclearSimulatorInstance.setParam('comptonE0', e0);
+      nuclearSimulatorInstance.setParam('comptonTheta', th);
+      if (sliderComptonE0) sliderComptonE0.value = e0;
+      if (labelComptonE0) labelComptonE0.textContent = e0.toFixed(1) + ' keV';
+      if (sliderComptonTheta) sliderComptonTheta.value = th;
+      if (labelComptonTheta) labelComptonTheta.textContent = th.toFixed(1) + '°';
+      nuclearSimulatorInstance.render();
+      if (window.syncAllNumericInputs) window.syncAllNumericInputs();
+    };
+
+    const btnComptonProb = document.getElementById('btn-compton-preset-prob');
+    if (btnComptonProb) btnComptonProb.addEventListener('click', () => setComptonParams(100.0, 90.0));
+
+    const btnComptonBack = document.getElementById('btn-compton-preset-back');
+    if (btnComptonBack) btnComptonBack.addEventListener('click', () => setComptonParams(100.0, 180.0));
+
+    const btnComptonGraze = document.getElementById('btn-compton-preset-graze');
+    if (btnComptonGraze) btnComptonGraze.addEventListener('click', () => setComptonParams(100.0, 45.0));
   }
 
   function updateNuclearTelemetryUI(telem) {
@@ -6270,6 +7908,13 @@
       const el = document.getElementById(id);
       if (el) el.textContent = val;
     };
+    if (telem.subMode === 'compton_scattering') {
+      if (telem.comptonEPrime) setText('nuclear-telem-eb', telem.comptonEPrime);
+      if (telem.comptonKe) setText('nuclear-telem-activity', telem.comptonKe);
+      if (telem.comptonTheta) setText('nuclear-telem-halflife', telem.comptonTheta);
+      if (telem.comptonPhi) setText('nuclear-telem-radiation', 'φ = ' + telem.comptonPhi);
+      return;
+    }
     if (telem.ebPerA) setText('nuclear-telem-eb', telem.ebPerA);
     if (telem.activityBq) setText('nuclear-telem-activity', telem.activityBq);
     if (telem.halfLife) setText('nuclear-telem-halflife', telem.halfLife);
@@ -6337,14 +7982,25 @@
 
         const grpBeam = document.getElementById('controls-civil-beam');
         const grpMohr = document.getElementById('controls-civil-mohr');
+        const grpTruss = document.getElementById('controls-civil-truss');
         const telemBeam = document.getElementById('telem-civil-beam');
         const telemMohr = document.getElementById('telem-civil-mohr');
-        const isMohr = (mode === 'mohr_circle');
+        const telemTruss = document.getElementById('telem-civil-truss');
+        const presetsBeam = document.getElementById('presets-civil-beam');
+        const presetsTruss = document.getElementById('presets-civil-truss');
 
-        if (grpBeam) grpBeam.style.display = isMohr ? 'none' : 'block';
+        const isMohr = (mode === 'mohr_circle');
+        const isTruss = (mode === 'truss_analysis');
+        const isBeam = (!isMohr && !isTruss);
+
+        if (grpBeam) grpBeam.style.display = isBeam ? 'block' : 'none';
         if (grpMohr) grpMohr.style.display = isMohr ? 'block' : 'none';
-        if (telemBeam) telemBeam.style.display = isMohr ? 'none' : 'grid';
+        if (grpTruss) grpTruss.style.display = isTruss ? 'block' : 'none';
+        if (telemBeam) telemBeam.style.display = isBeam ? 'grid' : 'none';
         if (telemMohr) telemMohr.style.display = isMohr ? 'grid' : 'none';
+        if (telemTruss) telemTruss.style.display = isTruss ? 'grid' : 'none';
+        if (presetsBeam) presetsBeam.style.display = isTruss ? 'none' : 'flex';
+        if (presetsTruss) presetsTruss.style.display = isTruss ? 'flex' : 'none';
 
         // Sync mode buttons in nav bar
         document.querySelectorAll('.sim-mode-btn[data-sim-mode="civil"]').forEach(b => {
@@ -6417,6 +8073,44 @@
       }
     });
 
+    // Truss Presets
+    bindClick('btn-civ-preset-truss-sym', () => {
+      if (!civilSimulatorInstance) return;
+      civilSimulatorInstance.setSubMode('truss_analysis');
+      civilSimulatorInstance.setParam('trussSpanL', 4.0);
+      civilSimulatorInstance.setParam('trussHeightH', 3.0);
+      civilSimulatorInstance.setParam('trussLoadPx', 40.0);
+      civilSimulatorInstance.setParam('trussLoadPy', 0.0);
+      syncCivilUIInputs();
+    });
+
+    bindClick('btn-civ-preset-truss-tall', () => {
+      if (!civilSimulatorInstance) return;
+      civilSimulatorInstance.setSubMode('truss_analysis');
+      civilSimulatorInstance.setParam('trussSpanL', 3.0);
+      civilSimulatorInstance.setParam('trussHeightH', 5.0);
+      civilSimulatorInstance.setParam('trussLoadPx', 60.0);
+      civilSimulatorInstance.setParam('trussLoadPy', 0.0);
+      syncCivilUIInputs();
+    });
+
+    bindClick('btn-civ-preset-truss-lateral', () => {
+      if (!civilSimulatorInstance) return;
+      civilSimulatorInstance.setSubMode('truss_analysis');
+      civilSimulatorInstance.setParam('trussSpanL', 4.0);
+      civilSimulatorInstance.setParam('trussHeightH', 3.0);
+      civilSimulatorInstance.setParam('trussLoadPx', 50.0);
+      civilSimulatorInstance.setParam('trussLoadPy', 0.0);
+      syncCivilUIInputs();
+    });
+
+    bindClick('btn-civ-reset-truss', () => {
+      if (civilSimulatorInstance) {
+        civilSimulatorInstance.reset();
+        syncCivilUIInputs();
+      }
+    });
+
     // Sliders
     const bindSlider = (id, paramKey, labelId, formatFn) => {
       const slider = document.getElementById(id);
@@ -6439,6 +8133,12 @@
     bindSlider('slider-civ-sy', 'sigmaY', 'label-civ-sy', v => v.toFixed(1) + ' MPa');
     bindSlider('slider-civ-txy', 'tauXY', 'label-civ-txy', v => v.toFixed(1) + ' MPa');
     bindSlider('slider-civ-theta', 'rotThetaDeg', 'label-civ-theta', v => v.toFixed(1) + '°');
+
+    // Truss Sliders
+    bindSlider('slider-civ-truss-l', 'trussSpanL', 'label-civ-truss-l', v => v.toFixed(1) + ' m');
+    bindSlider('slider-civ-truss-h', 'trussHeightH', 'label-civ-truss-h', v => v.toFixed(1) + ' m');
+    bindSlider('slider-civ-truss-px', 'trussLoadPx', 'label-civ-truss-px', v => v.toFixed(1) + ' kN');
+    bindSlider('slider-civ-truss-py', 'trussLoadPy', 'label-civ-truss-py', v => v.toFixed(1) + ' kN');
   }
 
   function syncCivilUIInputs() {
@@ -6451,14 +8151,25 @@
 
     const grpBeam = document.getElementById('controls-civil-beam');
     const grpMohr = document.getElementById('controls-civil-mohr');
+    const grpTruss = document.getElementById('controls-civil-truss');
     const telemBeam = document.getElementById('telem-civil-beam');
     const telemMohr = document.getElementById('telem-civil-mohr');
-    const isMohr = (sub === 'mohr_circle');
+    const telemTruss = document.getElementById('telem-civil-truss');
+    const presetsBeam = document.getElementById('presets-civil-beam');
+    const presetsTruss = document.getElementById('presets-civil-truss');
 
-    if (grpBeam) grpBeam.style.display = isMohr ? 'none' : 'block';
+    const isMohr = (sub === 'mohr_circle');
+    const isTruss = (sub === 'truss_analysis');
+    const isBeam = (!isMohr && !isTruss);
+
+    if (grpBeam) grpBeam.style.display = isBeam ? 'block' : 'none';
     if (grpMohr) grpMohr.style.display = isMohr ? 'block' : 'none';
-    if (telemBeam) telemBeam.style.display = isMohr ? 'none' : 'grid';
+    if (grpTruss) grpTruss.style.display = isTruss ? 'block' : 'none';
+    if (telemBeam) telemBeam.style.display = isBeam ? 'grid' : 'none';
     if (telemMohr) telemMohr.style.display = isMohr ? 'grid' : 'none';
+    if (telemTruss) telemTruss.style.display = isTruss ? 'grid' : 'none';
+    if (presetsBeam) presetsBeam.style.display = isTruss ? 'none' : 'flex';
+    if (presetsTruss) presetsTruss.style.display = isTruss ? 'flex' : 'none';
 
     const setSlider = (id, lblId, val, fmt) => {
       const s = document.getElementById(id);
@@ -6476,6 +8187,12 @@
     setSlider('slider-civ-sy', 'label-civ-sy', p.sigmaY, v => v.toFixed(1) + ' MPa');
     setSlider('slider-civ-txy', 'label-civ-txy', p.tauXY, v => v.toFixed(1) + ' MPa');
     setSlider('slider-civ-theta', 'label-civ-theta', p.rotThetaDeg, v => v.toFixed(1) + '°');
+
+    // Truss Sliders sync
+    setSlider('slider-civ-truss-l', 'label-civ-truss-l', p.trussSpanL || 4.0, v => v.toFixed(1) + ' m');
+    setSlider('slider-civ-truss-h', 'label-civ-truss-h', p.trussHeightH || 3.0, v => v.toFixed(1) + ' m');
+    setSlider('slider-civ-truss-px', 'label-civ-truss-px', p.trussLoadPx !== undefined ? p.trussLoadPx : 40.0, v => v.toFixed(1) + ' kN');
+    setSlider('slider-civ-truss-py', 'label-civ-truss-py', p.trussLoadPy !== undefined ? p.trussLoadPy : 0.0, v => v.toFixed(1) + ' kN');
 
     if (window.syncAllNumericInputs) window.syncAllNumericInputs();
   }
@@ -6508,6 +8225,13 @@
       setText('civ-telem-thetap', telem.thetaP);
       setText('civ-telem-sxprime', telem.sxPrime);
       setText('civ-telem-txyprime', telem.txyPrime);
+    } else if (telem.subMode === 'truss_analysis') {
+      setText('civ-telem-ax', telem.ax);
+      setText('civ-telem-ay', telem.ay);
+      setText('civ-telem-cy', telem.cy);
+      setText('civ-telem-fab', telem.fab);
+      setText('civ-telem-fbc', telem.fbc);
+      setText('civ-telem-fac', telem.fac);
     }
   }
 
@@ -6529,11 +8253,32 @@
   // UNIVERSAL DIRECT NUMERIC TYPING INPUTS & BIDIRECTIONAL SYNC
   // ========================================================================
   function setupUniversalNumericInputs() {
+    if (!window.__hasNumInputFallback) {
+      window.__hasNumInputFallback = true;
+      const origGetElementById = document.getElementById.bind(document);
+      document.getElementById = function (id) {
+        let el = origGetElementById(id);
+        if (!el && typeof id === 'string' && id.startsWith('num-')) {
+          el = origGetElementById(id.replace(/^num-/, 'input-'));
+        }
+        return el;
+      };
+    }
+
     const sliders = document.querySelectorAll('input[type="range"]');
 
     sliders.forEach(slider => {
       // Avoid duplicate wrap
       if (slider.parentElement && slider.parentElement.classList.contains('slider-control-row')) {
+        return;
+      }
+
+      // Check if this slider's control group already has an explicit direct number input (e.g. input-v0, input-rocket-m0)
+      const matchingInput = slider.id ? document.getElementById(slider.id.replace(/^slider-/, 'input-')) : null;
+      const group = slider.closest('.slider-group, .control-group, .sim-control-group, .param-group');
+      const groupInput = group ? group.querySelector('.direct-number-input') : null;
+      if (matchingInput || groupInput) {
+        // Already has direct number input in this group! Do not inject a duplicate number input.
         return;
       }
 
@@ -6611,6 +8356,47 @@
       row.appendChild(numInput);
     });
 
+    // Bidirectional sync for direct-number-input elements in slider headers (e.g. input-v0 <-> slider-v0)
+    document.querySelectorAll('.direct-number-input').forEach(input => {
+      const sliderId = input.id.replace(/^input-/, 'slider-');
+      const slider = document.getElementById(sliderId);
+      if (!slider) return;
+
+      slider.addEventListener('input', () => { input.value = slider.value; });
+      slider.addEventListener('change', () => { input.value = slider.value; });
+
+      const commit = () => {
+        let val = parseFloat(input.value);
+        if (isNaN(val)) {
+          input.value = slider.value;
+        } else {
+          const min = slider.min !== '' ? parseFloat(slider.min) : -Infinity;
+          const max = slider.max !== '' ? parseFloat(slider.max) : Infinity;
+          if (val < min) val = min;
+          if (val > max) val = max;
+          input.value = val;
+          slider.value = val;
+          slider.dispatchEvent(new Event('input', { bubbles: true }));
+          slider.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      };
+      input.addEventListener('input', () => {
+        const raw = input.value.trim();
+        if (raw === '' || raw === '-' || raw === '.') return;
+        let val = parseFloat(raw);
+        if (!isNaN(val)) {
+          slider.value = val;
+          slider.dispatchEvent(new Event('input', { bubbles: true }));
+          slider.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      input.addEventListener('blur', commit);
+      input.addEventListener('change', commit);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { commit(); input.blur(); }
+      });
+    });
+
     // Global synchronizer helper for presets and resets
     window.syncAllNumericInputs = () => {
       document.querySelectorAll('.slider-control-row').forEach(row => {
@@ -6620,7 +8406,131 @@
           numInput.value = slider.value;
         }
       });
+      document.querySelectorAll('.direct-number-input').forEach(input => {
+        const sliderId = input.id.replace(/^input-/, 'slider-');
+        const slider = document.getElementById(sliderId);
+        if (slider) {
+          input.value = slider.value;
+        }
+      });
     };
+  }
+
+  // ========================================================================
+  // UNIVERSAL SIMULATION ANIMATION SPEED CONTROLS (0.25x, 0.5x, 1.0x, 2.0x, 4.0x)
+  // ========================================================================
+  window.currentGlobalSimSpeed = 1.0;
+
+  function setUniversalSimulationSpeed(speed) {
+    const s = parseFloat(speed);
+    if (isNaN(s) || s <= 0) return;
+    window.currentGlobalSimSpeed = s;
+
+    // 1. Update all simulator instances
+    const simInstances = [
+      window.simulatorInstance,
+      window.projectileSimulatorInstance,
+      window.vehicleSimulatorInstance,
+      window.collisionSimulatorInstance,
+      window.threejsSimulatorInstance,
+      window.circularSimulatorInstance,
+      window.oscillationSimulatorInstance,
+      window.waveSimulatorInstance,
+      window.thermoSimulatorInstance,
+      window.emSimulatorInstance,
+      window.nuclearSimulatorInstance,
+      window.civilSimulatorInstance
+    ];
+
+    simInstances.forEach(sim => {
+      if (!sim) return;
+      if (typeof sim.setTimeScale === 'function') {
+        sim.setTimeScale(s);
+      } else {
+        sim.timeScale = s;
+      }
+    });
+
+    // 2. Sync all speed buttons active class across the page
+    document.querySelectorAll('.btn-speed').forEach(btn => {
+      const btnSpeed = parseFloat(btn.dataset.speed);
+      if (Math.abs(btnSpeed - s) < 0.01) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      }
+    });
+  }
+
+  function setupUniversalSpeedControls() {
+    // Find all simulator controls bars
+    const controlBars = document.querySelectorAll(
+      '.sim-controls-bar, .canvas-controls-bar, .vehicle-controls-bar, #sim-container-civil .sim-controls-bar'
+    );
+
+    const speeds = [
+      { label: '0.25x', val: 0.25 },
+      { label: '0.5x', val: 0.5 },
+      { label: '1.0x', val: 1.0 },
+      { label: '2.0x', val: 2.0 },
+      { label: '4.0x', val: 4.0 }
+    ];
+
+    controlBars.forEach(bar => {
+      // Don't add if already exists in this bar
+      if (bar.querySelector('.sim-speed-control-group')) return;
+
+      const group = document.createElement('div');
+      group.className = 'sim-speed-control-group';
+      group.setAttribute('role', 'group');
+      group.setAttribute('aria-label', 'ความเร็วแอนิเมชัน (Animation Speed)');
+
+      const label = document.createElement('span');
+      label.className = 'sim-speed-label';
+      label.textContent = '⏱️';
+      label.title = 'ปรับความเร็วแอนิเมชัน (Animation Speed)';
+      group.appendChild(label);
+
+      speeds.forEach(sp => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-speed' + (Math.abs(sp.val - window.currentGlobalSimSpeed) < 0.01 ? ' active' : '');
+        btn.dataset.speed = sp.val.toString();
+        btn.textContent = sp.label;
+        btn.setAttribute('aria-label', `ความเร็วแอนิเมชัน ${sp.label}`);
+        btn.setAttribute('aria-pressed', Math.abs(sp.val - window.currentGlobalSimSpeed) < 0.01 ? 'true' : 'false');
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setUniversalSimulationSpeed(sp.val);
+        });
+        group.appendChild(btn);
+      });
+
+      // Append to the control bar
+      bar.appendChild(group);
+    });
+  }
+
+  // ========================================================================
+  // PROGRESSIVE TAB STEP NAVIGATION BAR GENERATOR
+  // ========================================================================
+  function renderTabStepNavBar(stepNum, prevInfo, nextInfo) {
+    let prevBtn = prevInfo ? `<button class="btn-prev-step" onclick="window.PhysicsApp.switchView('${prevInfo.view}');">${prevInfo.label}</button>` : `<button class="btn-prev-step" onclick="window.PhysicsApp.switchView('view-chapter-select');">← กลับหน้าเลือกบท</button>`;
+    let nextBtn = nextInfo ? `<button class="btn-next-step" onclick="window.PhysicsApp.switchView('${nextInfo.view}');">${nextInfo.label}</button>` : '';
+
+    return `
+      <div class="tab-step-nav-bar">
+        ${prevBtn}
+        <div class="step-status-indicator">
+          <span class="step-dot"></span>
+          <span>ลำดับการเรียนรู้ ขั้นที่ ${stepNum} จาก 5</span>
+        </div>
+        ${nextBtn}
+      </div>
+    `;
   }
 
   window.PhysicsApp = {
@@ -6672,6 +8582,8 @@
     launchWaveSimulatorPreset,
     getThermoSimulator: () => thermoSimulatorInstance,
     launchThermoSimulatorPreset,
+    getCurrentChapter: () => currentChapter,
+    getCurrentView: () => currentView,
     getEMSimulator: () => emSimulatorInstance,
     launchEMSimulatorPreset,
     getNuclearSimulator: () => nuclearSimulatorInstance,

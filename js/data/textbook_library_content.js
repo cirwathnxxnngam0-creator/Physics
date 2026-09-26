@@ -249,20 +249,20 @@
     { id: 'THERMO-MOD-02', cat: 'thermo', title: 'Statistical Ensembles & Partition Functions', file: 'curated_modules/05_thermodynamics_and_statphys/02_Statistical_Ensembles_and_Partition_Functions.pdf', pages: 31, source: 'Tong SP Ch. 1' },
     { id: 'THERMO-MOD-03', cat: 'thermo', title: 'Classical Gases & Maxwell-Boltzmann Distribution', file: 'curated_modules/05_thermodynamics_and_statphys/03_Classical_Gases_and_Interactions.pdf', pages: 30, source: 'Tong SP Ch. 2' },
     { id: 'THERMO-MOD-04', cat: 'thermo', title: 'Quantum Statistics (Fermi & Bose Gases)', file: 'curated_modules/05_thermodynamics_and_statphys/04_Quantum_Gases_Bose_Fermi.pdf', pages: 38, source: 'Tong SP Ch. 7' },
-    { id: 'THERMO-MOD-05', cat: 'thermo', title: 'Phase Transitions & Mean Field Theory', file: 'curated_modules/05_thermodynamics_and_statphys/05_Phase_Transitions_and_Ising_Model.pdf', pages: 48, source: 'Tong SP Ch. 5-6' },
-    { id: 'THERMO-MOD-06', cat: 'thermo', title: 'Kinetic Theory of Gases & Transport Equations', file: 'curated_modules/05_thermodynamics_and_statphys/06_Kinetic_Theory_and_Transport.pdf', pages: 85, source: 'Tong Kinetic Theory' },
+    { id: 'THERMO-MOD-05', cat: 'thermo', title: 'Kinetic Theory, Boltzmann Equation & Transport', file: 'curated_modules/05_thermodynamics_and_statphys/05_Kinetic_Theory_and_Transport.pdf', pages: 52, source: 'Tong Kinetic Theory Ch. 1-3' },
+    { id: 'THERMO-MOD-06', cat: 'thermo', title: 'Stochastic Processes & Linear Response Theory', file: 'curated_modules/05_thermodynamics_and_statphys/06_Stochastic_Processes_and_Linear_Response.pdf', pages: 50, source: 'Tong Kinetic Theory Ch. 4' },
 
     // 06 Vector Calculus
-    { id: 'VEC-MOD-01', cat: 'math_methods', title: 'Curves, Arc Length & Frenet-Serret Apparatus', file: 'curated_modules/06_vector_calculus/01_Curves_and_Surfaces_in_Space.pdf', pages: 31, source: 'Tong Vector Calc Ch. 1' },
-    { id: 'VEC-MOD-02', cat: 'math_methods', title: 'Vector Differential Operators: Grad, Div & Curl', file: 'curated_modules/06_vector_calculus/02_Grad_Div_Curl_Operators.pdf', pages: 25, source: 'Tong Vector Calc Ch. 2' },
-    { id: 'VEC-MOD-03', cat: 'math_methods', title: 'Line, Surface & Volume Integrals', file: 'curated_modules/06_vector_calculus/03_Line_Surface_Volume_Integrals.pdf', pages: 24, source: 'Tong Vector Calc Ch. 3' },
-    { id: 'VEC-MOD-04', cat: 'math_methods', title: 'Gauss\'s Divergence & Stokes\' Theorems', file: 'curated_modules/06_vector_calculus/04_Gauss_Divergence_Stokes_Theorems.pdf', pages: 31, source: 'Tong Vector Calc Ch. 4' },
-    { id: 'VEC-MOD-05', cat: 'math_methods', title: 'Curvilinear & Polar Coordinate Systems', file: 'curated_modules/06_vector_calculus/05_Curvilinear_Coordinates.pdf', pages: 26, source: 'Tong Vector Calc Ch. 5' },
+    { id: 'VEC-MOD-01', cat: 'math_methods', title: 'Curves, Arc Length & Frenet-Serret Apparatus', file: 'curated_modules/06_vector_calculus/01_Curves_Frenet_Serret_Line_Integrals.pdf', pages: 21, source: 'Tong Vector Calc Ch. 1' },
+    { id: 'VEC-MOD-02', cat: 'math_methods', title: 'Surfaces, Volumes & Flux Integrals', file: 'curated_modules/06_vector_calculus/02_Surfaces_Volumes_Flux_Integrals.pdf', pages: 25, source: 'Tong Vector Calc Ch. 2' },
+    { id: 'VEC-MOD-03', cat: 'math_methods', title: 'Gradient, Divergence, Curl & Curvilinear Coordinates', file: 'curated_modules/06_vector_calculus/03_Grad_Div_Curl_Curvilinear.pdf', pages: 15, source: 'Tong Vector Calc Ch. 3' },
+    { id: 'VEC-MOD-04', cat: 'math_methods', title: 'Gauss\'s Divergence, Green\'s & Stokes\' Theorems', file: 'curated_modules/06_vector_calculus/04_Integral_Theorems_Gauss_Stokes.pdf', pages: 25, source: 'Tong Vector Calc Ch. 4' },
+    { id: 'VEC-MOD-05', cat: 'math_methods', title: 'Poisson, Laplace Equations & Cartesian Tensors', file: 'curated_modules/06_vector_calculus/05_Poisson_Laplace_and_Tensors.pdf', pages: 42, source: 'Tong Vector Calc Ch. 5' },
 
     // 07 Relativity & Modern Physics
-    { id: 'REL-MOD-01', cat: 'mechanics', title: 'Special Relativity: Kinematics & Lorentz Boosts', file: 'curated_modules/07_relativity_and_modern_physics/01_Special_Relativity_Kinematics.pdf', pages: 71, source: 'Morin Ch. 11' },
-    { id: 'REL-MOD-02', cat: 'mechanics', title: 'Relativistic Dynamics: Energy & Momentum 4-Vectors', file: 'curated_modules/07_relativity_and_modern_physics/02_Relativistic_Dynamics_Energy_Momentum.pdf', pages: 62, source: 'Morin Ch. 12' },
-    { id: 'REL-MOD-03', cat: 'mechanics', title: '4-Vectors and Minkowski Spacetime Geometry', file: 'curated_modules/07_relativity_and_modern_physics/03_4Vectors_and_Relativity.pdf', pages: 56, source: 'Morin Ch. 13' }
+    { id: 'REL-MOD-01', cat: 'mechanics', title: 'Special Relativity: Kinematics & Lorentz Transformations', file: 'curated_modules/07_relativity_and_modern_physics/01_Relativity_Kinematics.pdf', pages: 83, source: 'Morin Ch. 11' },
+    { id: 'REL-MOD-02', cat: 'mechanics', title: 'Relativistic Dynamics: Energy, Momentum & Collisions', file: 'curated_modules/07_relativity_and_modern_physics/02_Relativity_Dynamics.pdf', pages: 50, source: 'Morin Ch. 12' },
+    { id: 'REL-MOD-03', cat: 'mechanics', title: '4-Vectors, Minkowski Metric & General Relativity', file: 'curated_modules/07_relativity_and_modern_physics/03_Four_Vectors_and_General_Relativity.pdf', pages: 41, source: 'Morin Ch. 13-14' }
   ];
 
   /**

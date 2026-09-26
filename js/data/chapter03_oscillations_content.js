@@ -44,6 +44,13 @@
         titleTh: "การสั่นหน่วง การสั่นถูกบังคับ และการสั่นพ้อง (Damped & Driven Oscillations, Resonance)",
         titleEn: "Damped, Driven Oscillations and Quality Factor",
         description: "แรงต้านความหนืด การสั่นแบบหน่วงต่ำ วิกฤต และเกินวิกฤต แรงกระตุ้นภายนอก กราฟการสั่นพ้องของแอมพลิจูด และค่าประกอบคุณภาพ Q"
+      },
+      {
+        id: "div-ch03-coupled-complex",
+        numeral: "ภาคที่ 3",
+        titleTh: "ระบบการแกว่งกวัดขั้นสูงและความโกลาหล (Coupled Oscillators, Chaos & Torsional Systems)",
+        titleEn: "Coupled Oscillations, Deterministic Chaos & Torsion Dynamics",
+        description: "ระบบสั่นแบบคู่ควบ โหมดปกติ การเกิดบีตส์ ลูกตุ้มคู่ ความโกลาหลแบบดีเทอร์มินิสติก เลขชี้กำลังเลียปูนอฟ และลูกตุ้มทอร์ชัน"
       }
     ],
 
@@ -59,7 +66,10 @@
       { sym: "k", nameTh: "ค่านิจสปริง / สติฟเนส", nameEn: "Spring Constant / Stiffness", unit: "\\text{N/m}", domain: "dynamics", domainTh: "พลศาสตร์", note: "ความชันของแรงคืนตัวตามกฎของฮุก F = -kx" },
       { sym: "E", nameTh: "พลังงานกลรวมใน SHM", nameEn: "Total Mechanical Energy", unit: "\\text{J}", domain: "dynamics", domainTh: "พลศาสตร์", note: "E = K + U = (1/2)kA² = (1/2)m v_max² คงที่ตลอดเวลา" },
       { sym: "\\gamma", nameTh: "อัตราส่วนการหน่วง / แดมปิง", nameEn: "Damping Factor", unit: "\\text{s}^{-1}", domain: "damping", domainTh: "การสั่นหน่วง", note: "γ = b / (2m) กำหนดอัตราการสูญเสียพลังงานสู่สิ่งแวดล้อม" },
-      { sym: "Q", nameTh: "ค่าประกอบคุณภาพ (Q-factor)", nameEn: "Quality Factor", unit: "—", domain: "damping", domainTh: "การสั่นพ้อง", note: "Q = ω₀ / (2γ) วัดความคมชัดของพีคการสั่นพ้องและการเก็บพลังงาน" }
+      { sym: "Q", nameTh: "ค่าประกอบคุณภาพ (Q-factor)", nameEn: "Quality Factor", unit: "—", domain: "damping", domainTh: "การสั่นพ้อง", note: "Q = ω₀ / (2γ) วัดความคมชัดของพีคการสั่นพ้องและการเก็บพลังงาน" },
+      { sym: "\\omega_1, \\omega_2", nameTh: "ความถี่เชิงมุมของโหมดปกติ", nameEn: "Normal Mode Frequencies", unit: "\\text{rad/s}", domain: "coupled", domainTh: "การสั่นคู่ควบ", note: "ความถี่เฉพาะที่ทุกส่วนของระบบสั่นด้วยเฟสร่วมกัน (สมมาตรและปฏิสมมาตร)" },
+      { sym: "\\lambda", nameTh: "เลขชี้กำลังเลียปูนอฟ", nameEn: "Lyapunov Exponent", unit: "\\text{s}^{-1}", domain: "chaos", domainTh: "ความโกลาหล", note: "อัตราการแยกออกจากกันแบบเอ็กซ์โพเนนเชียลของวิถีสภาวะที่ใกล้กันมาก (λ > 0 บ่งชี้ความโกลาหล)" },
+      { sym: "\\kappa", nameTh: "ค่านิจการบิดของเส้นลวด", nameEn: "Torsional Stiffness", unit: "\\text{N}\\cdot\\text{m/rad}", domain: "torsion", domainTh: "การบิด", note: "ทอร์กคืนตัวต่อมุมบิด 1 เรเดียน ในลูกตุ้มทอร์ชัน τ = -κ θ" }
     ],
 
     theories: [
@@ -130,31 +140,32 @@
             "ขั้นตอนที่ 5: คำนวณอัตราเร็วสูงสุด $v_{\\text{max}} = \\omega_0 A = (20.0)(0.08) = 1.60\\text{ m/s}$ (เกิดขึ้นเมื่อผ่านจุดสมดุล $x = 0$)",
             "ขั้นตอนที่ 6: คำนวณความเร่งสูงสุด $a_{\\text{max}} = \\omega_0^2 A = (20.0)^2(0.08) = (400)(0.08) = 32.0\\text{ m/s}^2$ (เกิดขึ้นที่จุดปลาย $x = \\pm 0.08\\text{ m}$)"
           ],
-          diagramSvg: `<svg viewBox="0 0 520 180" class="theory-diagram-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพมวลติดสปริง SHM">
-            <rect width="520" height="180" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-            <line x1="40" y1="30" x2="40" y2="150" stroke="#94A3B8" stroke-width="6"/>
-            <line x1="40" y1="148" x2="480" y2="148" stroke="#475569" stroke-width="2"/>
+          diagramSvg: `<svg viewBox="0 0 560 180" class="theory-diagram-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพมวลติดสปริง SHM">
+            <rect width="560" height="180" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <line x1="30" y1="30" x2="30" y2="150" stroke="#94A3B8" stroke-width="6"/>
+            <line x1="30" y1="148" x2="310" y2="148" stroke="#475569" stroke-width="2"/>
             <!-- Spring Coil -->
-            <path d="M 40 90 L 80 90 L 95 70 L 110 110 L 125 70 L 140 110 L 155 70 L 170 110 L 185 70 L 200 110 L 215 90 L 240 90" fill="none" stroke="#38BDF8" stroke-width="3"/>
+            <path d="M 30 90 L 65 90 L 80 70 L 95 110 L 110 70 L 125 110 L 140 70 L 155 110 L 170 70 L 185 110 L 200 90 L 215 90" fill="none" stroke="#38BDF8" stroke-width="3"/>
             <!-- Mass Block -->
-            <rect x="240" y="60" width="60" height="60" rx="6" fill="#EA580C" stroke="#F97316" stroke-width="2"/>
-            <text x="270" y="96" fill="#FFFFFF" font-size="14" font-weight="bold" text-anchor="middle">m</text>
+            <rect x="215" y="60" width="55" height="60" rx="6" fill="#EA580C" stroke="#F97316" stroke-width="2"/>
+            <text x="242" y="96" fill="#FFFFFF" font-size="14" font-weight="bold" text-anchor="middle">m</text>
             <!-- Equilibrium line -->
-            <line x1="200" y1="40" x2="200" y2="150" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,4"/>
-            <text x="200" y="32" fill="#10B981" font-size="11" text-anchor="middle">x = 0 (สมดุล)</text>
+            <line x1="175" y1="40" x2="175" y2="150" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <text x="175" y="32" fill="#10B981" font-size="11" text-anchor="middle">x = 0 (สมดุล)</text>
             <!-- Displacement arrow -->
-            <line x1="200" y1="135" x2="270" y2="135" stroke="#F59E0B" stroke-width="2" marker-end="url(#arr-yellow)"/>
-            <text x="235" y="130" fill="#F59E0B" font-size="11" text-anchor="middle">+x</text>
+            <line x1="175" y1="135" x2="242" y2="135" stroke="#F59E0B" stroke-width="2" marker-end="url(#arr-yellow)"/>
+            <text x="208" y="130" fill="#F59E0B" font-size="11" text-anchor="middle">+x</text>
             <!-- Restoring force arrow -->
-            <line x1="240" y1="75" x2="180" y2="75" stroke="#EF4444" stroke-width="2.5" marker-end="url(#arr-red)"/>
-            <text x="205" y="68" fill="#EF4444" font-size="11" font-weight="bold">F = -kx</text>
-            <!-- Right notes panel -->
-            <g transform="translate(340, 45)">
-              <rect width="160" height="95" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1"/>
-              <text x="15" y="24" fill="#38BDF8" font-size="11" font-weight="bold">คุณสมบัติการสั่น SHM</text>
-              <text x="15" y="44" fill="#F8FAFC" font-size="10">• ที่ x = ±A: v = 0, |a| = a_max</text>
-              <text x="15" y="62" fill="#10B981" font-size="10">• ที่ x = 0: a = 0, |v| = v_max</text>
-              <text x="15" y="80" fill="#F59E0B" font-size="10">• คาบ T ไม่ขึ้นกับแอมพลิจูด A</text>
+            <line x1="215" y1="75" x2="155" y2="75" stroke="#EF4444" stroke-width="2.5" marker-end="url(#arr-red)"/>
+            <text x="180" y="68" fill="#EF4444" font-size="11" font-weight="bold">F = -kx</text>
+            <!-- Right notes panel with ample width -->
+            <g transform="translate(315, 25)">
+              <rect width="230" height="130" rx="8" fill="#1E293B" stroke="#475569" stroke-width="1.5"/>
+              <text x="15" y="24" fill="#38BDF8" font-size="12" font-weight="bold">คุณสมบัติการสั่น SHM</text>
+              <text x="15" y="50" fill="#F8FAFC" font-size="11">• ที่ x = ±A: v = 0, |a| = a_max</text>
+              <text x="15" y="74" fill="#10B981" font-size="11">• ที่ x = 0: a = 0, |v| = v_max</text>
+              <text x="15" y="98" fill="#F59E0B" font-size="11">• คาบ T ไม่ขึ้นกับแอมพลิจูด A</text>
+              <text x="15" y="118" fill="#94A3B8" font-size="10.5">  (T = 2π√(m/k) = ค่าคงที่)</text>
             </g>
           </svg>`,
           diagramCaption: "ระบบมวล-สปริงในแนวราบ: แรงดึงกลับ $F = -kx$ มีทิศพุ่งเข้าหาตำแหน่งสมดุล $x = 0$ สวนทางกับการกระจัดเสมอ"
@@ -210,6 +221,28 @@
               "5. การประมาณมุมเล็ก $\\sin\\theta \\approx \\theta$: $\\frac{d^2\\theta}{dt^2} + \\frac{g}{L}\\theta = 0$",
               "6. เปรียบเทียบกับ $\\ddot{\\theta} + \\omega_0^2\\theta = 0 \\implies \\omega_0 = \\sqrt{\\frac{g}{L}}$ และ $T = 2\\pi\\sqrt{\\frac{L}{g}}$"
             ]
+          },
+          {
+            name: "อนุกรมของบอร์ดาสำหรับคาบลูกตุ้มมุมกว้าง (Borda's Large-Angle Period Series)",
+            latex: "T = 2\\pi\\sqrt{\\frac{L}{g}}\\left[1 + \\frac{1}{4}\\sin^2\\left(\\frac{\\theta_0}{2}\\right) + \\frac{9}{64}\\sin^4\\left(\\frac{\\theta_0}{2}\\right) + \\frac{25}{256}\\sin^6\\left(\\frac{\\theta_0}{2}\\right) + \\dots\\right]",
+            symbols: [
+              { sym: "T", desc: "คาบการแกว่งที่แท้จริงที่มุมกว้างใดๆ", unit: "\\text{s}" },
+              { sym: "T_0", desc: "คาบการแกว่งมุมเล็ก 2π√(L/g)", unit: "\\text{s}" },
+              { sym: "\\theta_0", desc: "แอมพลิจูดเชิงมุมสูงสุด", unit: "\\text{rad หรือ } ^\\circ" },
+              { sym: "k", desc: "มอดุลัสเอลลิปติก k = sin(θ₀/2)", unit: "—" }
+            ],
+            derivationSteps: [
+              "1. จากการอนุรักษ์พลังงานกล: (1/2) m L^2 θ̇^2 + mg L (1 - cos θ) = mg L (1 - cos θ_0)",
+              "2. จัดรูปอัตราเร็วเชิงมุม: θ̇ = dθ/dt = √[2(g/L)(cos θ - cos θ_0)]",
+              "3. ใช้เอกลักษณ์ cos θ = 1 - 2 sin²(θ/2): θ̇ = 2 √(g/L) √[sin²(θ_0/2) - sin²(θ/2)]",
+              "4. คาบเต็มรอบคือ 4 เท่าของการเคลื่อนที่จาก 0 ถึง θ_0: T = 4 ∫_0^{θ_0} dθ / θ̇",
+              "5. กำหนดตัวแปรแทนที่ sin(θ/2) = sin(θ_0/2) sin φ = k sin φ โดย k = sin(θ_0/2)",
+              "6. อนุพันธ์: (1/2) cos(θ/2) dθ = k cos φ dφ => dθ = 2 k cos φ dφ / √(1 - k² sin² φ)",
+              "7. รูปอินทิกรัลเอลลิปติกสมบูรณ์ชนิดที่หนึ่ง (Complete Elliptic Integral of the First Kind): T = 4 √(L/g) ∫_0^{π/2} dφ / √(1 - k² sin² φ) = 4 √(L/g) K(k)",
+              "8. กระจายอนุกรมทวินาม (1 - k² sin² φ)^{-1/2} = 1 + (1/2) k² sin² φ + (3/8) k⁴ sin⁴ φ + (5/16) k⁶ sin⁶ φ + ...",
+              "9. อินทิเกรตตามสูตรวอลลิส: ∫_0^{π/2} sin² φ dφ = π/4, ∫_0^{π/2} sin⁴ φ dφ = 3π/16",
+              "10. ได้อนุกรมของบอร์ดา: T = 2π √(L/g) [1 + (1/4) sin²(θ_0/2) + (9/64) sin⁴(θ_0/2) + (25/256) sin⁶(θ_0/2) + ...]"
+            ]
           }
         ],
         application: {
@@ -218,13 +251,16 @@
           invalidWhen: "เมื่อมุมแกว่งกว้าง เช่น $\\theta_0 = 60^\\circ$ ความคลาดเคลื่อนของสูตร $2\\pi\\sqrt{L/g}$ จะพุ่งสูงเกิน 7% หรือเมื่อเชือกหย่อน"
         },
         example: {
-          problem: "นักสำรวจต้องการวัดค่าความเร่งโน้มถ่วง $g$ บนดาวเคราะห์ดวงหนึ่ง โดยใช้ลูกตุ้มอย่างง่ายความยาวสาย $L = 1.000\\text{ m}$ จับเวลาการแกว่งกวัดครบ 50 รอบได้เวลา $110.0\\text{ s}$ ด้วยมุมแกว่งเล็ก $\\theta_0 = 4^\\circ$ จงหา: (ก) คาบการแกว่ง $T$ และ (ข) ค่าความเร่งโน้มถ่วง $g$ ของดาวเคราะห์ดวงนี้",
+          problem: "ลูกตุ้มอย่างง่ายความยาว $L = 1.000\\text{ m}$ แกว่งบนโลก ($g = 9.80665\\text{ m/s}^2$): (ก) คำนวณคาบมุมเล็ก $T_0$ (ข) หากดึงลูกตุ้มทำมุมกว้าง $\\theta_0 = 60^\\circ$ แล้วปล่อย จงคำนวณคาบที่แท้จริง $T$ โดยใช้อนุกรมของบอร์ดา (ถึงพจน์กำลังสี่) และเปรียบเทียบเปอร์เซ็นต์ความคลาดเคลื่อน",
           steps: [
-            "ขั้นตอนที่ 1: หาคาบการแกว่ง 1 รอบ: $T = \\frac{\\text{เวลารวม}}{\\text{จำนวนรอบ}} = \\frac{110.0}{50} = 2.200\\text{ s}$",
-            "ขั้นตอนที่ 2: ตั้งสมการคาบของลูกตุ้มอย่างง่าย: $T = 2\\pi\\sqrt{\\frac{L}{g}}$",
-            "ขั้นตอนที่ 3: ยกกำลังสองทั้งสองข้าง: $T^2 = 4\\pi^2 \\frac{L}{g}$",
-            "ขั้นตอนที่ 4: จัดรูปหาค่า $g$: $g = \\frac{4\\pi^2 L}{T^2}$",
-            "ขั้นตอนที่ 5: แทนค่าพารามิเตอร์: $g = \\frac{4\\pi^2 (1.000)}{(2.200)^2} = \\frac{39.4784}{4.84} \\approx 8.157\\text{ m/s}^2$"
+            "ขั้นตอนที่ 1: คำนวณคาบมุมเล็ก: $T_0 = 2\\pi\\sqrt{\\frac{L}{g}} = 2\\pi\\sqrt{\\frac{1.000}{9.80665}} \\approx 2.0064\\text{ s}$",
+            "ขั้นตอนที่ 2: วิเคราะห์ที่มุมกว้าง $\\theta_0 = 60^\\circ$: คำนวณ $\\theta_0/2 = 30^\\circ$",
+            "ขั้นตอนที่ 3: หาค่า $\\sin(\\theta_0/2) = \\sin(30^\\circ) = 0.5000$",
+            "ขั้นตอนที่ 4: คำนวณพจน์ปรับแก้ในอนุกรมของบอร์ดา:\n• พจน์ที่ 1: $\\frac{1}{4}\\sin^2(30^\\circ) = \\frac{1}{4}(0.5)^2 = \\frac{0.25}{4} = 0.0625$\n• พจน์ที่ 2: $\\frac{9}{64}\\sin^4(30^\\circ) = \\frac{9}{64}(0.0625) \\approx 0.008789$\n• พจน์ที่ 3: $\\frac{25}{256}\\sin^6(30^\\circ) = \\frac{25}{256}(0.015625) \\approx 0.001526$",
+            "ขั้นตอนที่ 5: รวมตัวคูณปรับแก้: $1 + 0.0625 + 0.008789 + 0.001526 \\approx 1.0728$",
+            "ขั้นตอนที่ 6: คำนวณคาบจริงที่ $\\theta_0 = 60^\\circ$:\n$T = T_0 \\times 1.0728 = (2.0064)(1.0728) \\approx 2.1525\\text{ s}$",
+            "ขั้นตอนที่ 7: คำนวณความคลาดเคลื่อนหากใช้สูตรมุมเล็ก: $\\frac{2.1525 - 2.0064}{2.1525} \\times 100\\% \\approx +7.25\\%$",
+            "สรุป: ที่มุม $60^\\circ$ คาบจริงจะยาวนานขึ้นกว่าสูตรมุมเล็กถึง $7.25\\%$ (ช้าลง $0.146\\text{ วินาทีต่อรอบ}$) หากนำไปใช้กับนาฬิกาลูกตุ้มจะเดินช้าไปถึง $1.74\\text{ ชั่วโมงต่อวัน}$"
           ],
           diagramSvg: `<svg viewBox="0 0 520 180" class="theory-diagram-svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="แผนภาพลูกตุ้มอย่างง่าย">
             <rect width="520" height="180" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
@@ -576,6 +612,333 @@
             verificationStatus: "verified_direct_content",
             evidencePin: "Billah & Scanlan (1991) pp. 118–124: Distinction between linear forced resonance and single-degree-of-freedom torsional flutter.",
             note: "งานวิจัยหักล้างความเข้าใจผิดเรื่องการสั่นพ้องของสะพานทาโคมา"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 6: Coupled Harmonic Oscillators & Normal Modes
+      // ----------------------------------------------------------------------
+      {
+        id: 6,
+        divisionId: "div-ch03-coupled-complex",
+        divisionTitle: "ภาคที่ 3: ระบบการแกว่งกวัดขั้นสูงและความโกลาหล",
+        numberTh: "ทฤษฎีที่ 6",
+        titleTh: "ระบบการสั่นแบบคู่ควบ โหมดปกติ และปรากฏการณ์บีตส์",
+        titleEn: "Coupled Harmonic Oscillators, Normal Modes & Beat Phenomena",
+        type: "ทฤษฎีระบบหลายองศาอิสระ (Multi-Degree-of-Freedom Dynamics)",
+        summary: "สมการการเคลื่อนที่ของมวลสองก้อนที่เชื่อมด้วยสปริงคู่ควบ โคออร์ดิเนตปกติ ความถี่โหมดสมมาตรและปฏิสมมาตร และการถ่ายโอนพลังงานผ่านบีตส์",
+        definition: {
+          text: "ระบบการสั่นแบบคู่ควบ (Coupled Oscillators) คือ ระบบทางกลที่ประกอบด้วยตัวแกว่งกวัดตั้งแต่สองตัวขึ้นไปที่มีปฏิสัมพันธ์หรือแลกเปลี่ยนพลังงานกลระหว่างกัน เช่น มวลสองก้อน $m_1, m_2$ ที่เชื่อมกันด้วยสปริงคู่ควบ $k_c$ (Coupling spring) หรือลูกตุ้มสองตัวที่แขวนจากคานร่วมกัน\n\nโหมดปกติ (Normal Modes) คือ รูปแบบการสั่นเฉพาะตัวของระบบที่ทุกส่วนของระบบสั่นด้วย 'ความถี่เดียวกัน' (Normal Frequency) และ 'เฟสสัมพันธ์คงที่' โดยระบบที่มี $N$ องศาความอิสระ (Degrees of Freedom) จะมีโหมดปกติอิสระกัน $N$ โหมด ซึ่งการเคลื่อนที่ทั่วไปใดๆ ของระบบสามารถเขียนแทนด้วยการรวมเชิงเส้น (Superposition) ของโหมดปกติเหล่านี้เสมอ"
+        },
+        principle: {
+          text: "การวิเคราะห์มวลสมมาตรสองก้อน ($m_1 = m_2 = m$) ยึดกับผนังด้วยสปริง $k$ และเชื่อมระหว่างกันด้วยสปริง $k_c$:\nสมการการเคลื่อนที่ตามกฎข้อ 2 ของนิวตัน:\n$$\\begin{cases} m\\ddot{x}_1 = -k x_1 - k_c(x_1 - x_2) \\\\ m\\ddot{x}_2 = -k x_2 - k_c(x_2 - x_1) \\end{cases}$$\nนิยามโคออร์ดิเนตปกติ (Normal Coordinates):\n1. โหมดสมมาตร (Symmetric Mode: In-Phase): $q_1 = \\frac{x_1 + x_2}{\\sqrt{2}}$\n   บวกสองสมการเข้าด้วยกัน: $m\\ddot{q}_1 = -k q_1 \\implies \\ddot{q}_1 + \\omega_1^2 q_1 = 0$ โดยที่ $\\omega_1 = \\sqrt{\\frac{k}{m}}$\n   ในโหมดนี้ มวลทั้งสองเคลื่อนที่ไปทางเดียวกัน สปริงตรงกลางไม่ยืดหด จึงสั่นด้วยความถี่ของสปริงเดี่ยว\n2. โหมดปฏิสมมาตร (Antisymmetric Mode: Out-of-Phase): $q_2 = \\frac{x_1 - x_2}{\\sqrt{2}}$\n   ลบสองสมการออกจากกัน: $m\\ddot{q}_2 = -(k + 2k_c)q_2 \\implies \\ddot{q}_2 + \\omega_2^2 q_2 = 0$ โดยที่ $\\omega_2 = \\sqrt{\\frac{k + 2k_c}{m}}$\n   ในโหมดนี้ มวลทั้งสองเคลื่อนที่สวนทางกัน สปริงตรงกลางยืดหดสองเท่า จึงมีความถี่สูงกว่า\n\nปรากฏการณ์บีตส์และการถ่ายโอนพลังงาน (Beats & Energy Exchange):\nหากดึงมวลก้อนที่ 1 ออกมาเป็นระยะ $A$ ในขณะที่มวลก้อนที่ 2 อยู่ที่สมดุล ($x_1(0) = A, x_2(0) = 0$) แล้วปล่อยจากสภาพนิ่ง ผลเฉลยคือ:\n$$x_1(t) = A\\cos\\left(\\frac{\\omega_2 - \\omega_1}{2}t\\right)\\cos\\left(\\frac{\\omega_1 + \\omega_2}{2}t\\right)$$\n$$x_2(t) = A\\sin\\left(\\frac{\\omega_2 - \\omega_1}{2}t\\right)\\sin\\left(\\frac{\\omega_1 + \\omega_2}{2}t\\right)$$\nพลังงานจลน์และศักย์จะไหลถ่ายโอนสลับไปมาระหว่างมวลก้อนที่ 1 และก้อนที่ 2 อย่างสมบูรณ์ด้วยความถี่บีตส์ $\\omega_{\\text{beat}} = \\omega_2 - \\omega_1$"
+        },
+        formulas: [
+          {
+            name: "ความถี่เชิงมุมของโหมดปกติในระบบสปริงคู่ควบ",
+            latex: "\\omega_1 = \\sqrt{\\frac{k}{m}}, \\quad \\omega_2 = \\sqrt{\\frac{k + 2k_c}{m}}, \\quad \\omega_{\\text{beat}} = |\\omega_2 - \\omega_1|",
+            symbols: [
+              { sym: "\\omega_1", desc: "ความถี่โหมดสมมาตร (มวลเคลื่อนที่ไปทางเดียวกัน)", unit: "\\text{rad/s}" },
+              { sym: "\\omega_2", desc: "ความถี่โหมดปฏิสมมาตร (มวลเคลื่อนที่สวนทางกัน)", unit: "\\text{rad/s}" },
+              { sym: "k", desc: "ค่านิจสปริงยึดผนังด้านนอก", unit: "\\text{N/m}" },
+              { sym: "k_c", desc: "ค่านิจสปริงคู่ควบตรงกลาง", unit: "\\text{N/m}" },
+              { sym: "m", desc: "มวลของวัตถุแต่ละก้อน", unit: "\\text{kg}" }
+            ],
+            derivationSteps: [
+              "1. สมการอนุพันธ์: m ẍ_1 + (k + k_c)x_1 - k_c x_2 = 0 และ m ẍ_2 + (k + k_c)x_2 - k_c x_1 = 0",
+              "2. เขียนในรูปเมทริกซ์: M ẍ + K x = 0 โดย K = [[k+k_c, -k_c], [-k_c, k+k_c]]",
+              "3. เสนอผลเฉลย x(t) = v e^{iωt} จะได้สมการลักษณะเฉพาะ: det(K - ω² M) = 0",
+              "4. det = (k + k_c - m ω²)² - k_c² = 0",
+              "5. ถอดราก: k + k_c - m ω² = ±k_c",
+              "6. กรณี +k_c: m ω₁² = k => ω₁ = √(k/m) (เวกเตอร์ลักษณะเฉพาะ [1, 1]ᵀ)",
+              "7. กรณี -k_c: m ω₂² = k + 2k_c => ω₂ = √[(k + 2k_c)/m] (เวกเตอร์ลักษณะเฉพาะ [1, -1]ᵀ)"
+            ]
+          }
+        ],
+        application: {
+          text: "การสั่นของพันธะเคมีในโมเลกุลสามอะตอม (เช่น CO₂ สั่นแบบสมมาตร ปฏิสมมาตร และดัดงอ), สายส่งกำลังไฟฟ้าแรงสูงที่มีสเปเซอร์คู่ควบ, การถ่ายโอนพลังงานระหว่างสายกีตาร์, และระบบกันสะเทือนหลายจุดในยานยนต์",
+          validWhen: "การกระจัดมีขนาดเล็กพอที่แรงคืนตัวของสปริงทุกตัวยังเป็นเชิงเส้นตามกฎของฮุก",
+          invalidWhen: "แอมพลิจูดสูงจนเกิดพฤติกรรมไม่เป็นเชิงเส้น (Nonlinear coupling) หรือมีพลังงานสูงพอที่จะกระตุ้นความโกลาหล"
+        },
+        example: {
+          problem: "มวลสองก้อน $m = 0.50\\text{ kg}$ วางบนพื้นลื่น ยึดกับผนังด้วยสปริง $k = 50\\text{ N/m}$ และเชื่อมต่อกันด้วยสปริงคู่ควบ $k_c = 15\\text{ N/m}$: (ก) คำนวณความถี่เชิงมุมของทั้งสองโหมด $\\omega_1$ และ $\\omega_2$ (ข) หาความถี่ของการเกิดบีตส์ $f_{\\text{beat}}$ และคาบเวลาที่พลังงานถ่ายโอนจากก้อนแรกไปก้อนที่สองอย่างสมบูรณ์",
+          steps: [
+            "ขั้นตอนที่ 1: คำนวณความถี่โหมดสมมาตร:\n$\\omega_1 = \\sqrt{\\frac{k}{m}} = \\sqrt{\\frac{50}{0.50}} = \\sqrt{100} = 10.0\\text{ rad/s}$",
+            "ขั้นตอนที่ 2: คำนวณความถี่โหมดปฏิสมมาตร:\n$\\omega_2 = \\sqrt{\\frac{k + 2k_c}{m}} = \\sqrt{\\frac{50 + 2(15)}{0.50}} = \\sqrt{\\frac{80}{0.50}} = \\sqrt{160} \\approx 12.65\\text{ rad/s}$",
+            "ขั้นตอนที่ 3: คำนวณความถี่เชิงมุมบีตส์:\n$\\omega_{\\text{beat}} = \\omega_2 - \\omega_1 = 12.65 - 10.00 = 2.65\\text{ rad/s}$",
+            "ขั้นตอนที่ 4: คำนวณความถี่บีตส์ในหน่วยเฮิรตซ์:\n$f_{\\text{beat}} = \\frac{\\omega_{\\text{beat}}}{2\\pi} = \\frac{2.65}{2\\pi} \\approx 0.422\\text{ Hz}$",
+            "ขั้นตอนที่ 5: คำนวณเวลาในการถ่ายโอนพลังงานสมบูรณ์ (ครึ่งคาบบีตส์):\n$t_{\\text{transfer}} = \\frac{\\pi}{\\omega_{\\text{beat}}} = \\frac{\\pi}{2.65} \\approx 1.19\\text{ s}$",
+            "สรุป: โหมดสมมาตรสั่นด้วยความถี่ $10.0\\text{ rad/s}$ โหมดปฏิสมมาตรสั่นด้วย $12.65\\text{ rad/s}$ และพลังงานจะไหลจากก้อนแรกไปยังก้อนที่สองจนก้อนแรกหยุดนิ่งทุกๆ $1.19\\text{ วินาที}$"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ระบบสั่นคู่ควบและโหมดปกติ">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Left & Right Walls -->
+            <line x1="30" y1="40" x2="30" y2="160" stroke="#64748B" stroke-width="6"/>
+            <line x1="490" y1="40" x2="490" y2="160" stroke="#64748B" stroke-width="6"/>
+            <line x1="30" y1="158" x2="490" y2="158" stroke="#475569" stroke-width="2"/>
+            <!-- Spring 1 -->
+            <path d="M 30 100 L 60 100 L 70 85 L 80 115 L 90 85 L 100 115 L 110 85 L 120 115 L 130 100 L 150 100" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+            <text x="90" y="75" fill="#38BDF8" font-size="10" text-anchor="middle">k</text>
+            <!-- Mass 1 -->
+            <rect x="150" y="75" width="50" height="50" rx="4" fill="#0284C7" stroke="#38BDF8" stroke-width="2"/>
+            <text x="175" y="105" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">m₁</text>
+            <!-- Coupling Spring -->
+            <path d="M 200 100 L 230 100 L 240 85 L 250 115 L 260 85 L 270 115 L 280 85 L 290 115 L 300 100 L 320 100" fill="none" stroke="#F59E0B" stroke-width="2.5"/>
+            <text x="260" y="75" fill="#F59E0B" font-size="10" font-weight="bold" text-anchor="middle">k_c (คู่ควบ)</text>
+            <!-- Mass 2 -->
+            <rect x="320" y="75" width="50" height="50" rx="4" fill="#0284C7" stroke="#38BDF8" stroke-width="2"/>
+            <text x="345" y="105" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">m₂</text>
+            <!-- Spring 2 -->
+            <path d="M 370 100 L 400 100 L 410 85 L 420 115 L 430 85 L 440 115 L 450 85 L 460 115 L 470 100 L 490 100" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+            <text x="430" y="75" fill="#38BDF8" font-size="10" text-anchor="middle">k</text>
+            <!-- Mode Indicators -->
+            <g transform="translate(110, 140)">
+              <text x="0" y="35" fill="#10B981" font-size="10" font-weight="bold">โหมด 1 (In-Phase): x₁ → , x₂ → (ω₁ = √(k/m))</text>
+              <text x="0" y="50" fill="#EF4444" font-size="10" font-weight="bold">โหมด 2 (Out-of-Phase): x₁ → , x₂ ← (ω₂ = √[(k+2k_c)/m])</text>
+            </g>
+          </svg>`,
+          diagramCaption: "ระบบสั่นแบบคู่ควบ: มวลสองก้อนเชื่อมโยงกันด้วยสปริงกลาง k_c เกิดเป็นโหมดปกติสองโหมดและปรากฏการณ์ถ่ายโอนพลังงานแบบบีตส์"
+        },
+        observations: [
+          "การคงอยู่ของโหมดปกติ: หากกระตุ้นระบบให้เริ่มต้นในโหมดปกติโหมดใดโหมดหนึ่ง ระบบจะสั่นในโหมดนั้นตลอดไปโดยไม่มีการถ่ายเทพลังงานไปยังโหมดอื่น",
+          "จากมวลไม่ต่อเนื่องสู่คลื่นในตัวกลางต่อเนื่อง: เมื่อจำนวนมวล $N \\to \\infty$ และระยะห่าง $\\Delta x \\to 0$ ระบบมวลติดสปริงคู่ควบจะกลายสภาพเป็นสมการคลื่นต่อเนื่อง (Wave Equation) ในของแข็ง"
+        ],
+        citation: "David Tong (2005), Classical Dynamics, Cambridge DAMTP, Section 2: Small Oscillations and Normal Modes.",
+        citations: [
+          {
+            title: "Lectures on Classical Dynamics",
+            authors: "David Tong",
+            source: "Cambridge University DAMTP, Chapter 2: Small Oscillations, pp. 25–48",
+            year: "2005",
+            url: "https://www.damtp.cam.ac.uk/user/tong/dynamics.html",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Tong (2005) DAMTP Sec 2.1–2.3: Coupled oscillators, normal modes, matrix eigenvalue formulation and beat phenomena.",
+            note: "เอกสารบรรยายกลศาสตร์ดั้งเดิม มหาวิทยาลัยเคมบริดจ์"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 7: Double Pendulum, Nonlinear Dynamics & Deterministic Chaos
+      // ----------------------------------------------------------------------
+      {
+        id: 7,
+        divisionId: "div-ch03-coupled-complex",
+        divisionTitle: "ภาคที่ 3: ระบบการแกว่งกวัดขั้นสูงและความโกลาหล",
+        numberTh: "ทฤษฎีที่ 7",
+        type: "ทฤษฎีความไม่เป็นเชิงเส้นและความโกลาหล (Nonlinear Dynamics & Chaos)",
+        titleTh: "ลูกตุ้มคู่ ความไม่เป็นเชิงเส้น และความโกลาหลแบบดีเทอร์มินิสติก",
+        titleEn: "Double Pendulum, Nonlinear Dynamics & Deterministic Chaos",
+        summary: "สมการการเคลื่อนที่ลากรองจ์ของลูกตุ้มคู่ ความไม่เป็นเชิงเส้นอย่างยิ่งยวด ความไวต่อเงื่อนไขเริ่มต้น ปรากฏการณ์ผีเสื้อขยับปีก และเลขชี้กำลังเลียปูนอฟ",
+        definition: {
+          text: "ลูกตุ้มคู่ (Double Pendulum) คือ ระบบกลศาสตร์ที่ประกอบด้วยลูกตุ้มสองตัวเชื่อมต่อกันแบบอนุกรม (ลูกตุ้มตัวที่สองแขวนอยู่ที่ปลายมวลของลูกตุ้มตัวแรก) แม้ว่าระบบนี้จะถูกควบคุมด้วยกฎทางฟิสิกส์คลาสสิกที่แน่นอน (Deterministic) โดยไม่มีองค์ประกอบของการสุ่ม (No stochastic noise) แต่เมื่อพลังงานของระบบสูงเกินขีดจำกัดมุมเล็ก พฤติกรรมของระบบจะเปลี่ยนผ่านจากการแกว่งกวัดที่เป็นระเบียบไปสู่ 'ความโกลาหลแบบดีเทอร์มินิสติก' (Deterministic Chaos)\n\nคุณลักษณะของความโกลาหล (Hallmarks of Chaos):\n1. ความไวสูงสุดต่อเงื่อนไขเริ่มต้น (Extreme Sensitivity to Initial Conditions หรือ Butterfly Effect): สภาวะเริ่มต้นที่ต่างกันเพียง $10^{-10}$ เรเดียน จะแยกทางออกจากกันแบบเอ็กซ์โพเนนเชียลในเวลาอันสั้น\n2. เลขชี้กำลังเลียปูนอฟเป็นบวก (Positive Lyapunov Exponent, $\\lambda > 0$): $\\Delta \\theta(t) \\sim \\Delta \\theta(0) e^{\\lambda t}$\n3. วิถีในปริภูมิเฟสแบบแฟรกทัล (Strange Attractor in Phase Space) และไม่สามารถหาผลเฉลยในรูปฟังก์ชันวิเคราะห์ปิดได้ (Non-integrable system)"
+        },
+        principle: {
+          text: "การอนุมานสมการการเคลื่อนที่ผ่านกลศาสตร์ลากรองจ์ (Lagrangian Formulation):\nกำหนดให้ลูกตุ้มมีความยาวสาย $L_1, L_2$ และมวล $m_1, m_2$ มุมเบี่ยงเบนเทียบแนวดิ่งคือ $\\theta_1, \\theta_2$:\nพลังงานจลน์รวม ($T$) และพลังงานศักย์รวม ($V$):\n$$T = \\frac{1}{2}(m_1 + m_2)L_1^2 \\dot{\\theta}_1^2 + \\frac{1}{2}m_2 L_2^2 \\dot{\\theta}_2^2 + m_2 L_1 L_2 \\dot{\\theta}_1 \\dot{\\theta}_2 \\cos(\\theta_1 - \\theta_2)$$\n$$V = -(m_1 + m_2)g L_1 \\cos\\theta_1 - m_2 g L_2 \\cos\\theta_2$$\nลากรองเจียนของระบบคือ $L = T - V$ นำเข้าสู่สมการออยเลอร์-ลากรองจ์ $\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{\\theta}_i}\\right) - \\frac{\\partial L}{\\partial \\theta_i} = 0$ จะได้สมการอนุพันธ์อันดับสองไม่เป็นเชิงเส้นคู่ควบ:\n$$(m_1 + m_2)L_1 \\ddot{\\theta}_1 + m_2 L_2 \\ddot{\\theta}_2 \\cos(\\theta_1 - \\theta_2) + m_2 L_2 \\dot{\\theta}_2^2 \\sin(\\theta_1 - \\theta_2) + (m_1 + m_2)g\\sin\\theta_1 = 0$$\n$$m_2 L_2 \\ddot{\\theta}_2 + m_2 L_1 \\ddot{\\theta}_1 \\cos(\\theta_1 - \\theta_2) - m_2 L_1 \\dot{\\theta}_1^2 \\sin(\\theta_1 - \\theta_2) + m_2 g\\sin\\theta_2 = 0$$\nสังเกตพจน์คู่ควบ $\\cos(\\theta_1 - \\theta_2)$ และ $\\sin(\\theta_1 - \\theta_2)$ ซึ่งเป็นฟังก์ชันไม่เป็นเชิงเส้นรุนแรง ทำให้ระบบไม่มีปริมาณอนุรักษ์อื่นนอกจากพลังงานรวม ส่งผลให้วิถีไม่สามารถอินทิเกรตหาคำตอบแบบปิดได้"
+        },
+        formulas: [
+          {
+            name: "สมการออยเลอร์-ลากรองจ์และการแยกออกจากกันของวิถีตามเลียปูนอฟ",
+            latex: "\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{\\theta}_i}\\right) - \\frac{\\partial L}{\\partial \\theta_i} = 0, \\quad |\\Delta\\vec{\\theta}(t)| \\approx |\\Delta\\vec{\\theta}(0)| e^{\\lambda t}",
+            symbols: [
+              { sym: "L", desc: "ลากรองเจียนของระบบ (T - V)", unit: "\\text{J}" },
+              { sym: "\\theta_1, \\theta_2", desc: "มุมแกว่งของท่อนที่ 1 และ 2", unit: "\\text{rad}" },
+              { sym: "\\lambda", desc: "เลขชี้กำลังเลียปูนอฟสูงสุด (Maximal Lyapunov Exponent)", unit: "\\text{s}^{-1}" },
+              { sym: "t_{\\text{Lyapunov}}", desc: "ขอบเขตเวลาการทำนายล่วงหน้า (1/λ)", unit: "\\text{s}" }
+            ],
+            derivationSteps: [
+              "1. ระบุตำแหน่งในพิกัดคาร์ทีเซียน: x_1 = L_1 sin θ_1, y_1 = -L_1 cos θ_1",
+              "2. x_2 = x_1 + L_2 sin θ_2, y_2 = y_1 - L_2 cos θ_2",
+              "3. หาอนุพันธ์ความเร็ว v_1^2 = ẋ_1^2 + ẏ_1^2 = L_1^2 θ̇_1^2",
+              "4. v_2^2 = L_1^2 θ̇_1^2 + L_2^2 θ̇_2^2 + 2 L_1 L_2 θ̇_1 θ̇_2 cos(θ_1 - θ_2)",
+              "5. ลากรองเจียน L = (1/2)m_1 v_1^2 + (1/2)m_2 v_2^2 - m_1 g y_1 - m_2 g y_2",
+              "6. คำนวณสมการออยเลอร์-ลากรองจ์ ได้สมการการเคลื่อนที่คู่ควบ 2 ตัวแปร",
+              "7. สำหรับมุมเล็ก θ_1, θ_2 << 1: cos(θ_1 - θ_2) ≈ 1, sin θ ≈ θ ระบบลดรูปเป็นเชิงเส้นและมีโหมดปกติ 2 โหมด",
+              "8. สำหรับมุมกว้าง พจน์ไม่เป็นเชิงเส้นครองความเป็นใหญ่ เกิดการแยกวิถีแบบ e^{λ t}"
+            ]
+          }
+        ],
+        application: {
+          text: "การศึกษาพลศาสตร์การพยากรณ์อากาศและบรรยากาศ (แบบจำลองลอเรนซ์), เสถียรภาพของวงโคจรสามวัตถุในกลศาสตร์ดาราศาสตร์ (Three-Body Problem), แขนกลหุ่นยนต์หลายข้อต่อความเร็วสูง, และการออกแบบสะพานคู่ควบ",
+          validWhen: "ใช้ได้กับระบบลูกตุ้มคู่ระนาบ 2 มิติที่ข้อต่อไม่มีแรงเสียดทานและแท่งเป็นของแข็งเกร็ง",
+          invalidWhen: "การประมาณว่าการเคลื่อนที่จะเป็นพีริออดิกซ้ำรอยเดิมเมื่อแอมพลิจูดสูง (เพราะระบบโกลาหลจะไม่มีวันกลับมาซ้ำรอยเดิมอย่างแท้จริง)"
+        },
+        example: {
+          problem: "ลูกตุ้มคู่ความยาวเท่ากัน $L_1 = L_2 = 0.50\\text{ m}$ มวลเท่ากัน $m_1 = m_2 = 0.20\\text{ kg}$ มีค่าเลขชี้กำลังเลียปูนอฟ $\\lambda = 2.5\\text{ s}^{-1}$ ในย่านพลังงานหนึ่ง ถ้าปล่อยลูกตุ้มสองชุดที่มีมุมเริ่มต้นต่างกันเพียง $\\Delta\\theta_0 = 10^{-6}\\text{ rad}$ (หนึ่งในล้านเรเดียน) จงหา: (ก) เวลาเลียปูนอฟ $t_{\\text{Lyapunov}}$ และ (ข) เวลาที่ผลต่างของมุมจะขยายตัวจนมีขนาด $1.0\\text{ rad}$ (ประมาณ $57^\\circ$ สิ้นสุดความสามารถในการทำนาย)",
+          steps: [
+            "ขั้นตอนที่ 1: คำนวณเวลาเลียปูนอฟ (Lyapunov Time): $t_{\\text{Lyapunov}} = \\frac{1}{\\lambda} = \\frac{1}{2.5} = 0.40\\text{ s}$",
+            "ขั้นตอนที่ 2: ตั้งสมการการแยกตัวแบบเอ็กซ์โพเนนเชียล: $\\Delta\\theta(t) = \\Delta\\theta_0 e^{\\lambda t}$",
+            "ขั้นตอนที่ 3: แทนค่าเป้าหมาย $\\Delta\\theta(t) = 1.0\\text{ rad}$ และ $\\Delta\\theta_0 = 10^{-6}\\text{ rad}$:\n$1.0 = 10^{-6} e^{2.5 t} \\implies e^{2.5 t} = 10^6$",
+            "ขั้นตอนที่ 4: ใส่ลอการิทึมธรรมชาติทั้งสองข้าง: $2.5 t = \\ln(10^6) = 6\\ln(10) \\approx 6(2.3026) \\approx 13.8155$",
+            "ขั้นตอนที่ 5: แก้หาเวลา $t$: $t = \\frac{13.8155}{2.5} \\approx 5.53\\text{ s}$",
+            "สรุป: แม้เงื่อนไขเริ่มต้นจะแม่นยำถึงระดับ 1 ใน 1,000,000 เรเดียน แต่หลังจากผ่านไปเพียง $5.53\\text{ วินาที}$ ความคลาดเคลื่อนจะระเบิดออกจนมีขนาดใหญ่ถึง $57^\\circ$ ทำให้ไม่สามารถทำนายตำแหน่งของลูกตุ้มได้อย่างสิ้นเชิง"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ลูกตุ้มคู่และความโกลาหล">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Pivot -->
+            <line x1="160" y1="20" x2="240" y2="20" stroke="#64748B" stroke-width="3"/>
+            <circle cx="200" cy="20" r="5" fill="#94A3B8"/>
+            <!-- Rod 1 -->
+            <line x1="200" y1="20" x2="245" y2="75" stroke="#38BDF8" stroke-width="2.5"/>
+            <circle cx="245" cy="75" r="12" fill="#0284C7" stroke="#38BDF8" stroke-width="2"/>
+            <text x="245" y="79" fill="#FFFFFF" font-size="9" text-anchor="middle">m₁</text>
+            <text x="210" y="45" fill="#38BDF8" font-size="10">L₁</text>
+            <!-- Rod 2 -->
+            <line x1="245" y1="75" x2="310" y2="130" stroke="#F59E0B" stroke-width="2.5"/>
+            <circle cx="310" cy="130" r="10" fill="#EA580C" stroke="#F59E0B" stroke-width="2"/>
+            <text x="310" y="134" fill="#FFFFFF" font-size="9" text-anchor="middle">m₂</text>
+            <text x="285" y="100" fill="#F59E0B" font-size="10">L₂</text>
+            <!-- Chaotic Trajectory Trail -->
+            <path d="M 310 130 Q 340 160 300 180 Q 250 170 230 140 Q 210 110 270 90 Q 320 110 335 150 Q 290 175 250 160" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <text x="360" y="175" fill="#EF4444" font-size="10" font-weight="bold">วิถีโกลาหล (Chaotic Trail)</text>
+            <!-- Lyapunov Box -->
+            <g transform="translate(360, 25)">
+              <rect width="145" height="115" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+              <text x="10" y="20" fill="#EF4444" font-size="11" font-weight="bold">คุณสมบัติความโกลาหล</text>
+              <text x="10" y="40" fill="#F8FAFC" font-size="9">• Deterministic (มีกฎชัดเจน)</text>
+              <text x="10" y="58" fill="#F8FAFC" font-size="9">• ไวต่อเงื่อนไขเริ่มต้น (e^λt)</text>
+              <text x="10" y="76" fill="#F59E0B" font-size="9">• λ &gt; 0 (Lyapunov exponent)</text>
+              <text x="10" y="94" fill="#10B981" font-size="9">• ทำนายระยะยาวไม่ได้</text>
+            </g>
+          </svg>`,
+          diagramCaption: "ลูกตุ้มคู่ (Double Pendulum): ตัวอย่างคลาสสิกของระบบกายภาพที่แน่นอนแต่ให้ผลลัพธ์ที่ไม่อาจทำนายได้ในระยะยาวเนื่องจากความไม่เป็นเชิงเส้น"
+        },
+        observations: [
+          "ความแตกต่างระหว่าง Random กับ Chaos: ความสุ่ม (Randomness) คือเหตุการณ์ที่ไร้กฎเกณฑ์ควบคุม แต่ความโกลาหล (Chaos) คือระบบที่มีสมการควบคุมแน่นอน 100% แต่ผลลัพธ์ซับซ้อนจนดูเหมือนสุ่มเพราะการขยายตัวของความคลาดเคลื่อนแบบเอ็กซ์โพเนนเชียล",
+          "เกาะแห่งความมีระเบียบ (KAM Tori): ทฤษฎีบท Kolmogorov-Arnold-Moser (KAM) พิสูจน์ว่าในระบบที่ไม่เป็นเชิงเส้นเล็กน้อย จะยังมีเส้นทางที่เสถียรและเป็นระเบียบอยู่ได้บางส่วน ก่อนจะถูกกลืนด้วยทะเลความโกลาหลเมื่อพลังงานสูงขึ้น"
+        ],
+        citation: "Strogatz, S. H. (2018). Nonlinear Dynamics and Chaos: With Applications to Physics, Biology, Chemistry, and Engineering (2nd Ed.). CRC Press.",
+        citations: [
+          {
+            title: "Nonlinear Dynamics and Chaos",
+            authors: "Steven H. Strogatz",
+            source: "CRC Press, 2nd Edition, Chapter 9 & 10: Chaos and Strange Attractors, pp. 320–385",
+            year: "2018",
+            url: "https://www.routledge.com/Nonlinear-Dynamics-and-Chaos/Strogatz/p/book/9780815393276",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Strogatz (2018) Ch 9–10: Double pendulum chaos, Lyapunov exponents, phase portraits, and deterministic unpredictability.",
+            note: "ตำรามาตรฐานระดับโลกด้านระบบไม่เป็นเชิงเส้นและความโกลาหล"
+          }
+        ]
+      },
+
+      // ----------------------------------------------------------------------
+      // Theory 8: Torsional Pendulum & Shear Modulus
+      // ----------------------------------------------------------------------
+      {
+        id: 8,
+        divisionId: "div-ch03-coupled-complex",
+        divisionTitle: "ภาคที่ 3: ระบบการแกว่งกวัดขั้นสูงและความโกลาหล",
+        numberTh: "ทฤษฎีที่ 8",
+        type: "ทฤษฎีการประยุกต์เชิงทดลอง (Experimental & Material Dynamics)",
+        titleTh: "การแกว่งกวัดแบบบิด ลูกตุ้มทอร์ชัน และการทดลองของคาเวนดิช",
+        titleEn: "Torsional Pendulum, Shear Modulus & The Cavendish Experiment",
+        summary: "ทอร์กคืนตัวจากการบิดของเส้นลวด สมการการเคลื่อนที่เชิงมุม คาบของลูกตุ้มทอร์ชัน และการประยุกต์วัดค่าคงตัวแรงโน้มถ่วงสากล G ของคาเวนดิช",
+        definition: {
+          text: "ลูกตุ้มทอร์ชัน (Torsional Pendulum หรือ Torsion Oscillator) คือ ระบบการแกว่งกวัดเชิงมุมที่ประกอบด้วยวัตถุแข็งเกร็งที่มีโมเมนต์ความเฉื่อย $I$ แขวนด้วยเส้นลวดหรือเส้นใยบางในแนวดิ่ง เมื่อบิดวัตถุออกไปเป็นมุม $\\theta$ แล้วปล่อย เส้นลวดจะสร้าง 'ทอร์กคืนตัวจากการบิด' (Restoring Torque) ตามกฎของฮุกสำหรับการบิด:\n$$\\tau = -\\kappa \\theta$$\nโดย $\\kappa$ คือ 'ค่านิจการบิด' (Torsional Constant / Torsion Stiffness) ของเส้นลวด (หน่วย $\\text{N}\\cdot\\text{m/rad}$)\n\nเมื่อนำกฎข้อ 2 ของนิวตันสำหรับการหมุน $\\Sigma\\tau = I\\ddot{\\theta}$ มารวมเข้ากับทอร์กคืนตัว จะได้สมการการเคลื่อนที่แบบฮาร์มอนิกอย่างง่ายเชิงมุม:\n$$I\\frac{d^2\\theta}{dt^2} + \\kappa\\theta = 0 \\implies \\frac{d^2\\theta}{dt^2} + \\omega_0^2\\theta = 0$$\nโดยมีความถี่เชิงมุมธรรมชาติ $\\omega_0 = \\sqrt{\\frac{\\kappa}{I}}$ และคาบการแกว่ง $T = 2\\pi\\sqrt{\\frac{I}{\\kappa}}$"
+        },
+        principle: {
+          text: "ความสัมพันธ์กับสมบัติของวัสดุ (Shear Modulus & Wire Geometry):\nค่านิจการบิด $\\kappa$ ของเส้นลวดหน้าตัดวงกลมรัศมี $R$ ความยาว $L$ ขึ้นอยู่กับมอดุลัสเฉือน (Shear Modulus, $G$) ของเนื้อโลหะตามสมการความยืดหยุ่น:\n$$\\kappa = \\frac{\\pi G R^4}{2 L} = \\frac{G J}{L}$$\n(โดย $J = \\frac{\\pi R^4}{2}$ คือโมเมนต์ความเฉื่อยเชิงขั้วของพื้นที่หน้าตัดเส้นลวด) สังเกตว่า $\\kappa$ แปรผันตรงกับรัศมีกำลังสี่ ($R^4$) ทำให้เส้นใยที่บางมากจะมีความไวต่อทอร์กขนาดจิ๋วอย่างมหาศาล\n\nการทดลองประวัติศาสตร์ของเฮนรี คาเวนดิช (The Cavendish Experiment 1798):\nคาเวนดิชใช้ลูกตุ้มทอร์ชันแขวนมวลตะกั่วขนาดเล็กสองก้อน ($m$) ที่ปลายคานเบายาว $2b$ เมื่อนำมวลตะกั่วขนาดใหญ่ ($M$) เข้ามาใกล้ แรงดึงดูดโน้มถ่วง $F_g = \\frac{G M m}{d^2}$ จะสร้างทอร์กบิดเส้นลวด:\n$$\\tau_{\\text{grav}} = 2 F_g b = 2\\left(\\frac{G M m}{d^2}\\right)b = \\kappa \\theta_{\\text{eq}}$$\nเมื่อรวมกับการวัดคาบการแกว่ง $T = 2\\pi\\sqrt{I/\\kappa} \\implies \\kappa = \\frac{4\\pi^2 I}{T^2}$ ทำให้สามารถคำนวณหาค่าคงตัวโน้มถ่วงสากล $G$ และคำนวณมวลรวมของโลกเป็นครั้งแรกในประวัติศาสตร์มนุษยชาติ ('Weighing the Earth')"
+        },
+        formulas: [
+          {
+            name: "สมการการเคลื่อนที่และคาบของลูกตุ้มทอร์ชัน",
+            latex: "I\\frac{d^2\\theta}{dt^2} + \\kappa\\theta = 0, \\quad T = 2\\pi\\sqrt{\\frac{I}{\\kappa}}, \\quad \\kappa = \\frac{\\pi G R^4}{2 L}",
+            symbols: [
+              { sym: "\\theta", desc: "มุมบิดของการหมุน", unit: "\\text{rad}" },
+              { sym: "I", desc: "โมเมนต์ความเฉื่อยของวัตถุรอบแกนเส้นลวด", unit: "\\text{kg}\\cdot\\text{m}^2" },
+              { sym: "\\kappa", desc: "ค่านิจการบิดของเส้นลวด", unit: "\\text{N}\\cdot\\text{m/rad}" },
+              { sym: "G", desc: "มอดุลัสเฉือนของเนื้อวัสดุเส้นลวด", unit: "\\text{N/m}^2 \\; (\\text{Pa})" },
+              { sym: "R, L", desc: "รัศมีและความยาวของเส้นลวด", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. ทอร์กคืนตัวตามการบิดของวัสดุยืดหยุ่น: τ = -κ θ",
+              "2. กฎการหมุน: Στ = I α = I θ̈",
+              "3. จับเท่ากัน: I θ̈ = -κ θ => I θ̈ + κ θ = 0",
+              "4. หารด้วย I: d²θ/dt² + (κ/I)θ = 0",
+              "5. เปรียบเทียบกับ d²x/dt² + ω₀² x = 0 => ω₀ = √(κ/I)",
+              "6. คาบการสั่น: T = 2π/ω₀ = 2π √(I/κ)",
+              "7. จากกลศาสตร์ของแข็ง การบิดแท่งกลม: τ = (G J / L) θ โดย J = π R⁴ / 2 => κ = π G R⁴ / (2 L)"
+            ]
+          },
+          {
+            name: "สมการการหาค่าคงตัวโน้มถ่วงสากล G ของคาเวนดิช",
+            latex: "G = \\frac{\\kappa \\theta_{\\text{eq}} d^2}{2 M m b} = \\frac{2\\pi^2 I \\theta_{\\text{eq}} d^2}{M m b T^2}",
+            symbols: [
+              { sym: "G", desc: "ค่าคงตัวโน้มถ่วงสากลของนิวตัน", unit: "\\text{N}\\cdot\\text{m}^2/\\text{kg}^2" },
+              { sym: "\\theta_{\\text{eq}}", desc: "มุมบิดเบนที่จุดสมดุลใหม่จากแรงโน้มถ่วง", unit: "\\text{rad}" },
+              { sym: "M, m", desc: "มวลของทรงกลมตะกั่วใหญ่และเล็ก", unit: "\\text{kg}" },
+              { sym: "b", desc: "ระยะจากแกนหมุนถึงมวลเล็ก m (กึ่งกลางคาน)", unit: "\\text{m}" },
+              { sym: "d", desc: "ระยะห่างระหว่างจุดศูนย์กลางมวล M และ m", unit: "\\text{m}" }
+            ],
+            derivationSteps: [
+              "1. แรงโน้มถ่วงระหว่างมวลแต่ละคู่: F_g = G M m / d²",
+              "2. ทอร์กโน้มถ่วงคู่ควบ: τ_grav = 2 F_g b = 2 (G M m / d²) b",
+              "3. ที่จุดสมดุล ทอร์กโน้มถ่วงเท่ากับทอร์กบิดของเส้นลวด: τ_grav = κ θ_eq",
+              "4. 2 (G M m / d²) b = κ θ_eq => G = (κ θ_eq d²) / (2 M m b)",
+              "5. แทนค่า κ = 4π² I / T² จะได้รูปสมการที่ขึ้นกับคาบการแกว่ง T"
+            ]
+          }
+        ],
+        application: {
+          text: "เครื่องชั่งทอร์ชันของคาเวนดิชเพื่อวัดค่า G และมวลโลก, กลไก Balance Wheel ในนาฬิกาจักรกลโบราณ, กัลวาโนมิเตอร์แบบขดลวดเคลื่อนที่ (D'Arsonval Galvanometer), เครื่องมือวัดแรงดันรังสีแสง (Nichols Radiometer)",
+          validWhen: "มุมบิดไม่เกินขีดจำกัดยืดหยุ่นของเส้นลวด และเส้นลวดอยู่ในแนวแกนสมมาตรสมบูรณ์",
+          invalidWhen: "เส้นลวดเกิดการคืบพลาสติก (Plastic deformation) หรือมุมบิดกว้างจนความเค้นเฉือนเกินขีดจำกัดคราก"
+        },
+        example: {
+          problem: "แผ่นจานโลหะตันมวล $M = 2.0\\text{ kg}$ รัศมี $R = 0.10\\text{ m}$ แขวนด้วยเส้นลวดเหล็กยาว $L = 1.0\\text{ m}$ ที่มีค่านิจการบิด $\\kappa = 0.050\\text{ N}\\cdot\\text{m/rad}$ จงหา: (ก) โมเมนต์ความเฉื่อยของจาน $I$ (ข) คาบการแกว่งกวัดแบบบิด $T$ และ (ค) ถ้าบิดจานออกไปเป็นมุม $\\theta_{\\text{max}} = 0.20\\text{ rad}$ แล้วปล่อย อัตราเร็วเชิงมุมสูงสุด $\\omega_{\\text{max}}$ จะเป็นเท่าใด",
+          steps: [
+            "ขั้นตอนที่ 1: คำนวณโมเมนต์ความเฉื่อยของจานตันรอบแกนหมุน:\n$I = \\frac{1}{2} M R^2 = \\frac{1}{2}(2.0\\text{ kg})(0.10\\text{ m})^2 = (1.0)(0.010) = 0.010\\text{ kg}\\cdot\\text{m}^2$",
+            "ขั้นตอนที่ 2: คำนวณความถี่เชิงมุมธรรมชาติ:\n$\\omega_0 = \\sqrt{\\frac{\\kappa}{I}} = \\sqrt{\\frac{0.050}{0.010}} = \\sqrt{5.0} \\approx 2.236\\text{ rad/s}$",
+            "ขั้นตอนที่ 3: คำนวณคาบการแกว่งกวัด:\n$T = \\frac{2\\pi}{\\omega_0} = \\frac{2\\pi}{2.236} \\approx 2.81\\text{ s}$",
+            "ขั้นตอนที่ 4: คำนวณอัตราเร็วเชิงมุมสูงสุดเมื่อผ่านจุดสมดุล:\n$\\Omega_{\\text{max}} = \\omega_0 \\theta_{\\text{max}} = (2.236)(0.20) \\approx 0.447\\text{ rad/s}$",
+            "ขั้นตอนที่ 5: ตรวจสอบด้วยการอนุรักษ์พลังงานกล:\n$E = \\frac{1}{2}\\kappa\\theta_{\\text{max}}^2 = \\frac{1}{2}(0.050)(0.20)^2 = 0.0010\\text{ J}$\n$\\frac{1}{2}I\\Omega_{\\text{max}}^2 = E \\implies \\Omega_{\\text{max}} = \\sqrt{\\frac{2E}{I}} = \\sqrt{\\frac{0.0020}{0.010}} = \\sqrt{0.20} \\approx 0.447\\text{ rad/s}$",
+            "สรุป: จานแกว่งกวัดด้วยคาบ $2.81\\text{ วินาที}$ และหมุนด้วยความเร็วเชิงมุมสูงสุด $0.447\\text{ rad/s}$"
+          ],
+          diagramSvg: `<svg viewBox="0 0 520 200" class="theory-diagram-svg w-full" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ลูกตุ้มทอร์ชันและการทดลองคาเวนดิช">
+            <rect width="520" height="200" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+            <!-- Fixed Support -->
+            <line x1="180" y1="20" x2="260" y2="20" stroke="#64748B" stroke-width="4"/>
+            <circle cx="220" cy="20" r="4" fill="#94A3B8"/>
+            <!-- Torsion Wire -->
+            <line x1="220" y1="20" x2="220" y2="105" stroke="#38BDF8" stroke-width="2"/>
+            <text x="230" y="60" fill="#38BDF8" font-size="10">ลวดทอร์ชัน (κ)</text>
+            <!-- Disk / Bar -->
+            <ellipse cx="220" cy="115" rx="70" ry="18" fill="#1E293B" stroke="#0284C7" stroke-width="2"/>
+            <ellipse cx="220" cy="122" rx="70" ry="18" fill="#0284C7" fill-opacity="0.3" stroke="#38BDF8" stroke-width="1"/>
+            <circle cx="220" cy="115" r="4" fill="#F8FAFC"/>
+            <!-- Angular arrow -->
+            <path d="M 270 120 A 60 15 0 0 1 170 120" fill="none" stroke="#F59E0B" stroke-width="2" marker-end="url(#arr-yellow)"/>
+            <text x="220" y="145" fill="#F59E0B" font-size="10" font-weight="bold" text-anchor="middle">τ = -κ θ (ทอร์กคืนตัว)</text>
+            <!-- Right Cavendish info -->
+            <g transform="translate(340, 25)">
+              <rect width="165" height="120" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+              <text x="12" y="20" fill="#10B981" font-size="11" font-weight="bold">การทดลองของคาเวนดิช</text>
+              <text x="12" y="38" fill="#F8FAFC" font-size="9">• ชั่งน้ำหนักโลกครั้งแรก (1798)</text>
+              <text x="12" y="54" fill="#F8FAFC" font-size="9">• แรงโน้มถ่วงบิดเส้นลวดบาง</text>
+              <text x="12" y="72" fill="#38BDF8" font-size="9">• คาบ T = 2π√(I/κ)</text>
+              <text x="12" y="90" fill="#FDE047" font-size="9">• วัด G = 6.674 × 10⁻¹¹</text>
+              <text x="12" y="108" fill="#94A3B8" font-size="8">N·m²/kg² ได้อย่างแม่นยำ</text>
+            </g>
+          </svg>`,
+          diagramCaption: "ลูกตุ้มทอร์ชัน (Torsional Pendulum): ทอร์กคืนตัวเกิดจากการบิดของเส้นลวด เป็นรากฐานสำคัญของการทดลองคาเวนดิชในการวัดค่าคงตัวแรงโน้มถ่วง G"
+        },
+        observations: [
+          "ความแม่นยำสูงของระบบทอร์ชัน: เนื่องจากเส้นลวดสามารถทำได้บางมาก ทำให้ค่า $\\kappa$ ต่ำมากในระดับ $10^{-8}\\text{ N}\\cdot\\text{m/rad}$ จึงสามารถวัดแรงที่มีขนาดเล็กระดับส่วนในล้านของนิวตันได้ ซึ่งแรงโน้มถ่วงระหว่างมวลบนโต๊ะทดลองมีขนาดเล็กมากจนตรวจจับไม่ได้ด้วยวิธีอื่น",
+          "ความเป็นไอโซโครนัส (Isochronism): ตราบใดที่การบิดอยู่ในช่วงยืดหยุ่น คาบของลูกตุ้มทอร์ชันจะไม่ขึ้นกับแอมพลิจูดมุมบิดเลย ทำให้ใช้เป็นกลไกควบคุมเวลาในนาฬิกาตั้งโต๊ะที่ทำงานได้นานนับปีโดยไม่ต้องไขลานบ่อย (400-day clock)"
+        ],
+        citation: "Cavendish, H. (1798). Experiments to Determine the Density of the Earth. Philosophical Transactions of the Royal Society, 88, 469–526.",
+        citations: [
+          {
+            title: "Experiments to Determine the Density of the Earth",
+            authors: "Henry Cavendish",
+            source: "Philosophical Transactions of the Royal Society of London, Vol. 88, pp. 469–526",
+            year: "1798",
+            url: "https://doi.org/10.1098/rstl.1798.0022",
+            verificationStatus: "verified_direct_content",
+            evidencePin: "Cavendish (1798) pp. 469–526: First accurate measurement of Earth's density using the Michell-Cavendish torsion balance apparatus.",
+            note: "งานวิจัยประวัติศาสตร์การวัดค่าคงตัวแรงโน้มถ่วงสากล"
           }
         ]
       }

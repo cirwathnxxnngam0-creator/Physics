@@ -3,7 +3,7 @@ const fs = require('fs');
 const puppeteer = require('../node_modules/puppeteer-core');
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const TARGET_URL = 'http://127.0.0.1:8080/';
+const TARGET_URL = process.env.TARGET_URL || 'http://127.0.0.1:8089/';
 const SCREENSHOT_DIR = 'C:\\Users\\ACER PREDATOR\\.gemini\\antigravity\\brain\\7214674d-608a-48f6-8f8d-7a378bbed4eb\\screenshots\\fix_verification';
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {

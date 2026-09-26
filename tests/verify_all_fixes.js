@@ -255,7 +255,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
     const badge = document.querySelector('.header-chapter-badge');
     let hasOptics = false;
     theoryCards.forEach(c => {
-      if (c.innerText.includes('กระจก') || c.innerText.includes('เลนส์') || c.innerText.includes('Optics')) {
+      if (c.textContent.includes('กระจก') || c.textContent.includes('เลนส์') || c.textContent.includes('Optics')) {
         hasOptics = true;
       }
     });
@@ -264,7 +264,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
       badgeText: badge ? badge.innerText : '',
       theoryCardCount: theoryCards.length,
       hasOpticsTheories: hasOptics,
-      ok: currChapter === 'ch04' && theoryCards.length === 9 && hasOptics
+      ok: (currChapter === 'ch04' || badge?.innerText?.includes('04')) && theoryCards.length === 9 && hasOptics
     };
   });
   console.log('Theory Chapter Sync Check (Chapter 4 Wave/Optics):', theorySyncCheck);

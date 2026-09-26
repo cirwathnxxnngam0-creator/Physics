@@ -194,7 +194,7 @@
       "titleTh": "รอยบุ๋มบนลูกกอล์ฟ ชั้นขอบเขตปั่นป่วน และแรงยกแมกนัส",
       "titleEn": "Golf Ball Dimples, Turbulent Boundary Layer & Magnus Lift",
       "category": "กลศาสตร์ของไหลเชิงวิศวกรรม",
-      "division": "ภาคที่ 2: พลศาสตร์ (Dynamics)",
+      "division": "ภาคที่ 4: การหมุนและของไหล (Rotation & Fluids)",
       "relatedTheoryId": "theory-6",
       "relatedTheoryTitle": "ทฤษฎีที่ 6: แรงต้านของไหลและอัตราเร็วปลาย",
       "relatedSimulator": "projectile",

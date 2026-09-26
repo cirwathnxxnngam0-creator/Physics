@@ -94,7 +94,14 @@
         acR: 40.0,                // Ohms
         acL: 0.20,                // Henry
         acC: 10.0,                // microFarad
-        acSpeed: 0.15             // Visual animation speed factor (0.02 - 0.50)
+        acSpeed: 0.15,            // Visual animation speed factor (0.02 - 0.50)
+
+        // Submode 7: Dielectric Kelvin Polarization Force
+        dielectricV0: 3000.0,     // Applied Volts (V)
+        dielectricKappa: 4.0,     // Relative permittivity
+        dielectricA: 2.0,         // Inner cylinder radius a (mm)
+        dielectricB: 6.0,         // Outer cylinder radius b (mm)
+        dielectricRho: 900.0      // Fluid density (kg/m^3)
       };
 
       // Resolution and interaction (Setup resolution first so cx/cy use true width/height)
@@ -149,6 +156,13 @@
       this.acF0 = 0;
       this.acQ = 0;
       this.recalcACParameters();
+
+      // Submode 7 State: Dielectric Kelvin Polarization Force
+      this.dielectricH = 0;
+      this.dielectricVh = 0;
+      this.dielectricTime = 0;
+      this.dielectricFe = 0;
+      this.dielectricHeq = 0;
 
       window.addEventListener('resize', () => this.resize());
       this.setupInteraction();
@@ -391,7 +405,7 @@
     // ==========================================
 
     setSubMode(subMode) {
-      const valid = ['field_charges', 'lorentz_cyclotron', 'rc_circuit', 'faraday_induction', 'biot_savart', 'ac_rlc_resonance'];
+      const valid = ['field_charges', 'lorentz_cyclotron', 'rc_circuit', 'faraday_induction', 'biot_savart', 'ac_rlc_resonance', 'dielectric_force'];
       if (valid.includes(subMode)) {
         this.subMode = subMode;
         if (subMode === 'field_charges') {
@@ -410,6 +424,10 @@
           this.acTime = 0;
           this.acWaveHistory = [];
           this.recalcACParameters();
+        } else if (subMode === 'dielectric_force') {
+          this.dielectricH = 0;
+          this.dielectricVh = 0;
+          this.dielectricTime = 0;
         }
         this.render();
         this.emitTelemetry();
@@ -507,13 +525,18 @@
         const dt = Math.min((timestamp - this.lastTimestamp) / 1000, 0.05);
         this.lastTimestamp = timestamp;
 
-        this.update(dt);
+        const effectiveDt = dt * (this.timeScale !== undefined ? this.timeScale : 1.0);
+        this.update(effectiveDt);
         this.render();
         this.emitTelemetry();
 
         this.animId = requestAnimationFrame(loop);
       };
       this.animId = requestAnimationFrame(loop);
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     destroy() {
@@ -541,6 +564,8 @@
         this.updateBiotSavart(dt);
       } else if (this.subMode === 'ac_rlc_resonance') {
         this.updateACRLC(dt);
+      } else if (this.subMode === 'dielectric_force') {
+        this.updateDielectricForce(dt);
       }
     }
 
@@ -897,6 +922,8 @@
         this.renderBiotSavart(ctx, w, h);
       } else if (this.subMode === 'ac_rlc_resonance') {
         this.renderACRLC(ctx, w, h);
+      } else if (this.subMode === 'dielectric_force') {
+        this.renderDielectricForce(ctx, w, h);
       }
     }
 
@@ -2206,6 +2233,392 @@
       ctx.fillText(`Z = ${this.acZ.toFixed(1)} Ω | φ = ${phiDeg.toFixed(1)}°`, tooltipX + 6, tooltipY + 23);
     }
 
+    // ----------------------------------------------------
+    // SUBMODE 7: DIELECTRIC POLARIZATION FORCE & COAXIAL CAPACITOR
+    // ----------------------------------------------------
+    updateDielectricForce(dt) {
+      const EPS0 = this.EPS0;
+      const V0 = Math.max(10, this.params.dielectricV0 || 3000.0);
+      const kappa = Math.max(1.0, this.params.dielectricKappa || 4.0);
+      const a_mm = Math.max(0.5, this.params.dielectricA || 2.0);
+      const b_mm = Math.max(a_mm + 0.5, this.params.dielectricB || 6.0);
+      const a = a_mm * 1e-3;
+      const b = b_mm * 1e-3;
+      const rho = Math.max(100, this.params.dielectricRho || 900.0);
+      const g = 9.80;
+
+      const lnBA = Math.log(b / a);
+      const Fe = (Math.PI * EPS0 * (kappa - 1) * V0 * V0) / lnBA;
+      const A_ann = Math.PI * (b * b - a * a);
+      const Heq = Fe / (rho * g * A_ann);
+
+      this.dielectricFe = Fe;
+      this.dielectricHeq = Heq;
+      this.dielectricTime += dt;
+
+      // Dynamics: fluid column acceleration
+      // m_eff = rho * A_ann * L_eff, F_net = Fe - rho * g * A_ann * h
+      const L_eff = 0.04;
+      const m_eff = rho * A_ann * L_eff;
+      const gamma = 7.0; // Viscous damping
+
+      const fDeriv = (hVal, vVal) => {
+        const fNet = Fe - rho * g * A_ann * hVal;
+        return (fNet / m_eff) - gamma * vVal;
+      };
+
+      // RK4 integration
+      const h0 = this.dielectricH || 0;
+      const v0 = this.dielectricVh || 0;
+
+      const k1_h = v0;
+      const k1_v = fDeriv(h0, v0);
+
+      const k2_h = v0 + 0.5 * dt * k1_v;
+      const k2_v = fDeriv(h0 + 0.5 * dt * k1_h, v0 + 0.5 * dt * k1_v);
+
+      const k3_h = v0 + 0.5 * dt * k2_v;
+      const k3_v = fDeriv(h0 + 0.5 * dt * k2_h, v0 + 0.5 * dt * k2_v);
+
+      const k4_h = v0 + dt * k3_v;
+      const k4_v = fDeriv(h0 + dt * k3_h, v0 + dt * k3_v);
+
+      this.dielectricH = Math.max(0, h0 + (dt / 6) * (k1_h + 2 * k2_h + 2 * k3_h + k4_h));
+      this.dielectricVh = v0 + (dt / 6) * (k1_v + 2 * k2_v + 2 * k3_v + k4_v);
+    }
+
+    renderDielectricForce(ctx, w, h) {
+      const isMobile = w < 680;
+      const V0 = Math.max(10, this.params.dielectricV0 || 3000.0);
+      const kappa = Math.max(1.0, this.params.dielectricKappa || 4.0);
+      const a_mm = Math.max(0.5, this.params.dielectricA || 2.0);
+      const b_mm = Math.max(a_mm + 0.5, this.params.dielectricB || 6.0);
+      const a = a_mm * 1e-3;
+      const b = b_mm * 1e-3;
+      const rho = Math.max(100, this.params.dielectricRho || 900.0);
+      const g = 9.80;
+
+      const lnBA = Math.log(b / a);
+      const Fe = (Math.PI * this.EPS0 * (kappa - 1) * V0 * V0) / lnBA;
+      const A_ann = Math.PI * (b * b - a * a);
+      const Heq = Fe / (rho * g * A_ann);
+      const curH = this.dielectricH || 0;
+
+      // Capacitance per meter: C0' = 2*pi*eps0/ln(b/a), Ckappa' = 2*pi*kappa*eps0/ln(b/a)
+      const C0_prime = (2 * Math.PI * this.EPS0) / lnBA;
+      const Ckappa_prime = kappa * C0_prime;
+      const totalLen = 0.05; // 50 mm capacitor length
+      const C_total = (C0_prime * (totalLen - curH) + Ckappa_prime * curH);
+      const energyUe = 0.5 * C_total * V0 * V0;
+
+      // Apparatus layout
+      const appX = isMobile ? w * 0.48 : w * 0.30;
+      const appY = isMobile ? (h - 110) * 0.55 + 10 : h * 0.52;
+      const tubeH = Math.min(220, isMobile ? (h - 120) * 0.68 : h * 0.55);
+      const reservoirW = Math.min(200, isMobile ? w - 60 : 200);
+      const reservoirH = isMobile ? 32 : 45;
+
+      // 1. Draw Liquid Reservoir Base
+      const resY = isMobile ? (h - 105) - reservoirH : appY + tubeH * 0.5 - 20;
+      ctx.save();
+      ctx.fillStyle = 'rgba(2, 132, 199, 0.25)';
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(appX - reservoirW * 0.5, resY, reservoirW, reservoirH, [0, 0, 10, 10]);
+      ctx.fill();
+      ctx.stroke();
+
+      // Fluid surface in reservoir
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.fillRect(appX - reservoirW * 0.5 + 2, resY + 4, reservoirW - 4, reservoirH - 6);
+      ctx.fillStyle = '#7dd3fc';
+      ctx.font = isMobile ? '8.5px Inter, sans-serif' : '10px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`อ่างของเหลวไดอิเล็กทริก (κ = ${kappa.toFixed(1)}, ρ = ${rho} kg/m³)`, appX, resY + reservoirH - (isMobile ? 7 : 10));
+      ctx.restore();
+
+      // 2. Coaxial Cylinder Cross-Section
+      const pxA = isMobile ? 10 : 14;  // Inner rod half-width in pixels
+      const pxB = isMobile ? 34 : 46;  // Outer cylinder inner wall half-width in pixels
+      const wallThick = isMobile ? 8 : 12;
+      const topY = resY - tubeH + 20;
+
+      // Outer cylinder outer walls (Negative / Ground conductor)
+      ctx.save();
+      // Left wall
+      const leftWallGrad = ctx.createLinearGradient(appX - pxB - wallThick, 0, appX - pxB, 0);
+      leftWallGrad.addColorStop(0, '#475569');
+      leftWallGrad.addColorStop(1, '#94a3b8');
+      ctx.fillStyle = leftWallGrad;
+      ctx.fillRect(appX - pxB - wallThick, topY, wallThick, tubeH);
+
+      // Right wall
+      const rightWallGrad = ctx.createLinearGradient(appX + pxB, 0, appX + pxB + wallThick, 0);
+      rightWallGrad.addColorStop(0, '#94a3b8');
+      rightWallGrad.addColorStop(1, '#475569');
+      ctx.fillStyle = rightWallGrad;
+      ctx.fillRect(appX + pxB, topY, wallThick, tubeH);
+
+      // Outer wall borders
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(appX - pxB - wallThick, topY, wallThick, tubeH);
+      ctx.strokeRect(appX + pxB, topY, wallThick, tubeH);
+
+      // Negative charge symbols on outer walls
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      for (let y = topY + 24; y < resY; y += 32) {
+        ctx.fillText('⊖', appX - pxB - wallThick * 0.5, y);
+        ctx.fillText('⊖', appX + pxB + wallThick * 0.5, y);
+      }
+
+      // Outer wall label
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = isMobile ? '8.5px Inter, sans-serif' : '10px Inter, sans-serif';
+      if (!isMobile) {
+        ctx.fillText(`ทรงกระบอกนอก (r = b = ${b_mm.toFixed(1)} mm, 0 V)`, appX + pxB + wallThick + 4, topY + 20);
+      } else {
+        ctx.fillText(`นอก b=${b_mm.toFixed(0)}mm`, appX + pxB + wallThick + 4, topY + 16);
+      }
+      ctx.restore();
+
+      // 3. Central Conductor Rod (Positive +V0)
+      ctx.save();
+      const rodGrad = ctx.createLinearGradient(appX - pxA, 0, appX + pxA, 0);
+      rodGrad.addColorStop(0, '#d97706');
+      rodGrad.addColorStop(0.5, '#fef08a');
+      rodGrad.addColorStop(1, '#b45309');
+      ctx.fillStyle = rodGrad;
+      ctx.fillRect(appX - pxA, topY - 15, pxA * 2, tubeH + 15);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(appX - pxA, topY - 15, pxA * 2, tubeH + 15);
+
+      // Positive charge symbols on rod
+      ctx.fillStyle = '#b45309';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      for (let y = topY + 12; y < resY; y += 28) {
+        ctx.fillText('⊕', appX, y);
+      }
+
+      // Rod label
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = isMobile ? 'bold 8.5px Inter, sans-serif' : 'bold 10px Inter, sans-serif';
+      ctx.fillText(isMobile ? `ใน a=${a_mm.toFixed(0)}mm (+${V0}V)` : `แกนใน (r = a = ${a_mm.toFixed(1)} mm, +${V0} V)`, appX, topY - (isMobile ? 14 : 22));
+      ctx.restore();
+
+      // 4. Liquid Dielectric Column Rising in the Annular Gap
+      const maxRisePx = Math.min(100, tubeH * 0.55);
+      const pxRise = (curH / Math.max(1e-6, Heq)) * (maxRisePx * 0.85);
+      const colTopY = resY - pxRise;
+
+      ctx.save();
+      // Left annular column
+      const fluidGrad = ctx.createLinearGradient(0, colTopY, 0, resY);
+      fluidGrad.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+      fluidGrad.addColorStop(1, 'rgba(2, 132, 199, 0.65)');
+      ctx.fillStyle = fluidGrad;
+      ctx.fillRect(appX - pxB, colTopY, pxB - pxA, resY - colTopY);
+      ctx.fillRect(appX + pxA, colTopY, pxB - pxA, resY - colTopY);
+
+      // Meniscus curvature highlights
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      const meniscusR = Math.max(1, Math.abs((pxB - pxA) * 0.5));
+      ctx.ellipse(appX - (pxB + pxA) * 0.5, colTopY, meniscusR, 4, 0, 0, Math.PI * 2);
+      ctx.ellipse(appX + (pxB + pxA) * 0.5, colTopY, meniscusR, 4, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 5. Electric Field Lines & Dipoles in the Gap
+      ctx.save();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 1;
+      for (let y = topY + 15; y < colTopY - 10; y += 22) {
+        this._drawArrow(ctx, appX - pxA - 2, y, appX - pxB + 2, y, 'rgba(56, 189, 248, 0.5)', '');
+        this._drawArrow(ctx, appX + pxA + 2, y, appX + pxB - 2, y, 'rgba(56, 189, 248, 0.5)', '');
+      }
+
+      // Induced dipoles inside rising dielectric liquid
+      for (let y = colTopY + 14; y < resY; y += 20) {
+        [- (pxA + pxB) * 0.5, (pxA + pxB) * 0.5].forEach(dx => {
+          ctx.fillStyle = '#f87171';
+          ctx.beginPath();
+          ctx.arc(appX + dx - 5, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#60a5fa';
+          ctx.beginPath();
+          ctx.arc(appX + dx + 5, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      ctx.restore();
+
+      // 6. Upward Electrostatic Polarization Force Vector (Fe) & Weight (W)
+      ctx.save();
+      const fArrY = colTopY - 4;
+      const fArrLen = Math.min(48, 30 * (Fe / 6.84e-4));
+      this._drawArrow(ctx, appX - (pxB + pxA) * 0.5, fArrY, appX - (pxB + pxA) * 0.5, fArrY - fArrLen, '#34d399', 'F_e/2');
+      this._drawArrow(ctx, appX + (pxB + pxA) * 0.5, fArrY, appX + (pxB + pxA) * 0.5, fArrY - fArrLen, '#34d399', 'F_e/2');
+
+      const wArrLen = Math.min(45, fArrLen * (curH / Math.max(1e-6, Heq)));
+      if (wArrLen > 6) {
+        this._drawArrow(ctx, appX - (pxB + pxA) * 0.5, fArrY + 14, appX - (pxB + pxA) * 0.5, fArrY + 14 + wArrLen, '#f87171', 'W/2');
+        this._drawArrow(ctx, appX + (pxB + pxA) * 0.5, fArrY + 14, appX + (pxB + pxA) * 0.5, fArrY + 14 + wArrLen, '#f87171', 'W/2');
+      }
+      ctx.restore();
+
+      // 7. Wiring and Battery Symbol
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      const batX = isMobile ? 24 : appX - pxB - 65;
+      const batY = isMobile ? topY + 20 : topY + 40;
+      ctx.beginPath();
+      ctx.moveTo(appX, topY - 15);
+      ctx.lineTo(appX, topY - (isMobile ? 28 : 40));
+      ctx.lineTo(batX, topY - (isMobile ? 28 : 40));
+      ctx.lineTo(batX, batY);
+      ctx.stroke();
+
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(batX - 14, batY, 28, isMobile ? 38 : 48);
+      ctx.strokeRect(batX - 14, batY, 28, isMobile ? 38 : 48);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = 'bold 9.5px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${V0}V`, batX, batY + (isMobile ? 22 : 28));
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText('+', batX, batY + 11);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('–', batX, batY + (isMobile ? 34 : 42));
+
+      ctx.beginPath();
+      ctx.moveTo(batX, batY + (isMobile ? 38 : 48));
+      ctx.lineTo(batX, topY + (isMobile ? 50 : 70));
+      ctx.lineTo(appX - pxB - wallThick, topY + (isMobile ? 50 : 70));
+      ctx.stroke();
+      ctx.restore();
+
+      // 8. HUD & Theory Card
+      ctx.save();
+      if (isMobile) {
+        const cardX = 10;
+        const cardY = h - 96;
+        const cardW = w - 20;
+        const cardH = 90;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillStyle = '#38BDF8';
+        ctx.textAlign = 'left';
+        ctx.fillText(`⚡ Kelvin Force: F_e = ${(Fe * 1e4).toFixed(2)}×10⁻⁴ N | h_eq = ${(Heq * 1e3).toFixed(3)} mm`, cardX + 8, cardY + 18);
+
+        ctx.font = '9.5px monospace';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`V₀ = ${V0.toFixed(0)} V | κ = ${kappa.toFixed(1)} | a = ${a_mm.toFixed(1)} mm, b = ${b_mm.toFixed(1)} mm`, cardX + 8, cardY + 38);
+
+        ctx.fillStyle = '#34D399';
+        ctx.fillText(`ระดับปัจจุบัน h(t) = ${(curH * 1e3).toFixed(3)} mm (${((curH/Math.max(1e-6, Heq))*100).toFixed(0)}%)`, cardX + 8, cardY + 56);
+
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillText(`C = ${(C_total * 1e12).toFixed(1)} pF | พลังงานสะสม U_e = ${(energyUe * 1e3).toFixed(3)} mJ`, cardX + 8, cardY + 74);
+      } else {
+        const cardX = w - 310;
+        const cardY = 16;
+        const cardW = 295;
+        const cardH = 200;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 12.5px Inter, sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'left';
+        ctx.fillText('⚡ แรงดึงไดอิเล็กทริก (Kelvin Force)', cardX + 12, cardY + 22);
+
+        ctx.font = '10.5px Inter, monospace';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`แรงดันแหล่งจ่าย V₀ = ${V0.toFixed(0)} V`, cardX + 12, cardY + 42);
+        ctx.fillText(`ค่าไดอิเล็กทริก κ = ${kappa.toFixed(1)} | ρ = ${rho.toFixed(0)} kg/m³`, cardX + 12, cardY + 58);
+        ctx.fillText(`รัศมีทรงกระบอก a = ${a_mm.toFixed(1)} mm, b = ${b_mm.toFixed(1)} mm`, cardX + 12, cardY + 74);
+        ctx.fillText(`อัตราส่วน ln(b/a) = ln(${ (b/a).toFixed(1) }) ≈ ${lnBA.toFixed(4)}`, cardX + 12, cardY + 90);
+
+        // Result highlight box
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+        ctx.fillRect(cardX + 8, cardY + 98, cardW - 16, 52);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.strokeRect(cardX + 8, cardY + 98, cardW - 16, 52);
+
+        ctx.fillStyle = '#38BDF8';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText(`F_e = ½V₀²(dC/dh) = π ε₀(κ - 1)V₀² / ln(b/a)`, cardX + 12, cardY + 114);
+        ctx.fillStyle = '#34D399';
+        ctx.fillText(`แรงดึงไฟฟ้า F_e ≈ ${(Fe * 1e4).toFixed(2)} × 10⁻⁴ N (${(Fe * 1e3).toFixed(3)} mN)`, cardX + 12, cardY + 130);
+        ctx.fillStyle = '#FBBF24';
+        ctx.fillText(`ความสูงสมดุล h_eq = ${(Heq * 1e3).toFixed(3)} mm`, cardX + 12, cardY + 144);
+
+        ctx.font = '10px Inter, monospace';
+        ctx.fillStyle = '#CBD5E1';
+        ctx.fillText(`ระดับปัจจุบัน h(t) = ${(curH * 1e3).toFixed(3)} mm (${((curH/Math.max(1e-6, Heq))*100).toFixed(1)}%)`, cardX + 12, cardY + 168);
+        ctx.fillText(`พลังงานสะสม U_e = ${(energyUe * 1e3).toFixed(3)} mJ | C = ${(C_total * 1e12).toFixed(2)} pF`, cardX + 12, cardY + 186);
+      }
+
+      ctx.restore();
+    }
+
+    _drawArrow(ctx, fromX, fromY, toX, toY, color = '#38bdf8', label = '', headLen = 6) {
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+      const len = Math.hypot(dx, dy);
+      if (len < 1) return;
+      const angle = Math.atan2(dy, dx);
+
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+
+      if (label) {
+        ctx.font = 'bold 9px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, toX + (headLen + 6) * Math.cos(angle), toY + (headLen + 6) * Math.sin(angle));
+      }
+      ctx.restore();
+    }
+
     // ==========================================
     // TELEMETRY BROADCAST
     // ==========================================
@@ -2246,7 +2659,12 @@
         acPhi: (this.acPhi * 180 / Math.PI).toFixed(1) + '°',
         acIrms: this.acIrms.toFixed(2) + ' A',
         acF0: this.acF0.toFixed(1) + ' Hz',
-        acQ: this.acQ.toFixed(2)
+        acQ: this.acQ.toFixed(2),
+        // Dielectric Kelvin Force
+        dielectricFe: (this.dielectricFe ? (this.dielectricFe * 1e4).toFixed(2) + ' × 10⁻⁴ N' : '6.84 × 10⁻⁴ N'),
+        dielectricHeq: (this.dielectricHeq ? (this.dielectricHeq * 1e3).toFixed(3) + ' mm' : '0.771 mm'),
+        dielectricV0: (this.params.dielectricV0 || 3000) + ' V',
+        dielectricKappa: (this.params.dielectricKappa || 4.0).toFixed(1)
       };
       this.options.onTelemetryUpdate(data);
     }

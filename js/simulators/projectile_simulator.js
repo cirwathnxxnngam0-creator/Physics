@@ -60,6 +60,16 @@
         showVacuum: true
       };
 
+      // Sub-mode: 'trajectory' | 'rocket_equation'
+      this.subMode = 'trajectory';
+      this.rocketParams = {
+        m0: 12000.0,       // kg initial mass
+        mf: 1200.0,        // kg dry structural mass
+        uex: 3000.0,       // m/s exhaust velocity
+        burnRate: 200.0,   // kg/s burn rate
+        gravity: 0.0       // m/s^2 (0 in deep space vacuum)
+      };
+
       // Playback State
       this.isRunning = false;
       this.isPaused = false;
@@ -370,6 +380,12 @@
     reset() {
       this.stop();
       this.simTime = 0.0;
+      if (this.subMode === 'rocket_equation') {
+        this._updateRocketState();
+        this.render();
+        this._dispatchStatus('idle');
+        return;
+      }
       this.currentLiveState = this.cachedSimulation.trajectory[0];
       this.render();
 
@@ -379,12 +395,87 @@
 
     stepForward(deltaSimSec = 0.05) {
       this.pause();
+      if (this.subMode === 'rocket_equation') {
+        const totalBurnTime = this.rocketParams.burnTime || 54.0;
+        this.simTime = Math.min(totalBurnTime, this.simTime + deltaSimSec);
+        this._updateRocketState();
+        this.render();
+        return;
+      }
       const targetTime = Math.min(this.cachedSimulation.landing.t, this.simTime + deltaSimSec);
       this.simTime = targetTime;
       this._interpolateLiveStateAtTime(this.simTime);
       this.render();
 
       this._dispatchTelemetry(this.currentLiveState, this.cachedSimulation);
+    }
+
+    _updateRocketState() {
+      const totalBurnTime = this.rocketParams.burnTime || 54.0;
+      const animT = Math.min(this.simTime, totalBurnTime);
+      const isBurning = (this.simTime < totalBurnTime) && (this.isRunning && !this.isPaused);
+
+      const m0 = (this.rocketParams.m0 !== undefined) ? this.rocketParams.m0 : (this.rocketParams.initialMassM0 || 12000.0);
+      const mf = (this.rocketParams.mf !== undefined) ? this.rocketParams.mf : (this.rocketParams.dryMassMf || 1200.0);
+      const uex = (this.rocketParams.uex !== undefined) ? this.rocketParams.uex : (this.rocketParams.exhaustSpeedUex || 3000.0);
+      const fuelTotal = Math.max(0, m0 - mf);
+      const burnRate = totalBurnTime > 0 ? (fuelTotal / totalBurnTime) : 0;
+      const curFuel = Math.max(0, fuelTotal - burnRate * animT);
+      const curMass = mf + curFuel;
+      const curV = (curMass > 0 && m0 > 0) ? (uex * Math.log(m0 / curMass)) : 0;
+      const deltaVIdeal = (mf > 0 && m0 > 0) ? (uex * Math.log(m0 / mf)) : 0;
+
+      this.state = {
+        t: animT,
+        mass: curMass,
+        v: curV,
+        deltaV: deltaVIdeal,
+        fuel: curFuel,
+        burnTime: totalBurnTime,
+        isBurning
+      };
+      this._dispatchTelemetry(this.state, null);
+    }
+
+    setRocketParams(newParams) {
+      if (!newParams || typeof newParams !== 'object') return;
+
+      if (newParams.m0 !== undefined) {
+        this.rocketParams.m0 = parseFloat(newParams.m0);
+        this.rocketParams.initialMassM0 = this.rocketParams.m0;
+      } else if (newParams.initialMassM0 !== undefined) {
+        this.rocketParams.m0 = parseFloat(newParams.initialMassM0);
+        this.rocketParams.initialMassM0 = this.rocketParams.m0;
+      }
+
+      if (newParams.mf !== undefined) {
+        this.rocketParams.mf = parseFloat(newParams.mf);
+        this.rocketParams.dryMassMf = this.rocketParams.mf;
+      } else if (newParams.dryMassMf !== undefined) {
+        this.rocketParams.mf = parseFloat(newParams.dryMassMf);
+        this.rocketParams.dryMassMf = this.rocketParams.mf;
+      }
+
+      if (newParams.uex !== undefined) {
+        this.rocketParams.uex = parseFloat(newParams.uex);
+        this.rocketParams.exhaustSpeedUex = this.rocketParams.uex;
+      } else if (newParams.exhaustSpeedUex !== undefined) {
+        this.rocketParams.uex = parseFloat(newParams.exhaustSpeedUex);
+        this.rocketParams.exhaustSpeedUex = this.rocketParams.uex;
+      }
+
+      if (newParams.burnRate !== undefined) {
+        this.rocketParams.burnRate = parseFloat(newParams.burnRate);
+      }
+      if (newParams.burnTime !== undefined) {
+        this.rocketParams.burnTime = parseFloat(newParams.burnTime);
+      }
+      if (newParams.gravity !== undefined) {
+        this.rocketParams.gravity = parseFloat(newParams.gravity);
+      }
+
+      this._updateRocketState();
+      this.render();
     }
 
     _interpolateLiveStateAtTime(tTarget) {
@@ -443,6 +534,21 @@
       // Advance physics time
       this.simTime += (elapsedMs / 1000.0) * this.timeScale;
 
+      if (this.subMode === 'rocket_equation') {
+        const totalBurnTime = this.rocketParams.burnTime || 54.0;
+        if (this.simTime >= totalBurnTime) {
+          this.simTime = totalBurnTime;
+          this._updateRocketState();
+          this.render();
+          this.pause();
+          return;
+        }
+        this._updateRocketState();
+        this.render();
+        this.animFrameId = requestAnimationFrame(this._boundStepLoop);
+        return;
+      }
+
       if (this.simTime >= this.cachedSimulation.landing.t) {
         this.simTime = this.cachedSimulation.landing.t;
         this.currentLiveState = this.cachedSimulation.trajectory[this.cachedSimulation.trajectory.length - 1];
@@ -472,11 +578,27 @@
       this.render();
     }
 
+    setSubMode(mode) {
+      if (mode === 'rocket_equation' || mode === 'trajectory') {
+        this.subMode = mode;
+        this.simTime = 0.0;
+        this.isRunning = false;
+        this.isPaused = false;
+        this._updateRocketState();
+        this.render();
+      }
+    }
+
     // Canvas Rendering Pipeline
     render() {
       const ctx = this.ctx;
       const width = this.displayWidth;
       const height = this.displayHeight;
+
+      if (this.subMode === 'rocket_equation') {
+        this._renderRocketEquation(ctx, width, height);
+        return;
+      }
 
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = '#FFFFFF';
@@ -498,6 +620,82 @@
       }
 
       this._drawVectorScalingLegend(ctx);
+      this._drawInsetCanvas();
+    }
+
+    _drawInsetCanvas() {
+      const insetCanvas = document.getElementById('simulator-inset-canvas');
+      if (!insetCanvas) return;
+      const ictx = insetCanvas.getContext('2d');
+      if (!ictx) return;
+      const w = insetCanvas.width;
+      const h = insetCanvas.height;
+
+      // Dark sleek slate background
+      ictx.fillStyle = '#0F172A';
+      ictx.fillRect(0, 0, w, h);
+
+      // Fine grid
+      ictx.strokeStyle = '#1E293B';
+      ictx.lineWidth = 1;
+      ictx.beginPath();
+      for (let x = 20; x < w; x += 20) {
+        ictx.moveTo(x, 0); ictx.lineTo(x, h);
+      }
+      for (let y = 20; y < h; y += 20) {
+        ictx.moveTo(0, y); ictx.lineTo(w, y);
+      }
+      ictx.stroke();
+
+      const apex = this.cachedSimulation ? this.cachedSimulation.apex : null;
+      const cur = this.currentLiveState || (this.cachedSimulation && this.cachedSimulation.dragPoints ? this.cachedSimulation.dragPoints[0] : null);
+
+      if (this.cachedSimulation && this.cachedSimulation.dragPoints && this.cachedSimulation.dragPoints.length > 1) {
+        const pts = this.cachedSimulation.dragPoints;
+        const maxRange = Math.max(this.cachedSimulation.range || 100, 50);
+        const maxHeight = Math.max((apex ? apex.y : 50) || 50, 20);
+
+        // Trajectory arc
+        ictx.strokeStyle = '#EA580C';
+        ictx.lineWidth = 2;
+        ictx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const ix = 12 + (pts[i].x / (maxRange * 1.15)) * (w - 24);
+          const iy = (h - 14) - (pts[i].y / (maxHeight * 1.35)) * (h - 26);
+          if (i === 0) ictx.moveTo(ix, iy);
+          else ictx.lineTo(ix, iy);
+        }
+        ictx.stroke();
+
+        // Apex marker
+        if (apex) {
+          const ax = 12 + (apex.x / (maxRange * 1.15)) * (w - 24);
+          const ay = (h - 14) - (apex.y / (maxHeight * 1.35)) * (h - 26);
+          ictx.fillStyle = '#F59E0B';
+          ictx.beginPath();
+          ictx.arc(ax, ay, 3.5, 0, Math.PI * 2);
+          ictx.fill();
+          ictx.fillStyle = '#F8FAFC';
+          ictx.font = '8.5px monospace';
+          ictx.fillText(`H=${apex.y.toFixed(1)}m`, Math.max(4, ax - 24), Math.max(10, ay - 4));
+        }
+
+        // Current point marker
+        if (cur) {
+          const cx = 12 + (cur.x / (maxRange * 1.15)) * (w - 24);
+          const cy = (h - 14) - (cur.y / (maxHeight * 1.35)) * (h - 26);
+          ictx.fillStyle = '#38BDF8';
+          ictx.beginPath();
+          ictx.arc(cx, cy, 3, 0, Math.PI * 2);
+          ictx.fill();
+        }
+      }
+
+      if (cur) {
+        ictx.fillStyle = '#94A3B8';
+        ictx.font = '8px monospace';
+        ictx.fillText(`v=${cur.speed ? cur.speed.toFixed(1) : cur.v ? cur.v.toFixed(1) : '0'}m/s t=${(cur.t || 0).toFixed(2)}s`, 6, h - 3);
+      }
     }
 
     _drawBackgroundGrid(ctx, width, height) {
@@ -859,6 +1057,238 @@
       ctx.fillStyle = '#64748B';
       ctx.fillText('สเกลเวกเตอร์: v (0.8 px/mps) | Fd (แดง Capped 80px) | mg (เทา Capped 60px) | a (ส้ม Capped 80px)', lx, ly);
       ctx.restore();
+    }
+
+    _renderRocketEquation(ctx, w, h) {
+      const isMobile = w < 600;
+      const p = this.rocketParams;
+      const m0 = p.initialMassM0 || p.m0 || 12000.0;
+      const mf = p.dryMassMf || p.mf || 1200.0;
+      const uex = p.exhaustSpeedUex || p.uex || 3000.0;
+      const burnRate = p.burnRate || 200.0;
+      const g = p.gravity || 0.0;
+
+      const totalBurnTime = (m0 - mf) / burnRate; // 54s
+      const deltaVIdeal = uex * Math.log(m0 / mf); // 6907.8 m/s = 6.91 km/s
+
+      // Loop time cycle for visual animation
+      const animT = (this.simTime || 0) % (totalBurnTime + 6.0);
+      const isBurning = animT <= totalBurnTime;
+      const curFuel = isBurning ? Math.max(0, (m0 - mf) - burnRate * animT) : 0;
+      const curMass = mf + curFuel;
+      const curV = isBurning ? (uex * Math.log(m0 / curMass) - g * animT) : (deltaVIdeal - g * totalBurnTime);
+      const fuelFrac = (m0 > mf) ? (curFuel / (m0 - mf)) : 0;
+
+      // Deep space starry canvas background
+      ctx.fillStyle = '#060a12';
+      ctx.fillRect(0, 0, w, h);
+
+      // Distant stars
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      for (let i = 0; i < 40; i++) {
+        const sx = ((i * 137.5 + 43) % w);
+        const sy = ((i * 269.3 + 71) % (h - 60));
+        const sz = (i % 3 === 0) ? 1.8 : 1.0;
+        ctx.fillRect(sx, sy, sz, sz);
+      }
+
+      // Title & Header
+      const padX = isMobile ? 10 : 18;
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = isMobile ? 'bold 11px sans-serif' : 'bold 15px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(isMobile ? '🚀 จรวดไซออลคอฟสกี (Rocket Equation)' : '🚀 สมการจรวดไซออลคอฟสกี (Tsiolkovsky Rocket Equation & Variable Mass)', padX, isMobile ? 6 : 14);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = isMobile ? '9px sans-serif' : '11px sans-serif';
+      ctx.fillText(
+        isMobile 
+          ? `m₀=${m0.toLocaleString()}kg | mf=${mf.toLocaleString()}kg | u_ex=${uex.toLocaleString()}m/s`
+          : `การขับดันในอวกาศลึก: m₀ = ${m0.toLocaleString()} kg | m_f = ${mf.toLocaleString()} kg | u_ex = ${uex.toLocaleString()} m/s | g = ${g.toFixed(1)} m/s²`,
+        padX, isMobile ? 22 : 34
+      );
+
+      // Calculate vertical budget
+      const headerH = isMobile ? 36 : 52;
+      const hudH = isMobile ? 38 : 46;
+      const hudY = h - hudH - (isMobile ? 4 : 8);
+      const availH = hudY - headerH;
+
+      // Left Column: Rocket Visualizer
+      const rocketCenterX = isMobile ? (padX + 22) : w * 0.20;
+      const rocketH = isMobile ? Math.min(85, availH * 0.58) : Math.min(190, availH * 0.65);
+      const rocketW = isMobile ? Math.max(22, rocketH * 0.26) : 48;
+      const tankH = rocketH * 0.65;
+      const fairingH = rocketH * 0.22;
+      const nozzleH = rocketH * 0.13;
+      const rocketBaseY = headerH + 6 + rocketH; // bottom of engine nozzle
+
+      // Rocket fairing (nosecone)
+      ctx.beginPath();
+      ctx.moveTo(rocketCenterX - rocketW / 2, rocketBaseY - rocketH + fairingH);
+      ctx.quadraticCurveTo(rocketCenterX, rocketBaseY - rocketH - (isMobile ? 8 : 16), rocketCenterX + rocketW / 2, rocketBaseY - rocketH + fairingH);
+      ctx.closePath();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fill();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Payload label
+      if (!isMobile) {
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Payload', rocketCenterX, rocketBaseY - rocketH + fairingH / 2);
+      }
+
+      // Fuel Tank Body (Glass/Cutaway view)
+      const tankTopY = rocketBaseY - rocketH + fairingH;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+      ctx.fillRect(rocketCenterX - rocketW / 2, tankTopY, rocketW, tankH);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(rocketCenterX - rocketW / 2, tankTopY, rocketW, tankH);
+
+      // Liquid propellant inside tank
+      const liquidH = tankH * fuelFrac;
+      const liquidTopY = tankTopY + (tankH - liquidH);
+      if (liquidH > 0) {
+        const grad = ctx.createLinearGradient(0, liquidTopY, 0, tankTopY + tankH);
+        grad.addColorStop(0, '#0284c7');
+        grad.addColorStop(1, '#0369a1');
+        ctx.fillStyle = grad;
+        ctx.fillRect(rocketCenterX - rocketW / 2 + 1.5, liquidTopY, rocketW - 3, liquidH);
+
+        // Meniscus
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillRect(rocketCenterX - rocketW / 2 + 1.5, liquidTopY, rocketW - 3, 2);
+      }
+
+      // Tank Fuel Percentage Text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = isMobile ? 'bold 8px monospace' : 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${(fuelFrac * 100).toFixed(0)}%`, rocketCenterX, tankTopY + tankH / 2 + (isMobile ? 3 : 4));
+
+      // Rocket Nozzle (Engine Bell)
+      const nozzleTopY = tankTopY + tankH;
+      ctx.beginPath();
+      ctx.moveTo(rocketCenterX - rocketW / 4, nozzleTopY);
+      ctx.lineTo(rocketCenterX - rocketW / 2.2, nozzleTopY + nozzleH);
+      ctx.lineTo(rocketCenterX + rocketW / 2.2, nozzleTopY + nozzleH);
+      ctx.lineTo(rocketCenterX + rocketW / 4, nozzleTopY);
+      ctx.closePath();
+      ctx.fillStyle = '#475569';
+      ctx.fill();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Exhaust Plume (Flames & Mach diamonds)
+      if (isBurning) {
+        const maxFlameSpace = Math.max(12, hudY - (nozzleTopY + nozzleH) - 3);
+        const flameLen = Math.min(maxFlameSpace, (isMobile ? 30 : 70) * (0.8 + 0.2 * Math.sin(animT * 30)));
+        const flameGrad = ctx.createLinearGradient(rocketCenterX, nozzleTopY + nozzleH, rocketCenterX, nozzleTopY + nozzleH + flameLen);
+        flameGrad.addColorStop(0, '#ffffff');
+        flameGrad.addColorStop(0.2, '#38bdf8'); // shock cone / LOX rich
+        flameGrad.addColorStop(0.6, '#f97316');
+        flameGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+
+        ctx.beginPath();
+        ctx.moveTo(rocketCenterX - rocketW / 2.2, nozzleTopY + nozzleH);
+        ctx.quadraticCurveTo(rocketCenterX, nozzleTopY + nozzleH + flameLen, rocketCenterX + rocketW / 2.2, nozzleTopY + nozzleH);
+        ctx.closePath();
+        ctx.fillStyle = flameGrad;
+        ctx.fill();
+
+        // Mach diamond dots
+        ctx.fillStyle = '#ffffff';
+        const numDiamonds = isMobile ? 2 : 3;
+        for (let d = 1; d <= numDiamonds; d++) {
+          const dy = nozzleTopY + nozzleH + (flameLen / (numDiamonds + 1)) * d;
+          ctx.beginPath();
+          ctx.arc(rocketCenterX, dy, isMobile ? 1.2 : (2.5 - d * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Right Column: Equations & Analytical Insights
+      const rightX = isMobile ? (rocketCenterX + rocketW / 2 + 10) : (w * 0.40);
+      const rightW = w - rightX - (isMobile ? 6 : 14);
+      const eqTopY = headerH + (isMobile ? 2 : 8);
+      const eqCardH = Math.min(isMobile ? 90 : 110, hudY - eqTopY - 4);
+
+      // Governing Formula Card
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.fillRect(rightX, eqTopY, rightW, eqCardH);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(rightX, eqTopY, rightW, eqCardH);
+
+      if (isMobile) {
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('📐 จรวดมวลแปรผัน', rightX + 6, eqTopY + 11);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 8.5px monospace';
+        ctx.fillText('dv = -u_ex (dm/m)', rightX + 6, eqTopY + 26);
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText('Δv = u_ex·ln(m₀/m_f)', rightX + 6, eqTopY + 41);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '8px sans-serif';
+        ctx.fillText(`R_m = ${(m0/mf).toFixed(1)} | ln=${Math.log(m0/mf).toFixed(2)}`, rightX + 6, eqTopY + 56);
+
+        ctx.fillStyle = '#4ade80';
+        ctx.font = 'bold 8.5px monospace';
+        ctx.fillText(`Δv ≈ ${(deltaVIdeal/1000).toFixed(2)} km/s`, rightX + 6, eqTopY + 71);
+      } else {
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 11.5px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('📐 กฎการอนุรักษ์โมเมนตัมมวลแปรผัน (Variable Mass):', rightX + 12, eqTopY + 12);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText('dp = 0  =>  m·dv = -u_ex·dm  =>  dv = -u_ex (dm/m)', rightX + 12, eqTopY + 34);
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 12.5px monospace';
+        ctx.fillText('Δv = u_ex · ln(m₀ / m_f)', rightX + 12, eqTopY + 56);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10.5px sans-serif';
+        const massRatioText = `อัตราส่วนมวล R_m = ${m0.toLocaleString()} / ${mf.toLocaleString()} = ${(m0/mf).toFixed(1)} (ln ≈ ${Math.log(m0/mf).toFixed(4)})`;
+        const deltaVText = `ผลลัพธ์ Δv = ${uex.toLocaleString()} × ${Math.log(m0/mf).toFixed(4)} = ${deltaVIdeal.toFixed(1)} m/s ≈ ${(deltaVIdeal/1000).toFixed(2)} km/s`;
+        ctx.fillText(massRatioText, rightX + 12, eqTopY + 76);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText(deltaVText, rightX + 12, eqTopY + 94);
+      }
+
+      // Live Telemetry HUD Bar at Bottom
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(padX, hudY, w - padX * 2, hudH);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(padX, hudY, w - padX * 2, hudH);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = isMobile ? 'bold 8px monospace' : 'bold 11px monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      if (isMobile) {
+        ctx.fillText(`เผาไหม้ t=${animT.toFixed(1)}s/${totalBurnTime.toFixed(0)}s | m(t)=${curMass.toFixed(0)} kg`, padX + 6, hudY + 11);
+        ctx.fillText(`v(t)=${(curV / 1000).toFixed(2)} km/s | Δv สุทธิ=${(deltaVIdeal / 1000).toFixed(2)} km/s`, padX + 6, hudY + 26);
+      } else {
+        ctx.fillText(`สถานะการบิน: เวลาเผาไหม้ t = ${animT.toFixed(1)}s / ${totalBurnTime.toFixed(0)}s | มวลรวม m(t) = ${curMass.toFixed(0)} kg (เชื้อเพลิงคงเหลือ ${curFuel.toFixed(0)} kg)`, padX + 12, hudY + 14);
+        ctx.fillText(`อัตราเร็วสะสมปัจจุบัน v(t) = ${(curV / 1000).toFixed(2)} km/s | อัตราเร็วสุทธิสุดท้าย Δv = ${(deltaVIdeal / 1000).toFixed(2)} km/s (${(deltaVIdeal/1000).toFixed(2)} km/s)`, padX + 12, hudY + 32);
+      }
     }
 
     // Teardown / Destruction for Single Loop Guard

@@ -66,12 +66,22 @@
         dpM2: 1.0,            // kg (m2)
         dpTheta1Deg: 90.0,    // degrees (\theta_1)
         dpTheta2Deg: 90.0,    // degrees (\theta_2)
-        dpShowTrail: true
+        dpShowTrail: true,
+
+        // Rotating Hoop (prob-adv-03: R=0.5m, Omega=6.0 rad/s, g=9.8 m/s^2)
+        hoopRadiusR: 0.50,    // m (R)
+        hoopOmega: 6.0,       // rad/s (Omega)
+        hoopGravity: 9.80,    // m/s^2 (g)
+        hoopDamping: 0.8      // damping coefficient
       };
 
       // State variables
       this.state = {
         simTime: 0.0,
+        // Rotating hoop state
+        hoopTheta: 0.25,      // rad
+        hoopThetaDot: 0.0,    // rad/s
+        hoopRotationAngle: 0.0,
         // Spring state
         x: 1.2,               // displacement (m)
         v: 0.0,               // velocity (m/s)
@@ -128,8 +138,8 @@
     _setupCanvasResolution() {
       const rect = this.canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const width = rect.width || 800;
-      const height = rect.height || 480;
+      const width = Math.max(300, rect.width || 800);
+      const height = Math.max(300, rect.height || 480);
 
       this.canvas.width = Math.round(width * dpr);
       this.canvas.height = Math.round(height * dpr);
@@ -144,7 +154,7 @@
     }
 
     setSubMode(mode) {
-      if (['spring', 'pendulum', 'damping_resonance', 'double_pendulum'].includes(mode)) {
+      if (['spring', 'pendulum', 'damping_resonance', 'double_pendulum', 'rotating_hoop'].includes(mode)) {
         this.subMode = mode;
         this.reset();
       }
@@ -231,6 +241,10 @@
       this.state.dpAlpha2 = 0.0;
       this.state.dpTrail = [];
 
+      this.state.hoopTheta = 0.25;
+      this.state.hoopThetaDot = 0.0;
+      this.state.hoopRotationAngle = 0.0;
+
       this.state.timeHistory = [];
       this.render();
       this._emitTelemetry();
@@ -245,6 +259,9 @@
       // Cap delta time to prevent physics instability
       if (dt > 0.05) dt = 0.05;
 
+      // Apply universal simulation animation speed factor
+      dt *= (this.timeScale !== undefined ? this.timeScale : 1.0);
+
       // Sub-step RK4 integration for stability
       const subSteps = 4;
       const subDt = dt / subSteps;
@@ -256,6 +273,10 @@
       this._emitTelemetry();
 
       this.animId = requestAnimationFrame(() => this._loop());
+    }
+
+    setTimeScale(scale) {
+      this.timeScale = (typeof scale === 'number' && scale > 0) ? scale : 1.0;
     }
 
     _updatePhysics(dt) {
@@ -423,6 +444,34 @@
         const K = 0.5 * (m1 + m2) * l1 * l1 * w1 * w1 + 0.5 * m2 * l2 * l2 * w2 * w2 + m2 * l1 * l2 * w1 * w2 * Math.cos(t1 - t2);
         const U = (m1 + m2) * g * l1 * (1 - Math.cos(t1)) + m2 * g * l2 * (1 - Math.cos(t2));
         this._recordHistory(t, (x2 - pivotX) / pxScale, (w1 * l1 + w2 * l2) / 2, K, U);
+      } else if (this.subMode === 'rotating_hoop') {
+        const R = Math.max(0.1, this.params.hoopRadiusR || 0.5);
+        const Omega = Math.max(0.0, this.params.hoopOmega !== undefined ? this.params.hoopOmega : 6.0);
+        const g = this.params.hoopGravity || 9.80;
+        const gamma = Math.max(0.0, this.params.hoopDamping !== undefined ? this.params.hoopDamping : 0.8);
+
+        // Differential equation: \ddot{\theta} = \Omega^2 \sin\theta \cos\theta - (g/R) \sin\theta - \gamma \dot{\theta}
+        const fHoop = (th, om) => (Omega * Omega * Math.sin(th) * Math.cos(th) - (g / R) * Math.sin(th) - gamma * om);
+
+        const th = this.state.hoopTheta !== undefined ? this.state.hoopTheta : 0.25;
+        const om = this.state.hoopThetaDot !== undefined ? this.state.hoopThetaDot : 0.0;
+
+        const k1_th = om;
+        const k1_om = fHoop(th, om);
+        const k2_th = om + 0.5 * dt * k1_om;
+        const k2_om = fHoop(th + 0.5 * dt * k1_th, om + 0.5 * dt * k1_om);
+        const k3_th = om + 0.5 * dt * k2_om;
+        const k3_om = fHoop(th + 0.5 * dt * k2_th, om + 0.5 * dt * k2_om);
+        const k4_th = om + dt * k3_om;
+        const k4_om = fHoop(th + dt * k3_th, om + dt * k3_om);
+
+        this.state.hoopTheta = th + (dt / 6) * (k1_th + 2 * k2_th + 2 * k3_th + k4_th);
+        this.state.hoopThetaDot = om + (dt / 6) * (k1_om + 2 * k2_om + 2 * k3_om + k4_om);
+        this.state.hoopRotationAngle = ((this.state.hoopRotationAngle || 0) + Omega * dt) % (Math.PI * 2);
+
+        const K = 0.5 * (R * om) * (R * om);
+        const U = -g * R * Math.cos(this.state.hoopTheta);
+        this._recordHistory(t, this.state.hoopTheta, om, K, U);
       }
     }
 
@@ -454,14 +503,18 @@
         this._renderDampingResonanceMode(ctx, w, h);
       } else if (this.subMode === 'double_pendulum') {
         this._renderDoublePendulumMode(ctx, w, h);
+      } else if (this.subMode === 'rotating_hoop') {
+        this._renderRotatingHoopMode(ctx, w, h);
       }
 
-      // Shared HUD telemetry overlays
-      if (this.toggles.showEnergy) {
-        this._renderEnergyBarHUD(ctx, w, h);
-      }
-      if (this.toggles.showPhaseSpace) {
-        this._renderPhaseSpaceHUD(ctx, w, h);
+      // Shared HUD telemetry overlays (suppressed in rotating_hoop to prevent overlap)
+      if (this.subMode !== 'rotating_hoop') {
+        if (this.toggles.showEnergy) {
+          this._renderEnergyBarHUD(ctx, w, h);
+        }
+        if (this.toggles.showPhaseSpace) {
+          this._renderPhaseSpaceHUD(ctx, w, h);
+        }
       }
     }
 
@@ -1462,6 +1515,220 @@
       ctx.restore();
     }
 
+    _renderRotatingHoopMode(ctx, w, h) {
+      const R = Math.max(0.1, this.params.hoopRadiusR || 0.5);
+      const Omega = Math.max(0.0, this.params.hoopOmega !== undefined ? this.params.hoopOmega : 6.0);
+      const g = this.params.hoopGravity || 9.80;
+      const Omega_c = Math.sqrt(g / R);
+
+      const isMobile = w < 600;
+      const safeH = Math.max(250, h);
+      const safeW = Math.max(250, w);
+      const cx = isMobile ? safeW * 0.50 : safeW * 0.42;
+      const cy = isMobile ? Math.max(70, (safeH - 110) * 0.52 + 18) : safeH * 0.48;
+      const rByW = isMobile ? safeW * 0.22 : safeW * 0.28;
+      const rByH = isMobile ? Math.max(30, (safeH - 110) * 0.38) : safeH * 0.34;
+      const pxRadius = Math.max(30, Math.min(rByW, rByH, 140));
+
+      // 1. Draw vertical rotation axis
+      ctx.save();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - pxRadius - (isMobile ? 20 : 40));
+      ctx.lineTo(cx, cy + pxRadius + (isMobile ? 20 : 40));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Axis label & rotation arrow at top
+      ctx.fillStyle = '#38BDF8';
+      ctx.font = isMobile ? 'bold 10px Inter, sans-serif' : 'bold 12px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`แกนหมุน Ω = ${Omega.toFixed(1)} rad/s`, cx, cy - pxRadius - (isMobile ? 24 : 48));
+
+      // Rotation direction arc
+      const rotAngle = this.state.hoopRotationAngle || 0;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy - pxRadius - (isMobile ? 14 : 28), Math.max(1, isMobile ? 18 : 28), Math.max(1, isMobile ? 5 : 8), 0, 0, Math.PI * 2);
+      ctx.strokeStyle = '#0284C7';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Top and bottom bearings / pivots
+      ctx.fillStyle = '#64748B';
+      ctx.fillRect(cx - 8, cy - pxRadius - 8, 16, 8);
+      ctx.fillRect(cx - 8, cy + pxRadius, 16, 8);
+
+      // 2. Draw 3D rotating hoop wire
+      const hoopPerspective = Math.cos(rotAngle);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, Math.max(0.1, Math.abs(pxRadius * hoopPerspective)), Math.max(0.1, Math.abs(pxRadius)), 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Front/Main circular hoop outline
+      ctx.strokeStyle = '#38BDF8';
+      ctx.lineWidth = 3.5;
+      ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(cx, cy, pxRadius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // 3. Equilibrium angles lines if Omega > Omega_c
+      if (Omega > Omega_c) {
+        const cosTheta0 = Math.min(1.0, g / (Omega * Omega * R));
+        const theta0 = Math.acos(cosTheta0);
+        const eqDeg = (theta0 * 180 / Math.PI).toFixed(1);
+
+        [-theta0, theta0].forEach((thEq, idx) => {
+          const eqX = cx + pxRadius * Math.sin(thEq);
+          const eqY = cy + pxRadius * Math.cos(thEq);
+          ctx.save();
+          ctx.strokeStyle = 'rgba(52, 211, 153, 0.6)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(eqX, eqY);
+          ctx.stroke();
+
+          ctx.fillStyle = '#34D399';
+          ctx.beginPath();
+          ctx.arc(eqX, eqY, 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.font = '10px Inter, sans-serif';
+          ctx.fillStyle = '#A7F3D0';
+          const align = idx === 0 ? 'right' : 'left';
+          ctx.textAlign = align;
+          ctx.fillText(`θ₀=${idx === 0 ? '-' : '+'}${eqDeg}°`, eqX + (idx === 0 ? -8 : 8), eqY);
+          ctx.restore();
+        });
+      }
+
+      // 4. Bead position
+      const theta = this.state.hoopTheta !== undefined ? this.state.hoopTheta : 0.25;
+      const beadX = cx + pxRadius * Math.sin(theta);
+      const beadY = cy + pxRadius * Math.cos(theta);
+
+      // Radial line to bead
+      ctx.save();
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(beadX, beadY);
+      ctx.stroke();
+
+      // Bead sphere with metallic glow
+      const beadGrad = ctx.createRadialGradient(beadX - 3, beadY - 3, 2, beadX, beadY, 11);
+      beadGrad.addColorStop(0, '#FEF08A');
+      beadGrad.addColorStop(0.5, '#F59E0B');
+      beadGrad.addColorStop(1, '#B45309');
+      ctx.fillStyle = beadGrad;
+      ctx.shadowColor = '#F59E0B';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(beadX, beadY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#FEF3C7';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // 5. Force Vectors on bead (Gravity & Centrifugal force)
+      if (this.toggles.showForces) {
+        // Gravity (downward)
+        const mgLen = Math.min(45, 25 * (g / 9.8));
+        this._drawArrow(ctx, beadX, beadY, beadX, beadY + mgLen, '#F87171', 'm g');
+
+        // Centrifugal force (horizontal away from axis)
+        const rAxial = pxRadius * Math.sin(theta);
+        const fcfVal = Math.min(50, (Omega * Omega * (pxRadius / 100) * Math.sin(theta)) * 3);
+        const fcfX = beadX + (rAxial >= 0 ? fcfVal : -fcfVal);
+        this._drawArrow(ctx, beadX, beadY, fcfX, beadY, '#38BDF8', 'm Ω² r');
+      }
+
+      // 6. HUD Card (Physics parameters and bifurcation regime)
+      ctx.save();
+      if (isMobile) {
+        const cardX = 10;
+        const cardY = h - 96;
+        const cardW = w - 20;
+        const cardH = 90;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'left';
+        ctx.fillText('🪐 ลูกปัดบนวงแหวนหมุน (Rotating Hoop)', cardX + 8, cardY + 16);
+
+        const isBifurcated = Omega > Omega_c;
+        const eqText = isBifurcated 
+          ? `cos θ₀ = g/(Ω²R) ⟹ ±${(Math.acos(g / (Omega * Omega * R)) * 180 / Math.PI).toFixed(1)}°`
+          : 'θ₀ = 0° (ก้นห่วงเสถียร)';
+
+        ctx.font = '9.5px monospace';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`R = ${R.toFixed(2)} m | g = ${g.toFixed(2)} m/s² | Ω = ${Omega.toFixed(1)} rad/s`, cardX + 8, cardY + 34);
+
+        ctx.fillStyle = '#38BDF8';
+        ctx.fillText(`ความเร็ววิกฤต Ω_c = √(g/R) = ${Omega_c.toFixed(2)} rad/s`, cardX + 8, cardY + 52);
+
+        ctx.fillStyle = isBifurcated ? '#34D399' : '#CBD5E1';
+        ctx.font = 'bold 9.5px Inter, sans-serif';
+        ctx.fillText(`สมดุล: ${eqText} (${isBifurcated ? 'Supercritical' : 'Subcritical'})`, cardX + 8, cardY + 72);
+      } else {
+        const cardX = w - 260;
+        const cardY = 16;
+        const cardW = 244;
+        const cardH = 136;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.textAlign = 'left';
+        ctx.fillText('🪐 ลูกปัดบนวงแหวนหมุน (Rotating Hoop)', cardX + 12, cardY + 22);
+
+        const isBifurcated = Omega > Omega_c;
+        const eqText = isBifurcated 
+          ? `cos θ₀ = g/(Ω²R) ⟹ ±${(Math.acos(g / (Omega * Omega * R)) * 180 / Math.PI).toFixed(1)}°`
+          : 'θ₀ = 0° (จุดต่ำสุดเสถียร)';
+
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText(`รัศมี R = ${R.toFixed(2)} m | g = ${g.toFixed(2)} m/s²`, cardX + 12, cardY + 44);
+        ctx.fillText(`ความเร็วเชิงมุมวิกฤต Ω_c = √(g/R) = ${Omega_c.toFixed(2)} rad/s`, cardX + 12, cardY + 64);
+        ctx.fillText(`ความเร็วเชิงมุมปัจจุบัน Ω = ${Omega.toFixed(2)} rad/s`, cardX + 12, cardY + 84);
+
+        ctx.fillStyle = isBifurcated ? '#34D399' : '#CBD5E1';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText(`สถานะ: ${isBifurcated ? 'Supercritical Bifurcation' : 'Subcritical'}`, cardX + 12, cardY + 104);
+        ctx.fillText(`มุมสมดุล: ${eqText}`, cardX + 12, cardY + 122);
+      }
+      ctx.restore();
+    }
+
     _emitTelemetry() {
       if (typeof this.options.onTelemetryUpdate !== 'function') return;
 
@@ -1566,6 +1833,34 @@
         Q = Infinity;
         zeta = 0;
         regime = 'Double Pendulum Chaos (ความโกลาหลแบบไม่เชิงเส้น)';
+      } else if (this.subMode === 'rotating_hoop') {
+        const R = Math.max(0.1, this.params.hoopRadiusR || 0.5);
+        const Omega = Math.max(0.0, this.params.hoopOmega !== undefined ? this.params.hoopOmega : 6.0);
+        const g = this.params.hoopGravity || 9.80;
+        const th = this.state.hoopTheta !== undefined ? this.state.hoopTheta : 0.25;
+        const om = this.state.hoopThetaDot !== undefined ? this.state.hoopThetaDot : 0.0;
+        const thDeg = (th * 180 / Math.PI);
+        const Omega_c = Math.sqrt(g / R);
+        let eqDeg = 0;
+        if (Omega > Omega_c) {
+          eqDeg = Math.acos(Math.min(1.0, g / (Omega * Omega * R))) * 180 / Math.PI;
+        }
+
+        pos = `${thDeg.toFixed(1)}° (eq: ${eqDeg > 0 ? '±' + eqDeg.toFixed(1) + '°' : '0°'})`;
+        vel = `${om.toFixed(2)} rad/s`;
+        acc = `${(Omega * Omega * Math.sin(th) * Math.cos(th) - (g / R) * Math.sin(th)).toFixed(2)} rad/s²`;
+        omega0 = Omega_c;
+        period = (Omega > 0) ? (2 * Math.PI / Omega) : 0;
+        freq = (period > 0) ? (1 / period) : 0;
+
+        K = 0.5 * (R * om) * (R * om);
+        U = -g * R * Math.cos(th);
+        E = K + U;
+        Q = Infinity;
+        zeta = (this.params.hoopDamping || 0.8) / (2 * Omega_c);
+        regime = (Omega > Omega_c)
+          ? `Supercritical Bifurcation (สมดุลเอียง θ₀=±${eqDeg.toFixed(1)}°)`
+          : 'Subcritical (สมดุลจุดต่ำสุด θ₀=0°)';
       }
 
       this.options.onTelemetryUpdate({

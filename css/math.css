@@ -13,11 +13,21 @@
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   margin: 1rem 0;
-  background-color: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  background-color: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 6px;
   -webkit-overflow-scrolling: touch;
   text-align: center;
+  color: #F8FAFC;
+}
+
+.table-math-cell .math-container {
+  background: transparent !important;
+  border: none !important;
+  padding: 0.2rem 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  box-shadow: none !important;
 }
 
 .katex-display {
@@ -33,20 +43,20 @@
 }
 
 .math-container::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: rgba(148, 163, 184, 0.4);
   border-radius: 3px;
 }
 
 .display-math {
   font-size: 1.15rem;
   line-height: 1.8;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 
 .inline-math {
   font-family: 'Times New Roman', Times, 'Cambria Math', serif;
   font-style: italic;
-  color: #0F172A;
+  color: #F8FAFC;
   padding: 0 0.15em;
   white-space: nowrap;
 }
